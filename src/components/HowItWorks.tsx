@@ -1,0 +1,85 @@
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Search, Calendar, Star, MapPin } from "lucide-react";
+
+const HowItWorks = () => {
+  const steps = [
+    {
+      step: "1",
+      icon: MapPin,
+      title: "Search Your Area",
+      description: "Enter your city or zip code to find verified cleaning professionals near you."
+    },
+    {
+      step: "2",
+      icon: Search,
+      title: "Browse & Compare",
+      description: "View profiles, read reviews, check ratings, and compare prices from multiple cleaners."
+    },
+    {
+      step: "3",
+      icon: Calendar,
+      title: "Book & Schedule",
+      description: "Choose your preferred cleaner, select your service date, and book instantly online."
+    },
+    {
+      step: "4",
+      icon: Star,
+      title: "Enjoy & Review",
+      description: "Relax while your cleaner works their magic, then leave a review to help others."
+    }
+  ];
+
+  return (
+    <section id="how-it-works" className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            How HOUSIE Works
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Finding quality cleaning services has never been easier. 
+            Follow these simple steps to get your home spotless.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, index) => {
+            const IconComponent = step.icon;
+            return (
+              <div key={index} className="relative">
+                {/* Connector Line */}
+                {index < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 transform translate-x-4 -translate-y-1/2 z-0"></div>
+                )}
+                
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-white relative z-10">
+                  <CardContent className="p-8 text-center">
+                    {/* Step Number */}
+                    <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                      {step.step}
+                    </div>
+                    
+                    {/* Icon */}
+                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <IconComponent className="w-8 h-8 text-blue-600" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600">
+                      {step.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HowItWorks;
