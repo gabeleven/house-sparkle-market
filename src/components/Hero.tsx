@@ -19,13 +19,13 @@ const Hero = () => {
           {/* Left Column - Main Content */}
           <div className="text-center lg:text-left">
             <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Find Quality
-              <span className="block text-blue-200">Cleaning Services</span>
-              <span className="block text-white">Near You</span>
+              Trouvez des
+              <span className="block text-blue-200">Services de Ménage</span>
+              <span className="block text-white">de Qualité Près de Chez Vous</span>
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-lg">
-              Connect with trusted, vetted cleaning professionals in your area. 
-              Book instantly, pay securely, and enjoy a spotless home.
+              Connectez-vous avec des professionnels de ménage de confiance et vérifiés dans votre région. 
+              Réservez instantanément, payez en toute sécurité et profitez d'un foyer impeccable.
             </p>
 
             {/* Main CTA Buttons */}
@@ -35,7 +35,7 @@ const Hero = () => {
                 className="bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <Search className="w-5 h-5 mr-2" />
-                LOOKING FOR SERVICES
+                JE CHERCHE DES SERVICES
               </Button>
               <Button 
                 size="lg" 
@@ -43,7 +43,7 @@ const Hero = () => {
                 className="border-2 border-white text-white hover:bg-white hover:text-blue-700 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <Star className="w-5 h-5 mr-2" />
-                OFFERING SERVICES
+                J'OFFRE DES SERVICES
               </Button>
             </div>
 
@@ -51,15 +51,15 @@ const Hero = () => {
             <div className="flex justify-center lg:justify-start space-x-8 text-blue-100">
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">500+</div>
-                <div className="text-sm">Verified Cleaners</div>
+                <div className="text-sm">Ménagers Vérifiés</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">2000+</div>
-                <div className="text-sm">Happy Customers</div>
+                <div className="text-sm">Clients Satisfaits</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">4.9★</div>
-                <div className="text-sm">Average Rating</div>
+                <div className="text-sm">Note Moyenne</div>
               </div>
             </div>
           </div>
@@ -69,7 +69,7 @@ const Hero = () => {
             <Card className="bg-white/95 backdrop-blur shadow-2xl border-0">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                  Start Your Search
+                  Commencez votre recherche
                 </h3>
                 
                 {/* Location Input */}
@@ -77,28 +77,28 @@ const Hero = () => {
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input 
                     type="text" 
-                    placeholder="Enter your city or zip code"
+                    placeholder="Entrez votre ville ou code postal"
                     className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
                   />
                 </div>
 
                 {/* Service Type */}
                 <select className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg mb-6">
-                  <option>Select cleaning service</option>
-                  <option>Regular House Cleaning</option>
-                  <option>Deep Cleaning</option>
-                  <option>Move-in/Move-out</option>
-                  <option>Office Cleaning</option>
-                  <option>Post-Construction</option>
+                  <option>Sélectionnez un service de ménage</option>
+                  <option>Ménage régulier</option>
+                  <option>Grand ménage</option>
+                  <option>Ménage déménagement</option>
+                  <option>Ménage bureau</option>
+                  <option>Ménage post-construction</option>
                 </select>
 
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-4 h-auto font-semibold">
                   <Search className="w-5 h-5 mr-2" />
-                  Find Cleaners
+                  Trouver des ménagers
                 </Button>
 
                 <p className="text-center text-sm text-gray-500 mt-4">
-                  Free to search • No hidden fees for customers
+                  Recherche gratuite • Aucun frais cachés pour les clients
                 </p>
               </CardContent>
             </Card>

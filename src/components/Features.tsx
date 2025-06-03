@@ -6,33 +6,33 @@ const Features = () => {
   const features = [
     {
       icon: Shield,
-      title: "Verified Professionals",
-      description: "All cleaners are background-checked, insured, and thoroughly vetted for your peace of mind."
+      title: "Professionnels Vérifiés",
+      description: "Tous les ménagers sont vérifiés, assurés et soigneusement contrôlés pour votre tranquillité d'esprit."
     },
     {
       icon: MapPin,
-      title: "Local & Nearby",
-      description: "Find trusted cleaning services right in your neighborhood with our interactive city search."
+      title: "Local et à Proximité",
+      description: "Trouvez des services de ménage de confiance dans votre quartier grâce à notre recherche interactive par ville."
     },
     {
       icon: Star,
-      title: "Rated & Reviewed",
-      description: "Read genuine reviews from real customers to make informed decisions about your cleaner."
+      title: "Notés et Évalués",
+      description: "Lisez de vrais avis de clients réels pour prendre des décisions éclairées sur votre ménager."
     },
     {
       icon: Clock,
-      title: "Flexible Scheduling",
-      description: "Book one-time cleanings or set up recurring services that fit your busy lifestyle."
+      title: "Planification Flexible",
+      description: "Réservez des ménages ponctuels ou configurez des services récurrents qui s'adaptent à votre emploi du temps chargé."
     },
     {
       icon: Users,
-      title: "Quality Guarantee",
-      description: "100% satisfaction guaranteed or we'll make it right. Your trust is our priority."
+      title: "Garantie Qualité",
+      description: "Satisfaction garantie à 100% ou nous arrangerons les choses. Votre confiance est notre priorité."
     },
     {
       icon: CheckCircle,
-      title: "Easy Booking",
-      description: "Simple online booking process with instant confirmation and secure payment options."
+      title: "Réservation Facile",
+      description: "Processus de réservation en ligne simple avec confirmation instantanée et options de paiement sécurisées."
     }
   ];
 
@@ -41,11 +41,11 @@ const Features = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Why Choose HOUSIE?
+            Pourquoi choisir HOUSIE ?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We've built the most trusted platform for connecting homeowners with 
-            professional cleaning services. Here's what sets us apart.
+            Nous avons construit la plateforme la plus fiable pour connecter les propriétaires 
+            avec des services de ménage professionnels. Voici ce qui nous distingue.
           </p>
         </div>
 

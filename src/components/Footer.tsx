@@ -17,8 +17,8 @@ const Footer = () => {
               <span className="text-2xl font-bold">HOUSIE</span>
             </div>
             <p className="text-gray-400 mb-6 max-w-sm">
-              Connecting homeowners with trusted cleaning professionals. 
-              Your satisfaction is our guarantee.
+              Connecter les propriétaires avec des professionnels de ménage de confiance. 
+              Votre satisfaction est notre garantie.
             </p>
             <div className="flex space-x-4">
               <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white p-2">
@@ -37,23 +37,23 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-6">Services</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">House Cleaning</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Deep Cleaning</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Move-in/Move-out</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Office Cleaning</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Post-Construction</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Ménage de maison</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Grand ménage</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Ménage déménagement</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Ménage bureau</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Ménage post-construction</a></li>
             </ul>
           </div>
 
           {/* Company */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Company</h4>
+            <h4 className="text-lg font-semibold mb-6">Entreprise</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">How it Works</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">For Providers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Safety & Trust</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">À propos de nous</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Comment ça marche</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Pour les prestataires</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Sécurité et confiance</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Centre d'aide</a></li>
             </ul>
           </div>
 
@@ -67,11 +67,11 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5" />
-                <span>1-800-HOUSIE</span>
+                <span>01-80-HOUSIE</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5" />
-                <span>Available Nationwide</span>
+                <span>Disponible partout en France</span>
               </div>
             </div>
           </div>
@@ -81,17 +81,17 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 HOUSIE. All rights reserved.
+            © 2024 HOUSIE. Tous droits réservés.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-              Privacy Policy
+              Politique de confidentialité
             </a>
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-              Terms of Service
+              Conditions d'utilisation
             </a>
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-              Cookie Policy
+              Politique des cookies
             </a>
           </div>
         </div>

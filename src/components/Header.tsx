@@ -18,13 +18,13 @@ const Header = () => {
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">
-              How it Works
+              Comment ça marche
             </a>
             <a href="#for-providers" className="text-gray-600 hover:text-blue-600 transition-colors">
-              For Providers
+              Pour les prestataires
             </a>
             <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">
-              About
+              À propos
             </a>
           </nav>
 
@@ -32,10 +32,10 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             <Button variant="ghost" size="sm" className="text-gray-600">
               <User className="w-4 h-4 mr-2" />
-              Sign In
+              Se connecter
             </Button>
             <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-              Join Now
+              Nous rejoindre
             </Button>
           </div>
         </div>

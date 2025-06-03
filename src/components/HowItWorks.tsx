@@ -7,26 +7,26 @@ const HowItWorks = () => {
     {
       step: "1",
       icon: MapPin,
-      title: "Search Your Area",
-      description: "Enter your city or zip code to find verified cleaning professionals near you."
+      title: "Recherchez dans votre région",
+      description: "Entrez votre ville ou code postal pour trouver des professionnels de ménage vérifiés près de chez vous."
     },
     {
       step: "2",
       icon: Search,
-      title: "Browse & Compare",
-      description: "View profiles, read reviews, check ratings, and compare prices from multiple cleaners."
+      title: "Parcourez et comparez",
+      description: "Consultez les profils, lisez les avis, vérifiez les notes et comparez les prix de plusieurs ménagers."
     },
     {
       step: "3",
       icon: Calendar,
-      title: "Book & Schedule",
-      description: "Choose your preferred cleaner, select your service date, and book instantly online."
+      title: "Réservez et planifiez",
+      description: "Choisissez votre ménager préféré, sélectionnez votre date de service et réservez instantanément en ligne."
     },
     {
       step: "4",
       icon: Star,
-      title: "Enjoy & Review",
-      description: "Relax while your cleaner works their magic, then leave a review to help others."
+      title: "Profitez et évaluez",
+      description: "Détendez-vous pendant que votre ménager fait sa magie, puis laissez un avis pour aider les autres."
     }
   ];
 
@@ -35,11 +35,11 @@ const HowItWorks = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            How HOUSIE Works
+            Comment fonctionne HOUSIE
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Finding quality cleaning services has never been easier. 
-            Follow these simple steps to get your home spotless.
+            Trouver des services de ménage de qualité n'a jamais été aussi facile. 
+            Suivez ces étapes simples pour que votre maison soit impeccable.
           </p>
         </div>
 

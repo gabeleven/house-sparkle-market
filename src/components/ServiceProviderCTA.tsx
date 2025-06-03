@@ -8,35 +8,35 @@ const ServiceProviderCTA = () => {
   const benefits = [
     {
       icon: DollarSign,
-      title: "Increase Your Income",
-      description: "Earn more with flexible scheduling and premium listing features"
+      title: "Augmentez vos revenus",
+      description: "Gagnez plus avec une planification flexible et des fonctionnalités d'annonce premium"
     },
     {
       icon: Users,
-      title: "Build Your Client Base",
-      description: "Access thousands of potential customers in your area"
+      title: "Développez votre clientèle",
+      description: "Accédez à des milliers de clients potentiels dans votre région"
     },
     {
       icon: Star,
-      title: "Build Your Reputation",
-      description: "Professional profile with reviews and ratings system"
+      title: "Construisez votre réputation",
+      description: "Profil professionnel avec système d'avis et de notes"
     },
     {
       icon: Shield,
-      title: "Trust & Safety",
-      description: "Verified platform with secure payments and insurance options"
+      title: "Confiance et sécurité",
+      description: "Plateforme vérifiée avec paiements sécurisés et options d'assurance"
     }
   ];
 
   const subscriptionFeatures = [
-    "Professional profile showcase with photo gallery",
-    "Priority placement in search results",
-    "Advanced booking management dashboard",
-    "Customer communication tools",
-    "Performance analytics and insights",
-    "Instant payment processing",
-    "Review management system",
-    "Marketing tools and promotions"
+    "Vitrine de profil professionnel avec galerie photos",
+    "Placement prioritaire dans les résultats de recherche",
+    "Tableau de bord de gestion de réservations avancé",
+    "Outils de communication client",
+    "Analyses de performance et insights",
+    "Traitement de paiement instantané",
+    "Système de gestion des avis",
+    "Outils marketing et promotions"
   ];
 
   return (
@@ -44,14 +44,14 @@ const ServiceProviderCTA = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <Badge className="bg-blue-100 text-blue-800 px-4 py-2 text-lg mb-4">
-            For Service Providers
+            Pour les prestataires de services
           </Badge>
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-            Grow Your Cleaning Business
+            Développez votre entreprise de ménage
           </h2>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-            Join hundreds of successful cleaning professionals who have transformed 
-            their business with HOUSIE's powerful platform.
+            Rejoignez des centaines de professionnels du ménage qui ont transformé 
+            leur entreprise avec la plateforme puissante de HOUSIE.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ const ServiceProviderCTA = () => {
           {/* Benefits Grid */}
           <div>
             <h3 className="text-2xl font-bold text-white mb-8">
-              Why Service Providers Choose HOUSIE
+              Pourquoi les prestataires choisissent HOUSIE
             </h3>
             <div className="grid sm:grid-cols-2 gap-6">
               {benefits.map((benefit, index) => {
@@ -88,13 +88,13 @@ const ServiceProviderCTA = () => {
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Professional Subscription
+                  Abonnement professionnel
                 </h3>
                 <div className="flex items-baseline justify-center">
-                  <span className="text-4xl font-bold text-blue-600">$29</span>
-                  <span className="text-gray-500 ml-2">/month</span>
+                  <span className="text-4xl font-bold text-blue-600">29€</span>
+                  <span className="text-gray-500 ml-2">/mois</span>
                 </div>
-                <p className="text-gray-600 mt-2">Everything you need to succeed</p>
+                <p className="text-gray-600 mt-2">Tout ce dont vous avez besoin pour réussir</p>
               </div>
 
               <ul className="space-y-3 mb-8">
@@ -107,11 +107,11 @@ const ServiceProviderCTA = () => {
               </ul>
 
               <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-4 h-auto font-semibold">
-                Start Your 30-Day Free Trial
+                Commencez votre essai gratuit de 30 jours
               </Button>
               
               <p className="text-center text-sm text-gray-500 mt-4">
-                No setup fees • Cancel anytime • Full support included
+                Aucun frais d'installation • Annulation à tout moment • Support complet inclus
               </p>
             </CardContent>
           </Card>
@@ -120,13 +120,13 @@ const ServiceProviderCTA = () => {
         {/* Success Stories */}
         <div className="text-center">
           <h3 className="text-2xl font-bold text-white mb-8">
-            Success Stories from Our Providers
+            Témoignages de nos prestataires
           </h3>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { name: "Sarah M.", increase: "150%", quote: "HOUSIE helped me triple my client base in just 3 months!" },
-              { name: "Mike R.", increase: "200%", quote: "The professional profile really makes a difference. More bookings than ever!" },
-              { name: "Lisa K.", increase: "180%", quote: "Love the automated scheduling and payment system. It saves me hours!" }
+              { name: "Sarah M.", increase: "150%", quote: "HOUSIE m'a aidée à tripler ma clientèle en seulement 3 mois !" },
+              { name: "Mike R.", increase: "200%", quote: "Le profil professionnel fait vraiment la différence. Plus de réservations que jamais !" },
+              { name: "Lisa K.", increase: "180%", quote: "J'adore le système de planification et paiement automatisé. Ça me fait gagner des heures !" }
             ].map((story, index) => (
               <Card key={index} className="bg-white/10 border-white/20 backdrop-blur">
                 <CardContent className="p-6 text-center">
