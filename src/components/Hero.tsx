@@ -5,7 +5,7 @@ import { Search, MapPin, Star } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
+    <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-green-700 to-yellow-500">
       {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-20"
@@ -19,36 +19,35 @@ const Hero = () => {
           {/* Left Column - Main Content */}
           <div className="text-center lg:text-left">
             <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Trouvez des
-              <span className="block text-blue-200">Services de Ménage</span>
-              <span className="block text-white">de Qualité Près de Chez Vous</span>
+              Pros du ménage,
+              <span className="block text-yellow-300">près de chez vous.</span>
             </h1>
-            <p className="text-xl text-blue-100 mb-8 max-w-lg">
-              Connectez-vous avec des professionnels de ménage de confiance et vérifiés dans votre région. 
-              Réservez instantanément, payez en toute sécurité et profitez d'un foyer impeccable.
+            <p className="text-xl text-green-100 mb-8 max-w-lg">
+              Connectez-vous avec des professionnels du ménage de confiance dans votre région. 
+              Réservez instantanément et profitez d'un foyer impeccable.
             </p>
 
             {/* Main CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Button 
                 size="lg" 
-                className="bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-4 h-auto font-semibold"
+                className="bg-white text-purple-700 hover:bg-yellow-50 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <Search className="w-5 h-5 mr-2" />
-                JE CHERCHE DES SERVICES
+                JE CHERCHE
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-white text-white hover:bg-white hover:text-blue-700 text-lg px-8 py-4 h-auto font-semibold"
+                className="border-2 border-white text-white hover:bg-white hover:text-purple-700 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <Star className="w-5 h-5 mr-2" />
-                J'OFFRE DES SERVICES
+                JE PROPOSE
               </Button>
             </div>
 
             {/* Quick Stats */}
-            <div className="flex justify-center lg:justify-start space-x-8 text-blue-100">
+            <div className="flex justify-center lg:justify-start space-x-8 text-green-100">
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">500+</div>
                 <div className="text-sm">Ménagers Vérifiés</div>
@@ -78,21 +77,20 @@ const Hero = () => {
                   <input 
                     type="text" 
                     placeholder="Entrez votre ville ou code postal"
-                    className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                    className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg"
                   />
                 </div>
 
                 {/* Service Type */}
-                <select className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg mb-6">
-                  <option>Sélectionnez un service de ménage</option>
+                <select className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg mb-6">
+                  <option>Sélectionnez un service</option>
                   <option>Ménage régulier</option>
-                  <option>Grand ménage</option>
-                  <option>Ménage déménagement</option>
-                  <option>Ménage bureau</option>
-                  <option>Ménage post-construction</option>
+                  <option>Ménage récurrent</option>
+                  <option>Ménage commercial</option>
+                  <option>Ménage touristique</option>
                 </select>
 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-4 h-auto font-semibold">
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-4 h-auto font-semibold">
                   <Search className="w-5 h-5 mr-2" />
                   Trouver des ménagers
                 </Button>

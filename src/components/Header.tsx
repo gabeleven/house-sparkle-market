@@ -9,7 +9,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-green-700 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
             <span className="text-2xl font-bold text-gray-900">HOUSIE</span>
@@ -17,13 +17,10 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">
+            <a href="#how-it-works" className="text-gray-600 hover:text-purple-600 transition-colors">
               Comment ça marche
             </a>
-            <a href="#for-providers" className="text-gray-600 hover:text-blue-600 transition-colors">
-              Pour les prestataires
-            </a>
-            <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">
+            <a href="#about" className="text-gray-600 hover:text-purple-600 transition-colors">
               À propos
             </a>
           </nav>
@@ -34,7 +31,7 @@ const Header = () => {
               <User className="w-4 h-4 mr-2" />
               Se connecter
             </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
               Nous rejoindre
             </Button>
           </div>

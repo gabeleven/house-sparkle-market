@@ -1,14 +1,9 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, MapPin, Star, Clock, Users, CheckCircle } from "lucide-react";
+import { MapPin, Star, CheckCircle } from "lucide-react";
 
 const Features = () => {
   const features = [
-    {
-      icon: Shield,
-      title: "Professionnels Vérifiés",
-      description: "Tous les ménagers sont vérifiés, assurés et soigneusement contrôlés pour votre tranquillité d'esprit."
-    },
     {
       icon: MapPin,
       title: "Local et à Proximité",
@@ -18,16 +13,6 @@ const Features = () => {
       icon: Star,
       title: "Notés et Évalués",
       description: "Lisez de vrais avis de clients réels pour prendre des décisions éclairées sur votre ménager."
-    },
-    {
-      icon: Clock,
-      title: "Planification Flexible",
-      description: "Réservez des ménages ponctuels ou configurez des services récurrents qui s'adaptent à votre emploi du temps chargé."
-    },
-    {
-      icon: Users,
-      title: "Garantie Qualité",
-      description: "Satisfaction garantie à 100% ou nous arrangerons les choses. Votre confiance est notre priorité."
     },
     {
       icon: CheckCircle,
@@ -49,14 +34,14 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
               <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <IconComponent className="w-8 h-8 text-blue-600" />
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <IconComponent className="w-8 h-8 text-purple-600" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
                     {feature.title}
