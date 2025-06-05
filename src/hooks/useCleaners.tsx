@@ -30,6 +30,25 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
     queryFn: async () => {
       console.log('Fetching cleaners from database...');
       
+      // First, let's try to query the profiles table directly to see if we can access cleaner profiles
+      console.log('Testing direct profiles query...');
+      const { data: profilesTest, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_role', 'cleaner');
+      
+      console.log('Direct profiles query result:', profilesTest);
+      console.log('Direct profiles query error:', profilesError);
+
+      // Also test the view
+      console.log('Testing cleaners_with_profiles view...');
+      const { data: viewTest, error: viewError } = await supabase
+        .from('cleaners_with_profiles')
+        .select('*');
+      
+      console.log('View query result:', viewTest);
+      console.log('View query error:', viewError);
+
       let query = supabase
         .from('cleaners_with_profiles')
         .select('*');
@@ -51,6 +70,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
       }
 
       console.log('Fetched cleaners:', data);
+      console.log('Number of cleaners found:', data?.length || 0);
 
       let processedCleaners = (data || []).map((cleaner): CleanerProfile => ({
         id: cleaner.id || '',
