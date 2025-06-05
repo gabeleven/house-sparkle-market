@@ -23,17 +23,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener FIRST - using non-async callback
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session);
+        
+        // Only synchronous state updates here - no async operations
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // If we need to perform additional Supabase operations based on auth changes,
+        // we defer them using setTimeout to avoid deadlocks
+        if (session?.user && event === 'SIGNED_IN') {
+          setTimeout(() => {
+            // Any additional Supabase operations would go here
+            // For example: fetching user profile data
+            console.log('User signed in, could fetch additional data here');
+          }, 0);
+        }
+        
+        if (event === 'SIGNED_OUT') {
+          setTimeout(() => {
+            // Any cleanup operations would go here
+            console.log('User signed out, could perform cleanup here');
+          }, 0);
+        }
       }
     );
 
-    // Check for existing session
+    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
