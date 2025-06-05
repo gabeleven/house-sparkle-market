@@ -9,7 +9,263 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      cleaner_profiles: {
+        Row: {
+          brief_description: string | null
+          business_name: string | null
+          created_at: string | null
+          id: string
+          is_profile_complete: boolean | null
+          latitude: number | null
+          longitude: number | null
+          profile_photo_url: string | null
+          service_area_city: string | null
+          service_area_postal_code: string | null
+          service_radius_km: number | null
+          updated_at: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          brief_description?: string | null
+          business_name?: string | null
+          created_at?: string | null
+          id: string
+          is_profile_complete?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          profile_photo_url?: string | null
+          service_area_city?: string | null
+          service_area_postal_code?: string | null
+          service_radius_km?: number | null
+          updated_at?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          brief_description?: string | null
+          business_name?: string | null
+          created_at?: string | null
+          id?: string
+          is_profile_complete?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          profile_photo_url?: string | null
+          service_area_city?: string | null
+          service_area_postal_code?: string | null
+          service_radius_km?: number | null
+          updated_at?: string | null
+          years_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleaner_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cleaner_services: {
+        Row: {
+          cleaner_id: string | null
+          created_at: string | null
+          id: string
+          service_type: Database["public"]["Enums"]["service_type"]
+        }
+        Insert: {
+          cleaner_id?: string | null
+          created_at?: string | null
+          id?: string
+          service_type: Database["public"]["Enums"]["service_type"]
+        }
+        Update: {
+          cleaner_id?: string | null
+          created_at?: string | null
+          id?: string
+          service_type?: Database["public"]["Enums"]["service_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleaner_services_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
+            referencedRelation: "cleaner_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          preferred_contact_method:
+            | Database["public"]["Enums"]["contact_method"]
+            | null
+          service_location_address: string | null
+          service_location_postal_code: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          latitude?: number | null
+          longitude?: number | null
+          preferred_contact_method?:
+            | Database["public"]["Enums"]["contact_method"]
+            | null
+          service_location_address?: string | null
+          service_location_postal_code?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          preferred_contact_method?:
+            | Database["public"]["Enums"]["contact_method"]
+            | null
+          service_location_address?: string | null
+          service_location_postal_code?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          message_content: string | null
+          proxy_number: string | null
+          recipient_id: string | null
+          sender_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_content?: string | null
+          proxy_number?: string | null
+          recipient_id?: string | null
+          sender_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_content?: string | null
+          proxy_number?: string | null
+          recipient_id?: string | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          is_email_verified: boolean | null
+          phone_number: string | null
+          updated_at: string | null
+          user_role: Database["public"]["Enums"]["user_role"]
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name: string
+          id: string
+          is_email_verified?: boolean | null
+          phone_number?: string | null
+          updated_at?: string | null
+          user_role: Database["public"]["Enums"]["user_role"]
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          is_email_verified?: boolean | null
+          phone_number?: string | null
+          updated_at?: string | null
+          user_role?: Database["public"]["Enums"]["user_role"]
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          started_at: string | null
+          stripe_subscription_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          started_at?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          started_at?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +274,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      contact_method: "email" | "phone" | "app_messaging"
+      service_type:
+        | "regular_cleaning"
+        | "deep_cleaning"
+        | "move_in_out"
+        | "post_construction"
+        | "commercial"
+      subscription_plan: "starter" | "professional" | "premium" | "client_plus"
+      user_role: "customer" | "cleaner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +397,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      contact_method: ["email", "phone", "app_messaging"],
+      service_type: [
+        "regular_cleaning",
+        "deep_cleaning",
+        "move_in_out",
+        "post_construction",
+        "commercial",
+      ],
+      subscription_plan: ["starter", "professional", "premium", "client_plus"],
+      user_role: ["customer", "cleaner"],
+    },
   },
 } as const
