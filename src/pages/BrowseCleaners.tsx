@@ -6,53 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Star, Phone, MessageCircle, Filter } from 'lucide-react';
-
-// Mock data for cleaners
-const mockCleaners = [
-  {
-    id: '1',
-    name: 'Marie Dubois',
-    businessName: 'Nettoyage Pro MTL',
-    rating: 4.8,
-    reviewCount: 127,
-    services: ['regular_cleaning', 'deep_cleaning'],
-    yearsExperience: 8,
-    description: 'Service de nettoyage professionnel avec 8 ans d\'expérience. Spécialisée dans le nettoyage résidentiel.',
-    location: 'Plateau Mont-Royal',
-    distance: '2.1 km',
-    profilePhoto: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-    priceRange: '25-35$/h'
-  },
-  {
-    id: '2',
-    name: 'Jean Tremblay',
-    businessName: 'CleanTeam Montréal',
-    rating: 4.9,
-    reviewCount: 89,
-    services: ['commercial', 'post_construction'],
-    yearsExperience: 12,
-    description: 'Expert en nettoyage commercial et post-construction. Équipe professionnelle et équipement moderne.',
-    location: 'Centre-ville',
-    distance: '3.5 km',
-    profilePhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    priceRange: '35-50$/h'
-  },
-  {
-    id: '3',
-    name: 'Sophie Martin',
-    businessName: 'Éclat Ménage',
-    rating: 4.7,
-    reviewCount: 156,
-    services: ['regular_cleaning', 'deep_cleaning', 'move_in_out'],
-    yearsExperience: 5,
-    description: 'Service personnalisé et éco-responsable. Produits naturels et attention aux détails.',
-    location: 'Rosemont',
-    distance: '4.2 km',
-    profilePhoto: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-    priceRange: '30-40$/h'
-  }
-];
+import { MapPin, Star, MessageCircle, Filter, Loader2 } from 'lucide-react';
+import { useCleaners } from '@/hooks/useCleaners';
+import { useLocation } from '@/hooks/useLocation';
+import { useMaskedCommunication } from '@/hooks/useMaskedCommunication';
+import LocationPermission from '@/components/LocationPermission';
+import { useAuth } from '@/hooks/useAuth';
 
 const serviceLabels = {
   regular_cleaning: 'Nettoyage régulier',
@@ -65,47 +24,114 @@ const serviceLabels = {
 const BrowseCleaners = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
-  const [filteredCleaners, setFilteredCleaners] = useState(mockCleaners);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const { user } = useAuth();
+  const { location, requestLocation, saveLocation } = useLocation();
+  const { cleaners, isLoading, error } = useCleaners({ 
+    userLocation: location, 
+    searchTerm, 
+    locationFilter 
+  });
+  const { initiateContact, loading: contactLoading } = useMaskedCommunication();
 
+  // Show location prompt on first visit for customers
   useEffect(() => {
-    let filtered = mockCleaners;
-
-    if (searchTerm) {
-      filtered = filtered.filter(cleaner => 
-        cleaner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cleaner.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cleaner.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    const hasShownPrompt = localStorage.getItem('hasShownLocationPrompt');
+    if (user && !hasShownPrompt && !location) {
+      setShowLocationPrompt(true);
     }
+  }, [user, location]);
 
-    if (locationFilter) {
-      filtered = filtered.filter(cleaner => 
-        cleaner.location.toLowerCase().includes(locationFilter.toLowerCase())
-      );
-    }
-
-    setFilteredCleaners(filtered);
-  }, [searchTerm, locationFilter]);
-
-  const handleContact = (cleanerId: string, method: 'phone' | 'message') => {
-    // This would trigger the masked communication system
-    console.log(`Contacting cleaner ${cleanerId} via ${method}`);
-    alert(`Communication masquée initiée avec le nettoyeur (${method})`);
+  const handleLocationGranted = async (lat: number, lng: number) => {
+    await saveLocation(lat, lng);
+    setShowLocationPrompt(false);
+    localStorage.setItem('hasShownLocationPrompt', 'true');
   };
+
+  const handlePostalCode = (postalCode: string) => {
+    // In a real implementation, we'd geocode the postal code
+    console.log('Postal code entered:', postalCode);
+    setLocationFilter(postalCode);
+    setShowLocationPrompt(false);
+    localStorage.setItem('hasShownLocationPrompt', 'true');
+  };
+
+  const handleDismissLocation = () => {
+    setShowLocationPrompt(false);
+    localStorage.setItem('hasShownLocationPrompt', 'true');
+  };
+
+  const handleContact = async (cleanerId: string) => {
+    if (!user) {
+      // Redirect to auth page
+      window.location.href = '/auth';
+      return;
+    }
+    
+    await initiateContact(cleanerId);
+  };
+
+  const formatDistance = (distance?: number) => {
+    if (!distance) return '';
+    if (distance < 1) return '< 1 km';
+    return `${distance.toFixed(1)} km`;
+  };
+
+  const getDefaultProfilePhoto = (name: string) => {
+    // Generate a placeholder based on initials
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7c3aed&color=fff&size=150`;
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Erreur de chargement
+            </h3>
+            <p className="text-gray-600">
+              Impossible de charger les nettoyeurs. Veuillez réessayer.
+            </p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <Header />
       
+      {showLocationPrompt && (
+        <LocationPermission
+          onLocationGranted={handleLocationGranted}
+          onPostalCode={handlePostalCode}
+          onDismiss={handleDismissLocation}
+        />
+      )}
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Nettoyeurs disponibles près de vous
+            Nettoyeurs disponibles{location ? ' près de vous' : ''}
           </h1>
           <p className="text-gray-600 mb-6">
             Trouvez le professionnel idéal pour vos besoins de nettoyage
           </p>
+
+          {/* Location Status */}
+          {location && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center text-green-700">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span className="text-sm">Tri par proximité activé</span>
+              </div>
+            </div>
+          )}
 
           {/* Search and Filters */}
           <div className="flex flex-col md:flex-row gap-4">
@@ -132,96 +158,124 @@ const BrowseCleaners = () => {
           </div>
         </div>
 
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin mr-2" />
+            <span>Chargement des nettoyeurs...</span>
+          </div>
+        )}
+
         {/* Results */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCleaners.map((cleaner) => (
-            <Card key={cleaner.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-start space-x-4">
-                  <img
-                    src={cleaner.profilePhoto}
-                    alt={cleaner.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{cleaner.name}</CardTitle>
-                    <CardDescription className="text-sm text-purple-600 font-medium">
-                      {cleaner.businessName}
-                    </CardDescription>
-                    <div className="flex items-center mt-1">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="ml-1 text-sm font-medium">{cleaner.rating}</span>
-                      <span className="ml-1 text-sm text-gray-500">({cleaner.reviewCount})</span>
+        {!isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cleaners.map((cleaner) => (
+              <Card key={cleaner.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-4">
+                  <div className="flex items-start space-x-4">
+                    <img
+                      src={cleaner.profile_photo_url || getDefaultProfilePhoto(cleaner.full_name)}
+                      alt={cleaner.full_name}
+                      className="w-16 h-16 rounded-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = getDefaultProfilePhoto(cleaner.full_name);
+                      }}
+                    />
+                    <div className="flex-1">
+                      <CardTitle className="text-lg">{cleaner.full_name}</CardTitle>
+                      {cleaner.business_name && (
+                        <CardDescription className="text-sm text-purple-600 font-medium">
+                          {cleaner.business_name}
+                        </CardDescription>
+                      )}
+                      <div className="flex items-center mt-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="ml-1 text-sm font-medium">Nouveau</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                {/* Location and Distance */}
-                <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  {cleaner.location} • {cleaner.distance}
-                </div>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  {/* Location and Distance */}
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="w-4 h-4 mr-1" />
+                    {cleaner.service_area_city || 'Localisation non spécifiée'}
+                    {cleaner.distance && (
+                      <>
+                        {' • '}
+                        <span className="text-green-600 font-medium">
+                          {formatDistance(cleaner.distance)}
+                        </span>
+                      </>
+                    )}
+                  </div>
 
-                {/* Services */}
-                <div className="flex flex-wrap gap-1">
-                  {cleaner.services.map((service) => (
-                    <Badge key={service} variant="secondary" className="text-xs">
-                      {serviceLabels[service as keyof typeof serviceLabels]}
-                    </Badge>
-                  ))}
-                </div>
+                  {/* Services */}
+                  {cleaner.services && cleaner.services.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {cleaner.services.map((service) => (
+                        <Badge key={service} variant="secondary" className="text-xs">
+                          {serviceLabels[service as keyof typeof serviceLabels] || service}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
 
-                {/* Description */}
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {cleaner.description}
-                </p>
+                  {/* Description */}
+                  {cleaner.brief_description && (
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {cleaner.brief_description}
+                    </p>
+                  )}
 
-                {/* Experience and Price */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
-                    {cleaner.yearsExperience} ans d'expérience
-                  </span>
-                  <span className="font-medium text-green-600">
-                    {cleaner.priceRange}
-                  </span>
-                </div>
+                  {/* Experience and Service Radius */}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">
+                      {cleaner.years_experience ? `${cleaner.years_experience} ans d'expérience` : 'Nouveau professionnel'}
+                    </span>
+                    {cleaner.service_radius_km && (
+                      <span className="text-gray-600">
+                        Rayon: {cleaner.service_radius_km}km
+                      </span>
+                    )}
+                  </div>
 
-                {/* Contact Buttons */}
-                <div className="flex gap-2 pt-2">
+                  {/* Contact Button */}
                   <Button
-                    size="sm"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => handleContact(cleaner.id, 'phone')}
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Appeler
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1 bg-purple-600 hover:bg-purple-700"
-                    onClick={() => handleContact(cleaner.id, 'message')}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                    onClick={() => handleContact(cleaner.id)}
+                    disabled={contactLoading}
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    Message
+                    {contactLoading ? 'Connexion...' : 'Contacter via Housie'}
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Empty State */}
-        {filteredCleaners.length === 0 && (
+        {!isLoading && cleaners.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Aucun nettoyeur trouvé
             </h3>
-            <p className="text-gray-600">
-              Essayez de modifier vos critères de recherche
+            <p className="text-gray-600 mb-4">
+              {searchTerm || locationFilter 
+                ? 'Essayez de modifier vos critères de recherche' 
+                : 'Aucun nettoyeur n\'est encore inscrit dans votre région'}
             </p>
+            {!searchTerm && !locationFilter && (
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/auth?type=cleaner'}
+              >
+                Devenir nettoyeur partenaire
+              </Button>
+            )}
           </div>
         )}
       </div>

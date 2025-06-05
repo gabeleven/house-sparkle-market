@@ -92,6 +92,13 @@ export type Database = {
             referencedRelation: "cleaner_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "cleaner_services_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       customer_profiles: {
@@ -99,7 +106,9 @@ export type Database = {
           created_at: string | null
           id: string
           latitude: number | null
+          location_permission_granted: boolean | null
           longitude: number | null
+          postal_code_fallback: string | null
           preferred_contact_method:
             | Database["public"]["Enums"]["contact_method"]
             | null
@@ -111,7 +120,9 @@ export type Database = {
           created_at?: string | null
           id: string
           latitude?: number | null
+          location_permission_granted?: boolean | null
           longitude?: number | null
+          postal_code_fallback?: string | null
           preferred_contact_method?:
             | Database["public"]["Enums"]["contact_method"]
             | null
@@ -123,7 +134,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           latitude?: number | null
+          location_permission_granted?: boolean | null
           longitude?: number | null
+          postal_code_fallback?: string | null
           preferred_contact_method?:
             | Database["public"]["Enums"]["contact_method"]
             | null
@@ -141,12 +154,61 @@ export type Database = {
           },
         ]
       }
+      masked_communications: {
+        Row: {
+          cleaner_id: string
+          created_at: string | null
+          customer_id: string
+          expires_at: string
+          id: string
+          is_active: boolean | null
+          proxy_phone_number: string
+          updated_at: string | null
+        }
+        Insert: {
+          cleaner_id: string
+          created_at?: string | null
+          customer_id: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          proxy_phone_number: string
+          updated_at?: string | null
+        }
+        Update: {
+          cleaner_id?: string
+          created_at?: string | null
+          customer_id?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          proxy_phone_number?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "masked_communications_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masked_communications_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           created_at: string | null
           expires_at: string | null
           id: string
           is_read: boolean | null
+          masked_communication_id: string | null
           message_content: string | null
           proxy_number: string | null
           recipient_id: string | null
@@ -157,6 +219,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_read?: boolean | null
+          masked_communication_id?: string | null
           message_content?: string | null
           proxy_number?: string | null
           recipient_id?: string | null
@@ -167,12 +230,20 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_read?: boolean | null
+          masked_communication_id?: string | null
           message_content?: string | null
           proxy_number?: string | null
           recipient_id?: string | null
           sender_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "messages_masked_communication_id_fkey"
+            columns: ["masked_communication_id"]
+            isOneToOne: false
+            referencedRelation: "masked_communications"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "messages_recipient_id_fkey"
             columns: ["recipient_id"]
@@ -268,10 +339,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      cleaners_with_profiles: {
+        Row: {
+          brief_description: string | null
+          business_name: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string | null
+          is_profile_complete: boolean | null
+          latitude: number | null
+          longitude: number | null
+          phone_number: string | null
+          profile_photo_url: string | null
+          service_area_city: string | null
+          service_area_postal_code: string | null
+          service_radius_km: number | null
+          services: Database["public"]["Enums"]["service_type"][] | null
+          updated_at: string | null
+          years_experience: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleaner_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      calculate_distance: {
+        Args: { lat1: number; lon1: number; lat2: number; lon2: number }
+        Returns: number
+      }
     }
     Enums: {
       contact_method: "email" | "phone" | "app_messaging"
