@@ -60,6 +60,13 @@ export type Database = {
             foreignKeyName: "cleaner_profiles_id_fkey"
             columns: ["id"]
             isOneToOne: true
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cleaner_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -90,13 +97,6 @@ export type Database = {
             columns: ["cleaner_id"]
             isOneToOne: false
             referencedRelation: "cleaner_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cleaner_services_cleaner_id_fkey"
-            columns: ["cleaner_id"]
-            isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -149,6 +149,13 @@ export type Database = {
             foreignKeyName: "customer_profiles_id_fkey"
             columns: ["id"]
             isOneToOne: true
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -190,7 +197,21 @@ export type Database = {
             foreignKeyName: "masked_communications_cleaner_id_fkey"
             columns: ["cleaner_id"]
             isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masked_communications_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "masked_communications_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -248,7 +269,21 @@ export type Database = {
             foreignKeyName: "messages_recipient_id_fkey"
             columns: ["recipient_id"]
             isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -332,6 +367,13 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -359,15 +401,7 @@ export type Database = {
           updated_at: string | null
           years_experience: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "cleaner_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
