@@ -95,11 +95,16 @@ export const ChatInterface = ({
           .from('profiles')
           .select('full_name, profile_photo_url')
           .eq('id', newMessage.sender_id)
-          .single();
+          .maybeSingle();
 
-        // Only access properties if we have valid data
-        const senderName = (!senderError && sender) ? sender.full_name || 'Unknown' : 'Unknown';
-        const senderAvatar = (!senderError && sender) ? sender.profile_photo_url : undefined;
+        // Use proper type guards to ensure sender data is valid
+        let senderName = 'Unknown';
+        let senderAvatar: string | undefined = undefined;
+        
+        if (!senderError && sender && typeof sender === 'object' && 'full_name' in sender) {
+          senderName = sender.full_name || 'Unknown';
+          senderAvatar = sender.profile_photo_url || undefined;
+        }
 
         const messageWithSender: ChatMessage = {
           ...newMessage,

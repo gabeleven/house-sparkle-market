@@ -68,7 +68,7 @@ export const ProfileEditor = () => {
         return;
       }
 
-      if (profileData) {
+      if (profileData && typeof profileData === 'object' && 'user_role' in profileData) {
         setUserRole(profileData.user_role || 'customer');
 
         // Get role-specific data
@@ -83,7 +83,7 @@ export const ProfileEditor = () => {
             console.error('Cleaner profile error:', cleanerError);
           }
 
-          if (cleanerData) {
+          if (cleanerData && typeof cleanerData === 'object') {
             setProfile({
               full_name: profileData.full_name || '',
               phone_number: profileData.phone_number || '',
