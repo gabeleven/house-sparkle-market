@@ -9,6 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          after_photos: string[] | null
+          before_photos: string[] | null
+          cleaner_id: string
+          created_at: string | null
+          customer_id: string
+          id: string
+          service_date: string
+          status: string | null
+          total_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          after_photos?: string[] | null
+          before_photos?: string[] | null
+          cleaner_id: string
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          service_date: string
+          status?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          after_photos?: string[] | null
+          before_photos?: string[] | null
+          cleaner_id?: string
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          service_date?: string
+          status?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           conversation_id: string
@@ -69,6 +137,7 @@ export type Database = {
       }
       cleaner_profiles: {
         Row: {
+          average_rating: number | null
           banner_image_url: string | null
           before_after_photos: string[] | null
           brief_description: string | null
@@ -85,10 +154,12 @@ export type Database = {
           service_area_postal_code: string | null
           service_badges: string[] | null
           service_radius_km: number | null
+          total_reviews: number | null
           updated_at: string | null
           years_experience: number | null
         }
         Insert: {
+          average_rating?: number | null
           banner_image_url?: string | null
           before_after_photos?: string[] | null
           brief_description?: string | null
@@ -105,10 +176,12 @@ export type Database = {
           service_area_postal_code?: string | null
           service_badges?: string[] | null
           service_radius_km?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
           years_experience?: number | null
         }
         Update: {
+          average_rating?: number | null
           banner_image_url?: string | null
           before_after_photos?: string[] | null
           brief_description?: string | null
@@ -125,6 +198,7 @@ export type Database = {
           service_area_postal_code?: string | null
           service_badges?: string[] | null
           service_radius_km?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
           years_experience?: number | null
         }
@@ -261,6 +335,7 @@ export type Database = {
       }
       customer_profiles: {
         Row: {
+          average_rating: number | null
           created_at: string | null
           id: string
           latitude: number | null
@@ -274,10 +349,12 @@ export type Database = {
           service_location_address: string | null
           service_location_postal_code: string | null
           service_needs_description: string | null
+          total_reviews: number | null
           updated_at: string | null
           urgency_level: string | null
         }
         Insert: {
+          average_rating?: number | null
           created_at?: string | null
           id: string
           latitude?: number | null
@@ -291,10 +368,12 @@ export type Database = {
           service_location_address?: string | null
           service_location_postal_code?: string | null
           service_needs_description?: string | null
+          total_reviews?: number | null
           updated_at?: string | null
           urgency_level?: string | null
         }
         Update: {
+          average_rating?: number | null
           created_at?: string | null
           id?: string
           latitude?: number | null
@@ -308,6 +387,7 @@ export type Database = {
           service_location_address?: string | null
           service_location_postal_code?: string | null
           service_needs_description?: string | null
+          total_reviews?: number | null
           updated_at?: string | null
           urgency_level?: string | null
         }
@@ -518,6 +598,128 @@ export type Database = {
           years_experience?: number | null
         }
         Relationships: []
+      }
+      review_photos: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          id: string
+          photo_type: string | null
+          photo_url: string
+          review_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          photo_type?: string | null
+          photo_url: string
+          review_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          photo_type?: string | null
+          photo_url?: string
+          review_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_photos_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          booking_id: string | null
+          cleaner_response: string | null
+          cleaner_response_date: string | null
+          comment: string | null
+          created_at: string | null
+          id: string
+          is_verified: boolean | null
+          photos: string[] | null
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          reviewer_type: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          booking_id?: string | null
+          cleaner_response?: string | null
+          cleaner_response_date?: string | null
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          photos?: string[] | null
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          reviewer_type: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          booking_id?: string | null
+          cleaner_response?: string | null
+          cleaner_response_date?: string | null
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          photos?: string[] | null
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+          reviewer_type?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       service_badges: {
         Row: {

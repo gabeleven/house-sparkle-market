@@ -18,6 +18,8 @@ export interface CleanerProfile {
   services: ServiceType[] | null;
   hourly_rate: number | null;
   distance?: number;
+  average_rating: number | null;
+  total_reviews: number | null;
 }
 
 interface UseCleanersProps {
@@ -32,7 +34,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
     queryFn: async () => {
       console.log('Fetching cleaners from database...');
       
-      // Use a direct query to cleaner_profiles joined with profiles to get hourly_rate
+      // Use a direct query to cleaner_profiles joined with profiles to get hourly_rate and review data
       let query = supabase
         .from('profiles')
         .select(`
@@ -47,7 +49,9 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
             service_radius_km,
             years_experience,
             service_area_city,
-            hourly_rate
+            hourly_rate,
+            average_rating,
+            total_reviews
           )
         `)
         .eq('user_role', 'cleaner');
@@ -87,6 +91,8 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
             years_experience: cleanerProfile.years_experience,
             service_area_city: cleanerProfile.service_area_city,
             hourly_rate: cleanerProfile.hourly_rate,
+            average_rating: cleanerProfile.average_rating,
+            total_reviews: cleanerProfile.total_reviews,
             services: [] // Will be fetched separately
           };
         });
@@ -106,8 +112,16 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
         }
       }
 
-      // Sort by service area city alphabetically for consistent ordering
+      // Sort by average rating first (highest first), then by service area city
       processedCleaners.sort((a, b) => {
+        // First sort by rating (descending)
+        const ratingA = a.average_rating || 0;
+        const ratingB = b.average_rating || 0;
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+        
+        // Then by city name
         if (a.service_area_city && b.service_area_city) {
           return a.service_area_city.localeCompare(b.service_area_city);
         }
