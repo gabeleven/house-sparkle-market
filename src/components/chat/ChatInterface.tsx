@@ -26,7 +26,7 @@ export const ChatInterface = ({
     if (conversationId) {
       loadMessages(conversationId);
     }
-  }, [conversationId]);
+  }, [conversationId, loadMessages]);
 
   return (
     <div className="flex flex-col h-full bg-white">
