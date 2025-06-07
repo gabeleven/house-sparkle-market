@@ -21,15 +21,19 @@ export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
     return distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`;
   };
 
-  const getDefaultRate = () => {
-    // Generate a realistic rate based on experience
+  const getDisplayRate = () => {
+    // Use actual hourly_rate from database, fallback to default if not set
+    if (cleaner.hourly_rate && cleaner.hourly_rate > 0) {
+      return cleaner.hourly_rate;
+    }
+    
+    // Fallback calculation based on experience
     const baseRate = 25;
     const experienceBonus = (cleaner.years_experience || 0) * 2;
     return baseRate + experienceBonus;
   };
 
   const handleViewProfile = () => {
-    // Navigate to the cleaner's public profile page
     navigate(`/profile/${cleaner.id}`);
   };
 
@@ -89,8 +93,10 @@ export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
             {/* Rate */}
             <div className="flex items-center text-sm text-gray-700 mb-2">
               <DollarSign className="w-4 h-4 mr-1 text-green-600" />
-              <span className="font-medium">${getDefaultRate()}/hour</span>
-              <span className="text-gray-500 ml-1">starting rate</span>
+              <span className="font-medium">${getDisplayRate()}/hour</span>
+              <span className="text-gray-500 ml-1">
+                {cleaner.hourly_rate && cleaner.hourly_rate > 0 ? 'quoted rate' : 'starting rate'}
+              </span>
             </div>
           </div>
         </div>

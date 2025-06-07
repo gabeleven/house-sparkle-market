@@ -15,6 +15,7 @@ export interface CleanerProfile {
   years_experience: number | null;
   service_area_city: string | null;
   services: string[] | null;
+  hourly_rate: number | null;
   distance?: number;
 }
 
@@ -30,17 +31,33 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
     queryFn: async () => {
       console.log('Fetching cleaners from database...');
       
+      // Use a direct query to cleaner_profiles joined with profiles to get hourly_rate
       let query = supabase
-        .from('cleaners_with_profiles')
-        .select('*');
+        .from('profiles')
+        .select(`
+          id,
+          full_name,
+          profile_photo_url,
+          cleaner_profiles!inner(
+            business_name,
+            brief_description,
+            latitude,
+            longitude,
+            service_radius_km,
+            years_experience,
+            service_area_city,
+            hourly_rate
+          )
+        `)
+        .eq('user_role', 'cleaner');
 
       // Apply search filters
       if (searchTerm) {
-        query = query.or(`full_name.ilike.%${searchTerm}%,business_name.ilike.%${searchTerm}%,brief_description.ilike.%${searchTerm}%`);
+        query = query.or(`full_name.ilike.%${searchTerm}%,cleaner_profiles.business_name.ilike.%${searchTerm}%,cleaner_profiles.brief_description.ilike.%${searchTerm}%`);
       }
 
       if (locationFilter) {
-        query = query.ilike('service_area_city', `%${locationFilter}%`);
+        query = query.ilike('cleaner_profiles.service_area_city', `%${locationFilter}%`);
       }
 
       const { data, error } = await query;
@@ -54,20 +71,24 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
       console.log('Number of cleaners found:', data?.length || 0);
 
       let processedCleaners = (data || [])
-        .filter(cleaner => isValidCleanerData(cleaner))
-        .map((cleaner): CleanerProfile => ({
-          id: cleaner.id || '',
-          full_name: cleaner.full_name || '',
-          business_name: cleaner.business_name,
-          brief_description: cleaner.brief_description,
-          profile_photo_url: cleaner.profile_photo_url,
-          latitude: cleaner.latitude,
-          longitude: cleaner.longitude,
-          service_radius_km: cleaner.service_radius_km,
-          years_experience: cleaner.years_experience,
-          service_area_city: cleaner.service_area_city,
-          services: cleaner.services || []
-        }));
+        .filter(cleaner => cleaner.cleaner_profiles && cleaner.cleaner_profiles.length > 0)
+        .map((cleaner): CleanerProfile => {
+          const cleanerProfile = cleaner.cleaner_profiles[0];
+          return {
+            id: cleaner.id || '',
+            full_name: cleaner.full_name || '',
+            business_name: cleanerProfile.business_name,
+            brief_description: cleanerProfile.brief_description,
+            profile_photo_url: cleaner.profile_photo_url,
+            latitude: cleanerProfile.latitude,
+            longitude: cleanerProfile.longitude,
+            service_radius_km: cleanerProfile.service_radius_km,
+            years_experience: cleanerProfile.years_experience,
+            service_area_city: cleanerProfile.service_area_city,
+            hourly_rate: cleanerProfile.hourly_rate,
+            services: [] // Services will be fetched separately if needed
+          };
+        });
 
       // Calculate distances if user location is available
       if (userLocation && userLocation.latitude && userLocation.longitude) {

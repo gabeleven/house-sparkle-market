@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +18,7 @@ interface PublicProfileData {
   service_area_city?: string;
   service_radius_km?: number;
   years_experience?: number;
+  hourly_rate?: number;
   latitude?: number;
   longitude?: number;
   services?: string[];
@@ -73,6 +73,7 @@ const PublicProfile = () => {
             service_area_city: cleanerData.service_area_city,
             service_radius_km: cleanerData.service_radius_km,
             years_experience: cleanerData.years_experience,
+            hourly_rate: cleanerData.hourly_rate,
             latitude: cleanerData.latitude,
             longitude: cleanerData.longitude
           };
@@ -98,7 +99,13 @@ const PublicProfile = () => {
     }
   };
 
-  const getDefaultRate = () => {
+  const getDisplayRate = () => {
+    // Use actual hourly_rate from database, fallback to default if not set
+    if (profile?.hourly_rate && profile.hourly_rate > 0) {
+      return profile.hourly_rate;
+    }
+    
+    // Fallback calculation based on experience
     const baseRate = 25;
     const experienceBonus = (profile?.years_experience || 0) * 2;
     return baseRate + experienceBonus;
@@ -185,8 +192,10 @@ const PublicProfile = () => {
                     {profile.user_role === 'cleaner' && (
                       <div className="flex items-center text-green-600 mb-4">
                         <DollarSign className="w-5 h-5 mr-1" />
-                        <span className="font-semibold text-lg">${getDefaultRate()}/hour</span>
-                        <span className="text-gray-500 ml-1">starting rate</span>
+                        <span className="font-semibold text-lg">${getDisplayRate()}/hour</span>
+                        <span className="text-gray-500 ml-1">
+                          {profile.hourly_rate && profile.hourly_rate > 0 ? 'quoted rate' : 'starting rate'}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -259,9 +268,11 @@ const PublicProfile = () => {
                   <div className="mb-4 p-4 bg-green-50 rounded-lg">
                     <div className="flex items-center text-green-700 mb-2">
                       <DollarSign className="w-5 h-5 mr-2" />
-                      <span className="font-semibold">Starting Rate</span>
+                      <span className="font-semibold">
+                        {profile.hourly_rate && profile.hourly_rate > 0 ? 'Quoted Rate' : 'Starting Rate'}
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-green-600">${getDefaultRate()}/hour</p>
+                    <p className="text-2xl font-bold text-green-600">${getDisplayRate()}/hour</p>
                     <p className="text-sm text-green-600">Custom quotes available</p>
                   </div>
                 )}
