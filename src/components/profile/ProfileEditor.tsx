@@ -54,7 +54,7 @@ export const ProfileEditor = () => {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', user.id as any)
         .maybeSingle();
 
       if (profileError) {
@@ -78,7 +78,7 @@ export const ProfileEditor = () => {
           const { data: cleanerData, error: cleanerError } = await supabase
             .from('cleaner_profiles')
             .select('*')
-            .eq('id', user.id)
+            .eq('id', user.id as any)
             .maybeSingle();
 
           if (cleanerError && cleanerError.code !== 'PGRST116') {
@@ -109,7 +109,7 @@ export const ProfileEditor = () => {
           const { data: customerData, error: customerError } = await supabase
             .from('customer_profiles')
             .select('*')
-            .eq('id', user.id)
+            .eq('id', user.id as any)
             .maybeSingle();
 
           if (customerError && customerError.code !== 'PGRST116') {
@@ -148,7 +148,7 @@ export const ProfileEditor = () => {
           full_name: profile.full_name,
           phone_number: profile.phone_number
         } as any)
-        .eq('id', user.id);
+        .eq('id', user.id as any);
 
       if (profileError) {
         console.error('Profile update error:', profileError);

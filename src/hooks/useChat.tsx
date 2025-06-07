@@ -83,8 +83,8 @@ export const useChat = () => {
           .from('chat_messages')
           .select('*', { count: 'exact', head: true })
           .eq('conversation_id', conv.id)
-          .eq('is_read', false)
-          .neq('sender_id', user.id);
+          .eq('is_read', false as any)
+          .neq('sender_id', user.id as any);
 
         // Get last message
         const { data: lastMsg } = await supabase
@@ -131,7 +131,7 @@ export const useChat = () => {
         *,
         sender:profiles!chat_messages_sender_id_fkey(full_name, profile_photo_url)
       `)
-      .eq('conversation_id', conversationId)
+      .eq('conversation_id', conversationId as any)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -170,8 +170,8 @@ export const useChat = () => {
     const { data: existing } = await supabase
       .from('conversations')
       .select('*')
-      .eq('customer_id', customerId)
-      .eq('cleaner_id', cleanerId)
+      .eq('customer_id', customerId as any)
+      .eq('cleaner_id', cleanerId as any)
       .maybeSingle();
 
     if (existing) {
@@ -184,7 +184,7 @@ export const useChat = () => {
       .insert({
         customer_id: customerId,
         cleaner_id: cleanerId
-      })
+      } as any)
       .select()
       .single();
 
@@ -214,7 +214,7 @@ export const useChat = () => {
 
     const { data, error } = await supabase
       .from('chat_messages')
-      .insert(messageData)
+      .insert(messageData as any)
       .select()
       .single();
 
@@ -238,9 +238,9 @@ export const useChat = () => {
 
     await supabase
       .from('chat_messages')
-      .update({ is_read: true })
-      .eq('conversation_id', conversationId)
-      .neq('sender_id', user.id);
+      .update({ is_read: true } as any)
+      .eq('conversation_id', conversationId as any)
+      .neq('sender_id', user.id as any);
   };
 
   // Request notification permission
