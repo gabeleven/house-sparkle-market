@@ -22,16 +22,20 @@ export const useMaskedCommunication = () => {
       }
 
       // Check if communication already exists
-      const { data: existing } = await supabase
+      const { data: existing, error: existingError } = await supabase
         .from('masked_communications')
         .select('*')
-        .eq('customer_id', user.id)
-        .eq('cleaner_id', cleanerId)
-        .eq('is_active', true)
+        .eq('customer_id', user.id as any)
+        .eq('cleaner_id', cleanerId as any)
+        .eq('is_active', true as any)
         .gt('expires_at', new Date().toISOString())
-        .single();
+        .maybeSingle();
 
-      if (existing) {
+      if (existingError) {
+        console.error('Error checking existing communication:', existingError);
+      }
+
+      if (existing && typeof existing === 'object' && 'proxy_phone_number' in existing) {
         toast({
           title: "Communication active",
           description: `Numéro de contact: ${existing.proxy_phone_number}`,
@@ -48,7 +52,7 @@ export const useMaskedCommunication = () => {
           customer_id: user.id,
           cleaner_id: cleanerId,
           proxy_phone_number: proxyNumber
-        })
+        } as any)
         .select()
         .single();
 

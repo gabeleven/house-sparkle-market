@@ -41,7 +41,7 @@ export const usePresence = () => {
           user_id: user.id,
           is_online: isOnline,
           last_seen: new Date().toISOString()
-        });
+        } as any);
     } catch (error) {
       console.error('Error updating presence:', error);
     }
@@ -52,16 +52,29 @@ export const usePresence = () => {
     const validSession = await validateSession();
     if (!validSession || userIds.length === 0) return;
     
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_presence')
       .select('*')
-      .in('user_id', userIds);
+      .in('user_id', userIds as any);
+
+    if (error) {
+      console.error('Error fetching presence:', error);
+      return;
+    }
 
     if (data) {
-      const presenceMap = data.reduce((acc, presence) => {
-        acc[presence.user_id] = presence;
-        return acc;
-      }, {} as Record<string, UserPresence>);
+      const presenceMap = data
+        .filter((presence): presence is UserPresence => 
+          presence && 
+          typeof presence === 'object' && 
+          'user_id' in presence &&
+          'is_online' in presence &&
+          'last_seen' in presence
+        )
+        .reduce((acc, presence) => {
+          acc[presence.user_id] = presence;
+          return acc;
+        }, {} as Record<string, UserPresence>);
       
       setPresenceData(prev => ({ ...prev, ...presenceMap }));
     }
@@ -98,7 +111,7 @@ export const usePresence = () => {
         table: 'user_presence'
       }, (payload) => {
         const presence = payload.new as UserPresence;
-        if (presence) {
+        if (presence && typeof presence === 'object' && 'user_id' in presence) {
           setPresenceData(prev => ({
             ...prev,
             [presence.user_id]: presence

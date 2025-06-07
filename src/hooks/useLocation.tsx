@@ -78,7 +78,7 @@ export const useLocation = (): UseLocationReturn => {
           latitude: lat,
           longitude: lng,
           location_permission_granted: true
-        });
+        } as any);
 
       if (error) {
         console.error('Error saving location:', error);

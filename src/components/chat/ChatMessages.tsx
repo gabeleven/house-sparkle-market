@@ -1,9 +1,8 @@
 
-import { useRef, useEffect } from 'react';
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChatBubble } from "./ChatBubble";
-import { ChatMessage } from "@/hooks/useChat";
-import { useAuth } from "@/hooks/useAuth";
+import React from 'react';
+import { ChatBubble } from './ChatBubble';
+import { ChatMessage } from '@/hooks/useChat';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ChatMessagesProps {
   messages: ChatMessage[];
@@ -12,37 +11,33 @@ interface ChatMessagesProps {
 
 export const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   const { user } = useAuth();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-gray-500">Loading messages...</div>
+      <div className="flex justify-center items-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+        <p>No messages yet.</p>
+        <p className="text-sm">Start the conversation!</p>
       </div>
     );
   }
 
   return (
-    <ScrollArea className="flex-1 p-4">
-      <div className="space-y-1">
-        {messages.map((message, index) => {
-          const prevMessage = messages[index - 1];
-          const showAvatar = !prevMessage || prevMessage.sender_id !== message.sender_id;
-          
-          return (
-            <ChatBubble
-              key={message.id}
-              message={message}
-              showAvatar={showAvatar}
-            />
-          );
-        })}
-        <div ref={messagesEndRef} />
-      </div>
-    </ScrollArea>
+    <div className="space-y-4">
+      {messages.map((message) => (
+        <ChatBubble
+          key={message.id}
+          message={message}
+          isOwnMessage={message.sender_id === user?.id}
+        />
+      ))}
+    </div>
   );
 };

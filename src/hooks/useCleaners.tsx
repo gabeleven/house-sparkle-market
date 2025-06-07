@@ -89,7 +89,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
                 
                 return {
                   ...cleaner,
-                  distance: distance || undefined
+                  distance: typeof distance === 'number' ? distance : undefined
                 };
               } catch (err) {
                 console.error('Distance calculation failed:', err);
