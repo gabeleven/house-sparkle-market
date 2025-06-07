@@ -3,8 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Wrapper, Status } from '@googlemaps/react-wrapper';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { Button } from '@/components/ui/button';
-import { X, ZoomIn, ZoomOut } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, AlertCircle } from 'lucide-react';
 import { CleanerMapPopup } from './CleanerMapPopup';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface GoogleMapViewProps {
   cleaners: CleanerProfile[];
@@ -32,7 +33,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
   const circleRef = useRef<google.maps.Circle | null>(null);
 
   useEffect(() => {
@@ -42,14 +43,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? { lat: userLocation.latitude, lng: userLocation.longitude }
       : MONTREAL_CENTER;
 
-    // Initialize the map
+    // Initialize the map with modern configuration
     mapInstanceRef.current = new google.maps.Map(mapRef.current, {
       center,
       zoom: userLocation ? 12 : 10,
+      mapId: 'housie-map', // Required for AdvancedMarkerElement
       mapTypeControl: true,
       streetViewControl: true,
       fullscreenControl: false,
-      zoomControl: false, // We'll add custom controls
+      zoomControl: false,
       styles: [
         {
           featureType: 'poi',
@@ -75,7 +77,11 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     return () => {
       // Cleanup markers
-      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current.forEach(marker => {
+        if (marker.map) {
+          marker.map = null;
+        }
+      });
       markersRef.current = [];
       
       // Cleanup circle
@@ -90,41 +96,40 @@ const MapComponent: React.FC<MapComponentProps> = ({
     if (!mapInstanceRef.current) return;
 
     // Clear existing markers
-    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current.forEach(marker => {
+      if (marker.map) {
+        marker.map = null;
+      }
+    });
     markersRef.current = [];
 
-    // Add cleaner markers
+    // Add cleaner markers using AdvancedMarkerElement
     cleaners.forEach(cleaner => {
       if (!cleaner.latitude || !cleaner.longitude || !mapInstanceRef.current) return;
 
-      const marker = new google.maps.Marker({
+      // Create marker content
+      const markerContent = document.createElement('div');
+      markerContent.className = 'relative w-10 h-10 cursor-pointer';
+      markerContent.innerHTML = `
+        <div class="w-10 h-10 bg-white border-3 border-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+          <span class="text-purple-600 font-bold text-sm">${cleaner.full_name.charAt(0).toUpperCase()}</span>
+        </div>
+      `;
+
+      const marker = new google.maps.marker.AdvancedMarkerElement({
         position: { lat: cleaner.latitude, lng: cleaner.longitude },
         map: mapInstanceRef.current,
         title: cleaner.full_name,
-        icon: {
-          url: cleaner.profile_photo_url || 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-            <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="20" cy="20" r="18" fill="white" stroke="#6366f1" stroke-width="3"/>
-              <text x="20" y="26" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#6366f1">
-                ${cleaner.full_name.charAt(0).toUpperCase()}
-              </text>
-            </svg>
-          `),
-          scaledSize: new google.maps.Size(40, 40),
-          anchor: new google.maps.Point(20, 20)
-        }
+        content: markerContent
       });
 
-      marker.addListener('click', (event: google.maps.MapMouseEvent) => {
-        if (event.domEvent) {
-          const rect = (event.domEvent.target as HTMLElement)?.getBoundingClientRect();
-          if (rect) {
-            onMarkerClick(cleaner, {
-              x: rect.left + rect.width / 2,
-              y: rect.top
-            });
-          }
-        }
+      // Add click event
+      marker.addListener('click', (event: any) => {
+        const rect = markerContent.getBoundingClientRect();
+        onMarkerClick(cleaner, {
+          x: rect.left + rect.width / 2,
+          y: rect.top
+        });
       });
 
       markersRef.current.push(marker);
@@ -181,15 +186,46 @@ const MapLoadingComponent = () => (
   </div>
 );
 
-const MapErrorComponent = ({ error }: { error: Status }) => (
-  <div className="w-full h-full flex items-center justify-center bg-red-50">
-    <div className="text-center">
-      <p className="text-red-600 font-medium mb-2">Failed to load Google Maps</p>
-      <p className="text-red-500 text-sm">Error: {error}</p>
-      <p className="text-gray-600 text-sm mt-2">Please check your API key and internet connection</p>
+const MapErrorComponent = ({ error }: { error: Status }) => {
+  const getErrorMessage = () => {
+    switch (error) {
+      case Status.FAILURE:
+        return {
+          title: "Google Maps API Error",
+          description: "Please check that the API key is properly configured and has the necessary permissions for this domain."
+        };
+      default:
+        return {
+          title: "Map Loading Failed",
+          description: `Error: ${error}. Please refresh the page or contact support if the issue persists.`
+        };
+    }
+  };
+
+  const { title, description } = getErrorMessage();
+
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-red-50 p-4">
+      <Alert className="max-w-md">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          <div className="space-y-2">
+            <p className="font-medium text-red-800">{title}</p>
+            <p className="text-red-700 text-sm">{description}</p>
+            <div className="text-xs text-red-600 mt-2">
+              <p>If you're the site administrator:</p>
+              <ul className="list-disc list-inside ml-2 space-y-1">
+                <li>Verify Google Maps JavaScript API is enabled</li>
+                <li>Check API key restrictions include: housie.ca/*, *.lovableproject.com/*</li>
+                <li>Ensure proper billing is set up in Google Cloud Console</li>
+              </ul>
+            </div>
+          </div>
+        </AlertDescription>
+      </Alert>
     </div>
-  </div>
-);
+  );
+};
 
 export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, isFullScreen = false }: GoogleMapViewProps) => {
   const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
@@ -231,7 +267,11 @@ export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, is
 
   return (
     <div className={containerClass}>
-      <Wrapper apiKey={GOOGLE_MAPS_API_KEY} render={render} />
+      <Wrapper 
+        apiKey={GOOGLE_MAPS_API_KEY} 
+        render={render}
+        libraries={['marker']}
+      />
       
       {/* Map Controls */}
       <div className="absolute top-4 left-4 flex flex-col gap-2">
