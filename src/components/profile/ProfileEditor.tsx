@@ -180,11 +180,13 @@ export const ProfileEditor = () => {
           service_area_city: profile.service_area_city || null,
           service_radius_km: profile.service_radius_km || 10,
           years_experience: profile.years_experience || 0,
-          hourly_rate: profile.hourly_rate || 25,
+          hourly_rate: Number(profile.hourly_rate) || 25, // Ensure it's a number
           latitude: profile.latitude || null,
           longitude: profile.longitude || null,
           is_profile_complete: true
         };
+
+        console.log('Saving cleaner profile with hourly_rate:', cleanerProfileData.hourly_rate);
 
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
@@ -254,11 +256,22 @@ export const ProfileEditor = () => {
   };
 
   const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (isNaN(value) || value < 0) {
-      return; // Don't update if invalid
+    const value = e.target.value;
+    
+    // Allow empty string for temporary states while typing
+    if (value === '') {
+      setProfile(prev => ({ ...prev, hourly_rate: undefined }));
+      return;
     }
-    setProfile(prev => ({ ...prev, hourly_rate: value }));
+    
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      setProfile(prev => ({ ...prev, hourly_rate: numValue }));
+    }
+  };
+
+  const isRateValid = () => {
+    return userRole !== 'cleaner' || (profile.hourly_rate !== undefined && profile.hourly_rate > 0);
   };
 
   if (loading) {
@@ -354,15 +367,15 @@ export const ProfileEditor = () => {
                   <Input
                     id="hourly_rate"
                     type="number"
-                    min="1"
+                    min="0.01"
                     step="0.01"
-                    value={profile.hourly_rate || 25}
+                    value={profile.hourly_rate !== undefined ? profile.hourly_rate : ''}
                     onChange={handleRateChange}
                     className="pl-10"
                     placeholder="25.00"
                   />
                 </div>
-                {(profile.hourly_rate || 0) < 1 && (
+                {!isRateValid() && (
                   <p className="text-sm text-red-500 mt-1">Rate must be greater than $0</p>
                 )}
               </div>
@@ -389,7 +402,7 @@ export const ProfileEditor = () => {
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={saving || (userRole === 'cleaner' && (profile.hourly_rate || 0) < 1)}>
+          <Button onClick={handleSave} disabled={saving || !isRateValid()}>
             {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Save Profile
           </Button>
