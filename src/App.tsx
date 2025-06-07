@@ -10,6 +10,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import ServiceProvidersPage from "./pages/ServiceProvidersPage";
 import AuthPage from "./components/auth/AuthPage";
 import BrowseCleaners from "./pages/BrowseCleaners";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/prestataires" element={<ServiceProvidersPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+            <Route path="/chat" element={<Chat />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

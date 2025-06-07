@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { MapPin, User, LogOut } from "lucide-react";
+import { MapPin, User, LogOut, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -34,9 +34,14 @@ const Header = () => {
               À propos
             </a>
             {user && (
-              <a href="/prestataires" className="text-gray-600 hover:text-purple-600 transition-colors">
-                Prestataires
-              </a>
+              <>
+                <a href="/prestataires" className="text-gray-600 hover:text-purple-600 transition-colors">
+                  Prestataires
+                </a>
+                <a href="/chat" className="text-gray-600 hover:text-purple-600 transition-colors">
+                  Messages
+                </a>
+              </>
             )}
           </nav>
 
@@ -44,12 +49,16 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             {user ? (
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600">
+                <Button variant="ghost" size="sm" onClick={() => navigate('/chat')} className="hidden md:flex">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Messages
+                </Button>
+                <span className="text-sm text-gray-600 hidden md:block">
                   Bonjour, {user.user_metadata?.full_name || user.email}
                 </span>
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="w-4 h-4 mr-2" />
-                  Déconnexion
+                  <span className="hidden md:inline">Déconnexion</span>
                 </Button>
               </div>
             ) : (

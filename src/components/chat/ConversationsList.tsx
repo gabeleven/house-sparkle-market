@@ -1,0 +1,93 @@
+
+import { useEffect, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
+import { useChat, Conversation } from "@/hooks/useChat";
+import { usePresence } from "@/hooks/usePresence";
+
+interface ConversationsListProps {
+  onSelectConversation: (conversation: Conversation) => void;
+  selectedConversationId?: string;
+}
+
+export const ConversationsList = ({ onSelectConversation, selectedConversationId }: ConversationsListProps) => {
+  const { conversations, loadConversations } = useChat();
+  const { isUserOnline, getPresence } = usePresence();
+
+  useEffect(() => {
+    loadConversations();
+  }, []);
+
+  useEffect(() => {
+    // Get presence for all conversation participants
+    const userIds = conversations.map(conv => conv.other_user_id);
+    if (userIds.length > 0) {
+      getPresence(userIds);
+    }
+  }, [conversations]);
+
+  if (conversations.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        <div className="text-center">
+          <p className="text-lg font-semibold mb-2">No conversations yet</p>
+          <p className="text-sm">Start a conversation with a cleaner to see it here.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <ScrollArea className="h-full">
+      <div className="space-y-1 p-2">
+        {conversations.map((conversation) => (
+          <div
+            key={conversation.id}
+            onClick={() => onSelectConversation(conversation)}
+            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+              selectedConversationId === conversation.id
+                ? 'bg-purple-50 border-l-4 border-purple-600'
+                : 'hover:bg-gray-50'
+            }`}
+          >
+            <div className="relative">
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={conversation.other_user_avatar} />
+                <AvatarFallback>
+                  {conversation.other_user_name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              {isUserOnline(conversation.other_user_id) && (
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1">
+                <h4 className="font-semibold text-gray-900 truncate">
+                  {conversation.other_user_name}
+                </h4>
+                <div className="flex items-center gap-2">
+                  {conversation.unread_count > 0 && (
+                    <Badge variant="destructive" className="text-xs">
+                      {conversation.unread_count}
+                    </Badge>
+                  )}
+                  <span className="text-xs text-gray-500">
+                    {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
+                  </span>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600 truncate">
+                {conversation.last_message || 'No messages yet'}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+  );
+};
