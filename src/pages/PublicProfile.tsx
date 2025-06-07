@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,11 +26,19 @@ interface PublicProfileData {
   user_role: string;
 }
 
+declare global {
+  interface Window {
+    google: any;
+    initProfileMap: () => void;
+  }
+}
+
 const PublicProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -113,9 +120,79 @@ const PublicProfile = () => {
     return baseRate + experienceBonus;
   };
 
+  useEffect(() => {
+    if (profile?.latitude && profile?.longitude && !mapLoaded) {
+      initializeProfileMap();
+    }
+  }, [profile, mapLoaded]);
+
+  const initializeProfileMap = () => {
+    if (window.google) {
+      createMap();
+      return;
+    }
+
+    window.initProfileMap = createMap;
+    
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initProfileMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  };
+
+  const createMap = () => {
+    if (!profile?.latitude || !profile?.longitude) return;
+
+    const mapContainer = document.getElementById('service-area-map');
+    if (!mapContainer) return;
+
+    const center = { lat: profile.latitude, lng: profile.longitude };
+    
+    const map = new window.google.maps.Map(mapContainer, {
+      center,
+      zoom: 12,
+      styles: [
+        {
+          featureType: 'all',
+          elementType: 'geometry.fill',
+          stylers: [{ color: '#f5f5f5' }]
+        }
+      ]
+    });
+
+    // Add service radius circle
+    if (profile.service_radius_km) {
+      new window.google.maps.Circle({
+        strokeColor: '#6366f1',
+        strokeOpacity: 0.5,
+        strokeWeight: 2,
+        fillColor: '#6366f1',
+        fillOpacity: 0.1,
+        map,
+        center,
+        radius: profile.service_radius_km * 1000, // Convert km to meters
+      });
+    }
+
+    // Add profile photo marker
+    new window.google.maps.Marker({
+      position: center,
+      map,
+      icon: {
+        url: profile.profile_photo_url || '/placeholder.svg',
+        scaledSize: new window.google.maps.Size(50, 50),
+        anchor: new window.google.maps.Point(25, 25),
+      },
+      title: profile.full_name
+    });
+
+    setMapLoaded(true);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Header />
         <div className="flex items-center justify-center min-h-[60vh]">
           <Loader2 className="w-8 h-8 animate-spin" />
@@ -126,11 +203,11 @@ const PublicProfile = () => {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Header />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">Profile Not Found</h1>
             <p className="text-gray-600">The profile you're looking for doesn't exist or isn't available.</p>
           </div>
         </div>
@@ -139,7 +216,7 @@ const PublicProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -156,7 +233,7 @@ const PublicProfile = () => {
                   </Avatar>
                   
                   <div className="flex-1">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h1 className="text-3xl font-bold text-foreground mb-2">
                       {profile.full_name}
                     </h1>
                     
@@ -205,14 +282,14 @@ const PublicProfile = () => {
 
                 {profile.brief_description && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-3">About</h3>
                     <p className="text-gray-700 leading-relaxed">{profile.brief_description}</p>
                   </div>
                 )}
 
                 {profile.services && profile.services.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Services Offered</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-3">Services Offered</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       {profile.services.map((service, index) => {
                         const Icon = serviceTypeIcons[service];
@@ -237,7 +314,7 @@ const PublicProfile = () => {
             {/* Reviews Section */}
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Customer Reviews</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Customer Reviews</h3>
                 <div className="space-y-4">
                   <div className="border-b pb-4">
                     <div className="flex items-start gap-3">
@@ -273,7 +350,7 @@ const PublicProfile = () => {
           <div className="lg:col-span-1">
             <Card className="sticky top-6">
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Get in Touch</h3>
                 
                 {profile.user_role === 'cleaner' && (
                   <div className="mb-4 p-4 bg-green-50 rounded-lg">
@@ -300,19 +377,19 @@ const PublicProfile = () => {
               </CardContent>
             </Card>
 
-            {/* Map Section */}
+            {/* Service Area Map */}
             {profile.latitude && profile.longitude && (
               <Card className="mt-6">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Service Area</h3>
-                  <div className="bg-gray-100 h-48 rounded-lg flex items-center justify-center">
-                    <div className="text-center text-gray-500">
-                      <MapPin className="w-8 h-8 mx-auto mb-2" />
-                      <p>Interactive map coming soon</p>
-                      <p className="text-sm">
-                        Located in {profile.service_area_city}
-                      </p>
-                    </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Service Area</h3>
+                  <div id="service-area-map" className="w-full h-48 rounded-lg bg-muted"></div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Located in {profile.service_area_city}
+                      {profile.service_radius_km && (
+                        <span className="block">Service radius: {profile.service_radius_km} km</span>
+                      )}
+                    </p>
                   </div>
                 </CardContent>
               </Card>

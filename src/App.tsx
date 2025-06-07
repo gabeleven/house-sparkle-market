@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/hooks/useTheme";
 import Index from "./pages/Index";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import ServiceProvidersPage from "./pages/ServiceProvidersPage";
@@ -19,26 +20,28 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
-            <Route path="/prestataires" element={<ServiceProvidersPage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/my-profile" element={<MyProfile />} />
-            <Route path="/profile/:userId" element={<PublicProfile />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+              <Route path="/prestataires" element={<ServiceProvidersPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/my-profile" element={<MyProfile />} />
+              <Route path="/profile/:userId" element={<PublicProfile />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
