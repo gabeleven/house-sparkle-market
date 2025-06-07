@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -14,21 +14,26 @@ export const usePresence = () => {
   const [presenceData, setPresenceData] = useState<Record<string, UserPresence>>({});
 
   // Update user's online status
-  const updatePresence = async (isOnline: boolean) => {
+  const updatePresence = useCallback(async (isOnline: boolean) => {
     if (!user) return;
 
-    await supabase
-      .from('user_presence')
-      .upsert({
-        user_id: user.id,
-        is_online: isOnline,
-        last_seen: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      });
-  };
+    try {
+      await supabase
+        .from('user_presence')
+        .upsert({
+          user_id: user.id,
+          is_online: isOnline,
+          last_seen: new Date().toISOString()
+        });
+    } catch (error) {
+      console.error('Error updating presence:', error);
+    }
+  }, [user]);
 
   // Get presence for specific users
-  const getPresence = async (userIds: string[]) => {
+  const getPresence = useCallback(async (userIds: string[]) => {
+    if (userIds.length === 0) return;
+    
     const { data } = await supabase
       .from('user_presence')
       .select('*')
@@ -42,28 +47,32 @@ export const usePresence = () => {
       
       setPresenceData(prev => ({ ...prev, ...presenceMap }));
     }
-  };
+  }, []);
 
   // Set up real-time presence updates
   useEffect(() => {
     if (!user) return;
 
+    console.log('Setting up presence for user:', user.id);
+
     // Set user online when hook mounts
     updatePresence(true);
 
     // Subscribe to presence updates
-    const presenceSubscription = supabase
-      .channel('user-presence')
+    const presenceChannel = supabase
+      .channel(`presence-${user.id}`)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'user_presence'
       }, (payload) => {
         const presence = payload.new as UserPresence;
-        setPresenceData(prev => ({
-          ...prev,
-          [presence.user_id]: presence
-        }));
+        if (presence) {
+          setPresenceData(prev => ({
+            ...prev,
+            [presence.user_id]: presence
+          }));
+        }
       })
       .subscribe();
 
@@ -74,7 +83,8 @@ export const usePresence = () => {
 
     // Handle beforeunload to set offline
     const handleBeforeUnload = () => {
-      updatePresence(false);
+      // Use sendBeacon for more reliable offline status update
+      navigator.sendBeacon?.('/api/presence/offline') || updatePresence(false);
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -82,13 +92,13 @@ export const usePresence = () => {
 
     return () => {
       updatePresence(false);
-      presenceSubscription.unsubscribe();
+      supabase.removeChannel(presenceChannel);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user]);
+  }, [user, updatePresence]);
 
-  const isUserOnline = (userId: string): boolean => {
+  const isUserOnline = useCallback((userId: string): boolean => {
     const presence = presenceData[userId];
     if (!presence) return false;
     
@@ -96,7 +106,7 @@ export const usePresence = () => {
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     
     return presence.is_online && lastSeen > fiveMinutesAgo;
-  };
+  }, [presenceData]);
 
   return {
     presenceData,

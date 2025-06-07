@@ -30,15 +30,6 @@ export interface Conversation {
   last_message?: string;
 }
 
-// Global subscription manager to prevent duplicate subscriptions
-let globalSubscriptions: {
-  messageSubscription?: any;
-  conversationSubscription?: any;
-} = {};
-
-let isGloballySubscribed = false;
-let subscriberCount = 0;
-
 export const useChat = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -48,9 +39,10 @@ export const useChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   
-  // Track if this instance has subscribed
-  const hasSubscribedRef = useRef(false);
-  const instanceIdRef = useRef(Math.random().toString(36).substr(2, 9));
+  const subscriptionsRef = useRef<{
+    messages?: any;
+    conversations?: any;
+  }>({});
 
   // Load conversations for current user
   const loadConversations = useCallback(async () => {
@@ -210,31 +202,6 @@ export const useChat = () => {
       return;
     }
 
-    // Get conversation details for notification
-    const { data: conversation } = await supabase
-      .from('conversations')
-      .select('customer_id, cleaner_id')
-      .eq('id', conversationId)
-      .single();
-
-    if (conversation) {
-      const recipientId = conversation.customer_id === user.id ? conversation.cleaner_id : conversation.customer_id;
-      
-      // Send email notification
-      try {
-        await supabase.functions.invoke('send-chat-notification', {
-          body: {
-            recipientId,
-            senderName: user.user_metadata?.full_name || user.email,
-            messagePreview: type === 'text' ? content : '📷 Sent an image',
-            conversationId
-          }
-        });
-      } catch (notificationError) {
-        console.error('Error sending notification:', notificationError);
-      }
-    }
-
     return data;
   };
 
@@ -249,118 +216,89 @@ export const useChat = () => {
       .neq('sender_id', user.id);
   };
 
-  // Clean up global subscriptions
-  const cleanupGlobalSubscriptions = useCallback(() => {
-    if (globalSubscriptions.messageSubscription) {
-      console.log('Cleaning up global message subscription');
-      supabase.removeChannel(globalSubscriptions.messageSubscription);
-      globalSubscriptions.messageSubscription = null;
-    }
-    if (globalSubscriptions.conversationSubscription) {
-      console.log('Cleaning up global conversation subscription');
-      supabase.removeChannel(globalSubscriptions.conversationSubscription);
-      globalSubscriptions.conversationSubscription = null;
-    }
-    isGloballySubscribed = false;
-  }, []);
-
-  // Set up real-time subscriptions (globally managed)
+  // Set up real-time subscriptions
   useEffect(() => {
-    if (!user || hasSubscribedRef.current) return;
+    if (!user) return;
 
-    // Increment subscriber count
-    subscriberCount++;
-    hasSubscribedRef.current = true;
+    console.log('Setting up chat subscriptions for user:', user.id);
 
-    console.log(`Setting up real-time subscriptions for user: ${user.id} (instance: ${instanceIdRef.current}, count: ${subscriberCount})`);
-
-    // Only set up subscriptions if not already done globally
-    if (!isGloballySubscribed) {
-      // Clean up any existing subscriptions first
-      cleanupGlobalSubscriptions();
-
-      // Create unique channel names
-      const timestamp = Date.now();
-      const messageChannelName = `chat-messages-global-${user.id}-${timestamp}`;
-      const conversationChannelName = `conversations-global-${user.id}-${timestamp}`;
-
-      // Subscribe to new messages
-      const messageSubscription = supabase
-        .channel(messageChannelName)
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'chat_messages'
-        }, (payload) => {
-          console.log('New message received:', payload);
-          const newMessage = payload.new as any;
-          
-          // Add sender info (we'll need to fetch this)
-          supabase
-            .from('profiles')
-            .select('full_name, profile_photo_url')
-            .eq('id', newMessage.sender_id)
-            .single()
-            .then(({ data: sender }) => {
-              const messageWithSender: ChatMessage = {
-                ...newMessage,
-                sender_name: sender?.full_name || 'Unknown',
-                sender_avatar: sender?.profile_photo_url
-              };
-
-              // Only add to current conversation
-              if (newMessage.conversation_id === currentConversationId) {
-                setMessages(prev => [...prev, messageWithSender]);
-              }
-
-              // Update conversations list
-              loadConversations();
-
-              // Show browser notification if not from current user
-              if (newMessage.sender_id !== user.id && 'Notification' in window && Notification.permission === 'granted') {
-                new Notification(`New message from ${messageWithSender.sender_name}`, {
-                  body: newMessage.message_type === 'text' ? newMessage.message_content : '📷 Sent an image',
-                  icon: messageWithSender.sender_avatar || '/placeholder.svg'
-                });
-              }
-            });
-        })
-        .subscribe();
-
-      // Subscribe to conversation updates
-      const conversationSubscription = supabase
-        .channel(conversationChannelName)
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'conversations'
-        }, () => {
-          console.log('Conversation updated');
-          loadConversations();
-        })
-        .subscribe();
-
-      // Store subscriptions globally
-      globalSubscriptions = {
-        messageSubscription,
-        conversationSubscription
-      };
-      isGloballySubscribed = true;
+    // Clean up existing subscriptions
+    if (subscriptionsRef.current.messages) {
+      supabase.removeChannel(subscriptionsRef.current.messages);
     }
+    if (subscriptionsRef.current.conversations) {
+      supabase.removeChannel(subscriptionsRef.current.conversations);
+    }
+
+    // Subscribe to new messages
+    const messagesChannel = supabase
+      .channel(`chat-messages-${user.id}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages'
+      }, async (payload) => {
+        console.log('New message received:', payload);
+        const newMessage = payload.new as any;
+        
+        // Fetch sender info
+        const { data: sender } = await supabase
+          .from('profiles')
+          .select('full_name, profile_photo_url')
+          .eq('id', newMessage.sender_id)
+          .single();
+
+        const messageWithSender: ChatMessage = {
+          ...newMessage,
+          sender_name: sender?.full_name || 'Unknown',
+          sender_avatar: sender?.profile_photo_url
+        };
+
+        // Update messages if it's for current conversation
+        if (newMessage.conversation_id === currentConversationId) {
+          setMessages(prev => [...prev, messageWithSender]);
+        }
+
+        // Reload conversations to update counts and last message
+        loadConversations();
+
+        // Show notification if not from current user
+        if (newMessage.sender_id !== user.id && 'Notification' in window && Notification.permission === 'granted') {
+          new Notification(`New message from ${messageWithSender.sender_name}`, {
+            body: newMessage.message_type === 'text' ? newMessage.message_content : '📷 Sent an image',
+            icon: messageWithSender.sender_avatar || '/placeholder.svg'
+          });
+        }
+      })
+      .subscribe();
+
+    // Subscribe to conversation updates
+    const conversationsChannel = supabase
+      .channel(`conversations-${user.id}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'conversations'
+      }, () => {
+        console.log('Conversation updated');
+        loadConversations();
+      })
+      .subscribe();
+
+    subscriptionsRef.current = {
+      messages: messagesChannel,
+      conversations: conversationsChannel
+    };
 
     return () => {
-      // Decrement subscriber count and cleanup if last subscriber
-      subscriberCount--;
-      hasSubscribedRef.current = false;
-      
-      console.log(`Cleaning up subscription for instance: ${instanceIdRef.current} (remaining: ${subscriberCount})`);
-      
-      if (subscriberCount <= 0) {
-        cleanupGlobalSubscriptions();
-        subscriberCount = 0;
+      if (subscriptionsRef.current.messages) {
+        supabase.removeChannel(subscriptionsRef.current.messages);
+      }
+      if (subscriptionsRef.current.conversations) {
+        supabase.removeChannel(subscriptionsRef.current.conversations);
       }
     };
-  }, [user, currentConversationId, loadConversations, cleanupGlobalSubscriptions]);
+  }, [user, currentConversationId, loadConversations]);
 
   // Request notification permission
   useEffect(() => {

@@ -53,12 +53,12 @@ const BrowseCleaners = () => {
   console.log('Error state:', error);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-200">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Find Cleaners Near You</h1>
           
           <div className="flex flex-col md:flex-row gap-4">
@@ -70,7 +70,7 @@ const BrowseCleaners = () => {
                   placeholder="Search by name, service, or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-gray-300"
                 />
               </div>
             </div>
@@ -83,7 +83,7 @@ const BrowseCleaners = () => {
                   placeholder="Location..."
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-gray-300"
                 />
               </div>
             </div>
@@ -117,12 +117,12 @@ const BrowseCleaners = () => {
 
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="mt-2 sm:mt-0">
+                <Button variant="outline" size="sm" className="mt-2 sm:mt-0 border-gray-300">
                   <Filter className="w-4 h-4 mr-2" />
                   Filters
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="bg-white">
                 <SheetHeader>
                   <SheetTitle>Filter Results</SheetTitle>
                   <SheetDescription>
@@ -180,7 +180,7 @@ const BrowseCleaners = () => {
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="animate-pulse">
+                  <Card key={i} className="animate-pulse bg-white border border-gray-200">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4 mb-4">
                         <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
@@ -202,13 +202,13 @@ const BrowseCleaners = () => {
                 ))}
               </div>
             ) : error ? (
-              <Card>
+              <Card className="bg-white border border-gray-200">
                 <CardContent className="p-6 text-center">
                   <p className="text-red-600">Error loading cleaners: {error.message || 'Unknown error'}. Please try again.</p>
                 </CardContent>
               </Card>
             ) : !cleaners || cleaners.length === 0 ? (
-              <Card>
+              <Card className="bg-white border border-gray-200">
                 <CardContent className="p-6 text-center">
                   <div className="max-w-md mx-auto">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
