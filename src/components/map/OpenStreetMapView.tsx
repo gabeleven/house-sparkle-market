@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,17 @@ interface OpenStreetMapViewProps {
   onClose: () => void;
   isFullScreen?: boolean;
 }
+
+// Component to handle map instance access
+const MapInstanceHandler = ({ setMap }: { setMap: (map: L.Map) => void }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    setMap(map);
+  }, [map, setMap]);
+  
+  return null;
+};
 
 export const OpenStreetMapView = ({ 
   cleaners, 
@@ -77,8 +88,8 @@ export const OpenStreetMapView = ({
         center={defaultCenter} 
         zoom={userLocation ? 12 : 10}
         style={{ height: "100%", width: "100%" }}
-        whenReady={(mapInstance) => setMap(mapInstance)}
       >
+        <MapInstanceHandler setMap={setMap} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
