@@ -64,8 +64,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       if (data) {
         setOtherUserInfo({
-          full_name: data.full_name,
-          profile_photo_url: data.profile_photo_url
+          full_name: data.full_name || 'Unknown User',
+          profile_photo_url: data.profile_photo_url || undefined
         });
       }
     } catch (error) {
@@ -111,12 +111,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <Card className="flex flex-col h-full">
       <ChatHeader 
+        otherUserId={otherUserId}
         otherUserName={otherUserInfo?.full_name || 'Unknown User'}
         otherUserAvatar={otherUserInfo?.profile_photo_url}
       />
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-        <ChatMessages messages={messages} currentUserId={user.id} />
+        <ChatMessages messages={messages} isLoading={false} />
         <div ref={messagesEndRef} />
       </div>
 

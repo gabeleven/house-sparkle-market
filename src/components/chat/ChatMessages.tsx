@@ -3,6 +3,7 @@ import { useRef, useEffect } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatBubble } from "./ChatBubble";
 import { ChatMessage } from "@/hooks/useChat";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ChatMessagesProps {
   messages: ChatMessage[];
@@ -10,6 +11,7 @@ interface ChatMessagesProps {
 }
 
 export const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
+  const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

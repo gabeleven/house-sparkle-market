@@ -44,9 +44,6 @@ export const ChatPage = () => {
           <ChatInterface
             conversationId={selectedConversation.id}
             otherUserId={selectedConversation.other_user_id}
-            otherUserName={selectedConversation.other_user_name}
-            otherUserAvatar={selectedConversation.other_user_avatar}
-            onBack={handleBackToList}
           />
         ) : (
           <div className="flex items-center justify-center w-full bg-gray-50">

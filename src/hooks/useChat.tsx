@@ -87,7 +87,7 @@ export const useChat = () => {
           .neq('sender_id', user.id as any);
 
         // Get last message
-        const { data: lastMsg } = await supabase
+        const { data: lastMsg, error: lastMsgError } = await supabase
           .from('chat_messages')
           .select('message_content, message_type')
           .eq('conversation_id', conv.id)
@@ -96,7 +96,7 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (lastMsg && lastMsg.message_type && lastMsg.message_content) {
+        if (!lastMsgError && lastMsg && lastMsg.message_type && lastMsg.message_content) {
           lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content;
         }
 
@@ -167,12 +167,16 @@ export const useChat = () => {
     if (!validSession) throw new Error('No valid session');
 
     // Try to find existing conversation
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('conversations')
       .select('*')
       .eq('customer_id', customerId as any)
       .eq('cleaner_id', cleanerId as any)
       .maybeSingle();
+
+    if (existingError) {
+      console.error('Error checking existing conversation:', existingError);
+    }
 
     if (existing && existing.id) {
       return existing.id;
