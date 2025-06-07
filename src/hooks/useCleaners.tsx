@@ -71,9 +71,9 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
       console.log('Number of cleaners found:', data?.length || 0);
 
       let processedCleaners = (data || [])
-        .filter(cleaner => cleaner.cleaner_profiles && Array.isArray(cleaner.cleaner_profiles) && cleaner.cleaner_profiles.length > 0)
+        .filter(cleaner => cleaner.cleaner_profiles)
         .map((cleaner): CleanerProfile => {
-          const cleanerProfile = cleaner.cleaner_profiles[0];
+          const cleanerProfile = cleaner.cleaner_profiles;
           return {
             id: cleaner.id || '',
             full_name: cleaner.full_name || '',
