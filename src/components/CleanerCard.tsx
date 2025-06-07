@@ -7,12 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Star, MessageCircle, DollarSign } from 'lucide-react';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { ContactViaHousieButton } from './ContactViaHousieButton';
+import { useNavigate } from 'react-router-dom';
 
 interface CleanerCardProps {
   cleaner: CleanerProfile;
 }
 
 export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
+  const navigate = useNavigate();
+
   const formatDistance = (distance?: number) => {
     if (!distance) return null;
     return distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`;
@@ -23,6 +26,11 @@ export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
     const baseRate = 25;
     const experienceBonus = (cleaner.years_experience || 0) * 2;
     return baseRate + experienceBonus;
+  };
+
+  const handleViewProfile = () => {
+    // Navigate to the cleaner's profile page
+    navigate(`/profile/${cleaner.id}`);
   };
 
   return (
@@ -114,7 +122,7 @@ export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
         )}
 
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
+          <Button variant="outline" size="sm" className="flex-1" onClick={handleViewProfile}>
             <MessageCircle className="w-4 h-4 mr-2" />
             View Profile
           </Button>
