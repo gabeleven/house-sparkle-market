@@ -89,8 +89,8 @@ export const useChat = () => {
           .from('chat_messages')
           .select('*', { count: 'exact', head: true })
           .eq('conversation_id', conv.id)
-          .eq('is_read', false)
-          .neq('sender_id', user.id);
+          .eq('is_read', false as any)
+          .neq('sender_id', user.id as any);
 
         // Get last message
         const { data: lastMsg } = await supabase
@@ -99,7 +99,12 @@ export const useChat = () => {
           .eq('conversation_id', conv.id)
           .order('created_at', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
+
+        let lastMessageText = '';
+        if (lastMsg && typeof lastMsg === 'object' && 'message_type' in lastMsg) {
+          lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content || '';
+        }
 
         return {
           id: conv.id,
@@ -111,7 +116,7 @@ export const useChat = () => {
           other_user_name: otherUser?.full_name || 'Unknown User',
           other_user_avatar: otherUser?.profile_photo_url,
           unread_count: count || 0,
-          last_message: lastMsg?.message_type === 'image' ? '📷 Image' : lastMsg?.message_content
+          last_message: lastMessageText
         };
       })
     );
@@ -173,7 +178,7 @@ export const useChat = () => {
       .select('*')
       .eq('customer_id', customerId)
       .eq('cleaner_id', cleanerId)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       return existing.id;
@@ -237,7 +242,7 @@ export const useChat = () => {
       .from('chat_messages')
       .update({ is_read: true })
       .eq('conversation_id', conversationId)
-      .neq('sender_id', user.id);
+      .neq('sender_id', user.id as any);
   };
 
   // Clean up subscriptions helper
@@ -290,12 +295,20 @@ export const useChat = () => {
           .from('profiles')
           .select('full_name, profile_photo_url')
           .eq('id', newMessage.sender_id)
-          .single();
+          .maybeSingle();
+
+        let senderName = 'Unknown';
+        let senderAvatar: string | undefined = undefined;
+        
+        if (sender && typeof sender === 'object' && 'full_name' in sender) {
+          senderName = sender.full_name || 'Unknown';
+          senderAvatar = sender.profile_photo_url || undefined;
+        }
 
         const messageWithSender: ChatMessage = {
           ...newMessage,
-          sender_name: sender?.full_name || 'Unknown',
-          sender_avatar: sender?.profile_photo_url
+          sender_name: senderName,
+          sender_avatar: senderAvatar
         };
 
         // Update messages if it's for current conversation
