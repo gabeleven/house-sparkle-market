@@ -77,7 +77,7 @@ export const OpenStreetMapView = ({
         center={defaultCenter} 
         zoom={userLocation ? 12 : 10}
         style={{ height: "100%", width: "100%" }}
-        whenCreated={setMap}
+        whenReady={setMap}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
