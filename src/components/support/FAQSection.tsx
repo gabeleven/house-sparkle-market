@@ -93,7 +93,7 @@ const faqData: FAQItem[] = [
   },
   {
     id: '5',
-    question: 'What if I'm not satisfied with my cleaning?',
+    question: 'What if I\'m not satisfied with my cleaning?',
     answer: `Your satisfaction is our priority! Here's what to do:
 
 **Immediate Issues** (during/right after cleaning):
