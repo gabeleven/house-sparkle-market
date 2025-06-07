@@ -11,7 +11,7 @@ import { useLocation } from "@/hooks/useLocation";
 import { CleanerCard } from "@/components/CleanerCard";
 import { MapPreview } from "@/components/map/MapPreview";
 import { GoogleMapView } from "@/components/map/GoogleMapView";
-import { RadiusSelector } from "@/components/map/RadiusSelector";
+import { DynamicRadiusSelector } from "@/components/map/DynamicRadiusSelector";
 import {
   Sheet,
   SheetContent,
@@ -27,9 +27,16 @@ const BrowseCleaners = () => {
   
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [locationFilter, setLocationFilter] = useState('');
-  const [searchRadius, setSearchRadius] = useState(25); // Increased default radius
+  const [searchRadius, setSearchRadius] = useState(25);
   const [showMap, setShowMap] = useState(false);
   const { location, requestLocation } = useLocation();
+  
+  // Create a search location object for the DynamicRadiusSelector
+  const searchLocation = location ? {
+    lat: location.latitude,
+    lng: location.longitude,
+    address: "Your location"
+  } : null;
   
   const { cleaners, isLoading, error } = useCleaners({
     userLocation: location,
@@ -133,20 +140,20 @@ const BrowseCleaners = () => {
           </div>
         </div>
 
+        {/* Integrated Radius Selector */}
+        {!showMap && searchLocation && (
+          <DynamicRadiusSelector 
+            currentRadius={searchRadius}
+            onRadiusChange={handleRadiusChange}
+            searchLocation={searchLocation}
+          />
+        )}
+
         {/* Map Preview */}
         {!showMap && !isLoading && cleaners && cleaners.length > 0 && (
           <MapPreview 
             cleaners={cleaners}
             onShowMap={() => setShowMap(true)}
-            userLocation={location}
-          />
-        )}
-
-        {/* Radius Selector */}
-        {!showMap && location && (
-          <RadiusSelector 
-            currentRadius={searchRadius}
-            onRadiusChange={handleRadiusChange}
             userLocation={location}
           />
         )}

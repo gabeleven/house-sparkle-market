@@ -1,7 +1,12 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { ChevronDown, MapPin } from 'lucide-react';
 
 interface DynamicRadiusSelectorProps {
   currentRadius: number;
@@ -15,31 +20,45 @@ export const DynamicRadiusSelector = ({ currentRadius, onRadiusChange, searchLoc
   if (!searchLocation) return null;
 
   return (
-    <Card className="mb-4">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="mb-4 h-auto p-3 flex items-center gap-2 hover:bg-muted/50">
+          <MapPin className="w-4 h-4 text-muted-foreground" />
+          <div className="text-left">
+            <div className="font-medium text-foreground">
+              Area: {searchLocation.address}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Within {currentRadius}km radius • Click to modify
+            </div>
+          </div>
+          <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-4">
+        <div className="space-y-3">
           <div>
-            <h4 className="font-medium text-gray-900">Search Radius</h4>
-            <p className="text-sm text-gray-600">
-              Within {currentRadius}km of {searchLocation.address}
+            <h4 className="font-medium text-foreground mb-1">Search Radius</h4>
+            <p className="text-sm text-muted-foreground">
+              Choose how far to search from {searchLocation.address}
             </p>
           </div>
           
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {radiusOptions.map((radius) => (
               <Button
                 key={radius}
                 variant={currentRadius === radius ? "default" : "outline"}
                 size="sm"
                 onClick={() => onRadiusChange(radius)}
-                className={currentRadius === radius ? "bg-purple-600 hover:bg-purple-700" : ""}
+                className={currentRadius === radius ? "bg-primary text-primary-foreground" : ""}
               >
                 {radius}km
               </Button>
             ))}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </PopoverContent>
+    </Popover>
   );
 };
