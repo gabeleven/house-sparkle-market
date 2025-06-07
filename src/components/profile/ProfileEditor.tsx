@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +22,10 @@ interface ProfileData {
   service_radius_km?: number;
   years_experience?: number;
   hourly_rate?: number;
+  banner_image_url?: string;
+  before_after_photos?: string[];
+  service_badges?: string[];
+  is_featured?: boolean;
 }
 
 export const ProfileEditor = () => {
@@ -34,7 +39,11 @@ export const ProfileEditor = () => {
     service_area_city: '',
     service_radius_km: 10,
     years_experience: 0,
-    hourly_rate: 25
+    hourly_rate: 25,
+    banner_image_url: '',
+    before_after_photos: [],
+    service_badges: [],
+    is_featured: false
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -69,7 +78,6 @@ export const ProfileEditor = () => {
       }
 
       if (profileData && isValidProfileData(profileData)) {
-        // Safe type checking for user_role
         const userRoleValue = profileData.user_role || 'customer';
         setUserRole(userRoleValue);
 
@@ -94,7 +102,11 @@ export const ProfileEditor = () => {
               service_area_city: cleanerData.service_area_city || '',
               service_radius_km: cleanerData.service_radius_km || 10,
               years_experience: cleanerData.years_experience || 0,
-              hourly_rate: cleanerData.hourly_rate || 25
+              hourly_rate: cleanerData.hourly_rate || 25,
+              banner_image_url: cleanerData.banner_image_url || '',
+              before_after_photos: cleanerData.before_after_photos || [],
+              service_badges: cleanerData.service_badges || [],
+              is_featured: cleanerData.is_featured || false
             });
           } else {
             setProfile(prev => ({
@@ -120,7 +132,6 @@ export const ProfileEditor = () => {
           });
         }
       } else {
-        // Handle case where profile data is invalid or missing
         console.warn('Invalid or missing profile data');
         setProfile({
           full_name: '',
@@ -130,7 +141,11 @@ export const ProfileEditor = () => {
           service_area_city: '',
           service_radius_km: 10,
           years_experience: 0,
-          hourly_rate: 25
+          hourly_rate: 25,
+          banner_image_url: '',
+          before_after_photos: [],
+          service_badges: [],
+          is_featured: false
         });
       }
     } catch (error) {
@@ -174,6 +189,9 @@ export const ProfileEditor = () => {
           service_radius_km: profile.service_radius_km || 10,
           years_experience: profile.years_experience || 0,
           hourly_rate: Number(profile.hourly_rate) || 25,
+          banner_image_url: profile.banner_image_url || null,
+          before_after_photos: profile.before_after_photos || [],
+          service_badges: profile.service_badges || [],
           is_profile_complete: true
         };
 
@@ -208,7 +226,6 @@ export const ProfileEditor = () => {
   const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
-    // Allow empty string for temporary states while typing
     if (value === '') {
       setProfile(prev => ({ ...prev, hourly_rate: undefined }));
       return;
