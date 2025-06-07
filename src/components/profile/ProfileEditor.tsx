@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, DollarSign } from 'lucide-react';
 import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
 import { ServiceTypesSelector } from './ServiceTypesSelector';
+import { RoleToggle } from './RoleToggle';
 
 interface ProfileData {
   full_name: string;
