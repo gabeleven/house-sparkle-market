@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, MapPin, DollarSign } from 'lucide-react';
+import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
 
 interface ProfileData {
   full_name: string;
@@ -68,7 +69,7 @@ export const ProfileEditor = () => {
         return;
       }
 
-      if (profileData) {
+      if (profileData && isValidProfileData(profileData)) {
         // Safe type checking for user_role
         const userRoleValue = profileData.user_role || 'customer';
         setUserRole(userRoleValue);
@@ -85,7 +86,7 @@ export const ProfileEditor = () => {
             console.error('Cleaner profile error:', cleanerError);
           }
 
-          if (cleanerData) {
+          if (cleanerData && isValidCleanerProfileData(cleanerData)) {
             setProfile({
               full_name: profileData.full_name || '',
               phone_number: profileData.phone_number || '',
@@ -116,13 +117,28 @@ export const ProfileEditor = () => {
             console.error('Customer profile error:', customerError);
           }
 
+          const customerProfile = customerData && isValidCustomerProfileData(customerData) ? customerData : null;
+
           setProfile({
             full_name: profileData.full_name || '',
             phone_number: profileData.phone_number || '',
-            latitude: customerData?.latitude || undefined,
-            longitude: customerData?.longitude || undefined
+            latitude: customerProfile?.latitude || undefined,
+            longitude: customerProfile?.longitude || undefined
           });
         }
+      } else {
+        // Handle case where profile data is invalid or missing
+        console.warn('Invalid or missing profile data');
+        setProfile({
+          full_name: '',
+          phone_number: '',
+          business_name: '',
+          brief_description: '',
+          service_area_city: '',
+          service_radius_km: 10,
+          years_experience: 0,
+          hourly_rate: 25
+        });
       }
     } catch (error) {
       console.error('Error loading profile:', error);

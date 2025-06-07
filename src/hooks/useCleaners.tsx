@@ -1,6 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { isValidCleanerData } from '@/utils/typeGuards';
 
 export interface CleanerProfile {
   id: string;
@@ -52,19 +53,21 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
       console.log('Fetched cleaners:', data);
       console.log('Number of cleaners found:', data?.length || 0);
 
-      let processedCleaners = (data || []).map((cleaner): CleanerProfile => ({
-        id: cleaner.id || '',
-        full_name: cleaner.full_name || '',
-        business_name: cleaner.business_name,
-        brief_description: cleaner.brief_description,
-        profile_photo_url: cleaner.profile_photo_url,
-        latitude: cleaner.latitude,
-        longitude: cleaner.longitude,
-        service_radius_km: cleaner.service_radius_km,
-        years_experience: cleaner.years_experience,
-        service_area_city: cleaner.service_area_city,
-        services: cleaner.services || []
-      }));
+      let processedCleaners = (data || [])
+        .filter(cleaner => isValidCleanerData(cleaner))
+        .map((cleaner): CleanerProfile => ({
+          id: cleaner.id || '',
+          full_name: cleaner.full_name || '',
+          business_name: cleaner.business_name,
+          brief_description: cleaner.brief_description,
+          profile_photo_url: cleaner.profile_photo_url,
+          latitude: cleaner.latitude,
+          longitude: cleaner.longitude,
+          service_radius_km: cleaner.service_radius_km,
+          years_experience: cleaner.years_experience,
+          service_area_city: cleaner.service_area_city,
+          services: cleaner.services || []
+        }));
 
       // Calculate distances if user location is available
       if (userLocation && userLocation.latitude && userLocation.longitude) {

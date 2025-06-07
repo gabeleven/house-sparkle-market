@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { isValidMessageData, isValidConversationData } from '@/utils/typeGuards';
 
 export interface ChatMessage {
   id: string;
@@ -96,7 +97,7 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (!lastMsgError && lastMsg && lastMsg.message_type && lastMsg.message_content) {
+        if (!lastMsgError && lastMsg && isValidMessageData(lastMsg)) {
           lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content;
         }
 
@@ -178,7 +179,7 @@ export const useChat = () => {
       console.error('Error checking existing conversation:', existingError);
     }
 
-    if (existing && existing.id) {
+    if (existing && isValidConversationData(existing)) {
       return existing.id;
     }
 
@@ -197,7 +198,7 @@ export const useChat = () => {
       throw error;
     }
 
-    if (newConv && newConv.id) {
+    if (newConv && isValidConversationData(newConv)) {
       return newConv.id;
     }
 

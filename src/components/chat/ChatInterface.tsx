@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
 import { ChatMessages } from './ChatMessages';
 import { ChatHeader } from './ChatHeader';
+import { isValidProfileData } from '@/utils/typeGuards';
 
 interface ChatInterfaceProps {
   conversationId: string;
@@ -62,14 +63,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         return;
       }
 
-      if (data) {
+      if (data && isValidProfileData(data)) {
         setOtherUserInfo({
           full_name: data.full_name || 'Unknown User',
           profile_photo_url: data.profile_photo_url || undefined
         });
+      } else {
+        // Fallback for invalid or missing data
+        setOtherUserInfo({
+          full_name: 'Unknown User',
+          profile_photo_url: undefined
+        });
       }
     } catch (error) {
       console.error('Error loading other user info:', error);
+      setOtherUserInfo({
+        full_name: 'Unknown User',
+        profile_photo_url: undefined
+      });
     }
   };
 
