@@ -17,7 +17,7 @@ interface GoogleMapViewProps {
   isFullScreen?: boolean;
 }
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCh7eDl0EFO4QyhBTgByLdL5VKM2EgcynU';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyC0T-uWpFRGR3Xi76KidhXZrbAjBst8JTQ';
 const QUEBEC_CENTER = { lat: 46.8139, lng: -71.2080 }; // Quebec province center
 const QUEBEC_BOUNDS = {
   north: 62.5834,
