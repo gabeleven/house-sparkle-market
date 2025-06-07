@@ -31,7 +31,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-green-700 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-primary to-green-700 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
             <span className="text-2xl font-bold text-foreground">HOUSIE</span>
@@ -92,7 +92,7 @@ const Header = () => {
                   <User className="w-4 h-4 mr-2" />
                   Se connecter
                 </Button>
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={() => navigate('/auth?type=cleaner')}>
+                <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/auth?type=cleaner')}>
                   Nous rejoindre
                 </Button>
               </>

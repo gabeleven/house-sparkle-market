@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
@@ -83,7 +84,7 @@ const BrowseCleaners = () => {
               </div>
             </div>
 
-            <Button onClick={handleSearch} className="bg-purple-600 hover:bg-purple-700">
+            <Button onClick={handleSearch} className="bg-primary hover:bg-primary/90">
               <Search className="w-4 h-4 mr-2" />
               Search
             </Button>
@@ -96,7 +97,7 @@ const BrowseCleaners = () => {
                   variant="outline"
                   size="sm"
                   onClick={requestLocation}
-                  className="text-purple-600 border-purple-600 hover:bg-purple-50"
+                  className="text-primary border-primary hover:bg-primary/10"
                 >
                   <MapPin className="w-4 h-4 mr-2" />
                   Use My Location
@@ -104,7 +105,7 @@ const BrowseCleaners = () => {
               )}
               
               {location && (
-                <span className="text-sm text-green-600 font-medium">
+                <span className="text-sm text-green-600 dark:text-green-400 font-medium">
                   ✓ Using your location for better results
                 </span>
               )}
@@ -217,7 +218,7 @@ const BrowseCleaners = () => {
                       <Button
                         onClick={requestLocation}
                         variant="outline"
-                        className="text-purple-600 border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                        className="text-primary border-primary hover:bg-primary/10"
                       >
                         <MapPin className="w-4 h-4 mr-2" />
                         Enable Location for Better Results

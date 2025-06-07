@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { ProfileEditor } from '@/components/profile/ProfileEditor';
+import { RoleToggle } from '@/components/profile/RoleToggle';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -28,7 +29,7 @@ const MyProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div>Loading...</div>
       </div>
     );
@@ -39,7 +40,7 @@ const MyProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
@@ -57,14 +58,17 @@ const MyProfile = () => {
         </div>
         
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+          <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
           <Button variant="outline" onClick={() => navigate(`/profile/${user.id}`)}>
             <Eye className="w-4 h-4 mr-2" />
             View Public Profile
           </Button>
         </div>
         
-        <ProfileEditor />
+        <div className="space-y-6">
+          <RoleToggle />
+          <ProfileEditor />
+        </div>
       </div>
     </div>
   );
