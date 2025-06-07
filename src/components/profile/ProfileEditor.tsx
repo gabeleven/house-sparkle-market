@@ -248,24 +248,45 @@ export const ProfileEditor = () => {
   const validateForm = (): boolean => {
     const errors: {[key: string]: string} = {};
 
-    if (!validatePhone(profile.phone_number)) {
+    // Log validation inputs for debugging
+    console.log('Validating form with values:', {
+      phone_number: profile.phone_number,
+      hourly_rate: profile.hourly_rate,
+      years_experience: profile.years_experience,
+      service_radius_km: profile.service_radius_km,
+      userRole
+    });
+
+    if (profile.phone_number && !validatePhone(profile.phone_number)) {
       errors.phone_number = "Invalid phone number format";
     }
 
     if (userRole === 'cleaner') {
-      if (!validateHourlyRate(profile.hourly_rate)) {
+      // Convert to numbers and validate
+      const hourlyRate = Number(profile.hourly_rate);
+      const yearsExp = Number(profile.years_experience);
+      const radius = Number(profile.service_radius_km);
+
+      console.log('Cleaner validation - converted values:', {
+        hourlyRate,
+        yearsExp,
+        radius
+      });
+
+      if (profile.hourly_rate !== undefined && !validateHourlyRate(hourlyRate)) {
         errors.hourly_rate = "Hourly rate must be greater than $0";
       }
 
-      if (!validateYearsExperience(profile.years_experience)) {
+      if (profile.years_experience !== undefined && !validateYearsExperience(yearsExp)) {
         errors.years_experience = "Years of experience must be between 0 and 50";
       }
 
-      if (!validateServiceRadius(profile.service_radius_km)) {
+      if (profile.service_radius_km !== undefined && !validateServiceRadius(radius)) {
         errors.service_radius_km = "Service radius must be between 1 and 100 km";
       }
     }
 
+    console.log('Validation errors:', errors);
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -306,8 +327,8 @@ export const ProfileEditor = () => {
           business_name: profile.business_name || null,
           brief_description: profile.brief_description || null,
           service_area_city: profile.service_area_city || null,
-          service_radius_km: profile.service_radius_km || 10,
-          years_experience: profile.years_experience || 0,
+          service_radius_km: Number(profile.service_radius_km) || 10,
+          years_experience: Number(profile.years_experience) || 0,
           hourly_rate: Number(profile.hourly_rate) || 25,
           banner_image_url: profile.banner_image_url || null,
           before_after_photos: profile.before_after_photos || [],
@@ -376,7 +397,7 @@ export const ProfileEditor = () => {
     <div className="max-w-2xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Edit Profile</CardTitle>
+          <CardTitle>Profile Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

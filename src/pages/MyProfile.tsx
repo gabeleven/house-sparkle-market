@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { ProfileEditor } from '@/components/profile/ProfileEditor';
-import { RoleToggle } from '@/components/profile/RoleToggle';
+import { UnifiedProfileToggle } from '@/components/profile/UnifiedProfileToggle';
+import { CustomerModeView } from '@/components/profile/CustomerModeView';
+import { CleanerModeView } from '@/components/profile/CleanerModeView';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -20,6 +21,7 @@ import {
 const MyProfile = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [currentMode, setCurrentMode] = useState<'customer' | 'cleaner'>('customer');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,6 +40,10 @@ const MyProfile = () => {
   if (!user) {
     return null;
   }
+
+  const handleModeChange = (mode: 'customer' | 'cleaner') => {
+    setCurrentMode(mode);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,8 +72,13 @@ const MyProfile = () => {
         </div>
         
         <div className="space-y-6">
-          <RoleToggle />
-          <ProfileEditor />
+          <UnifiedProfileToggle onModeChange={handleModeChange} />
+          
+          {currentMode === 'customer' ? (
+            <CustomerModeView />
+          ) : (
+            <CleanerModeView />
+          )}
         </div>
       </div>
     </div>
