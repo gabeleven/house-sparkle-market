@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -215,35 +216,39 @@ export const useChat = () => {
       .neq('sender_id', user.id);
   };
 
+  // Clean up subscriptions helper
+  const cleanupSubscriptions = useCallback(() => {
+    if (subscriptionsRef.current.messages) {
+      console.log('Removing messages channel');
+      supabase.removeChannel(subscriptionsRef.current.messages);
+      subscriptionsRef.current.messages = undefined;
+    }
+    if (subscriptionsRef.current.conversations) {
+      console.log('Removing conversations channel');
+      supabase.removeChannel(subscriptionsRef.current.conversations);
+      subscriptionsRef.current.conversations = undefined;
+    }
+  }, []);
+
   // Set up real-time subscriptions - only when user is authenticated
   useEffect(() => {
+    // Always clean up first
+    cleanupSubscriptions();
+
     // Early return if no user to prevent subscriptions
     if (!user) {
-      // Clean up any existing subscriptions
-      if (subscriptionsRef.current.messages) {
-        supabase.removeChannel(subscriptionsRef.current.messages);
-        subscriptionsRef.current.messages = undefined;
-      }
-      if (subscriptionsRef.current.conversations) {
-        supabase.removeChannel(subscriptionsRef.current.conversations);
-        subscriptionsRef.current.conversations = undefined;
-      }
       return;
     }
 
     console.log('Setting up chat subscriptions for user:', user.id);
 
-    // Clean up existing subscriptions before creating new ones
-    if (subscriptionsRef.current.messages) {
-      supabase.removeChannel(subscriptionsRef.current.messages);
-    }
-    if (subscriptionsRef.current.conversations) {
-      supabase.removeChannel(subscriptionsRef.current.conversations);
-    }
+    // Create unique channel names to avoid conflicts
+    const messagesChannelName = `chat-messages-${user.id}-${Date.now()}`;
+    const conversationsChannelName = `conversations-${user.id}-${Date.now()}`;
 
     // Subscribe to new messages
     const messagesChannel = supabase
-      .channel(`chat-messages-${user.id}`)
+      .channel(messagesChannelName)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -285,7 +290,7 @@ export const useChat = () => {
 
     // Subscribe to conversation updates
     const conversationsChannel = supabase
-      .channel(`conversations-${user.id}`)
+      .channel(conversationsChannelName)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
@@ -301,15 +306,8 @@ export const useChat = () => {
       conversations: conversationsChannel
     };
 
-    return () => {
-      if (subscriptionsRef.current.messages) {
-        supabase.removeChannel(subscriptionsRef.current.messages);
-      }
-      if (subscriptionsRef.current.conversations) {
-        supabase.removeChannel(subscriptionsRef.current.conversations);
-      }
-    };
-  }, [user, currentConversationId, loadConversations]);
+    return cleanupSubscriptions;
+  }, [user, currentConversationId, loadConversations, cleanupSubscriptions]);
 
   // Request notification permission
   useEffect(() => {
