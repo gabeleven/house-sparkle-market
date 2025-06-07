@@ -72,6 +72,7 @@ export type Database = {
           brief_description: string | null
           business_name: string | null
           created_at: string | null
+          hourly_rate: number | null
           id: string
           is_profile_complete: boolean | null
           latitude: number | null
@@ -87,6 +88,7 @@ export type Database = {
           brief_description?: string | null
           business_name?: string | null
           created_at?: string | null
+          hourly_rate?: number | null
           id: string
           is_profile_complete?: boolean | null
           latitude?: number | null
@@ -102,6 +104,7 @@ export type Database = {
           brief_description?: string | null
           business_name?: string | null
           created_at?: string | null
+          hourly_rate?: number | null
           id?: string
           is_profile_complete?: boolean | null
           latitude?: number | null

@@ -34,7 +34,7 @@ export const ProfileEditor = () => {
     service_area_city: '',
     service_radius_km: 10,
     years_experience: 0,
-    hourly_rate: 0
+    hourly_rate: 25
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -94,7 +94,7 @@ export const ProfileEditor = () => {
               service_area_city: cleanerData.service_area_city || '',
               service_radius_km: cleanerData.service_radius_km || 10,
               years_experience: cleanerData.years_experience || 0,
-              hourly_rate: 25, // Default rate
+              hourly_rate: cleanerData.hourly_rate || 25,
               latitude: cleanerData.latitude || undefined,
               longitude: cleanerData.longitude || undefined
             });
@@ -164,6 +164,7 @@ export const ProfileEditor = () => {
           service_area_city: profile.service_area_city || null,
           service_radius_km: profile.service_radius_km || 10,
           years_experience: profile.years_experience || 0,
+          hourly_rate: profile.hourly_rate || 25,
           latitude: profile.latitude || null,
           longitude: profile.longitude || null,
           is_profile_complete: true
@@ -236,6 +237,14 @@ export const ProfileEditor = () => {
     }
   };
 
+  const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if (isNaN(value) || value < 0) {
+      return; // Don't update if invalid
+    }
+    setProfile(prev => ({ ...prev, hourly_rate: value }));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -304,6 +313,7 @@ export const ProfileEditor = () => {
                 <Input
                   id="service_radius_km"
                   type="number"
+                  min="1"
                   value={profile.service_radius_km || 10}
                   onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 10 }))}
                 />
@@ -316,6 +326,7 @@ export const ProfileEditor = () => {
                 <Input
                   id="years_experience"
                   type="number"
+                  min="0"
                   value={profile.years_experience || 0}
                   onChange={(e) => setProfile(prev => ({ ...prev, years_experience: parseInt(e.target.value) || 0 }))}
                 />
@@ -327,11 +338,17 @@ export const ProfileEditor = () => {
                   <Input
                     id="hourly_rate"
                     type="number"
-                    value={profile.hourly_rate || 0}
-                    onChange={(e) => setProfile(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 }))}
+                    min="1"
+                    step="0.01"
+                    value={profile.hourly_rate || 25}
+                    onChange={handleRateChange}
                     className="pl-10"
+                    placeholder="25.00"
                   />
                 </div>
+                {(profile.hourly_rate || 0) < 1 && (
+                  <p className="text-sm text-red-500 mt-1">Rate must be greater than $0</p>
+                )}
               </div>
             </div>
           </>
@@ -356,7 +373,7 @@ export const ProfileEditor = () => {
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={saving}>
+          <Button onClick={handleSave} disabled={saving || (userRole === 'cleaner' && (profile.hourly_rate || 0) < 1)}>
             {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Save Profile
           </Button>

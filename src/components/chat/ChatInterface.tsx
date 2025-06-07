@@ -1,179 +1,144 @@
 
-import { useEffect, useRef, useState } from 'react';
-import { ChatHeader } from "./ChatHeader";
-import { ChatMessages } from "./ChatMessages";
-import { ChatInput } from "./ChatInput";
-import { useChat, ChatMessage } from "@/hooks/useChat";
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Badge } from '@/components/ui/badge';
+import { useChat } from '@/hooks/useChat';
+import { supabase } from '@/integrations/supabase/client';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Send } from 'lucide-react';
+import { ChatMessages } from './ChatMessages';
+import { ChatHeader } from './ChatHeader';
 
 interface ChatInterfaceProps {
   conversationId: string;
   otherUserId: string;
-  otherUserName: string;
-  otherUserAvatar?: string;
-  onBack?: () => void;
 }
 
-export const ChatInterface = ({
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   conversationId,
-  otherUserId,
-  otherUserName,
-  otherUserAvatar,
-  onBack
-}: ChatInterfaceProps) => {
+  otherUserId
+}) => {
   const { user } = useAuth();
-  const { messages, loadMessages, isLoading, markMessagesAsRead } = useChat();
-  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
-  const [newMessageCount, setNewMessageCount] = useState(0);
-  const [isWindowFocused, setIsWindowFocused] = useState(true);
-  const channelRef = useRef<any>(null);
+  const { messages, loadMessages, sendMessage, markMessagesAsRead } = useChat();
+  const [newMessage, setNewMessage] = useState('');
+  const [otherUserInfo, setOtherUserInfo] = useState<{
+    full_name: string;
+    profile_photo_url?: string;
+  } | null>(null);
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Track window focus for notification badges
-  useEffect(() => {
-    const handleFocus = () => {
-      setIsWindowFocused(true);
-      setNewMessageCount(0);
-      if (conversationId) {
-        markMessagesAsRead(conversationId);
-      }
-    };
-    const handleBlur = () => setIsWindowFocused(false);
-
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('blur', handleBlur);
-
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('blur', handleBlur);
-    };
-  }, [conversationId, markMessagesAsRead]);
-
-  // Load initial messages
   useEffect(() => {
     if (conversationId) {
       loadMessages(conversationId);
+      loadOtherUserInfo();
     }
   }, [conversationId, loadMessages]);
 
-  // Update local messages when chat messages change
   useEffect(() => {
-    setLocalMessages(messages);
+    scrollToBottom();
   }, [messages]);
 
-  // Set up real-time subscription for new messages in this conversation
   useEffect(() => {
-    if (!conversationId || !user) return;
-
-    // Clean up existing subscription
-    if (channelRef.current) {
-      console.log('Removing existing chat interface subscription');
-      supabase.removeChannel(channelRef.current);
+    // Mark messages as read when viewing conversation
+    if (conversationId) {
+      markMessagesAsRead(conversationId);
     }
+  }, [conversationId, markMessagesAsRead]);
 
-    console.log('Setting up real-time subscription for conversation:', conversationId);
+  const loadOtherUserInfo = async () => {
+    if (!otherUserId) return;
 
-    const channel = supabase
-      .channel(`chat-messages-${conversationId}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `conversation_id=eq.${conversationId}`
-      }, async (payload) => {
-        console.log('New message received in chat interface:', payload);
-        const newMessage = payload.new as any;
-        
-        // Fetch sender info to complete the message object
-        const { data: sender, error: senderError } = await supabase
-          .from('profiles')
-          .select('full_name, profile_photo_url')
-          .eq('id', newMessage.sender_id)
-          .maybeSingle();
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name, profile_photo_url')
+        .eq('id', otherUserId as any)
+        .maybeSingle();
 
-        let senderName = 'Unknown';
-        let senderAvatar: string | undefined = undefined;
-        
-        if (!senderError && sender) {
-          senderName = sender.full_name || 'Unknown';
-          senderAvatar = sender.profile_photo_url || undefined;
-        }
-
-        const messageWithSender: ChatMessage = {
-          ...newMessage,
-          sender_name: senderName,
-          sender_avatar: senderAvatar
-        };
-
-        // Add message to local state immediately for instant display
-        setLocalMessages(prev => {
-          const exists = prev.some(msg => msg.id === messageWithSender.id);
-          if (exists) return prev;
-          return [...prev, messageWithSender];
-        });
-
-        // Update notification count if window is not focused and message is from other user
-        if (!isWindowFocused && newMessage.sender_id !== user.id) {
-          setNewMessageCount(prev => prev + 1);
-          
-          // Show browser notification if permission granted
-          if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(`New message from ${messageWithSender.sender_name}`, {
-              body: newMessage.message_type === 'text' ? newMessage.message_content : '📷 Sent an image',
-              icon: messageWithSender.sender_avatar || '/placeholder.svg'
-            });
-          }
-        }
-
-        // Auto-mark as read if window is focused
-        if (isWindowFocused && newMessage.sender_id !== user.id) {
-          markMessagesAsRead(conversationId);
-        }
-      })
-      .subscribe((status) => {
-        console.log('Chat interface subscription status:', status);
-      });
-
-    channelRef.current = channel;
-
-    return () => {
-      if (channelRef.current) {
-        console.log('Cleaning up chat interface subscription');
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
+      if (error) {
+        console.error('Error loading other user info:', error);
+        return;
       }
-    };
-  }, [conversationId, user, isWindowFocused, markMessagesAsRead]);
 
-  // Request notification permission on mount
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+      if (data) {
+        setOtherUserInfo({
+          full_name: data.full_name,
+          profile_photo_url: data.profile_photo_url
+        });
+      }
+    } catch (error) {
+      console.error('Error loading other user info:', error);
     }
-  }, []);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !conversationId || sending) return;
+
+    setSending(true);
+    try {
+      await sendMessage(conversationId, newMessage.trim());
+      setNewMessage('');
+      // Reload messages to get the latest
+      loadMessages(conversationId);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p>Please log in to view messages.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-full bg-white relative">
-      {/* New message notification badge */}
-      {newMessageCount > 0 && !isWindowFocused && (
-        <div className="absolute top-4 right-4 z-10">
-          <Badge variant="destructive" className="animate-pulse">
-            {newMessageCount} new message{newMessageCount > 1 ? 's' : ''}
-          </Badge>
-        </div>
-      )}
-
-      <ChatHeader
-        otherUserId={otherUserId}
-        otherUserName={otherUserName}
-        otherUserAvatar={otherUserAvatar}
-        onBack={onBack}
+    <Card className="flex flex-col h-full">
+      <ChatHeader 
+        otherUserName={otherUserInfo?.full_name || 'Unknown User'}
+        otherUserAvatar={otherUserInfo?.profile_photo_url}
       />
+      
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+        <ChatMessages messages={messages} currentUserId={user.id} />
+        <div ref={messagesEndRef} />
+      </div>
 
-      <ChatMessages messages={localMessages} isLoading={isLoading} />
-
-      <ChatInput conversationId={conversationId} />
-    </div>
+      <div className="border-t p-4">
+        <div className="flex gap-2">
+          <Input
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Type a message..."
+            disabled={sending}
+            className="flex-1"
+          />
+          <Button 
+            onClick={handleSendMessage}
+            disabled={!newMessage.trim() || sending}
+            size="icon"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
 };

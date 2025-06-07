@@ -96,8 +96,8 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (lastMsg) {
-          lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content || '';
+        if (lastMsg && lastMsg.message_type && lastMsg.message_content) {
+          lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content;
         }
 
         return {
@@ -174,7 +174,7 @@ export const useChat = () => {
       .eq('cleaner_id', cleanerId as any)
       .maybeSingle();
 
-    if (existing) {
+    if (existing && existing.id) {
       return existing.id;
     }
 
@@ -193,7 +193,7 @@ export const useChat = () => {
       throw error;
     }
 
-    if (newConv) {
+    if (newConv && newConv.id) {
       return newConv.id;
     }
 
