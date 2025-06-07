@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -40,7 +40,7 @@ export const useChat = () => {
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   // Load conversations for current user
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     if (!user) return;
 
     const { data, error } = await supabase
@@ -96,10 +96,10 @@ export const useChat = () => {
     );
 
     setConversations(processedConversations);
-  };
+  }, [user]);
 
   // Load messages for a conversation
-  const loadMessages = async (conversationId: string) => {
+  const loadMessages = useCallback(async (conversationId: string) => {
     setIsLoading(true);
     
     const { data, error } = await supabase
@@ -136,7 +136,7 @@ export const useChat = () => {
 
     // Mark messages as read
     await markMessagesAsRead(conversationId);
-  };
+  }, []);
 
   // Create or get conversation
   const getOrCreateConversation = async (cleanerId: string, customerId: string) => {
@@ -240,14 +240,21 @@ export const useChat = () => {
   useEffect(() => {
     if (!user) return;
 
+    console.log('Setting up real-time subscriptions for user:', user.id);
+
+    // Create unique channel names to avoid conflicts
+    const messageChannelName = `chat-messages-${user.id}-${Date.now()}`;
+    const conversationChannelName = `conversations-updates-${user.id}-${Date.now()}`;
+
     // Subscribe to new messages
     const messageSubscription = supabase
-      .channel('chat-messages')
+      .channel(messageChannelName)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'chat_messages'
       }, (payload) => {
+        console.log('New message received:', payload);
         const newMessage = payload.new as any;
         
         // Add sender info (we'll need to fetch this)
@@ -284,21 +291,23 @@ export const useChat = () => {
 
     // Subscribe to conversation updates
     const conversationSubscription = supabase
-      .channel('conversations-updates')
+      .channel(conversationChannelName)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'conversations'
       }, () => {
+        console.log('Conversation updated');
         loadConversations();
       })
       .subscribe();
 
     return () => {
-      messageSubscription.unsubscribe();
-      conversationSubscription.unsubscribe();
+      console.log('Cleaning up real-time subscriptions');
+      supabase.removeChannel(messageSubscription);
+      supabase.removeChannel(conversationSubscription);
     };
-  }, [user, currentConversationId]);
+  }, [user, currentConversationId, loadConversations]);
 
   // Request notification permission
   useEffect(() => {
