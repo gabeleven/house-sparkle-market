@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, MapPin, DollarSign } from 'lucide-react';
+import { Loader2, DollarSign } from 'lucide-react';
 import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
 
 interface ProfileData {
@@ -20,8 +20,6 @@ interface ProfileData {
   service_radius_km?: number;
   years_experience?: number;
   hourly_rate?: number;
-  latitude?: number;
-  longitude?: number;
 }
 
 export const ProfileEditor = () => {
@@ -95,9 +93,7 @@ export const ProfileEditor = () => {
               service_area_city: cleanerData.service_area_city || '',
               service_radius_km: cleanerData.service_radius_km || 10,
               years_experience: cleanerData.years_experience || 0,
-              hourly_rate: cleanerData.hourly_rate || 25,
-              latitude: cleanerData.latitude || undefined,
-              longitude: cleanerData.longitude || undefined
+              hourly_rate: cleanerData.hourly_rate || 25
             });
           } else {
             setProfile(prev => ({
@@ -117,13 +113,9 @@ export const ProfileEditor = () => {
             console.error('Customer profile error:', customerError);
           }
 
-          const customerProfile = customerData && isValidCustomerProfileData(customerData) ? customerData : null;
-
           setProfile({
             full_name: profileData.full_name || '',
-            phone_number: profileData.phone_number || '',
-            latitude: customerProfile?.latitude || undefined,
-            longitude: customerProfile?.longitude || undefined
+            phone_number: profileData.phone_number || ''
           });
         }
       } else {
@@ -180,9 +172,7 @@ export const ProfileEditor = () => {
           service_area_city: profile.service_area_city || null,
           service_radius_km: profile.service_radius_km || 10,
           years_experience: profile.years_experience || 0,
-          hourly_rate: Number(profile.hourly_rate) || 25, // Ensure it's a number
-          latitude: profile.latitude || null,
-          longitude: profile.longitude || null,
+          hourly_rate: Number(profile.hourly_rate) || 25,
           is_profile_complete: true
         };
 
@@ -195,21 +185,6 @@ export const ProfileEditor = () => {
         if (cleanerError) {
           console.error('Cleaner profile update error:', cleanerError);
           throw cleanerError;
-        }
-      } else {
-        const customerProfileData = {
-          id: user.id,
-          latitude: profile.latitude || null,
-          longitude: profile.longitude || null
-        };
-
-        const { error: customerError } = await supabase
-          .from('customer_profiles')
-          .upsert(customerProfileData as any);
-
-        if (customerError) {
-          console.error('Customer profile update error:', customerError);
-          throw customerError;
         }
       }
 
@@ -226,32 +201,6 @@ export const ProfileEditor = () => {
       });
     } finally {
       setSaving(false);
-    }
-  };
-
-  const requestLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setProfile(prev => ({
-            ...prev,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          }));
-          toast({
-            title: "Location updated",
-            description: "Your location has been saved"
-          });
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          toast({
-            title: "Location error",
-            description: "Could not get your location",
-            variant: "destructive"
-          });
-        }
-      );
     }
   };
 
@@ -335,6 +284,7 @@ export const ProfileEditor = () => {
                   id="service_area_city"
                   value={profile.service_area_city || ''}
                   onChange={(e) => setProfile(prev => ({ ...prev, service_area_city: e.target.value }))}
+                  placeholder="e.g. Montreal, Toronto, Vancouver"
                 />
               </div>
               <div>
@@ -382,24 +332,6 @@ export const ProfileEditor = () => {
             </div>
           </>
         )}
-
-        <div className="border-t pt-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Location</h3>
-              <p className="text-sm text-gray-600">
-                {profile.latitude && profile.longitude 
-                  ? `Location saved (${profile.latitude.toFixed(4)}, ${profile.longitude.toFixed(4)})` 
-                  : 'No location set'
-                }
-              </p>
-            </div>
-            <Button variant="outline" onClick={requestLocation}>
-              <MapPin className="w-4 h-4 mr-2" />
-              Update Location
-            </Button>
-          </div>
-        </div>
 
         <div className="flex justify-end">
           <Button onClick={handleSave} disabled={saving || !isRateValid()}>

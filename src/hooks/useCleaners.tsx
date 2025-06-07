@@ -90,47 +90,16 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
           };
         });
 
-      // Calculate distances if user location is available
-      if (userLocation && userLocation.latitude && userLocation.longitude) {
-        const cleanersWithDistance = await Promise.all(
-          processedCleaners.map(async (cleaner) => {
-            if (cleaner.latitude && cleaner.longitude) {
-              try {
-                const { data: distance, error: distanceError } = await supabase.rpc('calculate_distance', {
-                  lat1: userLocation.latitude,
-                  lon1: userLocation.longitude,
-                  lat2: cleaner.latitude,
-                  lon2: cleaner.longitude
-                });
-                
-                if (distanceError) {
-                  console.error('Error calculating distance:', distanceError);
-                  return cleaner;
-                }
-                
-                return {
-                  ...cleaner,
-                  distance: typeof distance === 'number' ? distance : undefined
-                };
-              } catch (err) {
-                console.error('Distance calculation failed:', err);
-                return cleaner;
-              }
-            }
-            return cleaner;
-          })
-        );
-
-        // Sort by distance
-        cleanersWithDistance.sort((a, b) => {
-          if (a.distance && b.distance) return a.distance - b.distance;
-          if (a.distance) return -1;
-          if (b.distance) return 1;
-          return 0;
-        });
-
-        return cleanersWithDistance;
-      }
+      // Filter by service area city if no specific coordinates are used for map display
+      // Sort by service area city alphabetically for consistent ordering
+      processedCleaners.sort((a, b) => {
+        if (a.service_area_city && b.service_area_city) {
+          return a.service_area_city.localeCompare(b.service_area_city);
+        }
+        if (a.service_area_city) return -1;
+        if (b.service_area_city) return 1;
+        return 0;
+      });
 
       return processedCleaners;
     }
