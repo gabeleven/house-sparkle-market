@@ -8,6 +8,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
+import { 
+  validatePhone, 
+  validatePostalCode, 
+  validateEmail,
+  validateHourlyRate, 
+  validateYearsExperience,
+  formatPhoneNumber,
+  formatPostalCode 
+} from '@/utils/validation';
 
 interface SignupFormProps {
   userType: string;
@@ -34,6 +43,7 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
@@ -45,7 +55,42 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
     { id: 'commercial', label: 'Commercial' }
   ];
 
+  const validateForm = (): boolean => {
+    const errors: {[key: string]: string} = {};
+
+    if (!validateEmail(formData.email)) {
+      errors.email = "Invalid email format";
+    }
+
+    if (!validatePhone(formData.phoneNumber)) {
+      errors.phoneNumber = "Invalid phone number format";
+    }
+
+    if (userType === 'cleaner') {
+      if (formData.serviceAreaPostalCode && !validatePostalCode(formData.serviceAreaPostalCode)) {
+        errors.serviceAreaPostalCode = "Invalid postal code format (e.g., H1A 1A1)";
+      }
+
+      if (formData.yearsExperience && !validateYearsExperience(parseInt(formData.yearsExperience))) {
+        errors.yearsExperience = "Years of experience must be between 0 and 50";
+      }
+    } else {
+      if (formData.serviceLocationPostalCode && !validatePostalCode(formData.serviceLocationPostalCode)) {
+        errors.serviceLocationPostalCode = "Invalid postal code format (e.g., H1A 1A1)";
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleInputChange = (field: string, value: string) => {
+    if (field === 'phoneNumber') {
+      value = formatPhoneNumber(value);
+    } else if (field === 'serviceAreaPostalCode' || field === 'serviceLocationPostalCode') {
+      value = formatPostalCode(value);
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -61,12 +106,16 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      alert('Les mots de passe ne correspondent pas');
+      setValidationErrors({ confirmPassword: 'Les mots de passe ne correspondent pas' });
       return;
     }
 
     if (userType === 'cleaner' && selectedServices.length === 0) {
-      alert('Veuillez sélectionner au moins un service');
+      setValidationErrors({ services: 'Veuillez sélectionner au moins un service' });
+      return;
+    }
+
+    if (!validateForm()) {
       return;
     }
 
@@ -126,6 +175,9 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
           required
           placeholder="jean@example.com"
         />
+        {validationErrors.email && (
+          <p className="text-sm text-destructive">{validationErrors.email}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -151,6 +203,9 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
           required
           placeholder="••••••••"
         />
+        {validationErrors.confirmPassword && (
+          <p className="text-sm text-destructive">{validationErrors.confirmPassword}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -162,6 +217,9 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
           onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
           placeholder="(514) 123-4567"
         />
+        {validationErrors.phoneNumber && (
+          <p className="text-sm text-destructive">{validationErrors.phoneNumber}</p>
+        )}
       </div>
 
       {/* Cleaner specific fields */}
@@ -197,6 +255,9 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
                 required
                 placeholder="H1A 1A1"
               />
+              {validationErrors.serviceAreaPostalCode && (
+                <p className="text-sm text-destructive">{validationErrors.serviceAreaPostalCode}</p>
+              )}
             </div>
           </div>
 
@@ -214,6 +275,9 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
                 </div>
               ))}
             </div>
+            {validationErrors.services && (
+              <p className="text-sm text-destructive">{validationErrors.services}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -224,8 +288,12 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
               value={formData.yearsExperience}
               onChange={(e) => handleInputChange('yearsExperience', e.target.value)}
               min="0"
+              max="50"
               placeholder="5"
             />
+            {validationErrors.yearsExperience && (
+              <p className="text-sm text-destructive">{validationErrors.yearsExperience}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -262,6 +330,9 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
               onChange={(e) => handleInputChange('serviceLocationPostalCode', e.target.value)}
               placeholder="H1A 1A1"
             />
+            {validationErrors.serviceLocationPostalCode && (
+              <p className="text-sm text-destructive">{validationErrors.serviceLocationPostalCode}</p>
+            )}
           </div>
 
           <div className="space-y-2">

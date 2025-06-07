@@ -11,20 +11,18 @@ import { MapPin, User, LogOut, MessageCircle, ChevronDown, HelpCircle } from "lu
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
+import { useUnreadCounts } from "@/hooks/useUnreadCounts";
 
 const Header = () => {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const { messages: unreadMessages, supportTickets, loading: countsLoading } = useUnreadCounts();
 
   const handleSignOut = async () => {
     console.log('Header: Initiating sign out...');
     await signOut();
     navigate('/');
   };
-
-  // Mock unread message count - in a real app this would come from a hook
-  const unreadMessages = 3;
-  const supportTickets = 7;
 
   console.log('Header: Rendering with user:', user?.id || 'no user', 'loading:', loading);
 
@@ -72,7 +70,7 @@ const Header = () => {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem onClick={() => navigate('/chat')}>
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    Messages {unreadMessages > 0 && `(${unreadMessages})`}
+                    Messages {!countsLoading && unreadMessages > 0 && `(${unreadMessages})`}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/my-profile')}>
                     <User className="w-4 h-4 mr-2" />
@@ -80,7 +78,7 @@ const Header = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <HelpCircle className="w-4 h-4 mr-2" />
-                    Support {supportTickets > 0 && `(${supportTickets})`}
+                    Support {!countsLoading && supportTickets > 0 && `(${supportTickets})`}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>

@@ -11,6 +11,15 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, DollarSign } from 'lucide-react';
 import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
 import { ServiceTypesSelector } from './ServiceTypesSelector';
+import { 
+  validatePhone, 
+  validatePostalCode, 
+  validateHourlyRate, 
+  validateYearsExperience,
+  validateServiceRadius,
+  formatPhoneNumber,
+  formatPostalCode 
+} from '@/utils/validation';
 
 interface ProfileData {
   full_name: string;
@@ -47,6 +56,7 @@ export const ProfileEditor = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userRole, setUserRole] = useState<string>('customer');
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     if (user) {
@@ -125,7 +135,7 @@ export const ProfileEditor = () => {
         console.log('User role detected:', userRoleValue);
         setUserRole(userRoleValue);
 
-        // Set basic profile fields
+        // Set basic profile fields with null safety
         setProfile(prev => ({
           ...prev,
           full_name: profileData.full_name || '',
@@ -235,8 +245,42 @@ export const ProfileEditor = () => {
     }
   };
 
+  const validateForm = (): boolean => {
+    const errors: {[key: string]: string} = {};
+
+    if (!validatePhone(profile.phone_number)) {
+      errors.phone_number = "Invalid phone number format";
+    }
+
+    if (userRole === 'cleaner') {
+      if (!validateHourlyRate(profile.hourly_rate)) {
+        errors.hourly_rate = "Hourly rate must be greater than $0";
+      }
+
+      if (!validateYearsExperience(profile.years_experience)) {
+        errors.years_experience = "Years of experience must be between 0 and 50";
+      }
+
+      if (!validateServiceRadius(profile.service_radius_km)) {
+        errors.service_radius_km = "Service radius must be between 1 and 100 km";
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSave = async () => {
     if (!user) return;
+
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the form errors before saving",
+        variant: "destructive"
+      });
+      return;
+    }
 
     console.log('Saving profile for user:', user.id, 'role:', userRole);
     setSaving(true);
@@ -246,7 +290,7 @@ export const ProfileEditor = () => {
         .from('profiles')
         .update({
           full_name: profile.full_name,
-          phone_number: profile.phone_number
+          phone_number: profile.phone_number || null
         } as any)
         .eq('id', user.id as any);
 
@@ -299,6 +343,11 @@ export const ProfileEditor = () => {
     }
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setProfile(prev => ({ ...prev, phone_number: formatted }));
+  };
+
   const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
@@ -311,10 +360,6 @@ export const ProfileEditor = () => {
     if (!isNaN(numValue) && numValue >= 0) {
       setProfile(prev => ({ ...prev, hourly_rate: numValue }));
     }
-  };
-
-  const isRateValid = () => {
-    return userRole !== 'cleaner' || (profile.hourly_rate !== undefined && profile.hourly_rate > 0);
   };
 
   if (loading) {
@@ -348,8 +393,12 @@ export const ProfileEditor = () => {
               <Input
                 id="phone_number"
                 value={profile.phone_number}
-                onChange={(e) => setProfile(prev => ({ ...prev, phone_number: e.target.value }))}
+                onChange={handlePhoneChange}
+                placeholder="(514) 123-4567"
               />
+              {validationErrors.phone_number && (
+                <p className="text-sm text-destructive mt-1">{validationErrors.phone_number}</p>
+              )}
             </div>
           </div>
 
@@ -390,9 +439,13 @@ export const ProfileEditor = () => {
                     id="service_radius_km"
                     type="number"
                     min="1"
+                    max="100"
                     value={profile.service_radius_km || 10}
                     onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 10 }))}
                   />
+                  {validationErrors.service_radius_km && (
+                    <p className="text-sm text-destructive mt-1">{validationErrors.service_radius_km}</p>
+                  )}
                 </div>
               </div>
 
@@ -403,9 +456,13 @@ export const ProfileEditor = () => {
                     id="years_experience"
                     type="number"
                     min="0"
+                    max="50"
                     value={profile.years_experience || 0}
                     onChange={(e) => setProfile(prev => ({ ...prev, years_experience: parseInt(e.target.value) || 0 }))}
                   />
+                  {validationErrors.years_experience && (
+                    <p className="text-sm text-destructive mt-1">{validationErrors.years_experience}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
@@ -416,14 +473,15 @@ export const ProfileEditor = () => {
                       type="number"
                       min="0.01"
                       step="0.01"
+                      max="1000"
                       value={profile.hourly_rate !== undefined ? profile.hourly_rate : ''}
                       onChange={handleRateChange}
                       className="pl-10"
                       placeholder="25.00"
                     />
                   </div>
-                  {!isRateValid() && (
-                    <p className="text-sm text-destructive mt-1">Rate must be greater than $0</p>
+                  {validationErrors.hourly_rate && (
+                    <p className="text-sm text-destructive mt-1">{validationErrors.hourly_rate}</p>
                   )}
                 </div>
               </div>
@@ -431,7 +489,7 @@ export const ProfileEditor = () => {
           )}
 
           <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={saving || !isRateValid()}>
+            <Button onClick={handleSave} disabled={saving}>
               {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Save Profile
             </Button>

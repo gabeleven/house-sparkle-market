@@ -3,7 +3,7 @@
 export function isValidProfileData(data: any): data is {
   id: string;
   full_name: string;
-  phone_number: string;
+  phone_number: string | null;
   user_role: string;
   business_name?: string;
   brief_description?: string;
@@ -21,20 +21,20 @@ export function isValidProfileData(data: any): data is {
     !('message' in data) &&
     typeof data.id === 'string' &&
     typeof data.full_name === 'string' &&
-    typeof data.phone_number === 'string' &&
+    (typeof data.phone_number === 'string' || data.phone_number === null) &&
     typeof data.user_role === 'string';
 }
 
 export function isValidCleanerProfileData(data: any): data is {
   id: string;
-  business_name?: string;
-  brief_description?: string;
-  service_area_city?: string;
-  service_radius_km?: number;
-  years_experience?: number;
-  hourly_rate?: number;
-  latitude?: number;
-  longitude?: number;
+  business_name?: string | null;
+  brief_description?: string | null;
+  service_area_city?: string | null;
+  service_radius_km?: number | null;
+  years_experience?: number | null;
+  hourly_rate?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
 } {
   return data &&
     typeof data === 'object' &&
@@ -45,8 +45,8 @@ export function isValidCleanerProfileData(data: any): data is {
 
 export function isValidCustomerProfileData(data: any): data is {
   id: string;
-  latitude?: number;
-  longitude?: number;
+  latitude?: number | null;
+  longitude?: number | null;
 } {
   return data &&
     typeof data === 'object' &&
@@ -79,16 +79,16 @@ export function isValidConversationData(data: any): data is {
 
 export function isValidCleanerData(data: any): data is {
   id: string;
-  full_name?: string;
-  business_name?: string;
-  brief_description?: string;
-  profile_photo_url?: string;
-  latitude?: number;
-  longitude?: number;
-  service_radius_km?: number;
-  years_experience?: number;
-  service_area_city?: string;
-  services?: string[];
+  full_name?: string | null;
+  business_name?: string | null;
+  brief_description?: string | null;
+  profile_photo_url?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  service_radius_km?: number | null;
+  years_experience?: number | null;
+  service_area_city?: string | null;
+  services?: string[] | null;
 } {
   return data &&
     typeof data === 'object' &&
