@@ -86,9 +86,9 @@ export const useChat = () => {
           cleaner_id: conv.cleaner_id,
           created_at: conv.created_at,
           last_message_at: conv.last_message_at,
-          other_user_id: otherUser.id,
-          other_user_name: otherUser.full_name,
-          other_user_avatar: otherUser.profile_photo_url,
+          other_user_id: otherUser?.id || '',
+          other_user_name: otherUser?.full_name || 'Unknown User',
+          other_user_avatar: otherUser?.profile_photo_url,
           unread_count: count || 0,
           last_message: lastMsg?.message_type === 'image' ? '📷 Image' : lastMsg?.message_content
         };
@@ -126,8 +126,8 @@ export const useChat = () => {
       message_type: msg.message_type,
       is_read: msg.is_read,
       created_at: msg.created_at,
-      sender_name: msg.sender.full_name,
-      sender_avatar: msg.sender.profile_photo_url
+      sender_name: msg.sender?.full_name || 'Unknown User',
+      sender_avatar: msg.sender?.profile_photo_url
     }));
 
     setMessages(processedMessages);

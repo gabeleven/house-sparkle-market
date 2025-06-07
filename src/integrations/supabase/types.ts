@@ -417,6 +417,7 @@ export type Database = {
           id: string
           is_email_verified: boolean | null
           phone_number: string | null
+          profile_photo_url: string | null
           updated_at: string | null
           user_role: Database["public"]["Enums"]["user_role"]
         }
@@ -427,6 +428,7 @@ export type Database = {
           id: string
           is_email_verified?: boolean | null
           phone_number?: string | null
+          profile_photo_url?: string | null
           updated_at?: string | null
           user_role: Database["public"]["Enums"]["user_role"]
         }
@@ -437,6 +439,7 @@ export type Database = {
           id?: string
           is_email_verified?: boolean | null
           phone_number?: string | null
+          profile_photo_url?: string | null
           updated_at?: string | null
           user_role?: Database["public"]["Enums"]["user_role"]
         }

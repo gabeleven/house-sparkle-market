@@ -26,7 +26,7 @@ const Chat = () => {
     if (conversationId && user) {
       // Load conversation data
       const loadConversation = async () => {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('conversations')
           .select(`
             *,
@@ -36,15 +36,15 @@ const Chat = () => {
           .eq('id', conversationId)
           .single();
 
-        if (data) {
+        if (data && !error) {
           const isCustomer = data.customer_id === user.id;
           const otherUser = isCustomer ? data.cleaner : data.customer;
           
           setConversationData({
             id: data.id,
-            otherUserId: otherUser.id,
-            otherUserName: otherUser.full_name,
-            otherUserAvatar: otherUser.profile_photo_url
+            otherUserId: otherUser?.id || '',
+            otherUserName: otherUser?.full_name || 'Unknown User',
+            otherUserAvatar: otherUser?.profile_photo_url
           });
         }
       };
