@@ -76,7 +76,7 @@ const Header = () => {
                     <User className="w-4 h-4 mr-2" />
                     My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/support')}>
                     <HelpCircle className="w-4 h-4 mr-2" />
                     Support {!countsLoading && supportTickets > 0 && `(${supportTickets})`}
                   </DropdownMenuItem>
