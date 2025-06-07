@@ -41,6 +41,9 @@ const Header = () => {
                 <a href="/chat" className="text-gray-600 hover:text-purple-600 transition-colors">
                   Messages
                 </a>
+                <a href="/my-profile" className="text-gray-600 hover:text-purple-600 transition-colors">
+                  My Profile
+                </a>
               </>
             )}
           </nav>

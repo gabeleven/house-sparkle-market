@@ -31,7 +31,7 @@ export interface Conversation {
 }
 
 export const useChat = () => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -43,10 +43,26 @@ export const useChat = () => {
     messages?: any;
     conversations?: any;
   }>({});
+  const isSubscribedRef = useRef(false);
+
+  // Validate session before database operations
+  const validateSession = useCallback(async () => {
+    if (!session) {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        return currentSession;
+      } catch (error) {
+        console.error('Session validation failed:', error);
+        return null;
+      }
+    }
+    return session;
+  }, [session]);
 
   // Load conversations for current user
   const loadConversations = useCallback(async () => {
-    if (!user) return;
+    const validSession = await validateSession();
+    if (!validSession || !user) return;
 
     const { data, error } = await supabase
       .from('conversations')
@@ -101,10 +117,13 @@ export const useChat = () => {
     );
 
     setConversations(processedConversations);
-  }, [user]);
+  }, [user, validateSession]);
 
   // Load messages for a conversation
   const loadMessages = useCallback(async (conversationId: string) => {
+    const validSession = await validateSession();
+    if (!validSession) return;
+    
     setIsLoading(true);
     
     const { data, error } = await supabase
@@ -141,10 +160,13 @@ export const useChat = () => {
 
     // Mark messages as read
     await markMessagesAsRead(conversationId);
-  }, []);
+  }, [validateSession]);
 
   // Create or get conversation
   const getOrCreateConversation = async (cleanerId: string, customerId: string) => {
+    const validSession = await validateSession();
+    if (!validSession) throw new Error('No valid session');
+
     // Try to find existing conversation
     const { data: existing } = await supabase
       .from('conversations')
@@ -177,7 +199,8 @@ export const useChat = () => {
 
   // Send a message
   const sendMessage = async (conversationId: string, content: string, type: 'text' | 'image' = 'text') => {
-    if (!user) return;
+    const validSession = await validateSession();
+    if (!validSession || !user) return;
 
     const messageData = {
       conversation_id: conversationId,
@@ -207,7 +230,8 @@ export const useChat = () => {
 
   // Mark messages as read
   const markMessagesAsRead = async (conversationId: string) => {
-    if (!user) return;
+    const validSession = await validateSession();
+    if (!validSession || !user) return;
 
     await supabase
       .from('chat_messages')
@@ -228,6 +252,7 @@ export const useChat = () => {
       supabase.removeChannel(subscriptionsRef.current.conversations);
       subscriptionsRef.current.conversations = undefined;
     }
+    isSubscribedRef.current = false;
   }, []);
 
   // Set up real-time subscriptions - only when user is authenticated
@@ -236,15 +261,18 @@ export const useChat = () => {
     cleanupSubscriptions();
 
     // Early return if no user to prevent subscriptions
-    if (!user) {
+    if (!user || !session || isSubscribedRef.current) {
       return;
     }
 
     console.log('Setting up chat subscriptions for user:', user.id);
+    isSubscribedRef.current = true;
 
-    // Create unique channel names to avoid conflicts
-    const messagesChannelName = `chat-messages-${user.id}-${Date.now()}`;
-    const conversationsChannelName = `conversations-${user.id}-${Date.now()}`;
+    // Create unique channel names with timestamp to avoid conflicts
+    const timestamp = Date.now();
+    const tabId = Math.random().toString(36).substr(2, 9);
+    const messagesChannelName = `chat-messages-${user.id}-${timestamp}-${tabId}`;
+    const conversationsChannelName = `conversations-${user.id}-${timestamp}-${tabId}`;
 
     // Subscribe to new messages
     const messagesChannel = supabase
@@ -307,7 +335,7 @@ export const useChat = () => {
     };
 
     return cleanupSubscriptions;
-  }, [user, currentConversationId, loadConversations, cleanupSubscriptions]);
+  }, [user, session, currentConversationId, loadConversations, cleanupSubscriptions]);
 
   // Request notification permission
   useEffect(() => {

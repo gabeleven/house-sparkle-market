@@ -29,7 +29,7 @@ export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
   };
 
   const handleViewProfile = () => {
-    // Navigate to the cleaner's profile page
+    // Navigate to the cleaner's public profile page
     navigate(`/profile/${cleaner.id}`);
   };
 

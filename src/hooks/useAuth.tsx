@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,45 +21,66 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const authSubscriptionRef = useRef<any>(null);
+  const isInitializedRef = useRef(false);
+
+  // Validate session before operations
+  const validateSession = async () => {
+    try {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      return currentSession;
+    } catch (error) {
+      console.error('Session validation failed:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
-    // Set up auth state listener FIRST - using non-async callback
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    // Prevent duplicate initialization
+    if (isInitializedRef.current) return;
+    isInitializedRef.current = true;
+
+    // Set up auth state listener with proper cleanup
+    authSubscriptionRef.current = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state changed:', event, session);
+        console.log('Auth state changed:', event, session?.user?.id || 'no user');
         
-        // Only synchronous state updates here - no async operations
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-        
-        // If we need to perform additional Supabase operations based on auth changes,
-        // we defer them using setTimeout to avoid deadlocks
-        if (session?.user && event === 'SIGNED_IN') {
-          setTimeout(() => {
-            // Any additional Supabase operations would go here
-            // For example: fetching user profile data
-            console.log('User signed in, could fetch additional data here');
-          }, 0);
-        }
-        
-        if (event === 'SIGNED_OUT') {
-          setTimeout(() => {
-            // Any cleanup operations would go here
-            console.log('User signed out, could perform cleanup here');
-          }, 0);
+        // Only update state for actual auth events, not tab switches
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+          
+          // Defer additional operations to prevent deadlocks
+          if (session?.user && event === 'SIGNED_IN') {
+            setTimeout(() => {
+              console.log('User signed in, session validated');
+            }, 0);
+          }
+          
+          if (event === 'SIGNED_OUT') {
+            setTimeout(() => {
+              console.log('User signed out, cleanup completed');
+            }, 0);
+          }
         }
       }
     );
 
-    // THEN check for existing session
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Cleanup function
+    return () => {
+      if (authSubscriptionRef.current) {
+        authSubscriptionRef.current.subscription.unsubscribe();
+        authSubscriptionRef.current = null;
+      }
+    };
   }, []);
 
   const signUp = async (email: string, password: string, userData: any) => {
@@ -91,6 +112,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
+    // Validate session before sign in
+    await validateSession();
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password

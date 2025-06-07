@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -10,12 +10,29 @@ export interface UserPresence {
 }
 
 export const usePresence = () => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [presenceData, setPresenceData] = useState<Record<string, UserPresence>>({});
+  const presenceChannelRef = useRef<any>(null);
+  const isSubscribedRef = useRef(false);
+
+  // Validate session before operations
+  const validateSession = useCallback(async () => {
+    if (!session) {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        return currentSession;
+      } catch (error) {
+        console.error('Session validation failed:', error);
+        return null;
+      }
+    }
+    return session;
+  }, [session]);
 
   // Update user's online status
   const updatePresence = useCallback(async (isOnline: boolean) => {
-    if (!user) return;
+    const validSession = await validateSession();
+    if (!validSession || !user) return;
 
     try {
       await supabase
@@ -28,11 +45,12 @@ export const usePresence = () => {
     } catch (error) {
       console.error('Error updating presence:', error);
     }
-  }, [user]);
+  }, [user, validateSession]);
 
   // Get presence for specific users
   const getPresence = useCallback(async (userIds: string[]) => {
-    if (userIds.length === 0) return;
+    const validSession = await validateSession();
+    if (!validSession || userIds.length === 0) return;
     
     const { data } = await supabase
       .from('user_presence')
@@ -47,20 +65,33 @@ export const usePresence = () => {
       
       setPresenceData(prev => ({ ...prev, ...presenceMap }));
     }
-  }, []);
+  }, [validateSession]);
 
   // Set up real-time presence updates
   useEffect(() => {
-    if (!user) return;
+    // Clean up existing subscription
+    if (presenceChannelRef.current) {
+      supabase.removeChannel(presenceChannelRef.current);
+      presenceChannelRef.current = null;
+      isSubscribedRef.current = false;
+    }
+
+    if (!user || !session || isSubscribedRef.current) return;
 
     console.log('Setting up presence for user:', user.id);
+    isSubscribedRef.current = true;
 
     // Set user online when hook mounts
     updatePresence(true);
 
+    // Create unique channel name to avoid conflicts
+    const timestamp = Date.now();
+    const tabId = Math.random().toString(36).substr(2, 9);
+    const channelName = `presence-${user.id}-${timestamp}-${tabId}`;
+
     // Subscribe to presence updates
-    const presenceChannel = supabase
-      .channel(`presence-${user.id}`)
+    presenceChannelRef.current = supabase
+      .channel(channelName)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
@@ -92,11 +123,15 @@ export const usePresence = () => {
 
     return () => {
       updatePresence(false);
-      supabase.removeChannel(presenceChannel);
+      if (presenceChannelRef.current) {
+        supabase.removeChannel(presenceChannelRef.current);
+        presenceChannelRef.current = null;
+      }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      isSubscribedRef.current = false;
     };
-  }, [user, updatePresence]);
+  }, [user, session, updatePresence]);
 
   const isUserOnline = useCallback((userId: string): boolean => {
     const presence = presenceData[userId];
