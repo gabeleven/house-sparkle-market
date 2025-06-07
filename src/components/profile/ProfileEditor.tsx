@@ -57,51 +57,70 @@ export const ProfileEditor = () => {
         .eq('id', user.id)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Profile error:', profileError);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
 
-      setUserRole(profileData.user_role || 'customer');
+      if (profileData) {
+        setUserRole(profileData.user_role || 'customer');
 
-      // Get role-specific data
-      if (profileData.user_role === 'cleaner') {
-        const { data: cleanerData } = await supabase
-          .from('cleaner_profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
+        // Get role-specific data
+        if (profileData.user_role === 'cleaner') {
+          const { data: cleanerData, error: cleanerError } = await supabase
+            .from('cleaner_profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
 
-        if (cleanerData) {
+          if (cleanerError) {
+            console.error('Cleaner profile error:', cleanerError);
+          }
+
+          if (cleanerData) {
+            setProfile({
+              full_name: profileData.full_name || '',
+              phone_number: profileData.phone_number || '',
+              business_name: cleanerData.business_name || '',
+              brief_description: cleanerData.brief_description || '',
+              service_area_city: cleanerData.service_area_city || '',
+              service_radius_km: cleanerData.service_radius_km || 10,
+              years_experience: cleanerData.years_experience || 0,
+              hourly_rate: 25, // Default rate
+              latitude: cleanerData.latitude || undefined,
+              longitude: cleanerData.longitude || undefined
+            });
+          } else {
+            setProfile(prev => ({
+              ...prev,
+              full_name: profileData.full_name || '',
+              phone_number: profileData.phone_number || ''
+            }));
+          }
+        } else {
+          const { data: customerData, error: customerError } = await supabase
+            .from('customer_profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+          if (customerError) {
+            console.error('Customer profile error:', customerError);
+          }
+
           setProfile({
             full_name: profileData.full_name || '',
             phone_number: profileData.phone_number || '',
-            business_name: cleanerData.business_name || '',
-            brief_description: cleanerData.brief_description || '',
-            service_area_city: cleanerData.service_area_city || '',
-            service_radius_km: cleanerData.service_radius_km || 10,
-            years_experience: cleanerData.years_experience || 0,
-            hourly_rate: 25, // Default rate
-            latitude: cleanerData.latitude,
-            longitude: cleanerData.longitude
+            latitude: customerData?.latitude || undefined,
+            longitude: customerData?.longitude || undefined
           });
-        } else {
-          setProfile(prev => ({
-            ...prev,
-            full_name: profileData.full_name || '',
-            phone_number: profileData.phone_number || ''
-          }));
         }
-      } else {
-        const { data: customerData } = await supabase
-          .from('customer_profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        setProfile({
-          full_name: profileData.full_name || '',
-          phone_number: profileData.phone_number || '',
-          latitude: customerData?.latitude,
-          longitude: customerData?.longitude
-        });
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -129,7 +148,10 @@ export const ProfileEditor = () => {
         })
         .eq('id', user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+        throw profileError;
+      }
 
       // Update role-specific data
       if (userRole === 'cleaner') {
@@ -147,7 +169,10 @@ export const ProfileEditor = () => {
             is_profile_complete: true
           });
 
-        if (cleanerError) throw cleanerError;
+        if (cleanerError) {
+          console.error('Cleaner profile update error:', cleanerError);
+          throw cleanerError;
+        }
       } else {
         const { error: customerError } = await supabase
           .from('customer_profiles')
@@ -157,7 +182,10 @@ export const ProfileEditor = () => {
             longitude: profile.longitude
           });
 
-        if (customerError) throw customerError;
+        if (customerError) {
+          console.error('Customer profile update error:', customerError);
+          throw customerError;
+        }
       }
 
       toast({
@@ -241,7 +269,7 @@ export const ProfileEditor = () => {
               <Label htmlFor="business_name">Business Name</Label>
               <Input
                 id="business_name"
-                value={profile.business_name}
+                value={profile.business_name || ''}
                 onChange={(e) => setProfile(prev => ({ ...prev, business_name: e.target.value }))}
               />
             </div>
@@ -250,7 +278,7 @@ export const ProfileEditor = () => {
               <Label htmlFor="brief_description">Brief Description</Label>
               <Textarea
                 id="brief_description"
-                value={profile.brief_description}
+                value={profile.brief_description || ''}
                 onChange={(e) => setProfile(prev => ({ ...prev, brief_description: e.target.value }))}
                 placeholder="Tell customers about your cleaning services..."
               />
@@ -261,7 +289,7 @@ export const ProfileEditor = () => {
                 <Label htmlFor="service_area_city">Service Area City</Label>
                 <Input
                   id="service_area_city"
-                  value={profile.service_area_city}
+                  value={profile.service_area_city || ''}
                   onChange={(e) => setProfile(prev => ({ ...prev, service_area_city: e.target.value }))}
                 />
               </div>
@@ -270,8 +298,8 @@ export const ProfileEditor = () => {
                 <Input
                   id="service_radius_km"
                   type="number"
-                  value={profile.service_radius_km}
-                  onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) }))}
+                  value={profile.service_radius_km || 10}
+                  onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 10 }))}
                 />
               </div>
             </div>
@@ -282,8 +310,8 @@ export const ProfileEditor = () => {
                 <Input
                   id="years_experience"
                   type="number"
-                  value={profile.years_experience}
-                  onChange={(e) => setProfile(prev => ({ ...prev, years_experience: parseInt(e.target.value) }))}
+                  value={profile.years_experience || 0}
+                  onChange={(e) => setProfile(prev => ({ ...prev, years_experience: parseInt(e.target.value) || 0 }))}
                 />
               </div>
               <div>
@@ -293,8 +321,8 @@ export const ProfileEditor = () => {
                   <Input
                     id="hourly_rate"
                     type="number"
-                    value={profile.hourly_rate}
-                    onChange={(e) => setProfile(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) }))}
+                    value={profile.hourly_rate || 0}
+                    onChange={(e) => setProfile(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 }))}
                     className="pl-10"
                   />
                 </div>
