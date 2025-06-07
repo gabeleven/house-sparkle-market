@@ -142,14 +142,12 @@ export const ProfileEditor = () => {
     setSaving(true);
     try {
       // Update basic profile with proper typing
-      const profileUpdate = {
-        full_name: profile.full_name,
-        phone_number: profile.phone_number
-      };
-
       const { error: profileError } = await supabase
         .from('profiles')
-        .update(profileUpdate)
+        .update({
+          full_name: profile.full_name,
+          phone_number: profile.phone_number
+        } as any)
         .eq('id', user.id);
 
       if (profileError) {
@@ -173,7 +171,7 @@ export const ProfileEditor = () => {
 
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
-          .upsert(cleanerProfileData);
+          .upsert(cleanerProfileData as any);
 
         if (cleanerError) {
           console.error('Cleaner profile update error:', cleanerError);
@@ -188,7 +186,7 @@ export const ProfileEditor = () => {
 
         const { error: customerError } = await supabase
           .from('customer_profiles')
-          .upsert(customerProfileData);
+          .upsert(customerProfileData as any);
 
         if (customerError) {
           console.error('Customer profile update error:', customerError);
