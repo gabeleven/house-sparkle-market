@@ -46,7 +46,7 @@ const Header = () => {
             </a>
             {user && (
               <a href="/prestataires" className="text-gray-600 hover:text-purple-600 transition-colors">
-                Prestataires
+                Professionnels
               </a>
             )}
           </nav>
