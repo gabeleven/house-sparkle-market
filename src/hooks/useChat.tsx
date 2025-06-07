@@ -38,12 +38,6 @@ export const useChat = () => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
-  
-  const subscriptionsRef = useRef<{
-    messages?: any;
-    conversations?: any;
-  }>({});
-  const isSubscribedRef = useRef(false);
 
   // Validate session before database operations
   const validateSession = useCallback(async () => {
@@ -102,7 +96,7 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (lastMsg && typeof lastMsg === 'object' && !('error' in lastMsg)) {
+        if (lastMsg) {
           lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content || '';
         }
 
@@ -180,7 +174,7 @@ export const useChat = () => {
       .eq('cleaner_id', cleanerId)
       .maybeSingle();
 
-    if (existing && typeof existing === 'object' && !('error' in existing)) {
+    if (existing) {
       return existing.id;
     }
 
@@ -199,7 +193,7 @@ export const useChat = () => {
       throw error;
     }
 
-    if (newConv && typeof newConv === 'object' && !('error' in newConv)) {
+    if (newConv) {
       return newConv.id;
     }
 
@@ -248,111 +242,6 @@ export const useChat = () => {
       .eq('conversation_id', conversationId)
       .neq('sender_id', user.id);
   };
-
-  // Clean up subscriptions helper
-  const cleanupSubscriptions = useCallback(() => {
-    if (subscriptionsRef.current.messages) {
-      console.log('Removing messages channel');
-      supabase.removeChannel(subscriptionsRef.current.messages);
-      subscriptionsRef.current.messages = undefined;
-    }
-    if (subscriptionsRef.current.conversations) {
-      console.log('Removing conversations channel');
-      supabase.removeChannel(subscriptionsRef.current.conversations);
-      subscriptionsRef.current.conversations = undefined;
-    }
-    isSubscribedRef.current = false;
-  }, []);
-
-  // Set up real-time subscriptions - only when user is authenticated
-  useEffect(() => {
-    // Always clean up first
-    cleanupSubscriptions();
-
-    // Early return if no user to prevent subscriptions
-    if (!user || !session || isSubscribedRef.current) {
-      return;
-    }
-
-    console.log('Setting up chat subscriptions for user:', user.id);
-    isSubscribedRef.current = true;
-
-    // Create unique channel names with timestamp to avoid conflicts
-    const timestamp = Date.now();
-    const tabId = Math.random().toString(36).substr(2, 9);
-    const messagesChannelName = `chat-messages-${user.id}-${timestamp}-${tabId}`;
-    const conversationsChannelName = `conversations-${user.id}-${timestamp}-${tabId}`;
-
-    // Subscribe to new messages
-    const messagesChannel = supabase
-      .channel(messagesChannelName)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages'
-      }, async (payload) => {
-        console.log('New message received:', payload);
-        const newMessage = payload.new as any;
-        
-        // Fetch sender info
-        const { data: sender } = await supabase
-          .from('profiles')
-          .select('full_name, profile_photo_url')
-          .eq('id', newMessage.sender_id)
-          .maybeSingle();
-
-        let senderName = 'Unknown';
-        let senderAvatar: string | undefined = undefined;
-        
-        if (sender && typeof sender === 'object' && !('error' in sender)) {
-          senderName = sender.full_name || 'Unknown';
-          senderAvatar = sender.profile_photo_url || undefined;
-        }
-
-        const messageWithSender: ChatMessage = {
-          ...newMessage,
-          sender_name: senderName,
-          sender_avatar: senderAvatar
-        };
-
-        // Update messages if it's for current conversation
-        if (newMessage.conversation_id === currentConversationId) {
-          setMessages(prev => [...prev, messageWithSender]);
-        }
-
-        // Reload conversations to update counts and last message
-        loadConversations();
-
-        // Show notification if not from current user
-        if (newMessage.sender_id !== user.id && 'Notification' in window && Notification.permission === 'granted') {
-          new Notification(`New message from ${messageWithSender.sender_name}`, {
-            body: newMessage.message_type === 'text' ? newMessage.message_content : '📷 Sent an image',
-            icon: messageWithSender.sender_avatar || '/placeholder.svg'
-          });
-        }
-      })
-      .subscribe();
-
-    // Subscribe to conversation updates
-    const conversationsChannel = supabase
-      .channel(conversationsChannelName)
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'conversations'
-      }, () => {
-        console.log('Conversation updated');
-        loadConversations();
-      })
-      .subscribe();
-
-    subscriptionsRef.current = {
-      messages: messagesChannel,
-      conversations: conversationsChannel
-    };
-
-    return cleanupSubscriptions;
-  }, [user, session, currentConversationId, loadConversations, cleanupSubscriptions]);
 
   // Request notification permission
   useEffect(() => {

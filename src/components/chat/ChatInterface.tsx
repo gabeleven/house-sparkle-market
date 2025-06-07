@@ -28,14 +28,13 @@ export const ChatInterface = ({
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
   const [newMessageCount, setNewMessageCount] = useState(0);
   const [isWindowFocused, setIsWindowFocused] = useState(true);
-  const subscriptionRef = useRef<any>(null);
+  const channelRef = useRef<any>(null);
 
   // Track window focus for notification badges
   useEffect(() => {
     const handleFocus = () => {
       setIsWindowFocused(true);
       setNewMessageCount(0);
-      // Mark messages as read when window gains focus
       if (conversationId) {
         markMessagesAsRead(conversationId);
       }
@@ -68,19 +67,15 @@ export const ChatInterface = ({
     if (!conversationId || !user) return;
 
     // Clean up existing subscription
-    if (subscriptionRef.current) {
+    if (channelRef.current) {
       console.log('Removing existing chat interface subscription');
-      supabase.removeChannel(subscriptionRef.current);
+      supabase.removeChannel(channelRef.current);
     }
 
-    // Create unique channel name to avoid conflicts
-    const timestamp = Date.now();
-    const channelName = `chat-interface-${conversationId}-${timestamp}`;
-    
     console.log('Setting up real-time subscription for conversation:', conversationId);
 
     const channel = supabase
-      .channel(channelName)
+      .channel(`chat-messages-${conversationId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -97,11 +92,10 @@ export const ChatInterface = ({
           .eq('id', newMessage.sender_id)
           .maybeSingle();
 
-        // Use proper type guards to ensure sender data is valid
         let senderName = 'Unknown';
         let senderAvatar: string | undefined = undefined;
         
-        if (!senderError && sender && typeof sender === 'object' && 'full_name' in sender) {
+        if (!senderError && sender) {
           senderName = sender.full_name || 'Unknown';
           senderAvatar = sender.profile_photo_url || undefined;
         }
@@ -114,10 +108,8 @@ export const ChatInterface = ({
 
         // Add message to local state immediately for instant display
         setLocalMessages(prev => {
-          // Check if message already exists to prevent duplicates
           const exists = prev.some(msg => msg.id === messageWithSender.id);
           if (exists) return prev;
-          
           return [...prev, messageWithSender];
         });
 
@@ -143,13 +135,13 @@ export const ChatInterface = ({
         console.log('Chat interface subscription status:', status);
       });
 
-    subscriptionRef.current = channel;
+    channelRef.current = channel;
 
     return () => {
-      if (subscriptionRef.current) {
+      if (channelRef.current) {
         console.log('Cleaning up chat interface subscription');
-        supabase.removeChannel(subscriptionRef.current);
-        subscriptionRef.current = null;
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
       }
     };
   }, [conversationId, user, isWindowFocused, markMessagesAsRead]);

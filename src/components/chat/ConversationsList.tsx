@@ -1,11 +1,13 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { useChat, Conversation } from "@/hooks/useChat";
 import { usePresence } from "@/hooks/usePresence";
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ConversationsListProps {
   onSelectConversation: (conversation: Conversation) => void;
@@ -13,8 +15,10 @@ interface ConversationsListProps {
 }
 
 export const ConversationsList = ({ onSelectConversation, selectedConversationId }: ConversationsListProps) => {
+  const { user } = useAuth();
   const { conversations, loadConversations } = useChat();
   const { isUserOnline, getPresence } = usePresence();
+  const channelRef = useRef<any>(null);
 
   useEffect(() => {
     loadConversations();
@@ -27,6 +31,52 @@ export const ConversationsList = ({ onSelectConversation, selectedConversationId
       getPresence(userIds);
     }
   }, [conversations]);
+
+  // Set up real-time subscription for conversation updates
+  useEffect(() => {
+    if (!user) return;
+
+    // Clean up existing subscription
+    if (channelRef.current) {
+      console.log('Removing existing conversations subscription');
+      supabase.removeChannel(channelRef.current);
+    }
+
+    console.log('Setting up real-time subscription for conversations');
+
+    const channel = supabase
+      .channel(`conversations-list-${user.id}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages'
+      }, (payload) => {
+        console.log('New message received, refreshing conversations list:', payload);
+        // Reload conversations to update last message and unread counts
+        loadConversations();
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'conversations'
+      }, (payload) => {
+        console.log('Conversation updated, refreshing list:', payload);
+        loadConversations();
+      })
+      .subscribe((status) => {
+        console.log('Conversations list subscription status:', status);
+      });
+
+    channelRef.current = channel;
+
+    return () => {
+      if (channelRef.current) {
+        console.log('Cleaning up conversations subscription');
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
+  }, [user, loadConversations]);
 
   if (conversations.length === 0) {
     return (
