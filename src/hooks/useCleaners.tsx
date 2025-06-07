@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isValidCleanerData } from '@/utils/typeGuards';
+import { ServiceType } from '@/utils/serviceTypes';
 
 export interface CleanerProfile {
   id: string;
@@ -14,7 +15,7 @@ export interface CleanerProfile {
   service_radius_km: number | null;
   years_experience: number | null;
   service_area_city: string | null;
-  services: string[] | null;
+  services: ServiceType[] | null;
   hourly_rate: number | null;
   distance?: number;
 }
@@ -86,11 +87,25 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
             years_experience: cleanerProfile.years_experience,
             service_area_city: cleanerProfile.service_area_city,
             hourly_rate: cleanerProfile.hourly_rate,
-            services: [] // Services will be fetched separately if needed
+            services: [] // Will be fetched separately
           };
         });
 
-      // Filter by service area city if no specific coordinates are used for map display
+      // Fetch services for each cleaner
+      for (const cleaner of processedCleaners) {
+        try {
+          const { data: servicesData } = await supabase
+            .from('cleaner_service_types')
+            .select('service_type')
+            .eq('cleaner_id', cleaner.id);
+
+          cleaner.services = servicesData?.map(s => s.service_type as ServiceType) || [];
+        } catch (error) {
+          console.error(`Error fetching services for cleaner ${cleaner.id}:`, error);
+          cleaner.services = [];
+        }
+      }
+
       // Sort by service area city alphabetically for consistent ordering
       processedCleaners.sort((a, b) => {
         if (a.service_area_city && b.service_area_city) {

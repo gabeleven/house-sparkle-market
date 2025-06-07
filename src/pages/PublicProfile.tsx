@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
 import { MapPin, Star, DollarSign, Clock, Award } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
+import { ServiceType, serviceTypeIcons, serviceTypeLabels } from '@/utils/serviceTypes';
 
 interface PublicProfileData {
   id: string;
@@ -21,7 +23,7 @@ interface PublicProfileData {
   hourly_rate?: number;
   latitude?: number;
   longitude?: number;
-  services?: string[];
+  services?: ServiceType[];
   user_role: string;
 }
 
@@ -80,12 +82,12 @@ const PublicProfile = () => {
 
           // Get services
           const { data: servicesData } = await supabase
-            .from('cleaner_services')
+            .from('cleaner_service_types')
             .select('service_type')
             .eq('cleaner_id', userId);
 
           if (servicesData) {
-            completeProfile.services = servicesData.map(s => s.service_type);
+            completeProfile.services = servicesData.map(s => s.service_type as ServiceType);
           }
         }
       }
@@ -211,12 +213,21 @@ const PublicProfile = () => {
                 {profile.services && profile.services.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Services Offered</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.services.map((service, index) => (
-                        <Badge key={index} variant="outline" className="text-sm">
-                          {service}
-                        </Badge>
-                      ))}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {profile.services.map((service, index) => {
+                        const Icon = serviceTypeIcons[service];
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg"
+                          >
+                            <Icon className="w-5 h-5 text-purple-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              {serviceTypeLabels[service]}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, DollarSign } from 'lucide-react';
 import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
+import { ServiceTypesSelector } from './ServiceTypesSelector';
 
 interface ProfileData {
   full_name: string;
@@ -232,114 +232,120 @@ export const ProfileEditor = () => {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Edit Profile</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="full_name">Full Name</Label>
-            <Input
-              id="full_name"
-              value={profile.full_name}
-              onChange={(e) => setProfile(prev => ({ ...prev, full_name: e.target.value }))}
-            />
-          </div>
-          <div>
-            <Label htmlFor="phone_number">Phone Number</Label>
-            <Input
-              id="phone_number"
-              value={profile.phone_number}
-              onChange={(e) => setProfile(prev => ({ ...prev, phone_number: e.target.value }))}
-            />
-          </div>
-        </div>
-
-        {userRole === 'cleaner' && (
-          <>
+    <div className="max-w-2xl mx-auto space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Edit Profile</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="business_name">Business Name</Label>
+              <Label htmlFor="full_name">Full Name</Label>
               <Input
-                id="business_name"
-                value={profile.business_name || ''}
-                onChange={(e) => setProfile(prev => ({ ...prev, business_name: e.target.value }))}
+                id="full_name"
+                value={profile.full_name}
+                onChange={(e) => setProfile(prev => ({ ...prev, full_name: e.target.value }))}
               />
             </div>
-
             <div>
-              <Label htmlFor="brief_description">Brief Description</Label>
-              <Textarea
-                id="brief_description"
-                value={profile.brief_description || ''}
-                onChange={(e) => setProfile(prev => ({ ...prev, brief_description: e.target.value }))}
-                placeholder="Tell customers about your cleaning services..."
+              <Label htmlFor="phone_number">Phone Number</Label>
+              <Input
+                id="phone_number"
+                value={profile.phone_number}
+                onChange={(e) => setProfile(prev => ({ ...prev, phone_number: e.target.value }))}
               />
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {userRole === 'cleaner' && (
+            <>
               <div>
-                <Label htmlFor="service_area_city">Service Area City</Label>
+                <Label htmlFor="business_name">Business Name</Label>
                 <Input
-                  id="service_area_city"
-                  value={profile.service_area_city || ''}
-                  onChange={(e) => setProfile(prev => ({ ...prev, service_area_city: e.target.value }))}
-                  placeholder="e.g. Montreal, Toronto, Vancouver"
+                  id="business_name"
+                  value={profile.business_name || ''}
+                  onChange={(e) => setProfile(prev => ({ ...prev, business_name: e.target.value }))}
                 />
               </div>
-              <div>
-                <Label htmlFor="service_radius_km">Service Radius (km)</Label>
-                <Input
-                  id="service_radius_km"
-                  type="number"
-                  min="1"
-                  value={profile.service_radius_km || 10}
-                  onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 10 }))}
-                />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="years_experience">Years of Experience</Label>
-                <Input
-                  id="years_experience"
-                  type="number"
-                  min="0"
-                  value={profile.years_experience || 0}
-                  onChange={(e) => setProfile(prev => ({ ...prev, years_experience: parseInt(e.target.value) || 0 }))}
+                <Label htmlFor="brief_description">Brief Description</Label>
+                <Textarea
+                  id="brief_description"
+                  value={profile.brief_description || ''}
+                  onChange={(e) => setProfile(prev => ({ ...prev, brief_description: e.target.value }))}
+                  placeholder="Tell customers about your cleaning services..."
                 />
               </div>
-              <div>
-                <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="service_area_city">Service Area City</Label>
                   <Input
-                    id="hourly_rate"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={profile.hourly_rate !== undefined ? profile.hourly_rate : ''}
-                    onChange={handleRateChange}
-                    className="pl-10"
-                    placeholder="25.00"
+                    id="service_area_city"
+                    value={profile.service_area_city || ''}
+                    onChange={(e) => setProfile(prev => ({ ...prev, service_area_city: e.target.value }))}
+                    placeholder="e.g. Montreal, Toronto, Vancouver"
                   />
                 </div>
-                {!isRateValid() && (
-                  <p className="text-sm text-red-500 mt-1">Rate must be greater than $0</p>
-                )}
+                <div>
+                  <Label htmlFor="service_radius_km">Service Radius (km)</Label>
+                  <Input
+                    id="service_radius_km"
+                    type="number"
+                    min="1"
+                    value={profile.service_radius_km || 10}
+                    onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 10 }))}
+                  />
+                </div>
               </div>
-            </div>
-          </>
-        )}
 
-        <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={saving || !isRateValid()}>
-            {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Save Profile
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="years_experience">Years of Experience</Label>
+                  <Input
+                    id="years_experience"
+                    type="number"
+                    min="0"
+                    value={profile.years_experience || 0}
+                    onChange={(e) => setProfile(prev => ({ ...prev, years_experience: parseInt(e.target.value) || 0 }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="hourly_rate"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      value={profile.hourly_rate !== undefined ? profile.hourly_rate : ''}
+                      onChange={handleRateChange}
+                      className="pl-10"
+                      placeholder="25.00"
+                    />
+                  </div>
+                  {!isRateValid() && (
+                    <p className="text-sm text-red-500 mt-1">Rate must be greater than $0</p>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="flex justify-end">
+            <Button onClick={handleSave} disabled={saving || !isRateValid()}>
+              {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Save Profile
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {userRole === 'cleaner' && user && (
+        <ServiceTypesSelector cleanerId={user.id} />
+      )}
+    </div>
   );
 };

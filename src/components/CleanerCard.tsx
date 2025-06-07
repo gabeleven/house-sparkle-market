@@ -8,6 +8,7 @@ import { MapPin, Star, MessageCircle, DollarSign } from 'lucide-react';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { ContactViaHousieButton } from './ContactViaHousieButton';
 import { useNavigate } from 'react-router-dom';
+import { serviceTypeIcons, serviceTypeLabels } from '@/utils/serviceTypes';
 
 interface CleanerCardProps {
   cleaner: CleanerProfile;
@@ -105,16 +106,24 @@ export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
         {cleaner.services && cleaner.services.length > 0 && (
           <div className="mb-4">
             <p className="text-sm font-medium text-gray-700 mb-2">Services:</p>
-            <div className="flex flex-wrap gap-1">
-              {cleaner.services.slice(0, 3).map((service, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {service}
-                </Badge>
-              ))}
-              {cleaner.services.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{cleaner.services.length - 3} more
-                </Badge>
+            <div className="flex flex-wrap gap-2">
+              {cleaner.services.slice(0, 6).map((service, index) => {
+                const Icon = serviceTypeIcons[service];
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md"
+                    title={serviceTypeLabels[service]}
+                  >
+                    <Icon className="w-3 h-3 text-gray-600" />
+                    <span className="text-xs text-gray-600">{serviceTypeLabels[service]}</span>
+                  </div>
+                );
+              })}
+              {cleaner.services.length > 6 && (
+                <div className="flex items-center px-2 py-1 bg-gray-100 rounded-md">
+                  <span className="text-xs text-gray-600">+{cleaner.services.length - 6} more</span>
+                </div>
               )}
             </div>
           </div>

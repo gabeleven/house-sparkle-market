@@ -133,6 +133,35 @@ export type Database = {
           },
         ]
       }
+      cleaner_service_types: {
+        Row: {
+          cleaner_id: string
+          created_at: string
+          id: string
+          service_type: Database["public"]["Enums"]["service_type_new"]
+        }
+        Insert: {
+          cleaner_id: string
+          created_at?: string
+          id?: string
+          service_type: Database["public"]["Enums"]["service_type_new"]
+        }
+        Update: {
+          cleaner_id?: string
+          created_at?: string
+          id?: string
+          service_type?: Database["public"]["Enums"]["service_type_new"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleaner_service_types_cleaner_id_fkey"
+            columns: ["cleaner_id"]
+            isOneToOne: false
+            referencedRelation: "cleaner_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cleaner_services: {
         Row: {
           cleaner_id: string | null
@@ -595,6 +624,15 @@ export type Database = {
         | "move_in_out"
         | "post_construction"
         | "commercial"
+      service_type_new:
+        | "residential_cleaning"
+        | "end_of_lease_cleaning"
+        | "commercial_cleaning"
+        | "chalet_airbnb_cleaning"
+        | "window_washing"
+        | "ironing"
+        | "light_housekeeping"
+        | "deep_cleaning"
       subscription_plan: "starter" | "professional" | "premium" | "client_plus"
       user_role: "customer" | "cleaner"
     }
@@ -719,6 +757,16 @@ export const Constants = {
         "move_in_out",
         "post_construction",
         "commercial",
+      ],
+      service_type_new: [
+        "residential_cleaning",
+        "end_of_lease_cleaning",
+        "commercial_cleaning",
+        "chalet_airbnb_cleaning",
+        "window_washing",
+        "ironing",
+        "light_housekeeping",
+        "deep_cleaning",
       ],
       subscription_plan: ["starter", "professional", "premium", "client_plus"],
       user_role: ["customer", "cleaner"],
