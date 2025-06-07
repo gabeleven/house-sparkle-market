@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,6 +54,43 @@ export const ProfileEditor = () => {
     }
   }, [user]);
 
+  const ensureCleanerProfile = async (userId: string) => {
+    const { error } = await supabase
+      .from('cleaner_profiles')
+      .upsert({
+        id: userId,
+        service_radius_km: 10,
+        years_experience: 0,
+        hourly_rate: 25.00,
+        before_after_photos: [],
+        service_badges: [],
+        is_featured: false,
+        is_profile_complete: false
+      });
+
+    if (error) {
+      console.error('Error ensuring cleaner profile:', error);
+      throw error;
+    }
+  };
+
+  const ensureCustomerProfile = async (userId: string) => {
+    const { error } = await supabase
+      .from('customer_profiles')
+      .upsert({
+        id: userId,
+        preferred_contact_method: 'email',
+        location_permission_granted: false,
+        looking_for_cleaning: false,
+        urgency_level: 'flexible'
+      });
+
+    if (error) {
+      console.error('Error ensuring customer profile:', error);
+      throw error;
+    }
+  };
+
   const loadProfile = async () => {
     if (!user) return;
 
@@ -93,7 +129,34 @@ export const ProfileEditor = () => {
             console.error('Cleaner profile error:', cleanerError);
           }
 
-          if (cleanerData && isValidCleanerProfileData(cleanerData)) {
+          // If no cleaner profile exists, create one
+          if (!cleanerData) {
+            console.log('Creating missing cleaner profile for user:', user.id);
+            await ensureCleanerProfile(user.id);
+            // Reload the cleaner data
+            const { data: newCleanerData } = await supabase
+              .from('cleaner_profiles')
+              .select('*')
+              .eq('id', user.id as any)
+              .single();
+            
+            if (newCleanerData && isValidCleanerProfileData(newCleanerData)) {
+              setProfile({
+                full_name: profileData.full_name || '',
+                phone_number: profileData.phone_number || '',
+                business_name: newCleanerData.business_name || '',
+                brief_description: newCleanerData.brief_description || '',
+                service_area_city: newCleanerData.service_area_city || '',
+                service_radius_km: newCleanerData.service_radius_km || 10,
+                years_experience: newCleanerData.years_experience || 0,
+                hourly_rate: newCleanerData.hourly_rate || 25,
+                banner_image_url: newCleanerData.banner_image_url || '',
+                before_after_photos: newCleanerData.before_after_photos || [],
+                service_badges: newCleanerData.service_badges || [],
+                is_featured: newCleanerData.is_featured || false
+              });
+            }
+          } else if (isValidCleanerProfileData(cleanerData)) {
             setProfile({
               full_name: profileData.full_name || '',
               phone_number: profileData.phone_number || '',
@@ -124,6 +187,12 @@ export const ProfileEditor = () => {
 
           if (customerError && customerError.code !== 'PGRST116') {
             console.error('Customer profile error:', customerError);
+          }
+
+          // If no customer profile exists, create one
+          if (!customerData) {
+            console.log('Creating missing customer profile for user:', user.id);
+            await ensureCustomerProfile(user.id);
           }
 
           setProfile({

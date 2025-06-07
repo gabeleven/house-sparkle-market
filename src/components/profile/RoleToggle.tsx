@@ -38,6 +38,43 @@ export const RoleToggle = () => {
     }
   };
 
+  const createCleanerProfile = async (userId: string) => {
+    const { error } = await supabase
+      .from('cleaner_profiles')
+      .upsert({
+        id: userId,
+        service_radius_km: 10,
+        years_experience: 0,
+        hourly_rate: 25.00,
+        before_after_photos: [],
+        service_badges: [],
+        is_featured: false,
+        is_profile_complete: false
+      });
+
+    if (error) {
+      console.error('Error creating cleaner profile:', error);
+      throw error;
+    }
+  };
+
+  const createCustomerProfile = async (userId: string) => {
+    const { error } = await supabase
+      .from('customer_profiles')
+      .upsert({
+        id: userId,
+        preferred_contact_method: 'email',
+        location_permission_granted: false,
+        looking_for_cleaning: false,
+        urgency_level: 'flexible'
+      });
+
+    if (error) {
+      console.error('Error creating customer profile:', error);
+      throw error;
+    }
+  };
+
   const handleRoleToggle = async () => {
     if (!user) return;
 
@@ -45,13 +82,21 @@ export const RoleToggle = () => {
     const newRole = userRole === 'customer' ? 'cleaner' : 'customer';
 
     try {
-      const { error } = await supabase
+      // Update the user role in profiles table
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ user_role: newRole })
         .eq('id', user.id);
 
-      if (error) {
-        throw error;
+      if (profileError) {
+        throw profileError;
+      }
+
+      // Create the appropriate role-specific profile record
+      if (newRole === 'cleaner') {
+        await createCleanerProfile(user.id);
+      } else {
+        await createCustomerProfile(user.id);
       }
 
       setUserRole(newRole);
