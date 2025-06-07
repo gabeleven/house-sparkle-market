@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -38,6 +38,13 @@ export const useChat = () => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+  
+  // Use refs to track subscriptions and prevent duplicates
+  const subscriptionsRef = useRef<{
+    messageSubscription?: any;
+    conversationSubscription?: any;
+  }>({});
+  const isSubscribedRef = useRef(false);
 
   // Load conversations for current user
   const loadConversations = useCallback(async () => {
@@ -236,15 +243,34 @@ export const useChat = () => {
       .neq('sender_id', user.id);
   };
 
+  // Clean up existing subscriptions
+  const cleanupSubscriptions = useCallback(() => {
+    if (subscriptionsRef.current.messageSubscription) {
+      console.log('Cleaning up message subscription');
+      supabase.removeChannel(subscriptionsRef.current.messageSubscription);
+      subscriptionsRef.current.messageSubscription = null;
+    }
+    if (subscriptionsRef.current.conversationSubscription) {
+      console.log('Cleaning up conversation subscription');
+      supabase.removeChannel(subscriptionsRef.current.conversationSubscription);
+      subscriptionsRef.current.conversationSubscription = null;
+    }
+    isSubscribedRef.current = false;
+  }, []);
+
   // Set up real-time subscriptions
   useEffect(() => {
-    if (!user) return;
+    if (!user || isSubscribedRef.current) return;
 
     console.log('Setting up real-time subscriptions for user:', user.id);
 
+    // Clean up any existing subscriptions first
+    cleanupSubscriptions();
+
     // Create unique channel names to avoid conflicts
-    const messageChannelName = `chat-messages-${user.id}-${Date.now()}`;
-    const conversationChannelName = `conversations-updates-${user.id}-${Date.now()}`;
+    const timestamp = Date.now();
+    const messageChannelName = `chat-messages-${user.id}-${timestamp}`;
+    const conversationChannelName = `conversations-updates-${user.id}-${timestamp}`;
 
     // Subscribe to new messages
     const messageSubscription = supabase
@@ -302,12 +328,15 @@ export const useChat = () => {
       })
       .subscribe();
 
-    return () => {
-      console.log('Cleaning up real-time subscriptions');
-      supabase.removeChannel(messageSubscription);
-      supabase.removeChannel(conversationSubscription);
+    // Store subscriptions in ref
+    subscriptionsRef.current = {
+      messageSubscription,
+      conversationSubscription
     };
-  }, [user, currentConversationId, loadConversations]);
+    isSubscribedRef.current = true;
+
+    return cleanupSubscriptions;
+  }, [user, currentConversationId, loadConversations, cleanupSubscriptions]);
 
   // Request notification permission
   useEffect(() => {
