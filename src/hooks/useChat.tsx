@@ -102,7 +102,7 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (lastMsg && 'message_type' in lastMsg) {
+        if (lastMsg && typeof lastMsg === 'object' && !('error' in lastMsg)) {
           lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content || '';
         }
 
@@ -180,7 +180,7 @@ export const useChat = () => {
       .eq('cleaner_id', cleanerId)
       .maybeSingle();
 
-    if (existing && 'id' in existing) {
+    if (existing && typeof existing === 'object' && !('error' in existing)) {
       return existing.id;
     }
 
@@ -199,7 +199,7 @@ export const useChat = () => {
       throw error;
     }
 
-    if (newConv && 'id' in newConv) {
+    if (newConv && typeof newConv === 'object' && !('error' in newConv)) {
       return newConv.id;
     }
 
@@ -304,7 +304,7 @@ export const useChat = () => {
         let senderName = 'Unknown';
         let senderAvatar: string | undefined = undefined;
         
-        if (sender && 'full_name' in sender) {
+        if (sender && typeof sender === 'object' && !('error' in sender)) {
           senderName = sender.full_name || 'Unknown';
           senderAvatar = sender.profile_photo_url || undefined;
         }

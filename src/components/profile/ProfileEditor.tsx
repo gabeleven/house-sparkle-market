@@ -54,7 +54,7 @@ export const ProfileEditor = () => {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id as any)
+        .eq('id', user.id)
         .maybeSingle();
 
       if (profileError) {
@@ -68,46 +68,48 @@ export const ProfileEditor = () => {
         return;
       }
 
-      if (profileData && 'user_role' in profileData) {
-        setUserRole(profileData.user_role || 'customer');
+      if (profileData && typeof profileData === 'object' && !('error' in profileData)) {
+        // Safe type checking for user_role
+        const userRoleValue = 'user_role' in profileData ? profileData.user_role : 'customer';
+        setUserRole(typeof userRoleValue === 'string' ? userRoleValue : 'customer');
 
         // Get role-specific data
-        if (profileData.user_role === 'cleaner') {
+        if (userRoleValue === 'cleaner') {
           const { data: cleanerData, error: cleanerError } = await supabase
             .from('cleaner_profiles')
             .select('*')
-            .eq('id', user.id as any)
+            .eq('id', user.id)
             .maybeSingle();
 
           if (cleanerError && cleanerError.code !== 'PGRST116') {
             console.error('Cleaner profile error:', cleanerError);
           }
 
-          if (cleanerData && 'business_name' in cleanerData) {
+          if (cleanerData && typeof cleanerData === 'object' && !('error' in cleanerData)) {
             setProfile({
-              full_name: profileData.full_name || '',
-              phone_number: profileData.phone_number || '',
-              business_name: cleanerData.business_name || '',
-              brief_description: cleanerData.brief_description || '',
-              service_area_city: cleanerData.service_area_city || '',
-              service_radius_km: cleanerData.service_radius_km || 10,
-              years_experience: cleanerData.years_experience || 0,
+              full_name: typeof profileData.full_name === 'string' ? profileData.full_name : '',
+              phone_number: typeof profileData.phone_number === 'string' ? profileData.phone_number : '',
+              business_name: typeof cleanerData.business_name === 'string' ? cleanerData.business_name : '',
+              brief_description: typeof cleanerData.brief_description === 'string' ? cleanerData.brief_description : '',
+              service_area_city: typeof cleanerData.service_area_city === 'string' ? cleanerData.service_area_city : '',
+              service_radius_km: typeof cleanerData.service_radius_km === 'number' ? cleanerData.service_radius_km : 10,
+              years_experience: typeof cleanerData.years_experience === 'number' ? cleanerData.years_experience : 0,
               hourly_rate: 25, // Default rate
-              latitude: cleanerData.latitude || undefined,
-              longitude: cleanerData.longitude || undefined
+              latitude: typeof cleanerData.latitude === 'number' ? cleanerData.latitude : undefined,
+              longitude: typeof cleanerData.longitude === 'number' ? cleanerData.longitude : undefined
             });
           } else {
             setProfile(prev => ({
               ...prev,
-              full_name: profileData.full_name || '',
-              phone_number: profileData.phone_number || ''
+              full_name: typeof profileData.full_name === 'string' ? profileData.full_name : '',
+              phone_number: typeof profileData.phone_number === 'string' ? profileData.phone_number : ''
             }));
           }
         } else {
           const { data: customerData, error: customerError } = await supabase
             .from('customer_profiles')
             .select('*')
-            .eq('id', user.id as any)
+            .eq('id', user.id)
             .maybeSingle();
 
           if (customerError && customerError.code !== 'PGRST116') {
@@ -115,10 +117,10 @@ export const ProfileEditor = () => {
           }
 
           setProfile({
-            full_name: profileData.full_name || '',
-            phone_number: profileData.phone_number || '',
-            latitude: customerData && 'latitude' in customerData ? customerData.latitude || undefined : undefined,
-            longitude: customerData && 'longitude' in customerData ? customerData.longitude || undefined : undefined
+            full_name: typeof profileData.full_name === 'string' ? profileData.full_name : '',
+            phone_number: typeof profileData.phone_number === 'string' ? profileData.phone_number : '',
+            latitude: customerData && typeof customerData === 'object' && !('error' in customerData) && typeof customerData.latitude === 'number' ? customerData.latitude : undefined,
+            longitude: customerData && typeof customerData === 'object' && !('error' in customerData) && typeof customerData.longitude === 'number' ? customerData.longitude : undefined
           });
         }
       }
@@ -143,12 +145,12 @@ export const ProfileEditor = () => {
       const profileUpdate = {
         full_name: profile.full_name,
         phone_number: profile.phone_number
-      } as any;
+      };
 
       const { error: profileError } = await supabase
         .from('profiles')
         .update(profileUpdate)
-        .eq('id', user.id as any);
+        .eq('id', user.id);
 
       if (profileError) {
         console.error('Profile update error:', profileError);
@@ -167,7 +169,7 @@ export const ProfileEditor = () => {
           latitude: profile.latitude || null,
           longitude: profile.longitude || null,
           is_profile_complete: true
-        } as any;
+        };
 
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
@@ -182,7 +184,7 @@ export const ProfileEditor = () => {
           id: user.id,
           latitude: profile.latitude || null,
           longitude: profile.longitude || null
-        } as any;
+        };
 
         const { error: customerError } = await supabase
           .from('customer_profiles')

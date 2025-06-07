@@ -411,37 +411,58 @@ export type Database = {
       }
       profiles: {
         Row: {
+          brief_description: string | null
+          business_name: string | null
           created_at: string | null
           email: string
           full_name: string
           id: string
           is_email_verified: boolean | null
+          latitude: number | null
+          longitude: number | null
           phone_number: string | null
           profile_photo_url: string | null
+          service_area_city: string | null
+          service_radius_km: number | null
           updated_at: string | null
           user_role: Database["public"]["Enums"]["user_role"]
+          years_experience: number | null
         }
         Insert: {
+          brief_description?: string | null
+          business_name?: string | null
           created_at?: string | null
           email: string
           full_name: string
           id: string
           is_email_verified?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
           phone_number?: string | null
           profile_photo_url?: string | null
+          service_area_city?: string | null
+          service_radius_km?: number | null
           updated_at?: string | null
           user_role: Database["public"]["Enums"]["user_role"]
+          years_experience?: number | null
         }
         Update: {
+          brief_description?: string | null
+          business_name?: string | null
           created_at?: string | null
           email?: string
           full_name?: string
           id?: string
           is_email_verified?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
           phone_number?: string | null
           profile_photo_url?: string | null
+          service_area_city?: string | null
+          service_radius_km?: number | null
           updated_at?: string | null
           user_role?: Database["public"]["Enums"]["user_role"]
+          years_experience?: number | null
         }
         Relationships: []
       }
