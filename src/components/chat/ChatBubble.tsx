@@ -6,12 +6,12 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface ChatBubbleProps {
   message: ChatMessage;
+  isOwnMessage: boolean;
   showAvatar?: boolean;
 }
 
-export const ChatBubble = ({ message, showAvatar = true }: ChatBubbleProps) => {
+export const ChatBubble = ({ message, isOwnMessage, showAvatar = true }: ChatBubbleProps) => {
   const { user } = useAuth();
-  const isOwnMessage = message.sender_id === user?.id;
 
   return (
     <div className={`flex gap-2 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'} mb-4`}>

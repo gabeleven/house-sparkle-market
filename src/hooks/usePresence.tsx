@@ -7,6 +7,7 @@ export interface UserPresence {
   user_id: string;
   is_online: boolean;
   last_seen: string;
+  updated_at: string;
 }
 
 export const usePresence = () => {
@@ -35,12 +36,14 @@ export const usePresence = () => {
     if (!validSession || !user) return;
 
     try {
+      const now = new Date().toISOString();
       await supabase
         .from('user_presence')
         .upsert({
           user_id: user.id,
           is_online: isOnline,
-          last_seen: new Date().toISOString()
+          last_seen: now,
+          updated_at: now
         } as any);
     } catch (error) {
       console.error('Error updating presence:', error);
@@ -69,7 +72,8 @@ export const usePresence = () => {
           typeof presence === 'object' && 
           'user_id' in presence &&
           'is_online' in presence &&
-          'last_seen' in presence
+          'last_seen' in presence &&
+          'updated_at' in presence
         )
         .reduce((acc, presence) => {
           acc[presence.user_id] = presence;

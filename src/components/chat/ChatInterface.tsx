@@ -14,11 +14,17 @@ import { isValidProfileData } from '@/utils/typeGuards';
 interface ChatInterfaceProps {
   conversationId: string;
   otherUserId: string;
+  otherUserName?: string;
+  otherUserAvatar?: string;
+  onBack?: () => void;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   conversationId,
-  otherUserId
+  otherUserId,
+  otherUserName,
+  otherUserAvatar,
+  onBack
 }) => {
   const { user } = useAuth();
   const { messages, loadMessages, sendMessage, markMessagesAsRead } = useChat();
@@ -33,9 +39,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   useEffect(() => {
     if (conversationId) {
       loadMessages(conversationId);
-      loadOtherUserInfo();
+      if (!otherUserName || !otherUserAvatar) {
+        loadOtherUserInfo();
+      } else {
+        setOtherUserInfo({
+          full_name: otherUserName,
+          profile_photo_url: otherUserAvatar
+        });
+      }
     }
-  }, [conversationId, loadMessages]);
+  }, [conversationId, loadMessages, otherUserName, otherUserAvatar]);
 
   useEffect(() => {
     scrollToBottom();
@@ -119,12 +132,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     );
   }
 
+  const displayName = otherUserInfo?.full_name || otherUserName || 'Unknown User';
+  const displayAvatar = otherUserInfo?.profile_photo_url || otherUserAvatar;
+
   return (
     <Card className="flex flex-col h-full">
       <ChatHeader 
         otherUserId={otherUserId}
-        otherUserName={otherUserInfo?.full_name || 'Unknown User'}
-        otherUserAvatar={otherUserInfo?.profile_photo_url}
+        otherUserName={displayName}
+        otherUserAvatar={displayAvatar}
+        onBack={onBack}
       />
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
