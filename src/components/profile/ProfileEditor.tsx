@@ -68,10 +68,10 @@ export const ProfileEditor = () => {
         return;
       }
 
-      if (profileData && typeof profileData === 'object' && !('error' in profileData)) {
+      if (profileData) {
         // Safe type checking for user_role
-        const userRoleValue = 'user_role' in profileData ? profileData.user_role : 'customer';
-        setUserRole(typeof userRoleValue === 'string' ? userRoleValue : 'customer');
+        const userRoleValue = profileData.user_role || 'customer';
+        setUserRole(userRoleValue);
 
         // Get role-specific data
         if (userRoleValue === 'cleaner') {
@@ -85,24 +85,24 @@ export const ProfileEditor = () => {
             console.error('Cleaner profile error:', cleanerError);
           }
 
-          if (cleanerData && typeof cleanerData === 'object' && !('error' in cleanerData)) {
+          if (cleanerData) {
             setProfile({
-              full_name: typeof profileData.full_name === 'string' ? profileData.full_name : '',
-              phone_number: typeof profileData.phone_number === 'string' ? profileData.phone_number : '',
-              business_name: typeof cleanerData.business_name === 'string' ? cleanerData.business_name : '',
-              brief_description: typeof cleanerData.brief_description === 'string' ? cleanerData.brief_description : '',
-              service_area_city: typeof cleanerData.service_area_city === 'string' ? cleanerData.service_area_city : '',
-              service_radius_km: typeof cleanerData.service_radius_km === 'number' ? cleanerData.service_radius_km : 10,
-              years_experience: typeof cleanerData.years_experience === 'number' ? cleanerData.years_experience : 0,
+              full_name: profileData.full_name || '',
+              phone_number: profileData.phone_number || '',
+              business_name: cleanerData.business_name || '',
+              brief_description: cleanerData.brief_description || '',
+              service_area_city: cleanerData.service_area_city || '',
+              service_radius_km: cleanerData.service_radius_km || 10,
+              years_experience: cleanerData.years_experience || 0,
               hourly_rate: 25, // Default rate
-              latitude: typeof cleanerData.latitude === 'number' ? cleanerData.latitude : undefined,
-              longitude: typeof cleanerData.longitude === 'number' ? cleanerData.longitude : undefined
+              latitude: cleanerData.latitude || undefined,
+              longitude: cleanerData.longitude || undefined
             });
           } else {
             setProfile(prev => ({
               ...prev,
-              full_name: typeof profileData.full_name === 'string' ? profileData.full_name : '',
-              phone_number: typeof profileData.phone_number === 'string' ? profileData.phone_number : ''
+              full_name: profileData.full_name || '',
+              phone_number: profileData.phone_number || ''
             }));
           }
         } else {
@@ -117,10 +117,10 @@ export const ProfileEditor = () => {
           }
 
           setProfile({
-            full_name: typeof profileData.full_name === 'string' ? profileData.full_name : '',
-            phone_number: typeof profileData.phone_number === 'string' ? profileData.phone_number : '',
-            latitude: customerData && typeof customerData === 'object' && !('error' in customerData) && typeof customerData.latitude === 'number' ? customerData.latitude : undefined,
-            longitude: customerData && typeof customerData === 'object' && !('error' in customerData) && typeof customerData.longitude === 'number' ? customerData.longitude : undefined
+            full_name: profileData.full_name || '',
+            phone_number: profileData.phone_number || '',
+            latitude: customerData?.latitude || undefined,
+            longitude: customerData?.longitude || undefined
           });
         }
       }
