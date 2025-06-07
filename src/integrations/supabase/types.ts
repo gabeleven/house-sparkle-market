@@ -69,49 +69,61 @@ export type Database = {
       }
       cleaner_profiles: {
         Row: {
+          banner_image_url: string | null
+          before_after_photos: string[] | null
           brief_description: string | null
           business_name: string | null
           created_at: string | null
           hourly_rate: number | null
           id: string
+          is_featured: boolean | null
           is_profile_complete: boolean | null
           latitude: number | null
           longitude: number | null
           profile_photo_url: string | null
           service_area_city: string | null
           service_area_postal_code: string | null
+          service_badges: string[] | null
           service_radius_km: number | null
           updated_at: string | null
           years_experience: number | null
         }
         Insert: {
+          banner_image_url?: string | null
+          before_after_photos?: string[] | null
           brief_description?: string | null
           business_name?: string | null
           created_at?: string | null
           hourly_rate?: number | null
           id: string
+          is_featured?: boolean | null
           is_profile_complete?: boolean | null
           latitude?: number | null
           longitude?: number | null
           profile_photo_url?: string | null
           service_area_city?: string | null
           service_area_postal_code?: string | null
+          service_badges?: string[] | null
           service_radius_km?: number | null
           updated_at?: string | null
           years_experience?: number | null
         }
         Update: {
+          banner_image_url?: string | null
+          before_after_photos?: string[] | null
           brief_description?: string | null
           business_name?: string | null
           created_at?: string | null
           hourly_rate?: number | null
           id?: string
+          is_featured?: boolean | null
           is_profile_complete?: boolean | null
           latitude?: number | null
           longitude?: number | null
           profile_photo_url?: string | null
           service_area_city?: string | null
           service_area_postal_code?: string | null
+          service_badges?: string[] | null
           service_radius_km?: number | null
           updated_at?: string | null
           years_experience?: number | null
@@ -254,13 +266,16 @@ export type Database = {
           latitude: number | null
           location_permission_granted: boolean | null
           longitude: number | null
+          looking_for_cleaning: boolean | null
           postal_code_fallback: string | null
           preferred_contact_method:
             | Database["public"]["Enums"]["contact_method"]
             | null
           service_location_address: string | null
           service_location_postal_code: string | null
+          service_needs_description: string | null
           updated_at: string | null
+          urgency_level: string | null
         }
         Insert: {
           created_at?: string | null
@@ -268,13 +283,16 @@ export type Database = {
           latitude?: number | null
           location_permission_granted?: boolean | null
           longitude?: number | null
+          looking_for_cleaning?: boolean | null
           postal_code_fallback?: string | null
           preferred_contact_method?:
             | Database["public"]["Enums"]["contact_method"]
             | null
           service_location_address?: string | null
           service_location_postal_code?: string | null
+          service_needs_description?: string | null
           updated_at?: string | null
+          urgency_level?: string | null
         }
         Update: {
           created_at?: string | null
@@ -282,13 +300,16 @@ export type Database = {
           latitude?: number | null
           location_permission_granted?: boolean | null
           longitude?: number | null
+          looking_for_cleaning?: boolean | null
           postal_code_fallback?: string | null
           preferred_contact_method?:
             | Database["public"]["Enums"]["contact_method"]
             | null
           service_location_address?: string | null
           service_location_postal_code?: string | null
+          service_needs_description?: string | null
           updated_at?: string | null
+          urgency_level?: string | null
         }
         Relationships: [
           {
@@ -495,6 +516,33 @@ export type Database = {
           updated_at?: string | null
           user_role?: Database["public"]["Enums"]["user_role"]
           years_experience?: number | null
+        }
+        Relationships: []
+      }
+      service_badges: {
+        Row: {
+          color_class: string | null
+          created_at: string | null
+          display_name: string
+          icon_name: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color_class?: string | null
+          created_at?: string | null
+          display_name: string
+          icon_name?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color_class?: string | null
+          created_at?: string | null
+          display_name?: string
+          icon_name?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
