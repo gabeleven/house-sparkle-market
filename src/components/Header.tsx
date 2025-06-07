@@ -10,6 +10,7 @@ import {
 import { MapPin, User, LogOut, MessageCircle, ChevronDown, HelpCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -25,7 +26,7 @@ const Header = () => {
   const supportTickets = 7;
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-background shadow-sm border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -33,19 +34,19 @@ const Header = () => {
             <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-green-700 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">HOUSIE</span>
+            <span className="text-2xl font-bold text-foreground">HOUSIE</span>
           </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="/comment-ca-marche" className="text-gray-600 hover:text-purple-600 transition-colors">
+            <a href="/comment-ca-marche" className="text-muted-foreground hover:text-primary transition-colors">
               Comment ça marche
             </a>
-            <a href="#about" className="text-gray-600 hover:text-purple-600 transition-colors">
+            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">
               À propos
             </a>
             {user && (
-              <a href="/prestataires" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <a href="/prestataires" className="text-muted-foreground hover:text-primary transition-colors">
                 Housie Pro
               </a>
             )}
@@ -53,11 +54,13 @@ const Header = () => {
 
           {/* Auth Section */}
           <div className="flex items-center space-x-3">
+            <ThemeToggle />
+            
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-700">
+                    <span className="text-sm text-foreground">
                       {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
                     </span>
                     <ChevronDown className="w-4 h-4" />

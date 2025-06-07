@@ -24,10 +24,10 @@ export const MapPreview = ({ cleaners, onShowMap, userLocation }: MapPreviewProp
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                View Cleaners on Map
+              <h3 className="text-lg font-semibold text-foreground mb-1">
+                View Cleaners on Google Maps
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {cleanersWithLocation.length} cleaner{cleanersWithLocation.length !== 1 ? 's' : ''} available in your area
               </p>
               {userLocation && (
@@ -48,8 +48,8 @@ export const MapPreview = ({ cleaners, onShowMap, userLocation }: MapPreviewProp
         </div>
         
         {cleanersWithLocation.length === 0 && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">
+          <div className="mt-4 p-3 bg-muted rounded-lg">
+            <p className="text-sm text-muted-foreground">
               No cleaners with location data found. Try adjusting your search filters.
             </p>
           </div>
