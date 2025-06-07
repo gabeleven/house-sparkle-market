@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -216,13 +215,25 @@ export const useChat = () => {
       .neq('sender_id', user.id);
   };
 
-  // Set up real-time subscriptions
+  // Set up real-time subscriptions - only when user is authenticated
   useEffect(() => {
-    if (!user) return;
+    // Early return if no user to prevent subscriptions
+    if (!user) {
+      // Clean up any existing subscriptions
+      if (subscriptionsRef.current.messages) {
+        supabase.removeChannel(subscriptionsRef.current.messages);
+        subscriptionsRef.current.messages = undefined;
+      }
+      if (subscriptionsRef.current.conversations) {
+        supabase.removeChannel(subscriptionsRef.current.conversations);
+        subscriptionsRef.current.conversations = undefined;
+      }
+      return;
+    }
 
     console.log('Setting up chat subscriptions for user:', user.id);
 
-    // Clean up existing subscriptions
+    // Clean up existing subscriptions before creating new ones
     if (subscriptionsRef.current.messages) {
       supabase.removeChannel(subscriptionsRef.current.messages);
     }

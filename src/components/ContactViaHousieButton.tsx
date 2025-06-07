@@ -19,8 +19,8 @@ export const ContactViaHousieButton = ({ cleanerId, size = "default", className 
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Only initialize chat hook when user is authenticated
-  const { getOrCreateConversation } = user ? useChat() : { getOrCreateConversation: null };
+  // Always call the hook, but conditionally use its functionality
+  const { getOrCreateConversation } = useChat();
 
   const handleContact = async () => {
     if (!user) {
@@ -37,15 +37,6 @@ export const ContactViaHousieButton = ({ cleanerId, size = "default", className 
       toast({
         title: "Cannot contact yourself",
         description: "You cannot start a conversation with yourself",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!getOrCreateConversation) {
-      toast({
-        title: "Error",
-        description: "Chat functionality not available. Please try again.",
         variant: "destructive"
       });
       return;
