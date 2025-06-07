@@ -9,10 +9,11 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ContactViaHousieButtonProps {
   cleanerId: string;
+  size?: "default" | "sm" | "lg" | "icon" | null | undefined;
   className?: string;
 }
 
-export const ContactViaHousieButton = ({ cleanerId, className }: ContactViaHousieButtonProps) => {
+export const ContactViaHousieButton = ({ cleanerId, size = "default", className }: ContactViaHousieButtonProps) => {
   const { user } = useAuth();
   const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ export const ContactViaHousieButton = ({ cleanerId, className }: ContactViaHousi
     <Button
       onClick={handleContact}
       disabled={isLoading}
+      size={size}
       className={`bg-purple-600 hover:bg-purple-700 text-white ${className}`}
     >
       <MessageCircle className="w-4 h-4 mr-2" />
