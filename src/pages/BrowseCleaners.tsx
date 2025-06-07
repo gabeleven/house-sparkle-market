@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
@@ -27,7 +26,7 @@ const BrowseCleaners = () => {
   
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [locationFilter, setLocationFilter] = useState('');
-  const [searchRadius, setSearchRadius] = useState(10);
+  const [searchRadius, setSearchRadius] = useState(25); // Increased default radius
   const [showMap, setShowMap] = useState(false);
   const { location, requestLocation } = useLocation();
   
@@ -38,19 +37,15 @@ const BrowseCleaners = () => {
   });
 
   const handleSearch = () => {
-    // The search is reactive, so this is mainly for mobile submit
     console.log('Search triggered with term:', searchTerm, 'and location:', locationFilter);
   };
 
   const handleRadiusChange = (newRadius: number) => {
     setSearchRadius(newRadius);
-    // Here you could refetch cleaners with new radius
     console.log('Radius changed to:', newRadius);
   };
 
   console.log('BrowseCleaners rendering - cleaners count:', cleaners?.length || 0);
-  console.log('Loading state:', isLoading);
-  console.log('Error state:', error);
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,7 +54,7 @@ const BrowseCleaners = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Header */}
         <div className="bg-card rounded-lg shadow-sm p-6 mb-8 border border-border">
-          <h1 className="text-3xl font-bold text-foreground mb-6">Find Cleaners Near You</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-6">Find Cleaners Across Quebec</h1>
           
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
@@ -80,7 +75,7 @@ const BrowseCleaners = () => {
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                 <Input
                   type="text"
-                  placeholder="Location..."
+                  placeholder="City or postal code..."
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
                   className="pl-10"
@@ -172,7 +167,7 @@ const BrowseCleaners = () => {
             <div className="mb-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-foreground">
-                  {cleaners?.length || 0} cleaner{(cleaners?.length || 0) !== 1 ? 's' : ''} found
+                  {cleaners?.length || 0} cleaner{(cleaners?.length || 0) !== 1 ? 's' : ''} found across Quebec
                 </h2>
               </div>
             </div>
@@ -216,7 +211,7 @@ const BrowseCleaners = () => {
                     </div>
                     <h3 className="text-lg font-semibold text-foreground mb-2">No cleaners found</h3>
                     <p className="text-muted-foreground mb-4">
-                      Try adjusting your search terms or location to find more results.
+                      Try adjusting your search terms or expand your search to other cities in Quebec.
                     </p>
                     {!location && (
                       <Button

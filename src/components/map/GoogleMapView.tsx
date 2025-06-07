@@ -1,11 +1,13 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Wrapper, Status } from '@googlemaps/react-wrapper';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { Button } from '@/components/ui/button';
 import { X, ZoomIn, ZoomOut, AlertCircle } from 'lucide-react';
 import { CleanerMapPopup } from './CleanerMapPopup';
+import { LocationSearch } from './LocationSearch';
+import { DynamicRadiusSelector } from './DynamicRadiusSelector';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useGeocodeCities } from '@/hooks/useGeocodeCities';
 
 interface GoogleMapViewProps {
   cleaners: CleanerProfile[];
@@ -16,41 +18,65 @@ interface GoogleMapViewProps {
 }
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCh7eDl0EFO4QyhBTgByLdL5VKM2EgcynU';
-const MONTREAL_CENTER = { lat: 45.5017, lng: -73.5673 };
+const QUEBEC_CENTER = { lat: 46.8139, lng: -71.2080 }; // Quebec province center
+const QUEBEC_BOUNDS = {
+  north: 62.5834,
+  south: 45.0059,
+  east: -57.1017,
+  west: -79.7624
+};
 
 interface MapComponentProps {
   cleaners: CleanerProfile[];
   userLocation?: { latitude: number; longitude: number } | null;
   radius?: number;
+  searchLocation?: { lat: number; lng: number; address: string } | null;
   onMarkerClick: (cleaner: CleanerProfile, position: { x: number; y: number }) => void;
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({ 
   cleaners, 
   userLocation, 
-  radius = 10,
+  radius = 25,
+  searchLocation,
   onMarkerClick 
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const circleRef = useRef<google.maps.Circle | null>(null);
+  const { geocodedCleaners, isGeocoding } = useGeocodeCities(cleaners);
+
+  // Determine map center and zoom
+  const getMapCenter = () => {
+    if (searchLocation) return searchLocation;
+    if (userLocation) return { lat: userLocation.latitude, lng: userLocation.longitude };
+    return QUEBEC_CENTER;
+  };
+
+  const getInitialZoom = () => {
+    if (searchLocation || userLocation) return 11;
+    return 6; // Show most of Quebec province
+  };
 
   useEffect(() => {
     if (!mapRef.current) return;
 
-    const center = userLocation 
-      ? { lat: userLocation.latitude, lng: userLocation.longitude }
-      : MONTREAL_CENTER;
+    console.log('Initializing Google Map...');
+    const center = getMapCenter();
 
-    // Initialize the map without mapId to allow custom styling
+    // Initialize the map
     mapInstanceRef.current = new google.maps.Map(mapRef.current, {
       center,
-      zoom: userLocation ? 12 : 10,
+      zoom: getInitialZoom(),
       mapTypeControl: true,
       streetViewControl: true,
       fullscreenControl: false,
       zoomControl: false,
+      restriction: {
+        latLngBounds: QUEBEC_BOUNDS,
+        strictBounds: false,
+      },
       styles: [
         {
           featureType: 'poi',
@@ -60,8 +86,36 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ]
     });
 
-    // Add radius circle if user location is available
-    if (userLocation && mapInstanceRef.current) {
+    console.log('Map initialized with center:', center);
+
+    return () => {
+      // Cleanup markers and circle
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
+      if (circleRef.current) {
+        circleRef.current.setMap(null);
+        circleRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update map center when search location or user location changes
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    const center = getMapCenter();
+    mapInstanceRef.current.setCenter(center);
+    mapInstanceRef.current.setZoom(getInitialZoom());
+
+    // Clear existing circle
+    if (circleRef.current) {
+      circleRef.current.setMap(null);
+      circleRef.current = null;
+    }
+
+    // Add radius circle if we have a search location or user location
+    const circleCenter = searchLocation || (userLocation ? { lat: userLocation.latitude, lng: userLocation.longitude } : null);
+    if (circleCenter && mapInstanceRef.current) {
       circleRef.current = new google.maps.Circle({
         strokeColor: '#6366f1',
         strokeOpacity: 0.5,
@@ -69,41 +123,40 @@ const MapComponent: React.FC<MapComponentProps> = ({
         fillColor: '#6366f1',
         fillOpacity: 0.1,
         map: mapInstanceRef.current,
-        center: { lat: userLocation.latitude, lng: userLocation.longitude },
+        center: circleCenter,
         radius: radius * 1000, // Convert km to meters
       });
     }
+  }, [userLocation, searchLocation, radius]);
 
-    return () => {
-      // Cleanup markers
-      markersRef.current.forEach(marker => {
-        marker.setMap(null);
-      });
-      markersRef.current = [];
-      
-      // Cleanup circle
-      if (circleRef.current) {
-        circleRef.current.setMap(null);
-        circleRef.current = null;
-      }
-    };
-  }, [userLocation, radius]);
-
+  // Update markers when cleaners change
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || isGeocoding) return;
+
+    console.log('Updating markers for', geocodedCleaners.length, 'cleaners');
 
     // Clear existing markers
-    markersRef.current.forEach(marker => {
-      marker.setMap(null);
-    });
+    markersRef.current.forEach(marker => marker.setMap(null));
     markersRef.current = [];
 
-    // Add cleaner markers using standard Marker (for broader compatibility)
-    cleaners.forEach(cleaner => {
-      if (!cleaner.latitude || !cleaner.longitude || !mapInstanceRef.current) return;
+    // Get cleaners with valid coordinates
+    const cleanersWithCoords = geocodedCleaners.filter(cleaner => {
+      const lat = cleaner.latitude || cleaner.geocoded_lat;
+      const lng = cleaner.longitude || cleaner.geocoded_lng;
+      return lat && lng;
+    });
+
+    console.log('Cleaners with coordinates:', cleanersWithCoords.length);
+
+    // Add cleaner markers
+    cleanersWithCoords.forEach(cleaner => {
+      const lat = cleaner.latitude || cleaner.geocoded_lat;
+      const lng = cleaner.longitude || cleaner.geocoded_lng;
+      
+      if (!lat || !lng) return;
 
       const marker = new google.maps.Marker({
-        position: { lat: cleaner.latitude, lng: cleaner.longitude },
+        position: { lat, lng },
         map: mapInstanceRef.current,
         title: cleaner.full_name,
         icon: {
@@ -123,30 +176,40 @@ const MapComponent: React.FC<MapComponentProps> = ({
       });
 
       // Add click event listener
-      marker.addListener('click', (event: google.maps.MapMouseEvent) => {
-        const markerPosition = marker.getPosition();
-        if (markerPosition) {
-          // Convert map coordinates to screen coordinates for popup positioning
-          const projection = mapInstanceRef.current?.getProjection();
-          if (projection) {
-            const point = projection.fromLatLngToPoint(markerPosition);
-            const scale = Math.pow(2, mapInstanceRef.current?.getZoom() || 10);
-            const worldPoint = new google.maps.Point(
-              point.x * scale,
-              point.y * scale
-            );
-            
-            onMarkerClick(cleaner, {
-              x: worldPoint.x,
-              y: worldPoint.y
-            });
-          }
+      marker.addListener('click', () => {
+        const rect = mapRef.current?.getBoundingClientRect();
+        if (rect) {
+          onMarkerClick(cleaner, {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+          });
         }
       });
 
       markersRef.current.push(marker);
     });
-  }, [cleaners, onMarkerClick]);
+
+    // If we have cleaners and no specific search location, fit bounds to show all cleaners
+    if (cleanersWithCoords.length > 0 && !searchLocation && !userLocation) {
+      const bounds = new google.maps.LatLngBounds();
+      cleanersWithCoords.forEach(cleaner => {
+        const lat = cleaner.latitude || cleaner.geocoded_lat;
+        const lng = cleaner.longitude || cleaner.geocoded_lng;
+        if (lat && lng) {
+          bounds.extend({ lat, lng });
+        }
+      });
+      mapInstanceRef.current.fitBounds(bounds);
+      
+      // Ensure minimum zoom level for better UX
+      const listener = google.maps.event.addListener(mapInstanceRef.current, 'bounds_changed', () => {
+        if (mapInstanceRef.current!.getZoom()! > 12) {
+          mapInstanceRef.current!.setZoom(12);
+        }
+        google.maps.event.removeListener(listener);
+      });
+    }
+  }, [geocodedCleaners, isGeocoding, onMarkerClick, searchLocation, userLocation]);
 
   const handleZoomIn = () => {
     if (mapInstanceRef.current) {
@@ -185,6 +248,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
           <ZoomOut className="w-4 h-4" />
         </Button>
       </div>
+
+      {isGeocoding && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+            <span className="text-sm">Loading cleaner locations...</span>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -240,9 +312,11 @@ const MapErrorComponent = ({ error }: { error: Status }) => {
   );
 };
 
-export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, isFullScreen = false }: GoogleMapViewProps) => {
+export const GoogleMapView = ({ cleaners, userLocation, radius = 25, onClose, isFullScreen = false }: GoogleMapViewProps) => {
   const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
+  const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
+  const [currentRadius, setCurrentRadius] = useState(radius);
 
   const handleMarkerClick = (cleaner: CleanerProfile, position: { x: number; y: number }) => {
     setSelectedCleaner(cleaner);
@@ -254,23 +328,59 @@ export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, is
     setPopupPosition(null);
   };
 
+  const handleLocationSearch = (location: { lat: number; lng: number; address: string }) => {
+    setSearchLocation(location);
+    console.log('Location search result:', location);
+  };
+
+  const handleRadiusChange = (newRadius: number) => {
+    setCurrentRadius(newRadius);
+  };
+
   const render = (status: Status) => {
     switch (status) {
       case Status.LOADING:
-        return <MapLoadingComponent />;
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading Google Maps...</p>
+            </div>
+          </div>
+        );
       case Status.FAILURE:
-        return <MapErrorComponent error={status} />;
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-red-50 p-4">
+            <Alert className="max-w-md">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <div className="space-y-2">
+                  <p className="font-medium text-red-800">Google Maps API Error</p>
+                  <p className="text-red-700 text-sm">Please check API key configuration</p>
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
+        );
       case Status.SUCCESS:
         return (
           <MapComponent 
             cleaners={cleaners}
             userLocation={userLocation}
-            radius={radius}
+            radius={currentRadius}
+            searchLocation={searchLocation}
             onMarkerClick={handleMarkerClick}
           />
         );
       default:
-        return <MapLoadingComponent />;
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading Google Maps...</p>
+            </div>
+          </div>
+        );
     }
   };
 
@@ -278,12 +388,16 @@ export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, is
     ? "fixed inset-0 z-50 bg-white"
     : "relative w-full h-96 rounded-lg overflow-hidden border";
 
+  const cleanersWithLocation = cleaners.filter(c => 
+    (c.latitude && c.longitude) || c.service_area_city
+  );
+
   return (
     <div className={containerClass}>
       <Wrapper 
         apiKey={GOOGLE_MAPS_API_KEY} 
         render={render}
-        libraries={['geometry']}
+        libraries={['geocoding']}
       />
       
       {/* Map Controls */}
@@ -298,11 +412,30 @@ export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, is
         </Button>
       </div>
 
-      {/* Radius Info */}
-      {userLocation && (
+      {/* Location Search */}
+      <div className="absolute top-4 left-16 right-16">
+        <div className="bg-white p-3 rounded-lg shadow-md">
+          <LocationSearch onLocationSearch={handleLocationSearch} />
+        </div>
+      </div>
+
+      {/* Dynamic Radius Selector */}
+      {searchLocation && (
+        <div className="absolute bottom-20 left-4 right-4">
+          <DynamicRadiusSelector
+            currentRadius={currentRadius}
+            onRadiusChange={handleRadiusChange}
+            searchLocation={searchLocation}
+          />
+        </div>
+      )}
+
+      {/* Current Location Info */}
+      {(userLocation || searchLocation) && (
         <div className="absolute bottom-4 left-4 bg-white px-3 py-2 rounded-lg shadow-md">
           <p className="text-sm text-gray-600">
-            Search radius: <span className="font-medium">{radius} km</span>
+            {searchLocation ? `Area: ${searchLocation.address.split(',')[0]}` : 'Using your location'}
+            <span className="ml-2 font-medium">{currentRadius} km radius</span>
           </p>
         </div>
       )}
@@ -310,7 +443,7 @@ export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, is
       {/* Cleaner Count */}
       <div className="absolute bottom-4 right-4 bg-white px-3 py-2 rounded-lg shadow-md">
         <p className="text-sm text-gray-600">
-          <span className="font-medium">{cleaners.length}</span> cleaner{cleaners.length !== 1 ? 's' : ''} shown
+          <span className="font-medium">{cleanersWithLocation.length}</span> cleaner{cleanersWithLocation.length !== 1 ? 's' : ''} available
         </p>
       </div>
 
