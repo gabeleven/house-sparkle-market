@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -49,12 +50,12 @@ export const ProfileEditor = () => {
     if (!user) return;
 
     try {
-      // Get basic profile info
+      // Get basic profile info with proper error handling
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error('Profile error:', profileError);
@@ -76,7 +77,7 @@ export const ProfileEditor = () => {
             .from('cleaner_profiles')
             .select('*')
             .eq('id', user.id)
-            .single();
+            .maybeSingle();
 
           if (cleanerError && cleanerError.code !== 'PGRST116') {
             console.error('Cleaner profile error:', cleanerError);
@@ -107,7 +108,7 @@ export const ProfileEditor = () => {
             .from('customer_profiles')
             .select('*')
             .eq('id', user.id)
-            .single();
+            .maybeSingle();
 
           if (customerError && customerError.code !== 'PGRST116') {
             console.error('Customer profile error:', customerError);
@@ -138,13 +139,15 @@ export const ProfileEditor = () => {
 
     setSaving(true);
     try {
-      // Update basic profile
+      // Update basic profile with proper typing
+      const profileUpdate = {
+        full_name: profile.full_name,
+        phone_number: profile.phone_number
+      };
+
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({
-          full_name: profile.full_name,
-          phone_number: profile.phone_number
-        })
+        .update(profileUpdate)
         .eq('id', user.id);
 
       if (profileError) {
@@ -155,22 +158,20 @@ export const ProfileEditor = () => {
       // Update role-specific data
       if (userRole === 'cleaner') {
         const cleanerProfileData = {
-          business_name: profile.business_name,
-          brief_description: profile.brief_description,
-          service_area_city: profile.service_area_city,
-          service_radius_km: profile.service_radius_km,
-          years_experience: profile.years_experience,
-          latitude: profile.latitude,
-          longitude: profile.longitude,
+          id: user.id,
+          business_name: profile.business_name || null,
+          brief_description: profile.brief_description || null,
+          service_area_city: profile.service_area_city || null,
+          service_radius_km: profile.service_radius_km || 10,
+          years_experience: profile.years_experience || 0,
+          latitude: profile.latitude || null,
+          longitude: profile.longitude || null,
           is_profile_complete: true
         };
 
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
-          .upsert({
-            id: user.id,
-            ...cleanerProfileData
-          });
+          .upsert(cleanerProfileData);
 
         if (cleanerError) {
           console.error('Cleaner profile update error:', cleanerError);
@@ -178,16 +179,14 @@ export const ProfileEditor = () => {
         }
       } else {
         const customerProfileData = {
-          latitude: profile.latitude,
-          longitude: profile.longitude
+          id: user.id,
+          latitude: profile.latitude || null,
+          longitude: profile.longitude || null
         };
 
         const { error: customerError } = await supabase
           .from('customer_profiles')
-          .upsert({
-            id: user.id,
-            ...customerProfileData
-          });
+          .upsert(customerProfileData);
 
         if (customerError) {
           console.error('Customer profile update error:', customerError);

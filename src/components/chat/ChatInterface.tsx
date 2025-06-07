@@ -91,16 +91,20 @@ export const ChatInterface = ({
         const newMessage = payload.new as any;
         
         // Fetch sender info to complete the message object
-        const { data: sender } = await supabase
+        const { data: sender, error: senderError } = await supabase
           .from('profiles')
           .select('full_name, profile_photo_url')
           .eq('id', newMessage.sender_id)
           .single();
 
+        // Only access properties if we have valid data
+        const senderName = (!senderError && sender) ? sender.full_name || 'Unknown' : 'Unknown';
+        const senderAvatar = (!senderError && sender) ? sender.profile_photo_url : undefined;
+
         const messageWithSender: ChatMessage = {
           ...newMessage,
-          sender_name: sender?.full_name || 'Unknown',
-          sender_avatar: sender?.profile_photo_url
+          sender_name: senderName,
+          sender_avatar: senderAvatar
         };
 
         // Add message to local state immediately for instant display
