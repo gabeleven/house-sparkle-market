@@ -1,6 +1,13 @@
 
 import { Button } from "@/components/ui/button";
-import { MapPin, User, LogOut, MessageCircle } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MapPin, User, LogOut, MessageCircle, ChevronDown, HelpCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +19,10 @@ const Header = () => {
     await signOut();
     navigate('/');
   };
+
+  // Mock unread message count - in a real app this would come from a hook
+  const unreadMessages = 3;
+  const supportTickets = 7;
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -34,36 +45,44 @@ const Header = () => {
               À propos
             </a>
             {user && (
-              <>
-                <a href="/prestataires" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  Prestataires
-                </a>
-                <a href="/chat" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  Messages
-                </a>
-                <a href="/my-profile" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  My Profile
-                </a>
-              </>
+              <a href="/prestataires" className="text-gray-600 hover:text-purple-600 transition-colors">
+                Prestataires
+              </a>
             )}
           </nav>
 
           {/* Auth Section */}
           <div className="flex items-center space-x-3">
             {user ? (
-              <div className="flex items-center space-x-3">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/chat')} className="hidden md:flex">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Messages
-                </Button>
-                <span className="text-sm text-gray-600 hidden md:block">
-                  Bonjour, {user.user_metadata?.full_name || user.email}
-                </span>
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  <span className="hidden md:inline">Déconnexion</span>
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-700">
+                      {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    </span>
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem onClick={() => navigate('/chat')}>
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Messages {unreadMessages > 0 && `(${unreadMessages})`}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/my-profile')}>
+                    <User className="w-4 h-4 mr-2" />
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    Support {supportTickets > 0 && `(${supportTickets})`}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Déconnexion
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
