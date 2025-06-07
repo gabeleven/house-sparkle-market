@@ -33,7 +33,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
+  const markersRef = useRef<google.maps.Marker[]>([]);
   const circleRef = useRef<google.maps.Circle | null>(null);
 
   useEffect(() => {
@@ -43,11 +43,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? { lat: userLocation.latitude, lng: userLocation.longitude }
       : MONTREAL_CENTER;
 
-    // Initialize the map with modern configuration
+    // Initialize the map without mapId to allow custom styling
     mapInstanceRef.current = new google.maps.Map(mapRef.current, {
       center,
       zoom: userLocation ? 12 : 10,
-      mapId: 'housie-map', // Required for AdvancedMarkerElement
       mapTypeControl: true,
       streetViewControl: true,
       fullscreenControl: false,
@@ -78,9 +77,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     return () => {
       // Cleanup markers
       markersRef.current.forEach(marker => {
-        if (marker.map) {
-          marker.map = null;
-        }
+        marker.setMap(null);
       });
       markersRef.current = [];
       
@@ -97,39 +94,54 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     // Clear existing markers
     markersRef.current.forEach(marker => {
-      if (marker.map) {
-        marker.map = null;
-      }
+      marker.setMap(null);
     });
     markersRef.current = [];
 
-    // Add cleaner markers using AdvancedMarkerElement
+    // Add cleaner markers using standard Marker (for broader compatibility)
     cleaners.forEach(cleaner => {
       if (!cleaner.latitude || !cleaner.longitude || !mapInstanceRef.current) return;
 
-      // Create marker content
-      const markerContent = document.createElement('div');
-      markerContent.className = 'relative w-10 h-10 cursor-pointer';
-      markerContent.innerHTML = `
-        <div class="w-10 h-10 bg-white border-3 border-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-          <span class="text-purple-600 font-bold text-sm">${cleaner.full_name.charAt(0).toUpperCase()}</span>
-        </div>
-      `;
-
-      const marker = new google.maps.marker.AdvancedMarkerElement({
+      const marker = new google.maps.Marker({
         position: { lat: cleaner.latitude, lng: cleaner.longitude },
         map: mapInstanceRef.current,
         title: cleaner.full_name,
-        content: markerContent
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 20,
+          fillColor: '#7c3aed',
+          fillOpacity: 1,
+          strokeColor: '#ffffff',
+          strokeWeight: 3,
+        },
+        label: {
+          text: cleaner.full_name.charAt(0).toUpperCase(),
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '14px'
+        }
       });
 
-      // Add click event
-      marker.addListener('click', (event: any) => {
-        const rect = markerContent.getBoundingClientRect();
-        onMarkerClick(cleaner, {
-          x: rect.left + rect.width / 2,
-          y: rect.top
-        });
+      // Add click event listener
+      marker.addListener('click', (event: google.maps.MapMouseEvent) => {
+        const markerPosition = marker.getPosition();
+        if (markerPosition) {
+          // Convert map coordinates to screen coordinates for popup positioning
+          const projection = mapInstanceRef.current?.getProjection();
+          if (projection) {
+            const point = projection.fromLatLngToPoint(markerPosition);
+            const scale = Math.pow(2, mapInstanceRef.current?.getZoom() || 10);
+            const worldPoint = new google.maps.Point(
+              point.x * scale,
+              point.y * scale
+            );
+            
+            onMarkerClick(cleaner, {
+              x: worldPoint.x,
+              y: worldPoint.y
+            });
+          }
+        }
       });
 
       markersRef.current.push(marker);
@@ -192,7 +204,7 @@ const MapErrorComponent = ({ error }: { error: Status }) => {
       case Status.FAILURE:
         return {
           title: "Google Maps API Error",
-          description: "Please check that the API key is properly configured and has the necessary permissions for this domain."
+          description: "Please check that the Maps JavaScript API is enabled in Google Cloud Console and the API key has proper domain restrictions configured."
         };
       default:
         return {
@@ -213,11 +225,12 @@ const MapErrorComponent = ({ error }: { error: Status }) => {
             <p className="font-medium text-red-800">{title}</p>
             <p className="text-red-700 text-sm">{description}</p>
             <div className="text-xs text-red-600 mt-2">
-              <p>If you're the site administrator:</p>
+              <p>Required steps to fix:</p>
               <ul className="list-disc list-inside ml-2 space-y-1">
-                <li>Verify Google Maps JavaScript API is enabled</li>
-                <li>Check API key restrictions include: housie.ca/*, *.lovableproject.com/*</li>
-                <li>Ensure proper billing is set up in Google Cloud Console</li>
+                <li>Enable Maps JavaScript API in Google Cloud Console</li>
+                <li>Configure API key restrictions for: housie.ca/*, *.lovableproject.com/*</li>
+                <li>Ensure proper billing is set up</li>
+                <li>Verify the API key is active and valid</li>
               </ul>
             </div>
           </div>
@@ -270,7 +283,7 @@ export const GoogleMapView = ({ cleaners, userLocation, radius = 10, onClose, is
       <Wrapper 
         apiKey={GOOGLE_MAPS_API_KEY} 
         render={render}
-        libraries={['marker']}
+        libraries={['geometry']}
       />
       
       {/* Map Controls */}
