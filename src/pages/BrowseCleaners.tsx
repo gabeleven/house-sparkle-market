@@ -34,7 +34,12 @@ const BrowseCleaners = () => {
 
   const handleSearch = () => {
     // The search is reactive, so this is mainly for mobile submit
+    console.log('Search triggered with term:', searchTerm, 'and location:', locationFilter);
   };
+
+  console.log('BrowseCleaners rendering - cleaners count:', cleaners?.length || 0);
+  console.log('Loading state:', isLoading);
+  console.log('Error state:', error);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -125,7 +130,7 @@ const BrowseCleaners = () => {
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
-              {cleaners.length} cleaner{cleaners.length !== 1 ? 's' : ''} found
+              {cleaners?.length || 0} cleaner{(cleaners?.length || 0) !== 1 ? 's' : ''} found
             </h2>
           </div>
         </div>
@@ -157,10 +162,10 @@ const BrowseCleaners = () => {
         ) : error ? (
           <Card>
             <CardContent className="p-6 text-center">
-              <p className="text-red-600">Error loading cleaners. Please try again.</p>
+              <p className="text-red-600">Error loading cleaners: {error.message || 'Unknown error'}. Please try again.</p>
             </CardContent>
           </Card>
-        ) : cleaners.length === 0 ? (
+        ) : !cleaners || cleaners.length === 0 ? (
           <Card>
             <CardContent className="p-6 text-center">
               <div className="max-w-md mx-auto">
