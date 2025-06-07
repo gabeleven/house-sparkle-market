@@ -22,13 +22,13 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
             Pourquoi choisir HOUSIE ?
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Nous avons construit la plateforme la plus fiable pour connecter les propriétaires 
             avec des services de ménage professionnels. Voici ce qui nous distingue.
           </p>
@@ -38,15 +38,15 @@ const Features = () => {
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white">
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-card">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <IconComponent className="w-8 h-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <IconComponent className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-xl font-bold text-foreground mb-4">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     {feature.description}
                   </p>
                 </CardContent>

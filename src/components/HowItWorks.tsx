@@ -31,13 +31,13 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-white">
+    <section id="how-it-works" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
             Comment fonctionne HOUSIE
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Trouver des services de ménage de qualité n'a jamais été aussi facile. 
             Suivez ces étapes simples pour que votre maison soit impeccable.
           </p>
@@ -50,25 +50,25 @@ const HowItWorks = () => {
               <div key={index} className="relative">
                 {/* Connector Line */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 transform translate-x-4 -translate-y-1/2 z-0"></div>
+                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-primary/30 to-primary/20 transform translate-x-4 -translate-y-1/2 z-0"></div>
                 )}
                 
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-white relative z-10">
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-card relative z-10">
                   <CardContent className="p-8 text-center">
                     {/* Step Number */}
-                    <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                    <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                       {step.step}
                     </div>
                     
                     {/* Icon */}
-                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <IconComponent className="w-8 h-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <IconComponent className="w-8 h-8 text-primary" />
                     </div>
                     
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    <h3 className="text-xl font-bold text-foreground mb-4">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-muted-foreground">
                       {step.description}
                     </p>
                   </CardContent>

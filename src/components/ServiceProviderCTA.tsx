@@ -40,10 +40,10 @@ const ServiceProviderCTA = () => {
   ];
 
   return (
-    <section id="for-providers" className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700">
+    <section id="for-providers" className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 dark:from-blue-950 dark:via-blue-900 dark:to-blue-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <Badge className="bg-blue-100 text-blue-800 px-4 py-2 text-lg mb-4">
+          <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 px-4 py-2 text-lg mb-4">
             Pour les prestataires de services
           </Badge>
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
@@ -66,7 +66,7 @@ const ServiceProviderCTA = () => {
                 const IconComponent = benefit.icon;
                 return (
                   <div key={index} className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-blue-600 dark:bg-blue-700 rounded-lg flex items-center justify-center flex-shrink-0">
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -84,33 +84,33 @@ const ServiceProviderCTA = () => {
           </div>
 
           {/* Subscription Features Card */}
-          <Card className="bg-white shadow-2xl border-0">
+          <Card className="bg-card shadow-2xl border-0">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-2xl font-bold text-foreground mb-2">
                   Abonnement professionnel
                 </h3>
                 <div className="flex items-baseline justify-center">
-                  <span className="text-4xl font-bold text-blue-600">29€</span>
-                  <span className="text-gray-500 ml-2">/mois</span>
+                  <span className="text-4xl font-bold text-blue-600 dark:text-blue-400">29€</span>
+                  <span className="text-muted-foreground ml-2">/mois</span>
                 </div>
-                <p className="text-gray-600 mt-2">Tout ce dont vous avez besoin pour réussir</p>
+                <p className="text-muted-foreground mt-2">Tout ce dont vous avez besoin pour réussir</p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 {subscriptionFeatures.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">{feature}</span>
+                    <Award className="w-5 h-5 text-green-500 dark:text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                    <span className="text-card-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-4 h-auto font-semibold">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-lg py-4 h-auto font-semibold">
                 Commencez votre essai gratuit de 30 jours
               </Button>
               
-              <p className="text-center text-sm text-gray-500 mt-4">
+              <p className="text-center text-sm text-muted-foreground mt-4">
                 Aucun frais d'installation • Annulation à tout moment • Support complet inclus
               </p>
             </CardContent>
@@ -128,7 +128,7 @@ const ServiceProviderCTA = () => {
               { name: "Mike R.", increase: "200%", quote: "Le profil professionnel fait vraiment la différence. Plus de réservations que jamais !" },
               { name: "Lisa K.", increase: "180%", quote: "J'adore le système de planification et paiement automatisé. Ça me fait gagner des heures !" }
             ].map((story, index) => (
-              <Card key={index} className="bg-white/10 border-white/20 backdrop-blur">
+              <Card key={index} className="bg-white/10 dark:bg-white/5 border-white/20 backdrop-blur">
                 <CardContent className="p-6 text-center">
                   <div className="text-3xl font-bold text-blue-200 mb-2">+{story.increase}</div>
                   <div className="text-white font-semibold mb-3">{story.name}</div>
