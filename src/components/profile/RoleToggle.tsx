@@ -16,6 +16,7 @@ export const RoleToggle = () => {
 
   useEffect(() => {
     if (user) {
+      console.log('RoleToggle: Loading user role for:', user.id);
       loadUserRole();
     }
   }, [user]);
@@ -31,7 +32,9 @@ export const RoleToggle = () => {
         .single();
 
       if (data && !error) {
-        setUserRole(data.user_role || 'customer');
+        const role = data.user_role || 'customer';
+        console.log('RoleToggle: Loaded user role:', role);
+        setUserRole(role);
       }
     } catch (error) {
       console.error('Error loading user role:', error);
@@ -39,6 +42,7 @@ export const RoleToggle = () => {
   };
 
   const createCleanerProfile = async (userId: string) => {
+    console.log('RoleToggle: Creating cleaner profile for:', userId);
     const { error } = await supabase
       .from('cleaner_profiles')
       .upsert({
@@ -56,9 +60,11 @@ export const RoleToggle = () => {
       console.error('Error creating cleaner profile:', error);
       throw error;
     }
+    console.log('RoleToggle: Cleaner profile created successfully');
   };
 
   const createCustomerProfile = async (userId: string) => {
+    console.log('RoleToggle: Creating customer profile for:', userId);
     const { error } = await supabase
       .from('customer_profiles')
       .upsert({
@@ -73,6 +79,7 @@ export const RoleToggle = () => {
       console.error('Error creating customer profile:', error);
       throw error;
     }
+    console.log('RoleToggle: Customer profile created successfully');
   };
 
   const handleRoleToggle = async () => {
@@ -80,6 +87,7 @@ export const RoleToggle = () => {
 
     setLoading(true);
     const newRole = userRole === 'customer' ? 'cleaner' : 'customer';
+    console.log('RoleToggle: Switching role from', userRole, 'to', newRole);
 
     try {
       // Update the user role in profiles table

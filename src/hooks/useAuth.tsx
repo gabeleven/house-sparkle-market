@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const validateSession = async () => {
     try {
       const { data: { session: currentSession } } = await supabase.auth.getSession();
+      console.log('Session validation result:', currentSession?.user?.id || 'no session');
       return currentSession;
     } catch (error) {
       console.error('Session validation failed:', error);
@@ -40,28 +41,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (isInitializedRef.current) return;
     isInitializedRef.current = true;
 
+    console.log('Initializing auth provider...');
+
     // Set up auth state listener with proper cleanup
     authSubscriptionRef.current = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id || 'no user');
         
-        // Only update state for actual auth events, not tab switches
-        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+        // Only update state for actual auth events
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
           
-          // Defer additional operations to prevent deadlocks
-          if (session?.user && event === 'SIGNED_IN') {
-            setTimeout(() => {
-              console.log('User signed in, session validated');
-            }, 0);
-          }
-          
-          if (event === 'SIGNED_OUT') {
-            setTimeout(() => {
-              console.log('User signed out, cleanup completed');
-            }, 0);
+          // Log current auth state for debugging
+          if (session?.user) {
+            console.log('User authenticated:', session.user.email, 'ID:', session.user.id);
+          } else {
+            console.log('User signed out or no session');
           }
         }
       }
@@ -69,6 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.id || 'no session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -126,19 +124,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: error.message,
         variant: "destructive"
       });
+    } else {
+      console.log('Sign in successful');
     }
 
     return { error };
   };
 
   const signOut = async () => {
+    console.log('Signing out user...');
     const { error } = await supabase.auth.signOut();
     if (error) {
+      console.error('Sign out error:', error);
       toast({
         title: "Erreur de déconnexion",
         description: error.message,
         variant: "destructive"
       });
+    } else {
+      console.log('Sign out successful');
     }
   };
 

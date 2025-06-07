@@ -13,10 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
+    console.log('Header: Initiating sign out...');
     await signOut();
     navigate('/');
   };
@@ -24,6 +25,8 @@ const Header = () => {
   // Mock unread message count - in a real app this would come from a hook
   const unreadMessages = 3;
   const supportTickets = 7;
+
+  console.log('Header: Rendering with user:', user?.id || 'no user', 'loading:', loading);
 
   return (
     <header className="bg-background shadow-sm border-b border-border">
@@ -56,7 +59,7 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             <ThemeToggle />
             
-            {user ? (
+            {!loading && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
@@ -86,7 +89,7 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
+            ) : !loading ? (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
                   <User className="w-4 h-4 mr-2" />
@@ -96,6 +99,8 @@ const Header = () => {
                   Nous rejoindre
                 </Button>
               </>
+            ) : (
+              <div className="text-sm text-muted-foreground">Loading...</div>
             )}
           </div>
         </div>

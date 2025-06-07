@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,7 +11,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, DollarSign } from 'lucide-react';
 import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
 import { ServiceTypesSelector } from './ServiceTypesSelector';
-import { RoleToggle } from './RoleToggle';
 
 interface ProfileData {
   full_name: string;
@@ -50,11 +50,13 @@ export const ProfileEditor = () => {
 
   useEffect(() => {
     if (user) {
+      console.log('ProfileEditor: Loading profile for user:', user.id);
       loadProfile();
     }
   }, [user]);
 
   const ensureCleanerProfile = async (userId: string) => {
+    console.log('Creating cleaner profile for user:', userId);
     const { error } = await supabase
       .from('cleaner_profiles')
       .upsert({
@@ -72,9 +74,11 @@ export const ProfileEditor = () => {
       console.error('Error ensuring cleaner profile:', error);
       throw error;
     }
+    console.log('Cleaner profile created successfully');
   };
 
   const ensureCustomerProfile = async (userId: string) => {
+    console.log('Creating customer profile for user:', userId);
     const { error } = await supabase
       .from('customer_profiles')
       .upsert({
@@ -89,12 +93,15 @@ export const ProfileEditor = () => {
       console.error('Error ensuring customer profile:', error);
       throw error;
     }
+    console.log('Customer profile created successfully');
   };
 
   const loadProfile = async () => {
     if (!user) return;
 
     try {
+      console.log('Loading profile data for user:', user.id);
+      
       // Get basic profile info with proper error handling
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -115,10 +122,19 @@ export const ProfileEditor = () => {
 
       if (profileData && isValidProfileData(profileData)) {
         const userRoleValue = profileData.user_role || 'customer';
+        console.log('User role detected:', userRoleValue);
         setUserRole(userRoleValue);
+
+        // Set basic profile fields
+        setProfile(prev => ({
+          ...prev,
+          full_name: profileData.full_name || '',
+          phone_number: profileData.phone_number || ''
+        }));
 
         // Get role-specific data
         if (userRoleValue === 'cleaner') {
+          console.log('Loading cleaner-specific data...');
           const { data: cleanerData, error: cleanerError } = await supabase
             .from('cleaner_profiles')
             .select('*')
@@ -131,7 +147,7 @@ export const ProfileEditor = () => {
 
           // If no cleaner profile exists, create one
           if (!cleanerData) {
-            console.log('Creating missing cleaner profile for user:', user.id);
+            console.log('No cleaner profile found, creating one...');
             await ensureCleanerProfile(user.id);
             // Reload the cleaner data
             const { data: newCleanerData } = await supabase
@@ -141,9 +157,9 @@ export const ProfileEditor = () => {
               .single();
             
             if (newCleanerData && isValidCleanerProfileData(newCleanerData)) {
-              setProfile({
-                full_name: profileData.full_name || '',
-                phone_number: profileData.phone_number || '',
+              console.log('Cleaner profile loaded:', newCleanerData);
+              setProfile(prev => ({
+                ...prev,
                 business_name: newCleanerData.business_name || '',
                 brief_description: newCleanerData.brief_description || '',
                 service_area_city: newCleanerData.service_area_city || '',
@@ -154,12 +170,12 @@ export const ProfileEditor = () => {
                 before_after_photos: newCleanerData.before_after_photos || [],
                 service_badges: newCleanerData.service_badges || [],
                 is_featured: newCleanerData.is_featured || false
-              });
+              }));
             }
           } else if (isValidCleanerProfileData(cleanerData)) {
-            setProfile({
-              full_name: profileData.full_name || '',
-              phone_number: profileData.phone_number || '',
+            console.log('Existing cleaner profile loaded:', cleanerData);
+            setProfile(prev => ({
+              ...prev,
               business_name: cleanerData.business_name || '',
               brief_description: cleanerData.brief_description || '',
               service_area_city: cleanerData.service_area_city || '',
@@ -170,15 +186,10 @@ export const ProfileEditor = () => {
               before_after_photos: cleanerData.before_after_photos || [],
               service_badges: cleanerData.service_badges || [],
               is_featured: cleanerData.is_featured || false
-            });
-          } else {
-            setProfile(prev => ({
-              ...prev,
-              full_name: profileData.full_name || '',
-              phone_number: profileData.phone_number || ''
             }));
           }
         } else {
+          console.log('User is customer, checking for customer profile...');
           const { data: customerData, error: customerError } = await supabase
             .from('customer_profiles')
             .select('*')
@@ -191,17 +202,12 @@ export const ProfileEditor = () => {
 
           // If no customer profile exists, create one
           if (!customerData) {
-            console.log('Creating missing customer profile for user:', user.id);
+            console.log('No customer profile found, creating one...');
             await ensureCustomerProfile(user.id);
           }
-
-          setProfile({
-            full_name: profileData.full_name || '',
-            phone_number: profileData.phone_number || ''
-          });
         }
       } else {
-        console.warn('Invalid or missing profile data');
+        console.warn('Invalid or missing profile data, setting defaults');
         setProfile({
           full_name: '',
           phone_number: '',
@@ -232,6 +238,7 @@ export const ProfileEditor = () => {
   const handleSave = async () => {
     if (!user) return;
 
+    console.log('Saving profile for user:', user.id, 'role:', userRole);
     setSaving(true);
     try {
       // Update basic profile with proper typing
@@ -264,7 +271,7 @@ export const ProfileEditor = () => {
           is_profile_complete: true
         };
 
-        console.log('Saving cleaner profile with hourly_rate:', cleanerProfileData.hourly_rate);
+        console.log('Saving cleaner profile with data:', cleanerProfileData);
 
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
@@ -317,6 +324,8 @@ export const ProfileEditor = () => {
       </div>
     );
   }
+
+  console.log('Rendering ProfileEditor with userRole:', userRole, 'profile:', profile);
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -401,7 +410,7 @@ export const ProfileEditor = () => {
                 <div>
                   <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="hourly_rate"
                       type="number"
@@ -414,7 +423,7 @@ export const ProfileEditor = () => {
                     />
                   </div>
                   {!isRateValid() && (
-                    <p className="text-sm text-red-500 mt-1">Rate must be greater than $0</p>
+                    <p className="text-sm text-destructive mt-1">Rate must be greater than $0</p>
                   )}
                 </div>
               </div>

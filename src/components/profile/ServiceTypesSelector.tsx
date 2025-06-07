@@ -23,12 +23,14 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
 
   useEffect(() => {
     if (cleanerId) {
+      console.log('ServiceTypesSelector: Loading services for cleaner:', cleanerId);
       loadSelectedServices();
     }
   }, [cleanerId]);
 
   const verifyCleanerProfile = async () => {
     try {
+      console.log('ServiceTypesSelector: Verifying cleaner profile exists for:', cleanerId);
       const { data: cleanerProfile, error } = await supabase
         .from('cleaner_profiles')
         .select('id')
@@ -42,10 +44,12 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
       }
 
       if (!cleanerProfile) {
+        console.error('Cleaner profile not found for:', cleanerId);
         setError('Cleaner profile not found. Please complete your profile setup first.');
         return false;
       }
 
+      console.log('ServiceTypesSelector: Cleaner profile verified');
       return true;
     } catch (error) {
       console.error('Error verifying cleaner profile:', error);
@@ -65,6 +69,7 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
         return;
       }
 
+      console.log('ServiceTypesSelector: Loading selected services for:', cleanerId);
       const { data, error } = await supabase
         .from('cleaner_service_types')
         .select('service_type')
@@ -74,7 +79,9 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
         console.error('Error loading services:', error);
         setError('Failed to load service types. Please try again.');
       } else {
-        setSelectedServices(data?.map(item => item.service_type as ServiceType) || []);
+        const services = data?.map(item => item.service_type as ServiceType) || [];
+        console.log('ServiceTypesSelector: Loaded services:', services);
+        setSelectedServices(services);
       }
     } catch (error) {
       console.error('Error loading services:', error);
@@ -85,7 +92,12 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
   };
 
   const handleServiceChange = async (serviceType: ServiceType, checked: boolean) => {
-    if (!user) return;
+    if (!user) {
+      console.error('ServiceTypesSelector: No user found');
+      return;
+    }
+
+    console.log('ServiceTypesSelector: Changing service', serviceType, 'to', checked);
 
     try {
       if (checked) {
@@ -99,6 +111,7 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
 
         if (error) throw error;
         setSelectedServices(prev => [...prev, serviceType]);
+        console.log('ServiceTypesSelector: Added service:', serviceType);
       } else {
         // Remove service
         const { error } = await supabase
@@ -109,6 +122,7 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
 
         if (error) throw error;
         setSelectedServices(prev => prev.filter(s => s !== serviceType));
+        console.log('ServiceTypesSelector: Removed service:', serviceType);
       }
 
       toast({
