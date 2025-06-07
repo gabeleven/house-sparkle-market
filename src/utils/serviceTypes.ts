@@ -1,5 +1,5 @@
 
-import { Home, Building, Sparkles, Mountain, Droplets, ShirtIcon, Broom, Zap } from 'lucide-react';
+import { Home, Building, Sparkles, Mountain, Droplets, ShirtIcon, Brush, Zap } from 'lucide-react';
 
 export type ServiceType = 
   | 'residential_cleaning'
@@ -29,7 +29,7 @@ export const serviceTypeIcons: Record<ServiceType, React.ComponentType<any>> = {
   chalet_airbnb_cleaning: Mountain,
   window_washing: Droplets,
   ironing: ShirtIcon,
-  light_housekeeping: Broom,
+  light_housekeeping: Brush,
   deep_cleaning: Zap
 };
 
