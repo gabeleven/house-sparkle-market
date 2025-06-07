@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, TrendingUp, Shield, DollarSign, Users, Award, MessageCircle, Eye } from "lucide-react";
+import { Star, TrendingUp, Shield, DollarSign, Users, Award, MessageCircle, Eye, Calendar, BarChart3, Crown } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -36,152 +36,140 @@ const ServiceProvidersPage = () => {
       
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <Badge className="bg-purple-100 text-purple-800 px-4 py-2 text-lg mb-4">
-              Pour les prestataires de services
-            </Badge>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              Développez votre entreprise de ménage
+          {/* Benefits Section - Now at the top */}
+          <div className="mb-16">
+            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6 text-center">
+              Pourquoi les prestataires choisissent HOUSIE
             </h1>
-            <p className="text-xl text-green-100 max-w-3xl mx-auto">
-              Rejoignez des centaines de professionnels du ménage qui ont transformé 
-              leur entreprise avec la plateforme puissante de HOUSIE.
-            </p>
+            <div className="grid lg:grid-cols-4 gap-8">
+              {benefits.map((benefit, index) => {
+                const IconComponent = benefit.icon;
+                return (
+                  <div key={index} className="text-center">
+                    <div className="w-16 h-16 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-3">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-green-100">
+                      {benefit.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            {/* Benefits Grid */}
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-8">
-                Pourquoi les prestataires choisissent HOUSIE
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {benefits.map((benefit, index) => {
-                  const IconComponent = benefit.icon;
-                  return (
-                    <div key={index} className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-white mb-2">
-                          {benefit.title}
-                        </h3>
-                        <p className="text-green-100">
-                          {benefit.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Pricing Cards */}
-            <div className="grid gap-6">
-              {/* Free Plan */}
+          {/* Pricing Plans Section */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-white mb-12 text-center">
+              Plans d'abonnement
+            </h2>
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Starter Plan */}
               <Card className="bg-white shadow-2xl border-0">
-                <CardContent className="p-6">
-                  <div className="text-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      Gratuit
+                <CardContent className="p-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      Starter
                     </h3>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-3xl font-bold text-green-600">0€</span>
+                      <span className="text-4xl font-bold text-purple-600">$12</span>
                       <span className="text-gray-500 ml-2">/mois</span>
                     </div>
-                    <p className="text-gray-600 mt-2">Consultation anonyme</p>
+                    <p className="text-gray-600 mt-2">Parfait pour commencer</p>
                   </div>
 
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-start">
-                      <Eye className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Voir les numéros de téléphone</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Profil de base</span>
-                    </li>
-                  </ul>
-
-                  <Button className="w-full bg-gray-600 hover:bg-gray-700 font-semibold">
-                    Commencer gratuitement
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Monthly Plan */}
-              <Card className="bg-white shadow-2xl border-0 ring-2 ring-purple-500">
-                <CardContent className="p-6">
-                  <div className="text-center mb-6">
-                    <Badge className="bg-purple-100 text-purple-800 mb-2">Populaire</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      Professionnel Mensuel
-                    </h3>
-                    <div className="flex items-baseline justify-center">
-                      <span className="text-3xl font-bold text-purple-600">9,99€</span>
-                      <span className="text-gray-500 ml-2">/mois</span>
-                    </div>
-                    <p className="text-gray-600 mt-2">Messagerie et vérification</p>
-                  </div>
-
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-start">
-                      <MessageCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Système de messagerie</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Shield className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Usagers vérifiés</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Réservation en ligne</span>
-                    </li>
+                  <ul className="space-y-4 mb-8">
                     <li className="flex items-start">
                       <Star className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Notifications par courriel</span>
+                      <span className="text-gray-700">Profil de base</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">2 catégories de services</span>
+                    </li>
+                    <li className="flex items-start">
+                      <MessageCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">Transfert des demandes clients</span>
                     </li>
                   </ul>
 
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 font-semibold">
-                    Commencer l'essai gratuit
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-4 h-auto font-semibold">
+                    Choisir Starter
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Annual Plan */}
-              <Card className="bg-white shadow-2xl border-0">
-                <CardContent className="p-6">
-                  <div className="text-center mb-6">
-                    <Badge className="bg-yellow-100 text-yellow-800 mb-2">Économie</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      Professionnel Annuel
+              {/* Professional Plan */}
+              <Card className="bg-white shadow-2xl border-0 ring-2 ring-purple-500 scale-105">
+                <CardContent className="p-8">
+                  <div className="text-center mb-8">
+                    <Badge className="bg-purple-100 text-purple-800 mb-4">Populaire</Badge>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      Professional
                     </h3>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-3xl font-bold text-yellow-600">99€</span>
-                      <span className="text-gray-500 ml-2">/an</span>
+                      <span className="text-4xl font-bold text-purple-600">$18</span>
+                      <span className="text-gray-500 ml-2">/mois</span>
                     </div>
-                    <p className="text-gray-600 mt-2">2 mois gratuits !</p>
+                    <p className="text-gray-600 mt-2">Pour les professionnels actifs</p>
                   </div>
 
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-4 mb-8">
                     <li className="flex items-start">
                       <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Toutes les fonctionnalités pro</span>
+                      <span className="text-gray-700">Services illimités</span>
                     </li>
                     <li className="flex items-start">
                       <TrendingUp className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Placement prioritaire</span>
+                      <span className="text-gray-700">Placement prioritaire dans les recherches</span>
                     </li>
                     <li className="flex items-start">
-                      <Shield className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Support prioritaire</span>
+                      <Calendar className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">Calendrier de réservation</span>
                     </li>
                   </ul>
 
-                  <Button className="w-full bg-yellow-600 hover:bg-yellow-700 font-semibold">
-                    Choisir le plan annuel
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-4 h-auto font-semibold">
+                    Choisir Professional
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Premium Plan */}
+              <Card className="bg-white shadow-2xl border-0">
+                <CardContent className="p-8">
+                  <div className="text-center mb-8">
+                    <Badge className="bg-yellow-100 text-yellow-800 mb-4">Premium</Badge>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      Premium
+                    </h3>
+                    <div className="flex items-baseline justify-center">
+                      <span className="text-4xl font-bold text-yellow-600">$28</span>
+                      <span className="text-gray-500 ml-2">/mois</span>
+                    </div>
+                    <p className="text-gray-600 mt-2">Maximum de visibilité</p>
+                  </div>
+
+                  <ul className="space-y-4 mb-8">
+                    <li className="flex items-start">
+                      <Crown className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">Annonces en vedette</span>
+                    </li>
+                    <li className="flex items-start">
+                      <BarChart3 className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">Tableau de bord analytique</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Star className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">Image de marque personnalisée</span>
+                    </li>
+                  </ul>
+
+                  <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-lg py-4 h-auto font-semibold">
+                    Choisir Premium
                   </Button>
                 </CardContent>
               </Card>
