@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ContactViaHousieButtonProps {
   cleanerId: string;
-  size?: "default" | "sm" | "lg" | "icon" | null | undefined;
+  size?: "default" | "sm" | "lg" | "icon";
   className?: string;
 }
 
