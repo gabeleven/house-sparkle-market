@@ -9,6 +9,9 @@ import { Search, MapPin, Filter } from "lucide-react";
 import { useCleaners } from "@/hooks/useCleaners";
 import { useLocation } from "@/hooks/useLocation";
 import { CleanerCard } from "@/components/CleanerCard";
+import { MapPreview } from "@/components/map/MapPreview";
+import { MapView } from "@/components/map/MapView";
+import { RadiusSelector } from "@/components/map/RadiusSelector";
 import {
   Sheet,
   SheetContent,
@@ -24,6 +27,8 @@ const BrowseCleaners = () => {
   
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [locationFilter, setLocationFilter] = useState('');
+  const [searchRadius, setSearchRadius] = useState(10);
+  const [showMap, setShowMap] = useState(false);
   const { location, requestLocation } = useLocation();
   
   const { cleaners, isLoading, error } = useCleaners({
@@ -35,6 +40,12 @@ const BrowseCleaners = () => {
   const handleSearch = () => {
     // The search is reactive, so this is mainly for mobile submit
     console.log('Search triggered with term:', searchTerm, 'and location:', locationFilter);
+  };
+
+  const handleRadiusChange = (newRadius: number) => {
+    setSearchRadius(newRadius);
+    // Here you could refetch cleaners with new radius
+    console.log('Radius changed to:', newRadius);
   };
 
   console.log('BrowseCleaners rendering - cleaners count:', cleaners?.length || 0);
@@ -126,75 +137,108 @@ const BrowseCleaners = () => {
           </div>
         </div>
 
-        {/* Results */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {cleaners?.length || 0} cleaner{(cleaners?.length || 0) !== 1 ? 's' : ''} found
-            </h2>
-          </div>
-        </div>
+        {/* Map Preview */}
+        {!showMap && !isLoading && cleaners && cleaners.length > 0 && (
+          <MapPreview 
+            cleaners={cleaners}
+            onShowMap={() => setShowMap(true)}
+            userLocation={location}
+          />
+        )}
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        {/* Radius Selector */}
+        {!showMap && location && (
+          <RadiusSelector 
+            currentRadius={searchRadius}
+            onRadiusChange={handleRadiusChange}
+            userLocation={location}
+          />
+        )}
+
+        {/* Full Screen Map */}
+        {showMap && (
+          <MapView
+            cleaners={cleaners || []}
+            userLocation={location}
+            radius={searchRadius}
+            onClose={() => setShowMap(false)}
+            isFullScreen={true}
+          />
+        )}
+
+        {/* Results */}
+        {!showMap && (
+          <>
+            <div className="mb-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {cleaners?.length || 0} cleaner{(cleaners?.length || 0) !== 1 ? 's' : ''} found
+                </h2>
+              </div>
+            </div>
+
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                      </div>
+                      <div className="space-y-2 mb-4">
+                        <div className="h-3 bg-gray-200 rounded"></div>
+                        <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : error ? (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-red-600">Error loading cleaners: {error.message || 'Unknown error'}. Please try again.</p>
+                </CardContent>
+              </Card>
+            ) : !cleaners || cleaners.length === 0 ? (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="max-w-md mx-auto">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-8 h-8 text-gray-400" />
                     </div>
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="h-3 bg-gray-200 rounded"></div>
-                    <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No cleaners found</h3>
+                    <p className="text-gray-600 mb-4">
+                      Try adjusting your search terms or location to find more results.
+                    </p>
+                    {!location && (
+                      <Button
+                        onClick={requestLocation}
+                        variant="outline"
+                        className="text-purple-600 border-purple-600 hover:bg-purple-50"
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Enable Location for Better Results
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        ) : error ? (
-          <Card>
-            <CardContent className="p-6 text-center">
-              <p className="text-red-600">Error loading cleaners: {error.message || 'Unknown error'}. Please try again.</p>
-            </CardContent>
-          </Card>
-        ) : !cleaners || cleaners.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-gray-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No cleaners found</h3>
-                <p className="text-gray-600 mb-4">
-                  Try adjusting your search terms or location to find more results.
-                </p>
-                {!location && (
-                  <Button
-                    onClick={requestLocation}
-                    variant="outline"
-                    className="text-purple-600 border-purple-600 hover:bg-purple-50"
-                  >
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Enable Location for Better Results
-                  </Button>
-                )}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cleaners.map((cleaner) => (
+                  <CleanerCard key={cleaner.id} cleaner={cleaner} />
+                ))}
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cleaners.map((cleaner) => (
-              <CleanerCard key={cleaner.id} cleaner={cleaner} />
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
     </div>
