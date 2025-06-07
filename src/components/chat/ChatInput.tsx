@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Image } from "lucide-react";
 import { useChat } from "@/hooks/useChat";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatInputProps {
   conversationId: string;
@@ -11,6 +12,7 @@ interface ChatInputProps {
 
 export const ChatInput = ({ conversationId }: ChatInputProps) => {
   const { sendMessage } = useChat();
+  const { toast } = useToast();
   const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,12 +20,21 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
   const handleSendMessage = async () => {
     if (!messageText.trim() || isSending) return;
 
+    const tempMessage = messageText;
+    setMessageText(''); // Clear input immediately for better UX
     setIsSending(true);
+
     try {
-      await sendMessage(conversationId, messageText);
-      setMessageText('');
+      await sendMessage(conversationId, tempMessage);
+      console.log('Message sent successfully');
     } catch (error) {
       console.error('Error sending message:', error);
+      setMessageText(tempMessage); // Restore message on error
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsSending(false);
     }
@@ -40,16 +51,38 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // In a real app, you would upload to Supabase Storage here
-    // For now, we'll just show a placeholder
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file",
+        description: "Please select an image file",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSending(true);
     try {
-      setIsSending(true);
-      // TODO: Implement actual image upload to Supabase Storage
+      // For now, we'll send a placeholder image URL
+      // In a real implementation, you would upload to Supabase Storage first
       await sendMessage(conversationId, '/placeholder.svg', 'image');
+      
+      toast({
+        title: "Image sent",
+        description: "Your image has been sent"
+      });
     } catch (error) {
       console.error('Error uploading image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send image. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsSending(false);
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -69,6 +102,7 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
           size="icon"
           onClick={() => fileInputRef.current?.click()}
           disabled={isSending}
+          className="flex-shrink-0"
         >
           <Image className="w-5 h-5" />
         </Button>
@@ -88,7 +122,7 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
           onClick={handleSendMessage}
           disabled={!messageText.trim() || isSending}
           size="icon"
-          className="rounded-full bg-purple-600 hover:bg-purple-700"
+          className="rounded-full bg-purple-600 hover:bg-purple-700 flex-shrink-0"
         >
           <Send className="w-4 h-4" />
         </Button>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -79,7 +78,7 @@ export const ProfileEditor = () => {
             .eq('id', user.id)
             .single();
 
-          if (cleanerError) {
+          if (cleanerError && cleanerError.code !== 'PGRST116') {
             console.error('Cleaner profile error:', cleanerError);
           }
 
@@ -110,7 +109,7 @@ export const ProfileEditor = () => {
             .eq('id', user.id)
             .single();
 
-          if (customerError) {
+          if (customerError && customerError.code !== 'PGRST116') {
             console.error('Customer profile error:', customerError);
           }
 
@@ -155,18 +154,22 @@ export const ProfileEditor = () => {
 
       // Update role-specific data
       if (userRole === 'cleaner') {
+        const cleanerProfileData = {
+          business_name: profile.business_name,
+          brief_description: profile.brief_description,
+          service_area_city: profile.service_area_city,
+          service_radius_km: profile.service_radius_km,
+          years_experience: profile.years_experience,
+          latitude: profile.latitude,
+          longitude: profile.longitude,
+          is_profile_complete: true
+        };
+
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
           .upsert({
             id: user.id,
-            business_name: profile.business_name,
-            brief_description: profile.brief_description,
-            service_area_city: profile.service_area_city,
-            service_radius_km: profile.service_radius_km,
-            years_experience: profile.years_experience,
-            latitude: profile.latitude,
-            longitude: profile.longitude,
-            is_profile_complete: true
+            ...cleanerProfileData
           });
 
         if (cleanerError) {
@@ -174,12 +177,16 @@ export const ProfileEditor = () => {
           throw cleanerError;
         }
       } else {
+        const customerProfileData = {
+          latitude: profile.latitude,
+          longitude: profile.longitude
+        };
+
         const { error: customerError } = await supabase
           .from('customer_profiles')
           .upsert({
             id: user.id,
-            latitude: profile.latitude,
-            longitude: profile.longitude
+            ...customerProfileData
           });
 
         if (customerError) {
