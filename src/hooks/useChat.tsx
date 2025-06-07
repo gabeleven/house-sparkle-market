@@ -89,8 +89,8 @@ export const useChat = () => {
           .from('chat_messages')
           .select('*', { count: 'exact', head: true })
           .eq('conversation_id', conv.id)
-          .eq('is_read', false as any)
-          .neq('sender_id', user.id as any);
+          .eq('is_read', false)
+          .neq('sender_id', user.id);
 
         // Get last message
         const { data: lastMsg } = await supabase
@@ -102,7 +102,7 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (lastMsg && typeof lastMsg === 'object' && 'message_type' in lastMsg) {
+        if (lastMsg && 'message_type' in lastMsg) {
           lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content || '';
         }
 
@@ -180,7 +180,7 @@ export const useChat = () => {
       .eq('cleaner_id', cleanerId)
       .maybeSingle();
 
-    if (existing) {
+    if (existing && 'id' in existing) {
       return existing.id;
     }
 
@@ -199,7 +199,11 @@ export const useChat = () => {
       throw error;
     }
 
-    return newConv.id;
+    if (newConv && 'id' in newConv) {
+      return newConv.id;
+    }
+
+    throw new Error('Failed to create conversation');
   };
 
   // Send a message
@@ -242,7 +246,7 @@ export const useChat = () => {
       .from('chat_messages')
       .update({ is_read: true })
       .eq('conversation_id', conversationId)
-      .neq('sender_id', user.id as any);
+      .neq('sender_id', user.id);
   };
 
   // Clean up subscriptions helper
@@ -300,7 +304,7 @@ export const useChat = () => {
         let senderName = 'Unknown';
         let senderAvatar: string | undefined = undefined;
         
-        if (sender && typeof sender === 'object' && 'full_name' in sender) {
+        if (sender && 'full_name' in sender) {
           senderName = sender.full_name || 'Unknown';
           senderAvatar = sender.profile_photo_url || undefined;
         }

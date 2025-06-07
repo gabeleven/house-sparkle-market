@@ -54,7 +54,7 @@ export const ProfileEditor = () => {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id as any)
+        .eq('id', user.id)
         .maybeSingle();
 
       if (profileError) {
@@ -68,7 +68,7 @@ export const ProfileEditor = () => {
         return;
       }
 
-      if (profileData && typeof profileData === 'object' && 'user_role' in profileData && profileData !== null) {
+      if (profileData) {
         setUserRole(profileData.user_role || 'customer');
 
         // Get role-specific data
@@ -76,14 +76,14 @@ export const ProfileEditor = () => {
           const { data: cleanerData, error: cleanerError } = await supabase
             .from('cleaner_profiles')
             .select('*')
-            .eq('id', user.id as any)
+            .eq('id', user.id)
             .maybeSingle();
 
           if (cleanerError && cleanerError.code !== 'PGRST116') {
             console.error('Cleaner profile error:', cleanerError);
           }
 
-          if (cleanerData && typeof cleanerData === 'object' && cleanerData !== null) {
+          if (cleanerData) {
             setProfile({
               full_name: profileData.full_name || '',
               phone_number: profileData.phone_number || '',
@@ -107,7 +107,7 @@ export const ProfileEditor = () => {
           const { data: customerData, error: customerError } = await supabase
             .from('customer_profiles')
             .select('*')
-            .eq('id', user.id as any)
+            .eq('id', user.id)
             .maybeSingle();
 
           if (customerError && customerError.code !== 'PGRST116') {
@@ -117,8 +117,8 @@ export const ProfileEditor = () => {
           setProfile({
             full_name: profileData.full_name || '',
             phone_number: profileData.phone_number || '',
-            latitude: (customerData && typeof customerData === 'object' && 'latitude' in customerData) ? customerData.latitude || undefined : undefined,
-            longitude: (customerData && typeof customerData === 'object' && 'longitude' in customerData) ? customerData.longitude || undefined : undefined
+            latitude: customerData?.latitude || undefined,
+            longitude: customerData?.longitude || undefined
           });
         }
       }
@@ -147,8 +147,8 @@ export const ProfileEditor = () => {
 
       const { error: profileError } = await supabase
         .from('profiles')
-        .update(profileUpdate as any)
-        .eq('id', user.id as any);
+        .update(profileUpdate)
+        .eq('id', user.id);
 
       if (profileError) {
         console.error('Profile update error:', profileError);
@@ -171,7 +171,7 @@ export const ProfileEditor = () => {
 
         const { error: cleanerError } = await supabase
           .from('cleaner_profiles')
-          .upsert(cleanerProfileData as any);
+          .upsert(cleanerProfileData);
 
         if (cleanerError) {
           console.error('Cleaner profile update error:', cleanerError);
@@ -186,7 +186,7 @@ export const ProfileEditor = () => {
 
         const { error: customerError } = await supabase
           .from('customer_profiles')
-          .upsert(customerProfileData as any);
+          .upsert(customerProfileData);
 
         if (customerError) {
           console.error('Customer profile update error:', customerError);
