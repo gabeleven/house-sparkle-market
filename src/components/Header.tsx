@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   // Mock user role - in a real app, this would come from user profile data
-  const userRole = 'starter'; // 'starter', 'professional', 'premium'
+  // Changed from const to let to allow dynamic assignment
+  let userRole: 'starter' | 'professional' | 'premium' = 'starter';
+  
+  // In a real app, you would fetch this from the user's profile data
+  // For now, we'll keep it as starter but the type allows for all values
 
   const handleSignOut = async () => {
     await signOut();
@@ -66,7 +69,7 @@ const Header = () => {
               <img 
                 src="/lovable-uploads/7e996b12-8e81-4588-9463-feb35fd38aec.png" 
                 alt="Housie Cleaner" 
-                className="w-8 h-8 object-contain"
+                className="w-8 h-8 object-contain rounded-full"
               />
             </div>
             <span className="text-xl font-bold text-foreground">HOUSIE</span>
