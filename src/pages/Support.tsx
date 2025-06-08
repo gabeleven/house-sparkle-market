@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Search, MessageCircle, Mail, Phone, HelpCircle } from 'lucide-react';
 import { FAQSection } from '@/components/support/FAQSection';
 import { LiveChatWidget } from '@/components/support/LiveChatWidget';
 import { ContactForm } from '@/components/support/ContactForm';
+import { useChatbot } from '@/contexts/ChatbotContext';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,6 +24,8 @@ import {
 const Support = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { openChatbot, setShowGoodbyeMessage } = useChatbot();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('faq');
 
@@ -32,6 +34,23 @@ const Support = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Handle chatbot navigation
+  useEffect(() => {
+    const section = searchParams.get('section');
+    const chatbotParam = searchParams.get('chatbot');
+    
+    if (section === 'contact') {
+      setActiveTab('contact');
+    }
+    
+    if (chatbotParam === 'goodbye') {
+      setShowGoodbyeMessage(true);
+      setTimeout(() => {
+        openChatbot('support');
+      }, 500);
+    }
+  }, [searchParams, setActiveTab, openChatbot, setShowGoodbyeMessage]);
 
   if (loading) {
     return (

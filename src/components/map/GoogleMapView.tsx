@@ -1,248 +1,156 @@
 
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { X, AlertCircle, MapPin } from 'lucide-react';
-import { CleanerProfile } from '@/hooks/useCleaners';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useGoogleMapsApi } from '@/hooks/useGoogleMapsApi';
-import { useMapState } from '@/hooks/useMapState';
-import { useUserLocation } from '@/hooks/useUserLocation';
+import React, { useCallback, useState, useEffect } from 'react';
+import { GoogleMap, useJSApiLoader } from '@react-google-maps/api';
 import { MapMarkers } from './MapMarkers';
 import { MapControls } from './MapControls';
+import { useMapState } from '@/hooks/useMapState';
+import { useUserLocation } from '@/hooks/useUserLocation';
 
-interface Location {
-  latitude: number;
-  longitude: number;
-}
-
-interface GoogleMapViewProps {
-  cleaners: CleanerProfile[];
-  userLocation?: Location | null;
-  radius?: number;
-  onClose?: () => void;
-  onError?: () => void;
-  isFullScreen?: boolean;
-}
-
-const containerStyle = {
+const mapContainerStyle = {
   width: '100%',
   height: '100%'
 };
 
+// Montreal fallback coordinates
+const MONTREAL_CENTER = {
+  lat: 45.5017,
+  lng: -73.5673
+};
+
+const mapOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+  mapTypeControl: false,
+  scaleControl: true,
+  streetViewControl: false,
+  rotateControl: false,
+  fullscreenControl: true,
+  styles: [
+    {
+      featureType: 'poi',
+      elementType: 'labels',
+      stylers: [{ visibility: 'off' }]
+    }
+  ]
+};
+
+interface GoogleMapViewProps {
+  cleaners: any[];
+  onCleanerSelect: (cleaner: any) => void;
+  selectedCleaner: any;
+  radiusKm: number;
+  onRadiusChange: (radius: number) => void;
+  className?: string;
+}
+
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   cleaners,
-  userLocation: propUserLocation,
-  radius = 25,
-  onClose,
-  onError,
-  isFullScreen = false
+  onCleanerSelect,
+  selectedCleaner,
+  radiusKm,
+  onRadiusChange,
+  className = ""
 }) => {
-  const {
-    isLoading,
-    hasError,
-    errorMessage,
-    scriptLoaded,
-    isGoogleMapsAvailable,
-    handleLoadSuccess,
-    handleLoadError,
-    apiKey
-  } = useGoogleMapsApi();
+  const { isLoaded, loadError } = useJSApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o'
+  });
 
-  const { userLocation: hookUserLocation, loading: locationLoading, requestUserLocation } = useUserLocation();
-  const [mapReady, setMapReady] = useState(false);
+  const { userLocation, isLoading: locationLoading, error: locationError } = useUserLocation();
+  const { 
+    mapCenter, 
+    zoom, 
+    setMapCenter, 
+    setZoom,
+    setMapInstance
+  } = useMapState();
 
-  // Use hook location if prop location is not provided
-  const effectiveUserLocation = propUserLocation || hookUserLocation;
+  const [finalCenter, setFinalCenter] = useState(MONTREAL_CENTER);
 
-  const {
-    selectedCleaner,
-    setSelectedCleaner,
-    mapInstance,
-    setMapInstance,
-    center,
-    zoom,
-    handleMarkerClick,
-    handleRecenter,
-    handleCenterOnUser
-  } = useMapState({ userLocation: effectiveUserLocation });
+  // Update map center based on user location
+  useEffect(() => {
+    if (userLocation) {
+      console.log('Setting map center to user location:', userLocation);
+      const newCenter = { lat: userLocation.lat, lng: userLocation.lng };
+      setFinalCenter(newCenter);
+      setMapCenter(newCenter);
+      setZoom(13); // Closer zoom when we have user location
+    } else if (mapCenter.lat !== MONTREAL_CENTER.lat || mapCenter.lng !== MONTREAL_CENTER.lng) {
+      // Use stored map center if available and different from Montreal
+      console.log('Using stored map center:', mapCenter);
+      setFinalCenter(mapCenter);
+    } else {
+      console.log('Using Montreal fallback center');
+      setFinalCenter(MONTREAL_CENTER);
+      setMapCenter(MONTREAL_CENTER);
+    }
+  }, [userLocation, mapCenter, setMapCenter, setZoom]);
 
-  const mapOptions = {
-    disableDefaultUI: false,
-    zoomControl: true,
-    streetViewControl: false,
-    mapTypeControl: false,
-    fullscreenControl: !isFullScreen,
-    gestureHandling: 'cooperative', // Better for Edge browser
-    styles: [
-      {
-        featureType: "poi",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }]
-      }
-    ]
-  };
-
-  // Handle map load
-  const handleMapLoad = (map: google.maps.Map) => {
-    console.log('Map instance loaded successfully');
-    console.log('Map center:', map.getCenter()?.toJSON());
-    console.log('Map zoom:', map.getZoom());
+  const onLoad = useCallback((map: google.maps.Map) => {
+    console.log('Google Map loaded successfully');
     setMapInstance(map);
-    setMapReady(true);
+  }, [setMapInstance]);
 
-    // Center on user location if available
-    if (effectiveUserLocation) {
-      const userPos = {
-        lat: effectiveUserLocation.latitude,
-        lng: effectiveUserLocation.longitude
-      };
-      console.log('Centering map on user location:', userPos);
-      map.setCenter(userPos);
-      map.setZoom(12);
-    }
-  };
+  const onUnmount = useCallback(() => {
+    setMapInstance(null);
+  }, [setMapInstance]);
 
-  // Enhanced error handling for Edge browser
-  useEffect(() => {
-    if (hasError && onError) {
-      console.log('Map loading failed, triggering fallback after delay...');
-      const timer = setTimeout(() => {
-        onError();
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [hasError, onError]);
+  const handleCenterChanged = useCallback(() => {
+    // This will be called when user manually moves the map
+  }, []);
 
-  // Auto-request location if not available
-  useEffect(() => {
-    if (!effectiveUserLocation && !locationLoading) {
-      console.log('No user location available, requesting...');
-      requestUserLocation();
-    }
-  }, [effectiveUserLocation, locationLoading, requestUserLocation]);
-
-  // Error state
-  if (hasError) {
+  if (loadError) {
+    console.error('Google Maps load error:', loadError);
     return (
-      <Card className={isFullScreen ? "fixed inset-0 z-50 rounded-none" : "h-96"}>
-        <CardHeader className="flex flex-row items-center justify-between py-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-red-500" />
-            Map Unavailable
-          </CardTitle>
-          {onClose && (
-            <Button variant="outline" size="sm" onClick={onClose}>
-              <X className="w-3 h-3" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent className="p-6 flex flex-col items-center justify-center">
-          <p className="text-center text-gray-600 mb-4">{errorMessage}</p>
-          <div className="flex gap-2">
-            {onError && (
-              <Button onClick={onError} variant="default">
-                Use Simple Map
-              </Button>
-            )}
-            <Button onClick={() => window.location.reload()} variant="outline">
-              Retry
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
+        <div className="text-center p-4">
+          <p className="text-red-600 mb-2">Failed to load Google Maps</p>
+          <p className="text-sm text-gray-500">
+            Please check your internet connection and try again.
+          </p>
+        </div>
+      </div>
     );
   }
 
-  // Loading state
-  if (isLoading || !scriptLoaded || !mapReady) {
+  if (!isLoaded || locationLoading) {
     return (
-      <Card className={isFullScreen ? "fixed inset-0 z-50 rounded-none" : "h-96"}>
-        <CardHeader className="flex flex-row items-center justify-between py-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            Loading Interactive Map...
-          </CardTitle>
-          {onClose && (
-            <Button variant="outline" size="sm" onClick={onClose}>
-              <X className="w-3 h-3" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent className="p-0 flex-1">
-          <div className={isFullScreen ? "h-full" : "h-80"}>
-            <div className="h-full flex items-center justify-center bg-gray-50">
-              <div className="text-center">
-                <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">Loading Google Maps...</p>
-                <p className="text-sm text-gray-500">
-                  {navigator.userAgent.includes('Edge') || navigator.userAgent.includes('Edg/') 
-                    ? 'Optimizing for Edge browser...' 
-                    : 'This may take a moment...'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
+        <div className="text-center p-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+          <p className="text-gray-600">
+            {locationLoading ? 'Getting your location...' : 'Loading Google Maps...'}
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className={isFullScreen ? "fixed inset-0 z-50 rounded-none" : "h-96"}>
-      <CardHeader className="flex flex-row items-center justify-between py-3">
-        <CardTitle className="text-lg">
-          {cleaners.length} Cleaners in Your Area
-        </CardTitle>
-        <MapControls
-          cleanerCount={cleaners.length}
-          onRecenter={handleRecenter}
-          onCenterOnUser={handleCenterOnUser}
-          onClose={onClose}
+    <div className={`relative ${className}`}>
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={finalCenter}
+        zoom={zoom}
+        options={mapOptions}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        onCenterChanged={handleCenterChanged}
+      >
+        <MapMarkers
+          cleaners={cleaners}
+          onCleanerSelect={onCleanerSelect}
+          selectedCleaner={selectedCleaner}
+          userLocation={userLocation}
+          radiusKm={radiusKm}
         />
-      </CardHeader>
-      <CardContent className="p-0 flex-1">
-        <div className={isFullScreen ? "h-full" : "h-80"}>
-          <LoadScript 
-            googleMapsApiKey={apiKey}
-            onLoad={handleLoadSuccess}
-            onError={(error) => handleLoadError(error, onError)}
-            libraries={['places']}
-            preventGoogleFontsLoading={true}
-            loadingElement={
-              <div className="h-full flex items-center justify-center bg-gray-50">
-                <div className="text-center">
-                  <Skeleton className="w-12 h-12 rounded-full mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">Loading...</p>
-                </div>
-              </div>
-            }
-          >
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={center}
-              zoom={zoom}
-              options={mapOptions}
-              onLoad={handleMapLoad}
-              onError={(error) => {
-                console.error('GoogleMap component error:', error);
-                if (onError) onError();
-              }}
-            >
-              <MapMarkers
-                cleaners={cleaners}
-                userLocation={effectiveUserLocation}
-                radius={radius}
-                selectedCleaner={selectedCleaner}
-                onMarkerClick={handleMarkerClick}
-                onInfoWindowClose={() => setSelectedCleaner(null)}
-                isGoogleMapsAvailable={isGoogleMapsAvailable}
-              />
-            </GoogleMap>
-          </LoadScript>
-        </div>
-      </CardContent>
-    </Card>
+        
+        <MapControls
+          radiusKm={radiusKm}
+          onRadiusChange={onRadiusChange}
+          userLocation={userLocation || finalCenter}
+        />
+      </GoogleMap>
+    </div>
   );
 };

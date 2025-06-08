@@ -1,10 +1,25 @@
 
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Calendar, Star, MapPin } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useChatbot } from "@/contexts/ChatbotContext";
 
 const HowItWorksPage = () => {
+  const [searchParams] = useSearchParams();
+  const { openChatbot } = useChatbot();
+
+  // Auto-open chatbot if coming from chatbot navigation
+  useEffect(() => {
+    if (searchParams.get('chatbot') === 'open') {
+      setTimeout(() => {
+        openChatbot('how-it-works');
+      }, 500); // Small delay to let page load
+    }
+  }, [searchParams, openChatbot]);
+
   const steps = [
     {
       step: "1",
