@@ -25,12 +25,12 @@ const getWelcomeMessage = (mode: 'support' | 'homepage' | 'how-it-works') => {
           'I can\'t find my booking confirmation',
           'How do I change my subscription?',
           'What if I\'m not satisfied with the cleaning?',
-          'Talk to human support'
+          'Talk to support'
         ]
       };
     case 'how-it-works':
       return {
-        content: 'Welcome to the "How Housie Works" guide! I can explain each step in detail. Which one interests you most?',
+        content: 'I can explain each step in detail! Which one interests you most?',
         options: [
           'Step 1: Finding cleaners in your area',
           'Step 2: Comparing profiles and reviews', 
@@ -133,7 +133,7 @@ export const DualModeChatbot: React.FC = () => {
     chatbotContext = useChatbot();
   } catch (error) {
     console.error('Chatbot context error:', error);
-    return null; // Don't render if context is broken
+    return null;
   }
 
   const { isOpen, mode, closeChatbot, navigateToHowItWorks, navigateToSupport, showGoodbyeMessage } = chatbotContext;
@@ -201,8 +201,20 @@ export const DualModeChatbot: React.FC = () => {
       // Homepage mode responses
       if (mode === 'homepage') {
         if (lower.includes('how does housie work') || lower === 'How does Housie work?') {
-          navigateToHowItWorks();
-          return 'Let me show you how Housie works! Taking you to our step-by-step guide...';
+          // Show goodbye message and navigate
+          setTimeout(() => {
+            setMessages(prev => [...prev, {
+              id: Date.now().toString(),
+              type: 'bot',
+              content: 'Let me show you how Housie works! Let me know if you need further assistance or guidance.',
+              timestamp: new Date()
+            }]);
+            setTimeout(() => {
+              navigateToHowItWorks();
+              closeChatbot();
+            }, 2000);
+          }, 1000);
+          return 'Taking you to our step-by-step guide...';
         }
         if (lower.includes('find cleaners') || lower.includes('near me')) {
           return 'Great! You can find cleaners by clicking "Trouver des ménagers près de moi" on the homepage, or I can guide you through what to expect when searching for cleaners in your area.';
@@ -252,7 +264,19 @@ Would you like help with any specific part of the booking process?`;
 
       // Common responses for all modes
       if (lower.includes('talk to support') || lower.includes('human support') || lower === 'Talk to support') {
-        navigateToSupport();
+        // Show goodbye message and navigate
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            id: Date.now().toString(),
+            type: 'bot',
+            content: 'Perfect! I\'ve brought you to our support team. They\'ll take great care of you from here. Thanks for using Housie! 😊',
+            timestamp: new Date()
+          }]);
+          setTimeout(() => {
+            navigateToSupport();
+            closeChatbot();
+          }, 2000);
+        }, 1000);
         return 'Connecting you with our human support team...';
       }
 
@@ -329,7 +353,7 @@ Would you like help with any specific part of the booking process?`;
 
   return (
     <Card className="fixed bottom-4 right-4 w-96 h-[600px] shadow-xl z-50 flex flex-col">
-      <CardHeader className="pb-3 border-b">
+      <CardHeader className="pb-3 border-b flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
@@ -343,7 +367,7 @@ Would you like help with any specific part of the booking process?`;
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 p-0 flex flex-col">
+      <CardContent className="flex-1 p-0 flex flex-col min-h-0">
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
             {messages.map((message) => (
@@ -398,7 +422,7 @@ Would you like help with any specific part of the booking process?`;
         </ScrollArea>
 
         {!showGoodbyeMessage && (
-          <div className="border-t p-4">
+          <div className="border-t p-4 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Input
                 value={input}
