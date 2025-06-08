@@ -6,6 +6,8 @@ import { useCleaners } from "@/hooks/useCleaners";
 import { useLocation } from "@/hooks/useLocation";
 import { MapPreview } from "@/components/map/MapPreview";
 import { GoogleMapView } from "@/components/map/GoogleMapView";
+import { MapView } from "@/components/map/MapView";
+import { MapErrorBoundary } from "@/components/map/MapErrorBoundary";
 import { DynamicRadiusSelector } from "@/components/map/DynamicRadiusSelector";
 import { SearchHeader } from "@/components/browse/SearchHeader";
 import { ResultsHeader } from "@/components/browse/ResultsHeader";
@@ -19,6 +21,7 @@ const BrowseCleaners = () => {
   const [locationFilter, setLocationFilter] = useState('');
   const [searchRadius, setSearchRadius] = useState(25);
   const [showMap, setShowMap] = useState(false);
+  const [useGoogleMaps, setUseGoogleMaps] = useState(true);
   const { location, requestLocation } = useLocation();
   
   // Create a search location object for the DynamicRadiusSelector
@@ -41,6 +44,11 @@ const BrowseCleaners = () => {
   const handleRadiusChange = (newRadius: number) => {
     setSearchRadius(newRadius);
     console.log('Radius changed to:', newRadius);
+  };
+
+  const handleMapFallback = () => {
+    console.log('Falling back to simple map view');
+    setUseGoogleMaps(false);
   };
 
   console.log('BrowseCleaners rendering - cleaners count:', cleaners?.length || 0);
@@ -78,15 +86,38 @@ const BrowseCleaners = () => {
           />
         )}
 
-        {/* Full Screen Map */}
+        {/* Full Screen Map with Error Boundary */}
         {showMap && (
-          <GoogleMapView
-            cleaners={cleaners || []}
-            userLocation={location}
-            radius={searchRadius}
-            onClose={() => setShowMap(false)}
-            isFullScreen={true}
-          />
+          <MapErrorBoundary 
+            fallback={
+              <MapView
+                cleaners={cleaners || []}
+                userLocation={location}
+                radius={searchRadius}
+                onClose={() => setShowMap(false)}
+                isFullScreen={true}
+              />
+            }
+          >
+            {useGoogleMaps ? (
+              <GoogleMapView
+                cleaners={cleaners || []}
+                userLocation={location}
+                radius={searchRadius}
+                onClose={() => setShowMap(false)}
+                onError={handleMapFallback}
+                isFullScreen={true}
+              />
+            ) : (
+              <MapView
+                cleaners={cleaners || []}
+                userLocation={location}
+                radius={searchRadius}
+                onClose={() => setShowMap(false)}
+                isFullScreen={true}
+              />
+            )}
+          </MapErrorBoundary>
         )}
 
         {/* Results */}

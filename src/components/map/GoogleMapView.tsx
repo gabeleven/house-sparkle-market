@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { GoogleMap, LoadScript, Marker, Circle, InfoWindow } from '@react-google-maps/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ interface GoogleMapViewProps {
   userLocation?: Location | null;
   radius?: number;
   onClose?: () => void;
+  onError?: () => void;
   isFullScreen?: boolean;
 }
 
@@ -27,11 +28,14 @@ const containerStyle = {
   height: '100%'
 };
 
+const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufa WRLR54fFpq4qupYDKNZZO9o";
+
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   cleaners,
   userLocation,
   radius = 25,
   onClose,
+  onError,
   isFullScreen = false
 }) => {
   const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
@@ -39,6 +43,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
   const { mapCenter, loading: mapCenterLoading } = useMapCenter();
   
   // Use map center from hook, fallback to user location, then default
@@ -108,24 +113,42 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     }
   };
 
-  const handleLoadSuccess = () => {
+  const handleLoadSuccess = useCallback(() => {
     console.log('Google Maps API loaded successfully');
     setIsLoading(false);
     setHasError(false);
-  };
+    setRetryCount(0);
+  }, []);
 
-  const handleLoadError = (error: Error) => {
+  const handleLoadError = useCallback((error: Error) => {
     console.error('Google Maps API failed to load:', error);
     setIsLoading(false);
     setHasError(true);
     setErrorMessage('Failed to load Google Maps. Please check your internet connection and try again.');
-  };
+    
+    // If we have an onError callback and this isn't a retry, call it
+    if (onError && retryCount === 0) {
+      setTimeout(() => {
+        onError();
+      }, 2000);
+    }
+  }, [onError, retryCount]);
 
   const handleRetry = () => {
     setIsLoading(true);
     setHasError(false);
     setErrorMessage('');
+    setRetryCount(prev => prev + 1);
   };
+
+  // Check if Google Maps API key is valid
+  useEffect(() => {
+    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY.includes('placeholder')) {
+      setHasError(true);
+      setIsLoading(false);
+      setErrorMessage('Google Maps API key is not configured properly.');
+    }
+  }, []);
 
   if (hasError) {
     return (
@@ -141,9 +164,16 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         <CardContent className="p-6 flex flex-col items-center justify-center">
           <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
           <p className="text-center text-gray-600 mb-4">{errorMessage}</p>
-          <Button onClick={handleRetry} variant="outline">
-            Try Again
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleRetry} variant="outline">
+              Try Again
+            </Button>
+            {onError && (
+              <Button onClick={onError} variant="secondary">
+                Use Simple Map
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     );
@@ -199,11 +229,12 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             </div>
           )}
           <LoadScript 
-            googleMapsApiKey="AIzaSyAJXkmufa WRLR54fFpq4qupYDKNZZO9o"
+            googleMapsApiKey={GOOGLE_MAPS_API_KEY}
             onLoad={handleLoadSuccess}
             onError={handleLoadError}
             libraries={['places']}
             preventGoogleFontsLoading={true}
+            loadingElement={<div style={{ height: '100%' }} />}
           >
             <GoogleMap
               mapContainerStyle={containerStyle}
