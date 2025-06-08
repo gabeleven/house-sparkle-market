@@ -16,12 +16,12 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Mock user role - in a real app, this would come from user profile data
-  // Changed from const to let to allow dynamic assignment
-  let userRole: 'starter' | 'professional' | 'premium' = 'starter';
+  // Mock user subscription - in a real app, this would come from user subscription data
+  // Using 'free' for users without subscription, 'professional', 'premium' for paid tiers
+  let userSubscription: 'free' | 'professional' | 'premium' = 'free';
   
-  // In a real app, you would fetch this from the user's profile data
-  // For now, we'll keep it as starter but the type allows for all values
+  // In a real app, you would fetch this from the user's subscription data
+  // For now, we'll keep it as free but the type allows for all values
 
   const handleSignOut = async () => {
     await signOut();
@@ -34,29 +34,27 @@ const Header = () => {
       { label: 'Mon Profil', path: '/my-profile' },
     ];
 
-    if (userRole === 'professional') {
+    if (userSubscription === 'professional') {
       return [
         ...baseItems,
-        { label: 'My Dashboard', path: '/dashboard' },
         { label: 'Bookmarks', path: '/bookmarks' },
+        { label: 'My Earnings', path: '/earnings' },
         { label: 'Position', path: '/position' },
       ];
     }
 
-    if (userRole === 'premium') {
+    if (userSubscription === 'premium') {
       return [
         ...baseItems,
-        { label: 'My Dashboard', path: '/dashboard' },
         { label: 'Bookmarks', path: '/bookmarks' },
+        { label: 'My Earnings', path: '/earnings' },
         { label: 'Position', path: '/position' },
+        { label: 'My Dashboard', path: '/dashboard' },
       ];
     }
 
-    // Default starter items
-    return [
-      ...baseItems,
-      { label: 'Bookmarks', path: '/bookmarks' },
-    ];
+    // Default free user items
+    return baseItems;
   };
 
   return (
