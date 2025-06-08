@@ -22,6 +22,7 @@ const BrowseCleaners = () => {
   const [searchRadius, setSearchRadius] = useState(25);
   const [showMap, setShowMap] = useState(false);
   const [useGoogleMaps, setUseGoogleMaps] = useState(true);
+  const [selectedCleaner, setSelectedCleaner] = useState(null);
   const { location, requestLocation } = useLocation();
   
   // Create a search location object for the DynamicRadiusSelector
@@ -54,6 +55,10 @@ const BrowseCleaners = () => {
   const handleCloseMap = () => {
     setShowMap(false);
     setUseGoogleMaps(true); // Reset to try Google Maps again next time
+  };
+
+  const handleCleanerSelect = (cleaner: any) => {
+    setSelectedCleaner(cleaner);
   };
 
   console.log('BrowseCleaners rendering - cleaners count:', cleaners?.length || 0);
@@ -107,11 +112,14 @@ const BrowseCleaners = () => {
             {useGoogleMaps ? (
               <GoogleMapView
                 cleaners={cleaners || []}
-                userLocation={location}
-                radius={searchRadius}
+                onCleanerSelect={handleCleanerSelect}
+                selectedCleaner={selectedCleaner}
+                radiusKm={searchRadius}
+                onRadiusChange={handleRadiusChange}
                 onClose={handleCloseMap}
                 onError={handleMapFallback}
                 isFullScreen={true}
+                className="h-[80vh]"
               />
             ) : (
               <MapView

@@ -1,6 +1,6 @@
 
 import React, { useCallback, useState, useEffect } from 'react';
-import { GoogleMap, useJSApiLoader } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { MapMarkers } from './MapMarkers';
 import { MapControls } from './MapControls';
 import { useMapState } from '@/hooks/useMapState';
@@ -36,34 +36,51 @@ const mapOptions = {
 
 interface GoogleMapViewProps {
   cleaners: any[];
-  onCleanerSelect: (cleaner: any) => void;
-  selectedCleaner: any;
-  radiusKm: number;
-  onRadiusChange: (radius: number) => void;
+  onCleanerSelect?: (cleaner: any) => void;
+  selectedCleaner?: any;
+  radiusKm?: number;
+  onRadiusChange?: (radius: number) => void;
   className?: string;
+  onClose?: () => void;
+  onError?: () => void;
+  isFullScreen?: boolean;
 }
 
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   cleaners,
   onCleanerSelect,
   selectedCleaner,
-  radiusKm,
+  radiusKm = 25,
   onRadiusChange,
-  className = ""
+  className = "",
+  onClose,
+  onError,
+  isFullScreen = false
 }) => {
-  const { isLoaded, loadError } = useJSApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o'
   });
 
-  const { userLocation, isLoading: locationLoading, error: locationError } = useUserLocation();
+  const { userLocation, loading: locationLoading, error: locationError } = useUserLocation();
+  
+  // Convert userLocation to the format expected by useMapState
+  const mapUserLocation = userLocation ? {
+    latitude: userLocation.latitude,
+    longitude: userLocation.longitude
+  } : null;
+
   const { 
-    mapCenter, 
-    zoom, 
-    setMapCenter, 
-    setZoom,
-    setMapInstance
-  } = useMapState();
+    selectedCleaner: mapSelectedCleaner,
+    setSelectedCleaner,
+    mapInstance,
+    setMapInstance,
+    center,
+    zoom,
+    handleMarkerClick,
+    handleRecenter,
+    handleCenterOnUser
+  } = useMapState({ userLocation: mapUserLocation });
 
   const [finalCenter, setFinalCenter] = useState(MONTREAL_CENTER);
 
@@ -71,20 +88,13 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   useEffect(() => {
     if (userLocation) {
       console.log('Setting map center to user location:', userLocation);
-      const newCenter = { lat: userLocation.lat, lng: userLocation.lng };
+      const newCenter = { lat: userLocation.latitude, lng: userLocation.longitude };
       setFinalCenter(newCenter);
-      setMapCenter(newCenter);
-      setZoom(13); // Closer zoom when we have user location
-    } else if (mapCenter.lat !== MONTREAL_CENTER.lat || mapCenter.lng !== MONTREAL_CENTER.lng) {
-      // Use stored map center if available and different from Montreal
-      console.log('Using stored map center:', mapCenter);
-      setFinalCenter(mapCenter);
     } else {
       console.log('Using Montreal fallback center');
       setFinalCenter(MONTREAL_CENTER);
-      setMapCenter(MONTREAL_CENTER);
     }
-  }, [userLocation, mapCenter, setMapCenter, setZoom]);
+  }, [userLocation]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
     console.log('Google Map loaded successfully');
@@ -95,12 +105,22 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     setMapInstance(null);
   }, [setMapInstance]);
 
-  const handleCenterChanged = useCallback(() => {
-    // This will be called when user manually moves the map
-  }, []);
+  const handleCleanerSelect = useCallback((cleaner: any) => {
+    setSelectedCleaner(cleaner);
+    if (onCleanerSelect) {
+      onCleanerSelect(cleaner);
+    }
+  }, [setSelectedCleaner, onCleanerSelect]);
+
+  const handleInfoWindowClose = useCallback(() => {
+    setSelectedCleaner(null);
+  }, [setSelectedCleaner]);
 
   if (loadError) {
     console.error('Google Maps load error:', loadError);
+    if (onError) {
+      onError();
+    }
     return (
       <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
         <div className="text-center p-4">
@@ -135,20 +155,22 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         options={mapOptions}
         onLoad={onLoad}
         onUnmount={onUnmount}
-        onCenterChanged={handleCenterChanged}
       >
         <MapMarkers
           cleaners={cleaners}
-          onCleanerSelect={onCleanerSelect}
-          selectedCleaner={selectedCleaner}
-          userLocation={userLocation}
-          radiusKm={radiusKm}
+          userLocation={mapUserLocation}
+          radius={radiusKm}
+          selectedCleaner={mapSelectedCleaner || selectedCleaner}
+          onMarkerClick={handleCleanerSelect}
+          onInfoWindowClose={handleInfoWindowClose}
+          isGoogleMapsAvailable={() => !!(window.google && window.google.maps)}
         />
         
         <MapControls
-          radiusKm={radiusKm}
-          onRadiusChange={onRadiusChange}
-          userLocation={userLocation || finalCenter}
+          cleanerCount={cleaners.length}
+          onRecenter={handleRecenter}
+          onCenterOnUser={handleCenterOnUser}
+          onClose={onClose}
         />
       </GoogleMap>
     </div>
