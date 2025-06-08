@@ -139,9 +139,17 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     }
   }, [onError]);
 
+  // Check if API key is configured properly
+  const isApiKeyValid = useCallback(() => {
+    return GOOGLE_MAPS_API_KEY && 
+           GOOGLE_MAPS_API_KEY.length > 10 && 
+           !GOOGLE_MAPS_API_KEY.includes('YOUR_API_KEY') &&
+           !GOOGLE_MAPS_API_KEY.includes('placeholder');
+  }, []);
+
   // Check if API key is configured
   useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "YOUR_API_KEY_HERE" || GOOGLE_MAPS_API_KEY.includes('placeholder')) {
+    if (!isApiKeyValid()) {
       setHasError(true);
       setIsLoading(false);
       setErrorMessage('Google Maps API key is not properly configured.');
@@ -153,7 +161,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
       setScriptLoaded(true);
       setIsLoading(false);
     }
-  }, [isGoogleMapsAvailable]);
+  }, [isGoogleMapsAvailable, isApiKeyValid]);
 
   // Error state
   if (hasError) {
