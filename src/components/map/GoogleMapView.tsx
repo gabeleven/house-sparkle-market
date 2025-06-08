@@ -6,31 +6,15 @@ import { Button } from '@/components/ui/button';
 import { X, Navigation, RotateCcw } from 'lucide-react';
 import { CleanerMapPopup } from './CleanerMapPopup';
 import { useMapCenter } from '@/hooks/useMapCenter';
+import { CleanerProfile } from '@/hooks/useCleaners';
 
 interface Location {
   latitude: number;
   longitude: number;
 }
 
-interface Cleaner {
-  id: string;
-  full_name: string;
-  business_name?: string;
-  brief_description?: string;
-  profile_photo_url?: string;
-  service_area_city?: string;
-  latitude?: number;
-  longitude?: number;
-  service_radius_km?: number;
-  years_experience?: number;
-  services?: string[];
-  average_rating?: number;
-  total_reviews?: number;
-  hourly_rate?: number;
-}
-
 interface GoogleMapViewProps {
-  cleaners: Cleaner[];
+  cleaners: CleanerProfile[];
   userLocation?: Location | null;
   radius?: number;
   onClose?: () => void;
@@ -49,7 +33,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   onClose,
   isFullScreen = false
 }) => {
-  const [selectedCleaner, setSelectedCleaner] = useState<Cleaner | null>(null);
+  const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
   const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
   const { mapCenter, loading: mapCenterLoading } = useMapCenter();
   
@@ -96,7 +80,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     ]
   };
 
-  const handleMarkerClick = (cleaner: Cleaner) => {
+  const handleMarkerClick = (cleaner: CleanerProfile) => {
     setSelectedCleaner(cleaner);
   };
 
@@ -241,7 +225,10 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
                   onCloseClick={() => setSelectedCleaner(null)}
                 >
                   <div className="p-0">
-                    <CleanerMapPopup cleaner={selectedCleaner} />
+                    <CleanerMapPopup 
+                      cleaner={selectedCleaner}
+                      onClose={() => setSelectedCleaner(null)}
+                    />
                   </div>
                 </InfoWindow>
               )}

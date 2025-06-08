@@ -34,6 +34,16 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
     !featuredCleaners.includes(cleaner)
   );
 
+  const handleCleanerClick = (cleaner: CleanerProfile, index: number) => {
+    setSelectedCleaner(cleaner);
+    setPopupPosition({ x: 200 + index * 50, y: 150 + index * 30 });
+  };
+
+  const handleClosePopup = () => {
+    setSelectedCleaner(null);
+    setPopupPosition(null);
+  };
+
   return (
     <div className={containerClass}>
       <div ref={mapContainer} className="w-full h-full bg-gradient-to-br from-blue-50 to-green-50 relative overflow-hidden">
@@ -65,10 +75,7 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
                 <div 
                   key={cleaner.id}
                   className="bg-white p-3 rounded-lg shadow-md border-2 border-yellow-400 cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => {
-                    setSelectedCleaner(cleaner);
-                    setPopupPosition({ x: 200 + index * 50, y: 150 + index * 30 });
-                  }}
+                  onClick={() => handleCleanerClick(cleaner, index)}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
@@ -112,10 +119,7 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
               top: `${30 + (index % 3) * 20}%`,
               transform: 'translate(-50%, -50%)'
             }}
-            onClick={() => {
-              setSelectedCleaner(cleaner);
-              setPopupPosition({ x: 100 + index * 40, y: 100 + index * 25 });
-            }}
+            onClick={() => handleCleanerClick(cleaner, index)}
           >
             <div className="flex items-center gap-1 mb-1">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -167,24 +171,27 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
 
       {/* Cleaner Popup */}
       {selectedCleaner && popupPosition && (
-        <CleanerMapPopup
-          cleaner={selectedCleaner}
-          position={popupPosition}
-          onClose={() => {
-            setSelectedCleaner(null);
-            setPopupPosition(null);
+        <div 
+          className="absolute z-20 bg-white rounded-lg shadow-lg border"
+          style={{
+            left: popupPosition.x,
+            top: popupPosition.y,
+            transform: 'translate(-50%, -100%)'
           }}
-        />
+        >
+          <CleanerMapPopup
+            cleaner={selectedCleaner}
+            position={popupPosition}
+            onClose={handleClosePopup}
+          />
+        </div>
       )}
 
       {/* Click to close overlay */}
       {selectedCleaner && (
         <div 
           className="absolute inset-0 z-10" 
-          onClick={() => {
-            setSelectedCleaner(null);
-            setPopupPosition(null);
-          }}
+          onClick={handleClosePopup}
         />
       )}
     </div>
