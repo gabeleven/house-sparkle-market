@@ -1,13 +1,15 @@
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { GoogleMap, LoadScript, Marker, Circle, InfoWindow } from '@react-google-maps/api';
+import React from 'react';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, Navigation, RotateCcw, AlertCircle } from 'lucide-react';
-import { CleanerMapPopup } from './CleanerMapPopup';
-import { useMapCenter } from '@/hooks/useMapCenter';
+import { X, AlertCircle } from 'lucide-react';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useGoogleMapsApi } from '@/hooks/useGoogleMapsApi';
+import { useMapState } from '@/hooks/useMapState';
+import { MapMarkers } from './MapMarkers';
+import { MapControls } from './MapControls';
 
 interface Location {
   latitude: number;
@@ -28,8 +30,6 @@ const containerStyle = {
   height: '100%'
 };
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufa_WRLR54fFpq4qupYDKNZZO9o";
-
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   cleaners,
   userLocation,
@@ -38,46 +38,28 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   onError,
   isFullScreen = false
 }) => {
-  const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
-  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-  const { mapCenter, loading: mapCenterLoading } = useMapCenter();
-  
-  // Check if Google Maps is available
-  const isGoogleMapsAvailable = useCallback(() => {
-    return typeof window !== 'undefined' && window.google && window.google.maps;
-  }, []);
+  const {
+    isLoading,
+    hasError,
+    errorMessage,
+    scriptLoaded,
+    isGoogleMapsAvailable,
+    handleLoadSuccess,
+    handleLoadError,
+    apiKey
+  } = useGoogleMapsApi();
 
-  // Use map center from hook, fallback to user location, then default
-  const center = React.useMemo(() => {
-    if (!mapCenterLoading && mapCenter) {
-      return {
-        lat: mapCenter.latitude,
-        lng: mapCenter.longitude
-      };
-    }
-    if (userLocation) {
-      return {
-        lat: userLocation.latitude,
-        lng: userLocation.longitude
-      };
-    }
-    // Default to Montreal if nothing else available
-    return {
-      lat: 45.5017,
-      lng: -73.5673
-    };
-  }, [mapCenter, mapCenterLoading, userLocation]);
-
-  const zoom = React.useMemo(() => {
-    if (!mapCenterLoading && mapCenter) {
-      return mapCenter.zoom;
-    }
-    return 11;
-  }, [mapCenter, mapCenterLoading]);
+  const {
+    selectedCleaner,
+    setSelectedCleaner,
+    mapInstance,
+    setMapInstance,
+    center,
+    zoom,
+    handleMarkerClick,
+    handleRecenter,
+    handleCenterOnUser
+  } = useMapState({ userLocation });
 
   const mapOptions = {
     disableDefaultUI: false,
@@ -93,75 +75,6 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
       }
     ]
   };
-
-  const handleMarkerClick = (cleaner: CleanerProfile) => {
-    setSelectedCleaner(cleaner);
-  };
-
-  const handleRecenter = () => {
-    if (mapInstance && center) {
-      mapInstance.panTo(center);
-      mapInstance.setZoom(zoom);
-    }
-  };
-
-  const handleCenterOnUser = () => {
-    if (navigator.geolocation && mapInstance) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const userPos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        mapInstance.panTo(userPos);
-        mapInstance.setZoom(12);
-      });
-    }
-  };
-
-  const handleLoadSuccess = useCallback(() => {
-    console.log('Google Maps API loaded successfully');
-    setScriptLoaded(true);
-    setIsLoading(false);
-    setHasError(false);
-  }, []);
-
-  const handleLoadError = useCallback((error: Error) => {
-    console.error('Google Maps API failed to load:', error);
-    setIsLoading(false);
-    setHasError(true);
-    setErrorMessage('Google Maps failed to load. This could be due to an API key issue or network problem.');
-    
-    // Automatically fall back to simple map after a short delay
-    if (onError) {
-      setTimeout(() => {
-        onError();
-      }, 2000);
-    }
-  }, [onError]);
-
-  // Check if API key is configured properly
-  const isApiKeyValid = useCallback(() => {
-    return GOOGLE_MAPS_API_KEY && 
-           GOOGLE_MAPS_API_KEY.length > 10 && 
-           !GOOGLE_MAPS_API_KEY.includes('YOUR_API_KEY') &&
-           !GOOGLE_MAPS_API_KEY.includes('placeholder');
-  }, []);
-
-  // Check if API key is configured
-  useEffect(() => {
-    if (!isApiKeyValid()) {
-      setHasError(true);
-      setIsLoading(false);
-      setErrorMessage('Google Maps API key is not properly configured.');
-      return;
-    }
-
-    // Check if Google Maps is already loaded
-    if (isGoogleMapsAvailable()) {
-      setScriptLoaded(true);
-      setIsLoading(false);
-    }
-  }, [isGoogleMapsAvailable, isApiKeyValid]);
 
   // Error state
   if (hasError) {
@@ -224,43 +137,19 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         <CardTitle className="text-lg">
           {cleaners.length} Cleaners in Your Area
         </CardTitle>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRecenter}
-            className="text-xs"
-          >
-            <RotateCcw className="w-3 h-3 mr-1" />
-            Center
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCenterOnUser}
-            className="text-xs"
-          >
-            <Navigation className="w-3 h-3 mr-1" />
-            My Location
-          </Button>
-          {onClose && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onClose}
-              className="text-xs"
-            >
-              <X className="w-3 h-3" />
-            </Button>
-          )}
-        </div>
+        <MapControls
+          cleanerCount={cleaners.length}
+          onRecenter={handleRecenter}
+          onCenterOnUser={handleCenterOnUser}
+          onClose={onClose}
+        />
       </CardHeader>
       <CardContent className="p-0 flex-1">
         <div className={isFullScreen ? "h-full" : "h-80"}>
           <LoadScript 
-            googleMapsApiKey={GOOGLE_MAPS_API_KEY}
+            googleMapsApiKey={apiKey}
             onLoad={handleLoadSuccess}
-            onError={handleLoadError}
+            onError={(error) => handleLoadError(error, onError)}
             libraries={['places']}
             preventGoogleFontsLoading={true}
           >
@@ -271,87 +160,15 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
               options={mapOptions}
               onLoad={setMapInstance}
             >
-              {/* User location marker */}
-              {userLocation && isGoogleMapsAvailable() && (
-                <>
-                  <Marker
-                    position={{
-                      lat: userLocation.latitude,
-                      lng: userLocation.longitude
-                    }}
-                    icon={{
-                      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="12" cy="12" r="8" fill="#3b82f6" stroke="#ffffff" stroke-width="2"/>
-                          <circle cx="12" cy="12" r="3" fill="#ffffff"/>
-                        </svg>
-                      `),
-                      scaledSize: isGoogleMapsAvailable() ? new window.google.maps.Size(24, 24) : undefined,
-                    }}
-                    title="Your Location"
-                  />
-                  
-                  {/* Service radius circle */}
-                  <Circle
-                    center={{
-                      lat: userLocation.latitude,
-                      lng: userLocation.longitude
-                    }}
-                    radius={radius * 1000} // Convert km to meters
-                    options={{
-                      fillColor: '#3b82f6',
-                      fillOpacity: 0.1,
-                      strokeColor: '#3b82f6',
-                      strokeOpacity: 0.3,
-                      strokeWeight: 2,
-                    }}
-                  />
-                </>
-              )}
-
-              {/* Cleaner markers */}
-              {cleaners.map((cleaner) => {
-                if (!cleaner.latitude || !cleaner.longitude || !isGoogleMapsAvailable()) return null;
-                
-                return (
-                  <Marker
-                    key={cleaner.id}
-                    position={{
-                      lat: Number(cleaner.latitude),
-                      lng: Number(cleaner.longitude)
-                    }}
-                    onClick={() => handleMarkerClick(cleaner)}
-                    icon={{
-                      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="16" cy="16" r="12" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
-                          <text x="16" y="21" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">🧽</text>
-                        </svg>
-                      `),
-                      scaledSize: new window.google.maps.Size(32, 32),
-                    }}
-                    title={cleaner.business_name || cleaner.full_name}
-                  />
-                );
-              })}
-
-              {/* Info window for selected cleaner */}
-              {selectedCleaner && selectedCleaner.latitude && selectedCleaner.longitude && isGoogleMapsAvailable() && (
-                <InfoWindow
-                  position={{
-                    lat: Number(selectedCleaner.latitude),
-                    lng: Number(selectedCleaner.longitude)
-                  }}
-                  onCloseClick={() => setSelectedCleaner(null)}
-                >
-                  <div className="p-0">
-                    <CleanerMapPopup 
-                      cleaner={selectedCleaner}
-                      onClose={() => setSelectedCleaner(null)}
-                    />
-                  </div>
-                </InfoWindow>
-              )}
+              <MapMarkers
+                cleaners={cleaners}
+                userLocation={userLocation}
+                radius={radius}
+                selectedCleaner={selectedCleaner}
+                onMarkerClick={handleMarkerClick}
+                onInfoWindowClose={() => setSelectedCleaner(null)}
+                isGoogleMapsAvailable={isGoogleMapsAvailable}
+              />
             </GoogleMap>
           </LoadScript>
         </div>
