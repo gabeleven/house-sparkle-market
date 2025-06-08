@@ -18,7 +18,8 @@ const Header = () => {
 
   // Mock user subscription - in a real app, this would come from user subscription data
   // Using 'free' for users without subscription, 'professional', 'premium' for paid tiers
-  let userSubscription: 'free' | 'professional' | 'premium' = 'free';
+  let userSubscription: 'free' | 'professional' | 'premium';
+  userSubscription = 'free'; // Default to free, but can be changed dynamically
   
   // In a real app, you would fetch this from the user's subscription data
   // For now, we'll keep it as free but the type allows for all values
