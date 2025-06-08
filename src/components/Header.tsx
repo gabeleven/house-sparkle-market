@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+type SubscriptionTier = 'free' | 'starter' | 'professional' | 'premium';
+
 const Header = () => {
   const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,8 +21,7 @@ const Header = () => {
 
   // Mock user subscription - in a real app, this would come from user subscription data
   // Updated to include all 4 tiers: free, starter, professional, premium
-  let userSubscription: 'free' | 'starter' | 'professional' | 'premium';
-  userSubscription = 'free'; // Default to free, but can be changed dynamically
+  const userSubscription: SubscriptionTier = 'free'; // Default to free, but can be changed dynamically
   
   // In a real app, you would fetch this from the user's subscription data
   // For now, we'll keep it as free but the type allows for all values
