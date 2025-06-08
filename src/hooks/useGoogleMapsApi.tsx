@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufa_WRLR54fFpq4qupYDKNZZO9o";
+const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o";
 
 export const useGoogleMapsApi = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +23,7 @@ export const useGoogleMapsApi = () => {
   }, []);
 
   const handleLoadSuccess = useCallback(() => {
-    console.log('Google Maps API loaded successfully');
+    console.log('Google Maps API loaded successfully with key:', GOOGLE_MAPS_API_KEY);
     setScriptLoaded(true);
     setIsLoading(false);
     setHasError(false);
@@ -31,9 +31,10 @@ export const useGoogleMapsApi = () => {
 
   const handleLoadError = useCallback((error: Error, onError?: () => void) => {
     console.error('Google Maps API failed to load:', error);
+    console.error('API Key used:', GOOGLE_MAPS_API_KEY);
     setIsLoading(false);
     setHasError(true);
-    setErrorMessage('Google Maps failed to load. This could be due to an API key issue or network problem.');
+    setErrorMessage(`Google Maps failed to load. Error: ${error.message}. This could be due to an API key issue or network problem.`);
     
     // Automatically fall back to simple map after a short delay
     if (onError) {
@@ -45,6 +46,7 @@ export const useGoogleMapsApi = () => {
 
   // Check if API key is configured
   useEffect(() => {
+    console.log('Checking API key validity:', GOOGLE_MAPS_API_KEY);
     if (!isApiKeyValid()) {
       setHasError(true);
       setIsLoading(false);
@@ -54,6 +56,7 @@ export const useGoogleMapsApi = () => {
 
     // Check if Google Maps is already loaded
     if (isGoogleMapsAvailable()) {
+      console.log('Google Maps already available');
       setScriptLoaded(true);
       setIsLoading(false);
     }
