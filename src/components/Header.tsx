@@ -11,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-type SubscriptionTier = 'free' | 'starter' | 'professional' | 'premium';
+import { SubscriptionTier, getMenuItems } from '@/types/subscription';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -20,54 +19,16 @@ const Header = () => {
   const navigate = useNavigate();
 
   // Mock user subscription - in a real app, this would come from user subscription data
-  // Updated to include all 4 tiers: free, starter, professional, premium
-  const userSubscription: SubscriptionTier = 'free'; // Default to free, but can be changed dynamically
+  const userSubscription = SubscriptionTier.FREE; // Default to free, can be changed dynamically
   
   // In a real app, you would fetch this from the user's subscription data
-  // For now, we'll keep it as free but the type allows for all values
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
 
-  const getDropdownItems = () => {
-    const baseItems = [
-      { label: 'Messages', path: '/chat', showNotification: true },
-      { label: 'Mon Profil', path: '/my-profile' },
-    ];
-
-    if (userSubscription === 'starter') {
-      return [
-        ...baseItems,
-        { label: 'Calendar', path: '/calendar' },
-      ];
-    }
-
-    if (userSubscription === 'professional') {
-      return [
-        ...baseItems,
-        { label: 'Calendar', path: '/calendar' },
-        { label: 'Bookmarks', path: '/bookmarks' },
-        { label: 'My Earnings', path: '/earnings' },
-        { label: 'Position', path: '/position' },
-      ];
-    }
-
-    if (userSubscription === 'premium') {
-      return [
-        ...baseItems,
-        { label: 'Calendar', path: '/calendar' },
-        { label: 'Bookmarks', path: '/bookmarks' },
-        { label: 'My Earnings', path: '/earnings' },
-        { label: 'Position', path: '/position' },
-        { label: 'My Dashboard', path: '/dashboard' },
-      ];
-    }
-
-    // Default free user items
-    return baseItems;
-  };
+  const dropdownItems = getMenuItems(userSubscription);
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
@@ -108,7 +69,7 @@ const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  {getDropdownItems().map((item, index) => (
+                  {dropdownItems.map((item, index) => (
                     <DropdownMenuItem key={item.path} asChild>
                       <Link to={item.path} className="flex items-center justify-between w-full">
                         <span>{item.label}</span>
@@ -182,7 +143,7 @@ const Header = () => {
               </Link>
               {user ? (
                 <>
-                  {getDropdownItems().map((item) => (
+                  {dropdownItems.map((item) => (
                     <Link key={item.path} to={item.path} onClick={() => setIsMenuOpen(false)}>
                       <Button variant="ghost" className="w-full justify-start">
                         {item.label}
