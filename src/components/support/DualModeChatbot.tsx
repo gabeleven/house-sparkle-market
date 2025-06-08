@@ -3,8 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Send, Bot, User, X, MessageCircle, ArrowRight } from 'lucide-react';
+import { Send, Bot, User, X } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatbot } from '@/contexts/ChatbotContext';
 
@@ -14,11 +13,6 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   options?: string[];
-  isTyping?: boolean;
-}
-
-interface DualModeChatbotProps {
-  onHandoffToHuman?: (context: string) => void;
 }
 
 const getWelcomeMessage = (mode: 'support' | 'homepage' | 'how-it-works') => {
@@ -45,7 +39,7 @@ const getWelcomeMessage = (mode: 'support' | 'homepage' | 'how-it-works') => {
           'How do pricing and payments work?'
         ]
       };
-    default: // homepage
+    default:
       return {
         content: 'Welcome to Housie! 👋 I\'m your personal assistant. How can I help you get started with finding the perfect cleaner?',
         options: [
@@ -126,18 +120,30 @@ Most cleaners charge between $25-$45/hour depending on services and location.`;
   }
 };
 
-export const DualModeChatbot: React.FC<DualModeChatbotProps> = ({
-  onHandoffToHuman
-}) => {
-  const { isOpen, mode, closeChatbot, navigateToHowItWorks, navigateToSupport, showGoodbyeMessage, setShowGoodbyeMessage } = useChatbot();
+export const DualModeChatbot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Use try-catch for chatbot context
+  let chatbotContext;
+  try {
+    chatbotContext = useChatbot();
+  } catch (error) {
+    console.error('Chatbot context error:', error);
+    return null; // Don't render if context is broken
+  }
+
+  const { isOpen, mode, closeChatbot, navigateToHowItWorks, navigateToSupport, showGoodbyeMessage } = chatbotContext;
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    try {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      console.error('Scroll error:', error);
+    }
   };
 
   useEffect(() => {
@@ -147,26 +153,32 @@ export const DualModeChatbot: React.FC<DualModeChatbotProps> = ({
   // Initialize messages when mode changes or chatbot opens
   useEffect(() => {
     if (isOpen) {
-      if (showGoodbyeMessage) {
-        setMessages([{
-          id: '1',
-          type: 'bot',
-          content: 'Perfect! I\'ve brought you to our support team. They\'ll take great care of you from here. Thanks for using Housie! 😊',
-          timestamp: new Date()
-        }]);
-        // Auto-close after showing goodbye message
-        setTimeout(() => {
-          closeChatbot();
-        }, 3000);
-      } else {
-        const welcomeMsg = getWelcomeMessage(mode);
-        setMessages([{
-          id: '1',
-          type: 'bot',
-          content: welcomeMsg.content,
-          timestamp: new Date(),
-          options: welcomeMsg.options
-        }]);
+      try {
+        if (showGoodbyeMessage) {
+          setMessages([{
+            id: '1',
+            type: 'bot',
+            content: 'Perfect! I\'ve brought you to our support team. They\'ll take great care of you from here. Thanks for using Housie! 😊',
+            timestamp: new Date()
+          }]);
+          // Auto-close after showing goodbye message
+          setTimeout(() => {
+            closeChatbot();
+          }, 3000);
+        } else {
+          const welcomeMsg = getWelcomeMessage(mode);
+          setMessages([{
+            id: '1',
+            type: 'bot',
+            content: welcomeMsg.content,
+            timestamp: new Date(),
+            options: welcomeMsg.options
+          }]);
+        }
+        setError(null);
+      } catch (error) {
+        console.error('Error initializing messages:', error);
+        setError('Chat initialization failed');
       }
     }
   }, [isOpen, mode, showGoodbyeMessage, closeChatbot]);
@@ -183,50 +195,51 @@ export const DualModeChatbot: React.FC<DualModeChatbotProps> = ({
   };
 
   const getBotResponse = (userMessage: string): string => {
-    const lower = userMessage.toLowerCase();
-    
-    // Homepage mode responses
-    if (mode === 'homepage') {
-      if (lower.includes('how does housie work') || lower === 'How does Housie work?') {
-        navigateToHowItWorks();
-        return 'Let me show you how Housie works! Taking you to our step-by-step guide...';
+    try {
+      const lower = userMessage.toLowerCase();
+      
+      // Homepage mode responses
+      if (mode === 'homepage') {
+        if (lower.includes('how does housie work') || lower === 'How does Housie work?') {
+          navigateToHowItWorks();
+          return 'Let me show you how Housie works! Taking you to our step-by-step guide...';
+        }
+        if (lower.includes('find cleaners') || lower.includes('near me')) {
+          return 'Great! You can find cleaners by clicking "Trouver des ménagers près de moi" on the homepage, or I can guide you through what to expect when searching for cleaners in your area.';
+        }
+        if (lower.includes('services')) {
+          return 'We offer a wide range of cleaning services! Our cleaners provide regular house cleaning, deep cleaning, apartment cleaning, office cleaning, move-in/move-out cleaning, and specialized services. Each cleaner lists their specific expertise on their profile.';
+        }
+        if (lower.includes('cost') || lower.includes('price')) {
+          return 'Pricing is transparent and varies by cleaner and service type. Most charge between $25-45/hour. You can see exact rates on each cleaner\'s profile before booking. No hidden fees!';
+        }
+        if (lower.includes('area') || lower.includes('covered')) {
+          return 'We cover most major Canadian cities! You can check availability in your area by entering your postal code on the homepage. If we don\'t serve your area yet, you can join our waitlist.';
+        }
       }
-      if (lower.includes('find cleaners') || lower.includes('near me')) {
-        return 'Great! You can find cleaners by clicking "Trouver des ménagers près de moi" on the homepage, or I can guide you through what to expect when searching for cleaners in your area.';
-      }
-      if (lower.includes('services')) {
-        return 'We offer a wide range of cleaning services! Our cleaners provide regular house cleaning, deep cleaning, apartment cleaning, office cleaning, move-in/move-out cleaning, and specialized services. Each cleaner lists their specific expertise on their profile.';
-      }
-      if (lower.includes('cost') || lower.includes('price')) {
-        return 'Pricing is transparent and varies by cleaner and service type. Most charge between $25-45/hour. You can see exact rates on each cleaner\'s profile before booking. No hidden fees!';
-      }
-      if (lower.includes('area') || lower.includes('covered')) {
-        return 'We cover most major Canadian cities! You can check availability in your area by entering your postal code on the homepage. If we don\'t serve your area yet, you can join our waitlist.';
-      }
-    }
 
-    // How-it-works mode responses
-    if (mode === 'how-it-works') {
-      if (lower.includes('step 1') || lower.includes('finding cleaners')) {
-        return getStepDetails('Step 1: Finding cleaners in your area');
+      // How-it-works mode responses
+      if (mode === 'how-it-works') {
+        if (lower.includes('step 1') || lower.includes('finding cleaners')) {
+          return getStepDetails('Step 1: Finding cleaners in your area');
+        }
+        if (lower.includes('step 2') || lower.includes('comparing')) {
+          return getStepDetails('Step 2: Comparing profiles and reviews');
+        }
+        if (lower.includes('step 3') || lower.includes('booking')) {
+          return getStepDetails('Step 3: Booking and scheduling');
+        }
+        if (lower.includes('step 4') || lower.includes('rating')) {
+          return getStepDetails('Step 4: Rating your experience');
+        }
+        if (lower.includes('pricing') || lower.includes('payments')) {
+          return getStepDetails('How do pricing and payments work?');
+        }
       }
-      if (lower.includes('step 2') || lower.includes('comparing')) {
-        return getStepDetails('Step 2: Comparing profiles and reviews');
-      }
-      if (lower.includes('step 3') || lower.includes('booking')) {
-        return getStepDetails('Step 3: Booking and scheduling');
-      }
-      if (lower.includes('step 4') || lower.includes('rating')) {
-        return getStepDetails('Step 4: Rating your experience');
-      }
-      if (lower.includes('pricing') || lower.includes('payments')) {
-        return getStepDetails('How do pricing and payments work?');
-      }
-    }
 
-    // Support mode responses (existing logic)
-    if (lower.includes('book') || lower.includes('réserver')) {
-      return `**Here's how to book a cleaner on Housie:**
+      // Support mode responses
+      if (lower.includes('book') || lower.includes('réserver')) {
+        return `**Here's how to book a cleaner on Housie:**
 
 1. **Browse Cleaners**: Click "Find Cleaners Near Me" on the homepage
 2. **Choose Your Cleaner**: Look at profiles, ratings, and reviews  
@@ -235,47 +248,56 @@ export const DualModeChatbot: React.FC<DualModeChatbotProps> = ({
 5. **Confirm & Pay**: Review details and complete payment
 
 Would you like help with any specific part of the booking process?`;
-    }
+      }
 
-    // Common responses for all modes
-    if (lower.includes('talk to support') || lower.includes('human support') || lower === 'Talk to support') {
-      navigateToSupport();
-      return 'Connecting you with our human support team...';
-    }
+      // Common responses for all modes
+      if (lower.includes('talk to support') || lower.includes('human support') || lower === 'Talk to support') {
+        navigateToSupport();
+        return 'Connecting you with our human support team...';
+      }
 
-    return 'I\'d be happy to help with that! Could you provide a bit more detail about what you\'re looking for?';
+      return 'I\'d be happy to help with that! Could you provide a bit more detail about what you\'re looking for?';
+    } catch (error) {
+      console.error('Error getting bot response:', error);
+      return 'I apologize, but I\'m having trouble processing your request right now. Please try again.';
+    }
   };
 
   const handleSendMessage = async (messageText?: string) => {
-    const userMessage = messageText || input.trim();
-    if (!userMessage) return;
+    try {
+      const userMessage = messageText || input.trim();
+      if (!userMessage) return;
 
-    // Add user message
-    const userMsg: ChatMessage = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: userMessage,
-      timestamp: new Date()
-    };
+      // Add user message
+      const userMsg: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        content: userMessage,
+        timestamp: new Date()
+      };
 
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
+      setMessages(prev => [...prev, userMsg]);
+      setInput('');
 
-    // Simulate bot typing
-    await simulateTyping(userMessage);
+      // Simulate bot typing
+      await simulateTyping(userMessage);
 
-    // Get bot response
-    const botResponse = getBotResponse(userMessage);
-    
-    // Add bot response
-    const botMsg: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      type: 'bot',
-      content: botResponse,
-      timestamp: new Date()
-    };
+      // Get bot response
+      const botResponse = getBotResponse(userMessage);
+      
+      // Add bot response
+      const botMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'bot',
+        content: botResponse,
+        timestamp: new Date()
+      };
 
-    setMessages(prev => [...prev, botMsg]);
+      setMessages(prev => [...prev, botMsg]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setError('Failed to send message');
+    }
   };
 
   const handleOptionClick = (option: string) => {
@@ -283,6 +305,19 @@ Would you like help with any specific part of the booking process?`;
   };
 
   if (!isOpen) return null;
+
+  if (error) {
+    return (
+      <Card className="fixed bottom-4 right-4 w-96 shadow-xl z-50">
+        <CardContent className="p-4">
+          <p className="text-red-600">Chat temporarily unavailable</p>
+          <Button onClick={closeChatbot} size="sm" className="mt-2">
+            Close
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getModeTitle = () => {
     switch (mode) {
@@ -309,7 +344,7 @@ Would you like help with any specific part of the booking process?`;
       </CardHeader>
 
       <CardContent className="flex-1 p-0 flex flex-col">
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
             {messages.map((message) => (
               <div key={message.id} className="space-y-2">
