@@ -28,7 +28,7 @@ const containerStyle = {
   height: '100%'
 };
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufa WRLR54fFpq4qupYDKNZZO9o";
+const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufa_WRLR54fFpq4qupYDKNZZO9o";
 
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   cleaners,
@@ -43,9 +43,14 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [retryCount, setRetryCount] = useState(0);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
   const { mapCenter, loading: mapCenterLoading } = useMapCenter();
   
+  // Check if Google Maps is available
+  const isGoogleMapsAvailable = useCallback(() => {
+    return typeof window !== 'undefined' && window.google && window.google.maps;
+  }, []);
+
   // Use map center from hook, fallback to user location, then default
   const center = React.useMemo(() => {
     if (!mapCenterLoading && mapCenter) {
@@ -115,46 +120,50 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 
   const handleLoadSuccess = useCallback(() => {
     console.log('Google Maps API loaded successfully');
+    setScriptLoaded(true);
     setIsLoading(false);
     setHasError(false);
-    setRetryCount(0);
   }, []);
 
   const handleLoadError = useCallback((error: Error) => {
     console.error('Google Maps API failed to load:', error);
     setIsLoading(false);
     setHasError(true);
-    setErrorMessage('Failed to load Google Maps. Please check your internet connection and try again.');
+    setErrorMessage('Google Maps failed to load. This could be due to an API key issue or network problem.');
     
-    // If we have an onError callback and this isn't a retry, call it
-    if (onError && retryCount === 0) {
+    // Automatically fall back to simple map after a short delay
+    if (onError) {
       setTimeout(() => {
         onError();
       }, 2000);
     }
-  }, [onError, retryCount]);
+  }, [onError]);
 
-  const handleRetry = () => {
-    setIsLoading(true);
-    setHasError(false);
-    setErrorMessage('');
-    setRetryCount(prev => prev + 1);
-  };
-
-  // Check if Google Maps API key is valid
+  // Check if API key is configured
   useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY.includes('placeholder')) {
+    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "YOUR_API_KEY_HERE" || GOOGLE_MAPS_API_KEY.includes('placeholder')) {
       setHasError(true);
       setIsLoading(false);
-      setErrorMessage('Google Maps API key is not configured properly.');
+      setErrorMessage('Google Maps API key is not properly configured.');
+      return;
     }
-  }, []);
 
+    // Check if Google Maps is already loaded
+    if (isGoogleMapsAvailable()) {
+      setScriptLoaded(true);
+      setIsLoading(false);
+    }
+  }, [isGoogleMapsAvailable]);
+
+  // Error state
   if (hasError) {
     return (
       <Card className={isFullScreen ? "fixed inset-0 z-50 rounded-none" : "h-96"}>
         <CardHeader className="flex flex-row items-center justify-between py-3">
-          <CardTitle className="text-lg">Map Error</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-red-500" />
+            Map Unavailable
+          </CardTitle>
           {onClose && (
             <Button variant="outline" size="sm" onClick={onClose}>
               <X className="w-3 h-3" />
@@ -162,17 +171,39 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
           )}
         </CardHeader>
         <CardContent className="p-6 flex flex-col items-center justify-center">
-          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
           <p className="text-center text-gray-600 mb-4">{errorMessage}</p>
           <div className="flex gap-2">
-            <Button onClick={handleRetry} variant="outline">
-              Try Again
-            </Button>
             {onError && (
-              <Button onClick={onError} variant="secondary">
+              <Button onClick={onError} variant="default">
                 Use Simple Map
               </Button>
             )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Loading state
+  if (isLoading || !scriptLoaded) {
+    return (
+      <Card className={isFullScreen ? "fixed inset-0 z-50 rounded-none" : "h-96"}>
+        <CardHeader className="flex flex-row items-center justify-between py-3">
+          <CardTitle className="text-lg">Loading Map...</CardTitle>
+          {onClose && (
+            <Button variant="outline" size="sm" onClick={onClose}>
+              <X className="w-3 h-3" />
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="p-0 flex-1">
+          <div className={isFullScreen ? "h-full" : "h-80"}>
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center">
+                <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
+                <p className="text-gray-600">Loading Google Maps...</p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -191,7 +222,6 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             size="sm"
             onClick={handleRecenter}
             className="text-xs"
-            disabled={isLoading}
           >
             <RotateCcw className="w-3 h-3 mr-1" />
             Center
@@ -201,7 +231,6 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             size="sm"
             onClick={handleCenterOnUser}
             className="text-xs"
-            disabled={isLoading}
           >
             <Navigation className="w-3 h-3 mr-1" />
             My Location
@@ -220,21 +249,12 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
       </CardHeader>
       <CardContent className="p-0 flex-1">
         <div className={isFullScreen ? "h-full" : "h-80"}>
-          {isLoading && (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
-                <p className="text-gray-600">Loading Google Maps...</p>
-              </div>
-            </div>
-          )}
           <LoadScript 
             googleMapsApiKey={GOOGLE_MAPS_API_KEY}
             onLoad={handleLoadSuccess}
             onError={handleLoadError}
             libraries={['places']}
             preventGoogleFontsLoading={true}
-            loadingElement={<div style={{ height: '100%' }} />}
           >
             <GoogleMap
               mapContainerStyle={containerStyle}
@@ -244,7 +264,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
               onLoad={setMapInstance}
             >
               {/* User location marker */}
-              {userLocation && (
+              {userLocation && isGoogleMapsAvailable() && (
                 <>
                   <Marker
                     position={{
@@ -258,7 +278,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
                           <circle cx="12" cy="12" r="3" fill="#ffffff"/>
                         </svg>
                       `),
-                      scaledSize: new google.maps.Size(24, 24),
+                      scaledSize: isGoogleMapsAvailable() ? new window.google.maps.Size(24, 24) : undefined,
                     }}
                     title="Your Location"
                   />
@@ -283,7 +303,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 
               {/* Cleaner markers */}
               {cleaners.map((cleaner) => {
-                if (!cleaner.latitude || !cleaner.longitude) return null;
+                if (!cleaner.latitude || !cleaner.longitude || !isGoogleMapsAvailable()) return null;
                 
                 return (
                   <Marker
@@ -300,7 +320,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
                           <text x="16" y="21" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">🧽</text>
                         </svg>
                       `),
-                      scaledSize: new google.maps.Size(32, 32),
+                      scaledSize: new window.google.maps.Size(32, 32),
                     }}
                     title={cleaner.business_name || cleaner.full_name}
                   />
@@ -308,7 +328,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
               })}
 
               {/* Info window for selected cleaner */}
-              {selectedCleaner && selectedCleaner.latitude && selectedCleaner.longitude && (
+              {selectedCleaner && selectedCleaner.latitude && selectedCleaner.longitude && isGoogleMapsAvailable() && (
                 <InfoWindow
                   position={{
                     lat: Number(selectedCleaner.latitude),

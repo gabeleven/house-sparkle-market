@@ -51,6 +51,11 @@ const BrowseCleaners = () => {
     setUseGoogleMaps(false);
   };
 
+  const handleCloseMap = () => {
+    setShowMap(false);
+    setUseGoogleMaps(true); // Reset to try Google Maps again next time
+  };
+
   console.log('BrowseCleaners rendering - cleaners count:', cleaners?.length || 0);
 
   return (
@@ -94,7 +99,7 @@ const BrowseCleaners = () => {
                 cleaners={cleaners || []}
                 userLocation={location}
                 radius={searchRadius}
-                onClose={() => setShowMap(false)}
+                onClose={handleCloseMap}
                 isFullScreen={true}
               />
             }
@@ -104,7 +109,7 @@ const BrowseCleaners = () => {
                 cleaners={cleaners || []}
                 userLocation={location}
                 radius={searchRadius}
-                onClose={() => setShowMap(false)}
+                onClose={handleCloseMap}
                 onError={handleMapFallback}
                 isFullScreen={true}
               />
@@ -113,7 +118,7 @@ const BrowseCleaners = () => {
                 cleaners={cleaners || []}
                 userLocation={location}
                 radius={searchRadius}
-                onClose={() => setShowMap(false)}
+                onClose={handleCloseMap}
                 isFullScreen={true}
               />
             )}
