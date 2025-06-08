@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, TrendingUp, Shield, DollarSign, Users, Award, MessageCircle, Eye, Calendar, BarChart3, Crown } from "lucide-react";
+import { Star, TrendingUp, Shield, DollarSign, Users, Award, MessageCircle, Eye, Calendar, BarChart3, Crown, Mail, Bell, MapPin, Image, Palette } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -30,13 +30,48 @@ const ServiceProvidersPage = () => {
     }
   ];
 
+  const starterFeatures = [
+    "Profil de base",
+    "2 catégories de services",
+    "Transfert des demandes clients",
+    "Messagerie intégrée",
+    "Gestion des rendez-vous de base",
+    "Support par email"
+  ];
+
+  const professionalFeatures = [
+    "Tout de Starter PLUS:",
+    "Jusqu'à 5 catégories de services",
+    "Favoris pour clients récurrents",
+    "Intégration calendrier avancée",
+    "Rapports de revenus (pour taxes)",
+    "Positionnement sur carte interactive",
+    "Placement prioritaire dans les recherches",
+    "Calendrier de réservation automatisé",
+    "Notifications en temps réel",
+    "Support prioritaire"
+  ];
+
+  const premiumFeatures = [
+    "Tout de Professional PLUS:",
+    "Services illimités",
+    "Tableau de bord analytique avancé",
+    "Annonces en vedette",
+    "Image de marque personnalisée",
+    "Bannières d'entreprise personnalisées",
+    "Galerie de photos avant/après",
+    "Métriques de performance détaillées",
+    "Outils marketing intégrés",
+    "Support 24/7 dédié"
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-green-800 to-yellow-700">
       <Header />
       
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Benefits Section - Now at the top */}
+          {/* Benefits Section */}
           <div className="mb-16">
             <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6 text-center">
               Pourquoi les prestataires choisissent HOUSIE
@@ -75,25 +110,19 @@ const ServiceProvidersPage = () => {
                       Starter
                     </h3>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-4xl font-bold text-purple-600">$12</span>
+                      <span className="text-4xl font-bold text-purple-600">12€</span>
                       <span className="text-gray-500 ml-2">/mois</span>
                     </div>
                     <p className="text-gray-600 mt-2">Parfait pour commencer</p>
                   </div>
 
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-start">
-                      <Star className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Profil de base</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">2 catégories de services</span>
-                    </li>
-                    <li className="flex items-start">
-                      <MessageCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Transfert des demandes clients</span>
-                    </li>
+                  <ul className="space-y-3 mb-8">
+                    {starterFeatures.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <Star className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-700 text-sm">{feature}</span>
+                      </li>
+                    ))}
                   </ul>
 
                   <Button className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-4 h-auto font-semibold">
@@ -111,25 +140,21 @@ const ServiceProvidersPage = () => {
                       Professional
                     </h3>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-4xl font-bold text-purple-600">$18</span>
+                      <span className="text-4xl font-bold text-purple-600">18€</span>
                       <span className="text-gray-500 ml-2">/mois</span>
                     </div>
                     <p className="text-gray-600 mt-2">Pour les professionnels actifs</p>
                   </div>
 
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-start">
-                      <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Services illimités</span>
-                    </li>
-                    <li className="flex items-start">
-                      <TrendingUp className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Placement prioritaire dans les recherches</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Calendar className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Calendrier de réservation</span>
-                    </li>
+                  <ul className="space-y-3 mb-8">
+                    {professionalFeatures.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <Award className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className={`text-gray-700 text-sm ${feature.includes('PLUS') ? 'font-semibold text-purple-600' : ''}`}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
 
                   <Button className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-4 h-auto font-semibold">
@@ -147,25 +172,21 @@ const ServiceProvidersPage = () => {
                       Premium
                     </h3>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-4xl font-bold text-yellow-600">$28</span>
+                      <span className="text-4xl font-bold text-yellow-600">28€</span>
                       <span className="text-gray-500 ml-2">/mois</span>
                     </div>
                     <p className="text-gray-600 mt-2">Maximum de visibilité</p>
                   </div>
 
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-start">
-                      <Crown className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Annonces en vedette</span>
-                    </li>
-                    <li className="flex items-start">
-                      <BarChart3 className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Tableau de bord analytique</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Star className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">Image de marque personnalisée</span>
-                    </li>
+                  <ul className="space-y-3 mb-8">
+                    {premiumFeatures.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <Crown className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className={`text-gray-700 text-sm ${feature.includes('PLUS') ? 'font-semibold text-yellow-600' : ''}`}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
 
                   <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-lg py-4 h-auto font-semibold">
