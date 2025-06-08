@@ -1,153 +1,160 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, Star, MessageCircle, DollarSign } from 'lucide-react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { Button } from '@/components/ui/button';
+import { Star, MapPin, Clock, DollarSign, User } from 'lucide-react';
 import { ContactViaHousieButton } from './ContactViaHousieButton';
-import { useNavigate } from 'react-router-dom';
-import { serviceTypeIcons, serviceTypeLabels } from '@/utils/serviceTypes';
+import { ProfileViewDialog } from './ProfileViewDialog';
+import { useProfileDialog } from '@/hooks/useProfileDialog';
 
 interface CleanerCardProps {
-  cleaner: CleanerProfile;
+  cleaner: {
+    id: string;
+    full_name: string;
+    email: string;
+    business_name?: string;
+    brief_description?: string;
+    profile_photo_url?: string;
+    service_area_city?: string;
+    latitude?: number;
+    longitude?: number;
+    service_radius_km?: number;
+    years_experience?: number;
+    services?: string[];
+    average_rating?: number;
+    total_reviews?: number;
+    hourly_rate?: number;
+    is_profile_complete?: boolean;
+  };
+  distance?: number;
 }
 
-export const CleanerCard = ({ cleaner }: CleanerCardProps) => {
-  const navigate = useNavigate();
-
-  const formatDistance = (distance?: number) => {
-    if (!distance) return null;
-    return distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`;
-  };
-
-  const getDisplayRate = () => {
-    // Use actual hourly_rate from database, fallback to default if not set
-    if (cleaner.hourly_rate && cleaner.hourly_rate > 0) {
-      return cleaner.hourly_rate;
-    }
-    
-    // Fallback calculation based on experience
-    const baseRate = 25;
-    const experienceBonus = (cleaner.years_experience || 0) * 2;
-    return baseRate + experienceBonus;
-  };
+const CleanerCard: React.FC<CleanerCardProps> = ({ cleaner, distance }) => {
+  const { 
+    isDialogOpen, 
+    selectedUserName, 
+    openProfileDialog, 
+    closeProfileDialog, 
+    confirmViewProfile 
+  } = useProfileDialog();
 
   const handleViewProfile = () => {
-    navigate(`/profile/${cleaner.id}`);
+    openProfileDialog(cleaner.id, cleaner.business_name || cleaner.full_name);
+  };
+
+  const handleNameClick = () => {
+    openProfileDialog(cleaner.id, cleaner.business_name || cleaner.full_name);
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200 bg-white border border-gray-200">
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4 mb-4">
-          <Avatar className="w-16 h-16">
-            <AvatarImage src={cleaner.profile_photo_url || ''} />
-            <AvatarFallback className="bg-purple-100 text-purple-600 text-lg font-semibold">
-              {cleaner.full_name?.charAt(0)?.toUpperCase() || 'C'}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {cleaner.full_name}
-              </h3>
-              {cleaner.distance && (
-                <span className="text-sm text-gray-500 flex items-center">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  {formatDistance(cleaner.distance)} away
-                </span>
-              )}
-            </div>
-            
-            {cleaner.business_name && (
-              <p className="text-sm text-purple-600 font-medium mb-1">
-                {cleaner.business_name}
-              </p>
-            )}
-            
-            <div className="flex items-center gap-2 mb-2">
-              <div className="flex items-center">
-                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                <span className="text-sm text-gray-600 ml-1">4.8 (24 reviews)</span>
-              </div>
-              {cleaner.years_experience && (
-                <Badge variant="secondary" className="text-xs">
-                  {cleaner.years_experience} years exp.
-                </Badge>
-              )}
-            </div>
-
-            {/* Location */}
-            {cleaner.service_area_city && (
-              <div className="flex items-center text-sm text-gray-600 mb-2">
-                <MapPin className="w-4 h-4 mr-1" />
-                <span>Services {cleaner.service_area_city}</span>
-                {cleaner.service_radius_km && (
-                  <span className="ml-1">• {cleaner.service_radius_km}km radius</span>
+    <>
+      <Card className="hover:shadow-lg transition-shadow duration-200">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-primary to-green-700 rounded-full flex items-center justify-center">
+                {cleaner.profile_photo_url ? (
+                  <img 
+                    src={cleaner.profile_photo_url} 
+                    alt={cleaner.full_name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="w-6 h-6 text-white" />
                 )}
               </div>
-            )}
-
-            {/* Rate */}
-            <div className="flex items-center text-sm text-gray-700 mb-2">
-              <DollarSign className="w-4 h-4 mr-1 text-green-600" />
-              <span className="font-medium">${getDisplayRate()}/hour</span>
-              <span className="text-gray-500 ml-1">
-                {cleaner.hourly_rate && cleaner.hourly_rate > 0 ? 'quoted rate' : 'starting rate'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Services */}
-        {cleaner.services && cleaner.services.length > 0 && (
-          <div className="mb-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Services:</p>
-            <div className="flex flex-wrap gap-2">
-              {cleaner.services.slice(0, 6).map((service, index) => {
-                const Icon = serviceTypeIcons[service];
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded-md"
-                    title={serviceTypeLabels[service]}
-                  >
-                    <Icon className="w-3 h-3 text-gray-600" />
-                    <span className="text-xs text-gray-600">{serviceTypeLabels[service]}</span>
+              <div>
+                <h3 
+                  className="font-semibold text-lg text-foreground cursor-pointer hover:text-primary transition-colors"
+                  onClick={handleNameClick}
+                >
+                  {cleaner.business_name || cleaner.full_name}
+                </h3>
+                {cleaner.average_rating && cleaner.total_reviews && (
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-muted-foreground">
+                      {cleaner.average_rating.toFixed(1)} ({cleaner.total_reviews} reviews)
+                    </span>
                   </div>
-                );
-              })}
-              {cleaner.services.length > 6 && (
-                <div className="flex items-center px-2 py-1 bg-gray-100 rounded-md">
-                  <span className="text-xs text-gray-600">+{cleaner.services.length - 6} more</span>
-                </div>
-              )}
+                )}
+              </div>
             </div>
+            {distance && (
+              <Badge variant="outline" className="text-xs">
+                {distance.toFixed(1)} km away
+              </Badge>
+            )}
           </div>
-        )}
+        </CardHeader>
 
-        {/* Description */}
-        {cleaner.brief_description && (
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-            {cleaner.brief_description}
-          </p>
-        )}
+        <CardContent className="space-y-4">
+          {cleaner.brief_description && (
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {cleaner.brief_description}
+            </p>
+          )}
 
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1" onClick={handleViewProfile}>
-            <MessageCircle className="w-4 h-4 mr-2" />
-            View Profile
-          </Button>
-          <ContactViaHousieButton 
-            cleanerId={cleaner.id}
-            size="sm"
-            className="flex-1"
-          />
-        </div>
-      </CardContent>
-    </Card>
+          <div className="flex flex-wrap gap-2">
+            {cleaner.services?.slice(0, 3).map((service, index) => (
+              <Badge key={index} variant="secondary" className="text-xs">
+                {service}
+              </Badge>
+            ))}
+            {cleaner.services && cleaner.services.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{cleaner.services.length - 3} more
+              </Badge>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+            {cleaner.service_area_city && (
+              <div className="flex items-center space-x-1">
+                <MapPin className="w-4 h-4" />
+                <span>{cleaner.service_area_city}</span>
+              </div>
+            )}
+            {cleaner.years_experience !== undefined && (
+              <div className="flex items-center space-x-1">
+                <Clock className="w-4 h-4" />
+                <span>{cleaner.years_experience} years exp.</span>
+              </div>
+            )}
+            {cleaner.hourly_rate && (
+              <div className="flex items-center space-x-1">
+                <DollarSign className="w-4 h-4" />
+                <span>${cleaner.hourly_rate}/hour</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex space-x-2 pt-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1"
+              onClick={handleViewProfile}
+            >
+              View Profile
+            </Button>
+            <ContactViaHousieButton 
+              cleanerId={cleaner.id} 
+              cleanerName={cleaner.business_name || cleaner.full_name}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <ProfileViewDialog
+        isOpen={isDialogOpen}
+        onClose={closeProfileDialog}
+        onConfirm={confirmViewProfile}
+        userName={selectedUserName}
+      />
+    </>
   );
 };
+
+export default CleanerCard;
