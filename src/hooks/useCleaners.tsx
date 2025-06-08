@@ -7,6 +7,7 @@ import { ServiceType } from '@/utils/serviceTypes';
 export interface CleanerProfile {
   id: string;
   full_name: string;
+  email: string;
   business_name: string | null;
   brief_description: string | null;
   profile_photo_url: string | null;
@@ -34,11 +35,12 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
     queryFn: async () => {
       console.log('Fetching cleaners from database...');
       
-      // Use a direct query to cleaner_profiles joined with profiles to get hourly_rate and review data
+      // Use a direct query to cleaner_profiles joined with profiles to get email and other data
       let query = supabase
         .from('profiles')
         .select(`
           id,
+          email,
           full_name,
           profile_photo_url,
           cleaner_profiles!inner(
@@ -81,6 +83,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
           const cleanerProfile = cleaner.cleaner_profiles;
           return {
             id: cleaner.id || '',
+            email: cleaner.email || '',
             full_name: cleaner.full_name || '',
             business_name: cleanerProfile.business_name,
             brief_description: cleanerProfile.brief_description,

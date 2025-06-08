@@ -27,9 +27,11 @@ interface CleanerMapPopupProps {
     hourly_rate?: number;
     distance?: number;
   };
+  position?: { x: number; y: number };
+  onClose?: () => void;
 }
 
-export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner }) => {
+export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, position, onClose }) => {
   const { 
     isDialogOpen, 
     selectedUserName, 
