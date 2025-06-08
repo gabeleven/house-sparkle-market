@@ -9,9 +9,9 @@ export const useGoogleMapsApi = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
-  // Check if Google Maps is available
+  // Check if Google Maps is available - fixed to return boolean
   const isGoogleMapsAvailable = useCallback(() => {
-    return typeof window !== 'undefined' && window.google && window.google.maps;
+    return !!(typeof window !== 'undefined' && window.google && window.google.maps);
   }, []);
 
   // Check if API key is configured properly
