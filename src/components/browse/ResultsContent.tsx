@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { CleanerProfile } from '@/hooks/useCleaners';
-import { CleanerCard } from '@/components/CleanerCard';
+import CleanerCard from '@/components/CleanerCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { ErrorMessage } from './ErrorMessage';
 import { NoResultsMessage } from './NoResultsMessage';

@@ -140,8 +140,7 @@ const CleanerCard: React.FC<CleanerCardProps> = ({ cleaner, distance }) => {
               View Profile
             </Button>
             <ContactViaHousieButton 
-              cleanerId={cleaner.id} 
-              cleanerName={cleaner.business_name || cleaner.full_name}
+              cleanerId={cleaner.id}
             />
           </div>
         </CardContent>
