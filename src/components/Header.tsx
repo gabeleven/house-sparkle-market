@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -17,8 +18,8 @@ const Header = () => {
   const navigate = useNavigate();
 
   // Mock user subscription - in a real app, this would come from user subscription data
-  // Using 'free' for users without subscription, 'professional', 'premium' for paid tiers
-  let userSubscription: 'free' | 'professional' | 'premium';
+  // Updated to include all 4 tiers: free, starter, professional, premium
+  let userSubscription: 'free' | 'starter' | 'professional' | 'premium';
   userSubscription = 'free'; // Default to free, but can be changed dynamically
   
   // In a real app, you would fetch this from the user's subscription data
@@ -35,9 +36,17 @@ const Header = () => {
       { label: 'Mon Profil', path: '/my-profile' },
     ];
 
+    if (userSubscription === 'starter') {
+      return [
+        ...baseItems,
+        { label: 'Calendar', path: '/calendar' },
+      ];
+    }
+
     if (userSubscription === 'professional') {
       return [
         ...baseItems,
+        { label: 'Calendar', path: '/calendar' },
         { label: 'Bookmarks', path: '/bookmarks' },
         { label: 'My Earnings', path: '/earnings' },
         { label: 'Position', path: '/position' },
@@ -47,6 +56,7 @@ const Header = () => {
     if (userSubscription === 'premium') {
       return [
         ...baseItems,
+        { label: 'Calendar', path: '/calendar' },
         { label: 'Bookmarks', path: '/bookmarks' },
         { label: 'My Earnings', path: '/earnings' },
         { label: 'Position', path: '/position' },
