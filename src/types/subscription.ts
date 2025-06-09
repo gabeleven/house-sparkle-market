@@ -13,6 +13,13 @@ export const isStarter = (plan: string) => plan === SubscriptionTier.STARTER;
 export const isProfessional = (plan: string) => plan === SubscriptionTier.PROFESSIONAL;
 export const isPremium = (plan: string) => plan === SubscriptionTier.PREMIUM;
 
+// Helper to check if user has at least starter tier
+export const hasStarterOrHigher = (plan: string) => {
+  return plan === SubscriptionTier.STARTER || 
+         plan === SubscriptionTier.PROFESSIONAL || 
+         plan === SubscriptionTier.PREMIUM;
+};
+
 export const hasFeature = (plan: string, feature: string) => {
   const features = {
     [SubscriptionTier.FREE]: ['messages', 'profile'],

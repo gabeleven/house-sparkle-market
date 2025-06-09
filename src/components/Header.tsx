@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Bell, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +20,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   // Mock user subscription - in a real app, this would come from user subscription data
-  const userSubscription = SubscriptionTier.FREE; // Default to free, can be changed dynamically
+  const userSubscription: SubscriptionTier = SubscriptionTier.FREE; // Default to free, can be changed dynamically
   
   // In a real app, you would fetch this from the user's subscription data
 
@@ -55,11 +56,15 @@ const Header = () => {
               Trouver un service
             </Link>
             <Link to="/prestataires" className="text-muted-foreground hover:text-primary transition-colors">
-              Devenir prestataire
+              HOUSIE Pro
             </Link>
             <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
               Support
             </Link>
+            
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -132,7 +137,7 @@ const Header = () => {
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Devenir prestataire
+                HOUSIE Pro
               </Link>
               <Link 
                 to="/support" 
@@ -141,6 +146,12 @@ const Header = () => {
               >
                 Support
               </Link>
+              
+              {/* Mobile Theme Toggle */}
+              <div className="py-2">
+                <ThemeToggle />
+              </div>
+              
               {user ? (
                 <>
                   {dropdownItems.map((item) => (
