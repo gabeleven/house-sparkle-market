@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ChatbotProvider } from "@/contexts/ChatbotContext";
 import Index from "./pages/Index";
 import HowItWorksPage from "./pages/HowItWorksPage";
@@ -25,31 +26,33 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <AuthProvider>
-        <ChatbotProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
-                <Route path="/prestataires" element={<ServiceProvidersPage />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-                <Route path="/chat" element={<Chat />} />
-                <Route path="/my-profile" element={<MyProfile />} />
-                <Route path="/profile/:userId" element={<PublicProfile />} />
-                <Route path="/support" element={<Support />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <FloatingChatButton />
-              <DualModeChatbot />
-            </BrowserRouter>
-          </TooltipProvider>
-        </ChatbotProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <ChatbotProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+                  <Route path="/prestataires" element={<ServiceProvidersPage />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+                  <Route path="/chat" element={<Chat />} />
+                  <Route path="/my-profile" element={<MyProfile />} />
+                  <Route path="/profile/:userId" element={<PublicProfile />} />
+                  <Route path="/support" element={<Support />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <FloatingChatButton />
+                <DualModeChatbot />
+              </BrowserRouter>
+            </TooltipProvider>
+          </ChatbotProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

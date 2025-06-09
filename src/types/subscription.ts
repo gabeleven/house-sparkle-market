@@ -32,16 +32,16 @@ export const hasFeature = (plan: string, feature: string) => {
 
 export const getMenuItems = (plan: string) => {
   const baseItems = [
-    { label: 'Messages', path: '/chat', showNotification: true, feature: 'messages' },
-    { label: 'Mon Profil', path: '/my-profile', showNotification: false, feature: 'profile' },
+    { labelKey: 'nav.messages', path: '/chat', showNotification: true, feature: 'messages' },
+    { labelKey: 'nav.profile', path: '/my-profile', showNotification: false, feature: 'profile' },
   ];
 
   const tierItems = [
-    { label: 'Calendar', path: '/calendar', showNotification: false, feature: 'calendar' },
-    { label: 'Bookmarks', path: '/bookmarks', showNotification: false, feature: 'bookmarks' },
-    { label: 'My Earnings', path: '/earnings', showNotification: false, feature: 'earnings' },
-    { label: 'Position', path: '/position', showNotification: false, feature: 'position' },
-    { label: 'My Dashboard', path: '/dashboard', showNotification: false, feature: 'dashboard' },
+    { labelKey: 'nav.calendar', path: '/calendar', showNotification: false, feature: 'calendar' },
+    { labelKey: 'nav.bookmarks', path: '/bookmarks', showNotification: false, feature: 'bookmarks' },
+    { labelKey: 'nav.earnings', path: '/earnings', showNotification: false, feature: 'earnings' },
+    { labelKey: 'nav.position', path: '/position', showNotification: false, feature: 'position' },
+    { labelKey: 'nav.dashboard', path: '/dashboard', showNotification: false, feature: 'dashboard' },
   ];
 
   return [

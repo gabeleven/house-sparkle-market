@@ -6,28 +6,31 @@ import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, B
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SubscriptionTier, getTierInfo } from "@/types/subscription";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ServiceProvidersPage = () => {
+  const { t } = useLanguage();
+
   const benefits = [
     {
       icon: FileText,
-      title: "CRA Compliance Built-In",
-      description: "Automatic tax tracking and reporting to meet Canada's new 2025 legal requirements"
+      titleKey: 'providers.benefit1.title',
+      descKey: 'providers.benefit1.desc'
     },
     {
       icon: Calculator,
-      title: "Save on Accounting Fees",
-      description: "Advanced tax features save $500-$2,000+ annually compared to hiring accountants"
+      titleKey: 'providers.benefit2.title',
+      descKey: 'providers.benefit2.desc'
     },
     {
       icon: Users,
-      title: "Développez votre clientèle",
-      description: "Accédez à des milliers de clients potentiels dans votre région"
+      titleKey: 'providers.benefit3.title',
+      descKey: 'providers.benefit3.desc'
     },
     {
       icon: Shield,
-      title: "Legal Protection",
-      description: "Stay compliant with CRA reporting requirements - avoid penalties and audits"
+      titleKey: 'providers.benefit4.title',
+      descKey: 'providers.benefit4.desc'
     }
   ];
 
@@ -45,22 +48,21 @@ const ServiceProvidersPage = () => {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <Badge className="bg-red-100 text-red-800 px-4 py-2 text-lg mb-4">
-              🚨 New 2025 Tax Laws - Compliance Required
+              {t('providers.badge')}
             </Badge>
             <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              Finally, a cleaning platform built for Canada's new tax laws
+              {t('providers.title')}
             </h1>
             <p className="text-xl text-green-100 max-w-4xl mx-auto mb-8">
-              The only platform that makes tax compliance automatic, not optional. 
-              Every cleaning business in Canada now needs income tracking - we've built it as our foundation.
+              {t('providers.subtitle')}
             </p>
             <div className="bg-white/10 backdrop-blur rounded-lg p-6 max-w-3xl mx-auto">
               <h3 className="text-xl font-semibold text-white mb-4">What the new laws require:</h3>
               <div className="grid md:grid-cols-2 gap-4 text-green-100 text-left">
-                <div>• Income tracking for 30+ transactions OR $2,800+ annually</div>
-                <div>• Annual CRA reporting by January 31st</div>
-                <div>• Collection of SIN, address, and transaction details</div>
-                <div>• Providing tax documents to service providers</div>
+                <div>• {t('providers.requirement1')}</div>
+                <div>• {t('providers.requirement2')}</div>
+                <div>• {t('providers.requirement3')}</div>
+                <div>• {t('providers.requirement4')}</div>
               </div>
             </div>
           </div>
@@ -68,7 +70,7 @@ const ServiceProvidersPage = () => {
           {/* Benefits Section */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-white mb-12 text-center">
-              Why HOUSIE is now essential, not optional
+              {t('providers.whyTitle')}
             </h2>
             <div className="grid lg:grid-cols-4 gap-8">
               {benefits.map((benefit, index) => {
@@ -79,10 +81,10 @@ const ServiceProvidersPage = () => {
                       <IconComponent className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-white mb-3">
-                      {benefit.title}
+                      {t(benefit.titleKey)}
                     </h3>
                     <p className="text-green-100">
-                      {benefit.description}
+                      {t(benefit.descKey)}
                     </p>
                   </div>
                 );
@@ -104,13 +106,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ CRA Ready</Badge>
+                    <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ {t('plan.free.name')}</Badge>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Free</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-blue-600">$0</span>
-                      <span className="text-gray-500 ml-2">/month</span>
+                      <span className="text-gray-500 ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">Essential tax compliance</p>
+                    <p className="text-gray-600 text-sm">{t('plan.free.tagline')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -123,7 +125,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 font-semibold">
-                    Start Free - Stay Compliant
+                    {t('plan.free.cta')}
                   </Button>
                 </CardContent>
               </Card>
@@ -132,13 +134,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-green-100 text-green-800 mb-3">📊 Tax Basics</Badge>
+                    <Badge className="bg-green-100 text-green-800 mb-3">📊 {t('plan.starter.name')}</Badge>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-green-600">$12</span>
-                      <span className="text-gray-500 ml-2">/month</span>
+                      <span className="text-gray-500 ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">Saves $500+ annually</p>
+                    <p className="text-gray-600 text-sm">{t('plan.starter.savings')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -153,7 +155,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-green-600 hover:bg-green-700 font-semibold">
-                    Choose Tax Basics
+                    {t('plan.starter.cta')}
                   </Button>
                 </CardContent>
               </Card>
@@ -162,13 +164,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0 ring-2 ring-purple-500 scale-105">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-purple-100 text-purple-800 mb-3">🎯 Most Popular</Badge>
+                    <Badge className="bg-purple-100 text-purple-800 mb-3">{t('plan.professional.popular')}</Badge>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Professional</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-purple-600">$25</span>
-                      <span className="text-gray-500 ml-2">/month</span>
+                      <span className="text-gray-500 ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">Saves $2,000+ annually</p>
+                    <p className="text-gray-600 text-sm">{t('plan.professional.savings')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -183,7 +185,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-purple-600 hover:bg-purple-700 font-semibold">
-                    Choose Tax Professional
+                    {t('plan.professional.cta')}
                   </Button>
                 </CardContent>
               </Card>
@@ -192,13 +194,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-yellow-100 text-yellow-800 mb-3">👑 Business Intelligence</Badge>
+                    <Badge className="bg-yellow-100 text-yellow-800 mb-3">👑 {t('plan.premium.name')}</Badge>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Premium</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-yellow-600">$39</span>
-                      <span className="text-gray-500 ml-2">/month</span>
+                      <span className="text-gray-500 ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">Market domination</p>
+                    <p className="text-gray-600 text-sm">{t('plan.premium.tagline')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -213,7 +215,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-yellow-600 hover:bg-yellow-700 font-semibold">
-                    Choose Premium
+                    {t('plan.premium.cta')}
                   </Button>
                 </CardContent>
               </Card>
