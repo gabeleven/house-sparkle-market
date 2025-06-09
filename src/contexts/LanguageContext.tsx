@@ -49,7 +49,7 @@ export const useLanguage = () => {
   return context;
 };
 
-// Translation object with Quebec French
+// Translation object with standard France French (professional tone)
 const translations = {
   en: {
     // Header
@@ -128,11 +128,11 @@ const translations = {
     'learnMore': 'Learn More',
   },
   fr: {
-    // Header
-    'nav.howItWorks': 'Comment ça marche',
+    // Header - Professional France French
+    'nav.howItWorks': 'Comment ça fonctionne',
     'nav.findService': 'Trouver un service',
     'nav.housePro': 'HOUSIE Pro',
-    'nav.support': 'Support',
+    'nav.support': 'Assistance',
     'nav.login': 'Connexion',
     'nav.signup': 'S\'inscrire',
     'nav.logout': 'Déconnexion',
@@ -144,48 +144,48 @@ const translations = {
     'nav.position': 'Position',
     'nav.dashboard': 'Mon Tableau de Bord',
 
-    // Homepage
+    // Homepage - Professional tone
     'hero.title': 'Trouvez des services de ménage de confiance au Québec',
-    'hero.subtitle': 'Connectez-vous avec des nettoyeurs vérifiés dans votre région. Réservez instantanément, suivez vos revenus, restez conforme à l\'ARC.',
-    'hero.cta': 'Trouver un Nettoyeur',
+    'hero.subtitle': 'Connectez-vous avec des professionnels vérifiés dans votre région. Réservez instantanément, suivez vos revenus, restez conforme à l\'ARC.',
+    'hero.cta': 'Trouver un Professionnel',
     'hero.ctaProvider': 'Devenir Prestataire',
 
-    // Service Providers Page
-    'providers.badge': '🚨 Nouvelles Lois Fiscales 2025 - Conformité Requise',
+    // Service Providers Page - Professional business French
+    'providers.badge': '🚨 Nouvelles Lois Fiscales 2025 - Conformité Obligatoire',
     'providers.title': 'Enfin, une plateforme de ménage conçue pour les nouvelles lois fiscales du Canada',
-    'providers.subtitle': 'La seule plateforme qui rend la conformité fiscale automatique, pas optionnelle. Chaque entreprise de ménage au Canada doit maintenant suivre ses revenus - nous l\'avons intégré comme fondation.',
-    'providers.requirement1': 'Suivi des revenus pour 30+ transactions OU 2 800$+ annuellement',
+    'providers.subtitle': 'La seule plateforme qui rend la conformité fiscale automatique, non optionnelle. Chaque entreprise de ménage au Canada doit maintenant effectuer le suivi des revenus - nous l\'avons intégré dans nos fondations.',
+    'providers.requirement1': 'Suivi des revenus pour 30+ transactions OU 2 800 $ et plus annuellement',
     'providers.requirement2': 'Déclaration annuelle à l\'ARC avant le 31 janvier',
     'providers.requirement3': 'Collecte du NAS, adresse et détails des transactions',
-    'providers.requirement4': 'Fourniture de documents fiscaux aux prestataires',
-    'providers.whyTitle': 'Pourquoi HOUSIE est maintenant essentiel, pas optionnel',
+    'providers.requirement4': 'Fourniture de documents fiscaux aux prestataires de services',
+    'providers.whyTitle': 'Pourquoi HOUSIE est maintenant essentiel, non optionnel',
     'providers.benefit1.title': 'Conformité ARC Intégrée',
     'providers.benefit1.desc': 'Suivi et déclaration fiscale automatiques pour respecter les nouvelles exigences légales 2025 du Canada',
     'providers.benefit2.title': 'Économisez sur les Frais Comptables',
-    'providers.benefit2.desc': 'Les fonctionnalités fiscales avancées économisent 500$-2 000$+ annuellement comparé à embaucher des comptables',
+    'providers.benefit2.desc': 'Les fonctionnalités fiscales avancées permettent d\'économiser 500 $ à 2 000 $ et plus annuellement par rapport à l\'embauche de comptables',
     'providers.benefit3.title': 'Développez votre Clientèle',
     'providers.benefit3.desc': 'Accédez à des milliers de clients potentiels dans votre région',
-    'providers.benefit4.title': 'Protection Légale',
+    'providers.benefit4.title': 'Protection Juridique',
     'providers.benefit4.desc': 'Restez conforme aux exigences de déclaration ARC - évitez les pénalités et vérifications',
 
-    // Free Plan
+    // Free Plan - Professional business language
     'plan.free.name': 'Conforme ARC',
-    'plan.free.tagline': 'Conformité fiscale essentielle pour nouveaux nettoyeurs',
+    'plan.free.tagline': 'Conformité fiscale essentielle pour nouveaux professionnels',
     'plan.free.desc': 'Restez légalement conforme aux nouvelles exigences de déclaration fiscale 2025 du Canada',
-    'plan.free.cta': 'Commencer Gratuit - Rester Conforme',
+    'plan.free.cta': 'Commencer Gratuitement - Rester Conforme',
 
     // Starter Plan
-    'plan.starter.name': 'Fiscal de Base',
-    'plan.starter.tagline': 'Suivi fiscal professionnel sans la complexité',
+    'plan.starter.name': 'Fiscalité de Base',
+    'plan.starter.tagline': 'Suivi fiscal professionnel sans complexité',
     'plan.starter.desc': 'Tout ce dont vous avez besoin pour la conformité fiscale plus des fonctionnalités professionnelles',
-    'plan.starter.savings': 'Économise 500$+ annuellement vs services comptables de base',
-    'plan.starter.cta': 'Choisir Fiscal de Base',
+    'plan.starter.savings': 'Économise 500 $ et plus annuellement vs services comptables de base',
+    'plan.starter.cta': 'Choisir Fiscalité de Base',
 
     // Professional Plan
     'plan.professional.name': 'Professionnel Fiscal',
-    'plan.professional.tagline': 'Maîtrise fiscale complète + optimisation d\'affaires',
+    'plan.professional.tagline': 'Maîtrise fiscale complète + optimisation des affaires',
     'plan.professional.desc': 'Fonctionnalités fiscales avancées qui transforment la conformité en avantage concurrentiel',
-    'plan.professional.savings': 'Économise 2 000$+ annuellement vs services comptables professionnels',
+    'plan.professional.savings': 'Économise 2 000 $ et plus annuellement vs services comptables professionnels',
     'plan.professional.cta': 'Choisir Professionnel Fiscal',
     'plan.professional.popular': '🎯 Plus Populaire',
 

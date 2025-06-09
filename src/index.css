@@ -286,4 +286,30 @@
   .dark .text-yellow-800 {
     @apply text-yellow-400;
   }
+
+  /* Fix alert/notification background in dark mode */
+  .dark .bg-red-100 {
+    @apply bg-red-900/30;
+  }
+
+  .dark .text-red-800 {
+    @apply text-red-300;
+  }
+
+  /* Yellow button fixes for dark mode */
+  .dark .bg-yellow-500 {
+    @apply bg-yellow-600;
+  }
+
+  .dark .hover\:bg-yellow-600:hover {
+    @apply hover:bg-yellow-700;
+  }
+
+  .dark .text-yellow-900 {
+    @apply text-yellow-100;
+  }
+
+  .dark .border-yellow-600 {
+    @apply border-yellow-500;
+  }
 }

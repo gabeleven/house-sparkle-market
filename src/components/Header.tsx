@@ -42,7 +42,7 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-100 flex items-center justify-center">
               <img 
-                src="/lovable-uploads/7e996b12-8e81-4588-9463-feb35fd38aec.png" 
+                src="/lovable-uploads/ec7e538c-d91e-427d-b524-a7bed56347a3.png" 
                 alt="Housie Cleaner" 
                 className="w-8 h-8 object-contain rounded-full"
               />
