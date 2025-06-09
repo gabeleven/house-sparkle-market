@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Shield, Lock, FileText, DollarSign } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { 
   validatePhone, 
@@ -221,6 +222,46 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
           <p className="text-sm text-destructive">{validationErrors.phoneNumber}</p>
         )}
       </div>
+
+      {/* Legal Requirement Notice for Cleaners */}
+      {userType === 'cleaner' && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="w-5 h-5 text-primary" />
+              Exigence Légale : Collecte du NAS
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Conformément à la loi canadienne (Projet de loi C-47), nous devons collecter votre Numéro d'Assurance Sociale si vous gagnez 2 800 $ et plus ou effectuez 30 transactions et plus annuellement sur notre plateforme.
+            </p>
+            
+            <div className="grid grid-cols-1 gap-3">
+              <div className="flex items-start gap-2">
+                <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-sm">Requis pour la déclaration fiscale ARC (non optionnel)</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Lock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-sm">Chiffré et stocké de manière sécurisée avec sécurité de niveau bancaire</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-sm">Utilisé uniquement pour la conformité et déclaration fiscale</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <DollarSign className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-sm">Vous aide à économiser 2 000 $ et plus en frais comptables grâce à nos fonctionnalités de conformité fiscale</span>
+              </div>
+            </div>
+            
+            <p className="text-xs text-muted-foreground mt-3 p-2 bg-muted/50 rounded">
+              💡 Votre NAS nous aide à vous fournir un suivi fiscal professionnel et des fonctionnalités de conformité qui vous font économiser du temps et de l'argent.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Cleaner specific fields */}
       {userType === 'cleaner' && (

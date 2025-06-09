@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { Search, BookOpen, CreditCard, User, MapPin, Star, MessageCircle } from 'lucide-react';
+import { Search, BookOpen, CreditCard, User, MapPin, Star, MessageCircle, Shield } from 'lucide-react';
 
 interface FAQItem {
   id: string;
@@ -132,6 +132,42 @@ const faqData: FAQItem[] = [
 **Reading Reviews**: Look for recent reviews and overall patterns rather than just the star rating.`,
     category: 'reviews',
     tags: ['ratings', 'reviews', 'feedback', 'verification']
+  },
+  {
+    id: '7',
+    question: 'Why does Housie collect Social Insurance Numbers (SIN) and how is my data protected?',
+    answer: `**Legal Requirement - Not Optional**
+
+Under Canadian law (Bill C-47), Housie is required to collect Social Insurance Numbers from service providers who either:
+• Earn $2,800 or more annually through our platform, OR
+• Complete 30 or more transactions per year
+
+**Why This Law Exists**:
+The government created this requirement to ensure proper tax reporting and compliance in the gig economy. This isn't unique to Housie - all platforms must follow these rules.
+
+**How We Protect Your SIN**:
+🔒 **Bank-Level Security**: Your SIN is encrypted using the same security standards as major banks
+🔒 **Restricted Access**: Only authorized personnel can access this information, and only when legally required
+🔒 **Secure Storage**: Data is stored in Canadian servers with multiple layers of protection
+🔒 **Limited Use**: We only use your SIN for CRA reporting and tax compliance - never for marketing or other purposes
+
+**How This Benefits You**:
+✅ **Professional Tax Tracking**: Automatic income tracking and tax document generation
+✅ **CRA Compliance**: We handle all reporting requirements so you don't have to worry
+✅ **Save Money**: Our compliance features save you $2,000+ annually vs hiring accountants
+✅ **Peace of Mind**: No risk of penalties or audit issues from missed reporting
+
+**When We Collect It**:
+We'll request your SIN only when you approach the $2,800 threshold or 30 transactions. You can continue using Housie without providing it until you reach these limits.
+
+**Your Rights**:
+• You can request to see what SIN information we have on file
+• You can ask questions about how your data is used
+• You're protected under Canadian privacy laws
+
+**Questions?** Contact our support team anytime for more details about our data protection practices.`,
+    category: 'legal',
+    tags: ['sin', 'privacy', 'legal', 'compliance', 'tax', 'security', 'data protection']
   }
 ];
 
@@ -141,7 +177,8 @@ const categories = [
   { id: 'payment', name: 'Payment & Billing', icon: CreditCard },
   { id: 'account', name: 'Account & Profile', icon: User },
   { id: 'service', name: 'Service Issues', icon: MapPin },
-  { id: 'reviews', name: 'Reviews & Ratings', icon: Star }
+  { id: 'reviews', name: 'Reviews & Ratings', icon: Star },
+  { id: 'legal', name: 'Legal & Compliance', icon: Shield }
 ];
 
 export const FAQSection: React.FC<FAQSectionProps> = ({ searchQuery }) => {
