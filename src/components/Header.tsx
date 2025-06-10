@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -66,6 +65,9 @@ const Header = () => {
                 <span>Bookings</span>
               </Link>
             )}
+            <Link to="/tax-compliance" className="text-muted-foreground hover:text-primary transition-colors">
+              Conformité fiscale
+            </Link>
             <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
               Support
             </Link>
@@ -160,6 +162,13 @@ const Header = () => {
                   <span>Bookings</span>
                 </Link>
               )}
+              <Link 
+                to="/tax-compliance" 
+                className="text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Conformité fiscale
+              </Link>
               <Link 
                 to="/support" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
