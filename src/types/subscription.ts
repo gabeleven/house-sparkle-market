@@ -24,8 +24,8 @@ export const hasFeature = (plan: string, feature: string) => {
   const features = {
     [SubscriptionTier.FREE]: ['messages', 'profile', 'basic_calendar', 'basic_compliance', 'bookings_limited', 'settings'],
     [SubscriptionTier.STARTER]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'settings'],
-    [SubscriptionTier.PROFESSIONAL]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'advanced_analytics', 'automated_invoicing', 'priority_support', 'settings'],
-    [SubscriptionTier.PREMIUM]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'advanced_analytics', 'automated_invoicing', 'priority_support', 'market_intelligence', 'api_access', 'dedicated_manager', 'white_label_reports', 'settings']
+    [SubscriptionTier.PROFESSIONAL]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'advanced_analytics', 'automated_invoicing', 'priority_support', 'growth_tools', 'settings'],
+    [SubscriptionTier.PREMIUM]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'advanced_analytics', 'automated_invoicing', 'priority_support', 'market_intelligence', 'api_access', 'dedicated_manager', 'white_label_reports', 'growth_tools', 'automated_marketing', 'settings']
   };
   return features[plan as keyof typeof features]?.includes(feature) || false;
 };
@@ -42,6 +42,7 @@ export const getMenuItems = (plan: string) => {
     { labelKey: 'Mes Réservations', englishKey: 'My Bookings', path: '/bookings', showNotification: false, feature: 'bookings_unlimited', icon: 'BookOpen', tierNote: '(illimitées)' },
     { labelKey: 'Communications Client', englishKey: 'Client Communications', path: '/chat', showNotification: true, feature: 'client_communications', icon: 'MessageSquare' },
     { labelKey: 'Analytiques Avancées', englishKey: 'Advanced Analytics', path: '/analytics', showNotification: false, feature: 'advanced_analytics', icon: 'TrendingUp' },
+    { labelKey: 'Outils de Croissance', englishKey: 'Growth Tools', path: '/growth', showNotification: false, feature: 'growth_tools', icon: 'Target' },
     { labelKey: 'Intelligence Marché', englishKey: 'Market Intelligence', path: '/market-intelligence', showNotification: false, feature: 'market_intelligence', icon: 'Brain' },
     { labelKey: 'Paramètres', englishKey: 'Settings', path: '/settings', showNotification: false, feature: 'settings', icon: 'Settings' },
   ];

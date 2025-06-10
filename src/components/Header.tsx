@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Menu, X, Bell, ChevronDown, Calendar, BarChart3, User, CalendarCheck, FileText, Shield, BookOpen, MessageSquare, TrendingUp, Brain, Settings } from 'lucide-react';
+import { Menu, X, Bell, ChevronDown, Calendar, BarChart3, User, CalendarCheck, FileText, Shield, BookOpen, MessageSquare, TrendingUp, Brain, Settings, Target } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -29,7 +28,8 @@ const iconMap = {
   MessageSquare,
   TrendingUp,
   Brain,
-  Settings
+  Settings,
+  Target
 };
 
 const Header = () => {

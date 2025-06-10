@@ -21,6 +21,9 @@ import CleanerReviews from "./pages/CleanerReviews";
 import Bookings from "./pages/Bookings";
 import TaxCompliancePage from "./pages/TaxCompliancePage";
 import ProviderDashboard from "./pages/ProviderDashboard";
+import CalendarDashboard from "./pages/CalendarDashboard";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import GrowthDashboard from "./pages/GrowthDashboard";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./components/auth/AuthPage";
 
@@ -51,6 +54,9 @@ const App = () => (
                   <Route path="/bookings" element={<Bookings />} />
                   <Route path="/tax-compliance" element={<TaxCompliancePage />} />
                   <Route path="/provider-dashboard" element={<ProviderDashboard />} />
+                  <Route path="/calendar" element={<CalendarDashboard />} />
+                  <Route path="/analytics" element={<AnalyticsDashboard />} />
+                  <Route path="/growth" element={<GrowthDashboard />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
