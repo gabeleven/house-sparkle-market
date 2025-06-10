@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,9 +67,9 @@ const Settings = () => {
     return metrics[tier];
   };
 
-  const isPremium = currentTier === SubscriptionTier.PREMIUM;
-  const isStarterPlus = currentTier !== SubscriptionTier.FREE;
-  const isProfessionalPlus = [SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM].includes(currentTier);
+  const isPremium = (currentTier as string) === (SubscriptionTier.PREMIUM as string);
+  const isStarterPlus = (currentTier as string) !== (SubscriptionTier.FREE as string);
+  const isProfessionalPlus = (currentTier as string) === (SubscriptionTier.PROFESSIONAL as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
 
   return (
     <div className="min-h-screen bg-background">
@@ -214,7 +213,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: currentTier === SubscriptionTier.FREE ? '70%' : '45%' }}
+                            style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '70%' : '45%' }}
                           />
                         </div>
                       </div>
@@ -433,3 +432,5 @@ const Settings = () => {
 };
 
 export default Settings;
+
+</edits_to_apply>
