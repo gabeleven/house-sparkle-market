@@ -26,7 +26,7 @@ const Hero = () => {
   };
 
   const handleMascotClick = () => {
-    openChatbot('tax-compliance');
+    openChatbot('support');
   };
 
   return (
@@ -37,15 +37,15 @@ const Hero = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                Services de{' '}
+                Votre entreprise de{' '}
                 <span className="bg-gradient-to-r from-purple-600 to-green-600 bg-clip-text text-transparent">
                   ménage
-                </span>{' '}
-                conformes ARC
+                </span>
+                , simplifiée
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                La première plateforme de ménage au Canada entièrement conforme aux nouvelles lois fiscales 2025. 
-                Trouvez des professionnels vérifiés et restez en règle avec l'ARC.
+                Nous gérons les réservations, les taxes et la paperasse, 
+                pour que vous puissiez vous concentrer sur ce que vous faites de mieux.
               </p>
             </div>
 
@@ -89,7 +89,7 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right Content - New Mascot */}
+          {/* Right Content - Mascot */}
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
               {/* Background circle with gradient */}
@@ -125,7 +125,7 @@ const Hero = () => {
                   onClick={handleSearch}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-3 rounded-full shadow-lg"
                 >
-                  Trouver un Professionnel
+                  Commencer
                 </Button>
               </div>
             </div>
