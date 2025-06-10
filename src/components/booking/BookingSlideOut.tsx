@@ -63,14 +63,14 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
 
   const fetchServicePricing = async () => {
     try {
-      // Since service_pricing table might not be in TypeScript types yet, 
-      // we'll use a direct query and handle the response manually
+      // Try to fetch from service_pricing table directly
       const { data, error } = await supabase
-        .rpc('get_service_pricing');
+        .from('service_pricing')
+        .select('*');
       
       if (error) {
-        // Fallback to hardcoded pricing if the table doesn't exist yet
-        console.log('Using fallback pricing data');
+        console.log('Service pricing table not accessible, using fallback data');
+        // Use fallback pricing
         setServicePricing([
           { service_type: 'deep_clean', base_price: 150, duration_minutes: 180, description: 'Comprehensive deep cleaning service' },
           { service_type: 'regular_clean', base_price: 80, duration_minutes: 120, description: 'Standard house cleaning' },
@@ -139,18 +139,23 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
       if (error) throw error;
 
       // Send notification email to cleaner
-      await supabase.functions.invoke('send-booking-notification', {
-        body: {
-          cleanerId: cleaner.id,
-          customerName: user.email?.split('@')[0] || 'Customer',
-          serviceType: serviceTypeLabels[serviceType as keyof typeof serviceTypeLabels],
-          serviceDate: format(selectedDate, 'PPP'),
-          serviceTime: selectedTime,
-          customerAddress,
-          customerPhone,
-          additionalNotes
-        }
-      });
+      try {
+        await supabase.functions.invoke('send-booking-notification', {
+          body: {
+            cleanerId: cleaner.id,
+            customerName: user.email?.split('@')[0] || 'Customer',
+            serviceType: serviceTypeLabels[serviceType as keyof typeof serviceTypeLabels],
+            serviceDate: format(selectedDate, 'PPP'),
+            serviceTime: selectedTime,
+            customerAddress,
+            customerPhone,
+            additionalNotes
+          }
+        });
+      } catch (notificationError) {
+        console.error('Error sending notification:', notificationError);
+        // Don't fail the booking if notification fails
+      }
 
       toast({
         title: "Booking request sent!",

@@ -7,11 +7,11 @@ export interface Booking {
   id: string;
   customer_id: string;
   cleaner_id: string;
-  service_type: string;
+  service_type?: string;
   service_date: string;
-  service_time: string;
-  estimated_duration: number;
-  estimated_price: number;
+  service_time?: string;
+  estimated_duration?: number;
+  estimated_price?: number;
   additional_notes?: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   customer_address?: string;
@@ -32,45 +32,29 @@ export const useBookings = () => {
     
     setLoading(true);
     try {
+      // First, let's try to get all available columns
       const { data, error } = await supabase
         .from('bookings')
-        .select(`
-          id,
-          customer_id,
-          cleaner_id,
-          service_type,
-          service_date,
-          service_time,
-          estimated_duration,
-          estimated_price,
-          additional_notes,
-          status,
-          customer_address,
-          customer_phone,
-          created_at,
-          updated_at,
-          confirmed_at,
-          cancelled_at
-        `)
+        .select('*')
         .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Transform the data to match our interface
+      // Transform the data to match our interface, handling missing columns gracefully
       const transformedBookings: Booking[] = (data || []).map(booking => ({
         id: booking.id,
         customer_id: booking.customer_id,
         cleaner_id: booking.cleaner_id,
-        service_type: booking.service_type,
+        service_type: booking.service_type || 'regular_clean',
         service_date: booking.service_date,
-        service_time: booking.service_time,
+        service_time: booking.service_time || '09:00',
         estimated_duration: booking.estimated_duration || 120,
         estimated_price: booking.estimated_price || 0,
-        additional_notes: booking.additional_notes,
+        additional_notes: booking.additional_notes || '',
         status: booking.status as 'pending' | 'confirmed' | 'cancelled' | 'completed',
-        customer_address: booking.customer_address,
-        customer_phone: booking.customer_phone,
+        customer_address: booking.customer_address || '',
+        customer_phone: booking.customer_phone || '',
         created_at: booking.created_at,
         updated_at: booking.updated_at,
         confirmed_at: booking.confirmed_at,
