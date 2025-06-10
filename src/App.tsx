@@ -20,7 +20,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import CleanerReviews from "./pages/CleanerReviews";
 import Bookings from "./pages/Bookings";
 import NotFound from "./pages/NotFound";
-import { AuthPage } from "./components/auth/AuthPage";
+import AuthPage from "./components/auth/AuthPage";
 
 const queryClient = new QueryClient();
 

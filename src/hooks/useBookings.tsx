@@ -34,12 +34,50 @@ export const useBookings = () => {
     try {
       const { data, error } = await supabase
         .from('bookings')
-        .select('*')
+        .select(`
+          id,
+          customer_id,
+          cleaner_id,
+          service_type,
+          service_date,
+          service_time,
+          estimated_duration,
+          estimated_price,
+          additional_notes,
+          status,
+          customer_address,
+          customer_phone,
+          created_at,
+          updated_at,
+          confirmed_at,
+          cancelled_at
+        `)
         .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBookings(data || []);
+      
+      // Transform the data to match our interface
+      const transformedBookings: Booking[] = (data || []).map(booking => ({
+        id: booking.id,
+        customer_id: booking.customer_id,
+        cleaner_id: booking.cleaner_id,
+        service_type: booking.service_type,
+        service_date: booking.service_date,
+        service_time: booking.service_time,
+        estimated_duration: booking.estimated_duration || 120,
+        estimated_price: booking.estimated_price || 0,
+        additional_notes: booking.additional_notes,
+        status: booking.status as 'pending' | 'confirmed' | 'cancelled' | 'completed',
+        customer_address: booking.customer_address,
+        customer_phone: booking.customer_phone,
+        created_at: booking.created_at,
+        updated_at: booking.updated_at,
+        confirmed_at: booking.confirmed_at,
+        cancelled_at: booking.cancelled_at
+      }));
+      
+      setBookings(transformedBookings);
     } catch (error) {
       console.error('Error fetching bookings:', error);
     } finally {
