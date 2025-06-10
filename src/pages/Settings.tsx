@@ -69,8 +69,8 @@ const Settings = () => {
   };
 
   const isPremium = currentTier === SubscriptionTier.PREMIUM;
-  const isStarterPlus = ([SubscriptionTier.STARTER, SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM] as const).includes(currentTier);
-  const isProfessionalPlus = ([SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM] as const).includes(currentTier);
+  const isStarterPlus = currentTier !== SubscriptionTier.FREE;
+  const isProfessionalPlus = [SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM].includes(currentTier);
 
   return (
     <div className="min-h-screen bg-background">

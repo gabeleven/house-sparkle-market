@@ -25,22 +25,52 @@ export const getTierInfo = (tier: SubscriptionTier) => {
     [SubscriptionTier.FREE]: { 
       name: 'Free', 
       label: 'CRA Ready',
-      color: 'secondary' as const
+      color: 'secondary' as const,
+      features: [
+        'Basic CRA compliance tracking',
+        'Up to 10 bookings per month',
+        'Basic calendar integration',
+        'Email support'
+      ]
     },
     [SubscriptionTier.STARTER]: { 
       name: 'Starter', 
       label: 'Tax Basics',
-      color: 'default' as const
+      color: 'default' as const,
+      features: [
+        'Everything in Free PLUS:',
+        'Unlimited bookings',
+        'Advanced tax compliance',
+        'Synchronized calendar',
+        'Client communication tools',
+        'Priority email support'
+      ]
     },
     [SubscriptionTier.PROFESSIONAL]: { 
       name: 'Professional', 
       label: 'Most Popular',
-      color: 'default' as const
+      color: 'default' as const,
+      features: [
+        'Everything in Starter PLUS:',
+        'Advanced analytics dashboard',
+        'Growth tools and insights',
+        'QuickBooks integration',
+        'Complete tax suite',
+        'Professional support'
+      ]
     },
     [SubscriptionTier.PREMIUM]: { 
       name: 'Premium', 
       label: 'Business Intelligence',
-      color: 'destructive' as const
+      color: 'destructive' as const,
+      features: [
+        'Everything in Professional PLUS:',
+        'AI-powered market intelligence',
+        'Automated marketing tools',
+        'Predictive analytics',
+        'Tax optimization AI',
+        'White-glove support'
+      ]
     }
   };
   
