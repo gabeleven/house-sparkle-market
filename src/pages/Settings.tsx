@@ -34,7 +34,7 @@ const Settings = () => {
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
-  const [lastName, setLastName] = useState('Dupont');
+  const [lastName, setLastName] = useState('Services de Ménage Pro');
   const [businessName, setBusinessName] = useState('Services de Ménage Pro');
   const [phone, setPhone] = useState('+1 (514) 555-0123');
   const [notifications, setNotifications] = useState(true);
