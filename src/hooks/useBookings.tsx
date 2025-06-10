@@ -32,36 +32,45 @@ export const useBookings = () => {
     
     setLoading(true);
     try {
-      // First, let's try to get all available columns
+      // Use RPC to get bookings with proper typing
       const { data, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
-        .order('created_at', { ascending: false });
+        .rpc('get_user_bookings', { user_uuid: user.id });
 
-      if (error) throw error;
-      
-      // Transform the data to match our interface, handling missing columns gracefully
-      const transformedBookings: Booking[] = (data || []).map(booking => ({
-        id: booking.id,
-        customer_id: booking.customer_id,
-        cleaner_id: booking.cleaner_id,
-        service_type: booking.service_type || 'regular_clean',
-        service_date: booking.service_date,
-        service_time: booking.service_time || '09:00',
-        estimated_duration: booking.estimated_duration || 120,
-        estimated_price: booking.estimated_price || 0,
-        additional_notes: booking.additional_notes || '',
-        status: booking.status as 'pending' | 'confirmed' | 'cancelled' | 'completed',
-        customer_address: booking.customer_address || '',
-        customer_phone: booking.customer_phone || '',
-        created_at: booking.created_at,
-        updated_at: booking.updated_at,
-        confirmed_at: booking.confirmed_at,
-        cancelled_at: booking.cancelled_at
-      }));
-      
-      setBookings(transformedBookings);
+      if (error) {
+        // Fallback to direct table query if RPC doesn't exist
+        console.log('RPC not available, using direct query');
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('bookings')
+          .select('*')
+          .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
+          .order('created_at', { ascending: false });
+
+        if (fallbackError) throw fallbackError;
+        
+        // Transform fallback data with safe property access
+        const transformedBookings: Booking[] = (fallbackData || []).map((booking: any) => ({
+          id: booking.id,
+          customer_id: booking.customer_id,
+          cleaner_id: booking.cleaner_id,
+          service_type: booking.service_type || 'regular_clean',
+          service_date: booking.service_date,
+          service_time: booking.service_time || '09:00',
+          estimated_duration: booking.estimated_duration || 120,
+          estimated_price: booking.estimated_price || 0,
+          additional_notes: booking.additional_notes || '',
+          status: booking.status as 'pending' | 'confirmed' | 'cancelled' | 'completed',
+          customer_address: booking.customer_address || '',
+          customer_phone: booking.customer_phone || '',
+          created_at: booking.created_at,
+          updated_at: booking.updated_at,
+          confirmed_at: booking.confirmed_at,
+          cancelled_at: booking.cancelled_at
+        }));
+        
+        setBookings(transformedBookings);
+      } else {
+        setBookings(data || []);
+      }
     } catch (error) {
       console.error('Error fetching bookings:', error);
     } finally {
