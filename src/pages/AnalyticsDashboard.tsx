@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +15,7 @@ const AnalyticsDashboard = () => {
   // Mock tier - in real app this would come from user subscription
   const currentTier = 'professional'; // This should come from context/props
   
-  const hasAccess = ['professional', 'premium'].includes(currentTier);
+  const hasAccess = ['professional', 'premium'].includes(currentTier as string);
 
   if (!user) {
     return <Navigate to="/auth" replace />;
@@ -82,7 +83,7 @@ const AnalyticsDashboard = () => {
               <p className="text-muted-foreground">Analysez vos performances et tendances</p>
             </div>
             
-            {currentTier === 'premium' && (
+            {(currentTier as string) === 'premium' && (
               <Badge variant="secondary" className="flex items-center gap-2">
                 <Brain className="w-4 h-4" />
                 Intelligence Marché: Active
@@ -202,7 +203,7 @@ const AnalyticsDashboard = () => {
           </Card>
 
           {/* Premium Features */}
-          {currentTier === 'premium' && (
+          {(currentTier as string) === 'premium' && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

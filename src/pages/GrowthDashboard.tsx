@@ -17,7 +17,7 @@ const GrowthDashboard = () => {
   // Mock tier - in real app this would come from user subscription
   const currentTier = 'professional'; // This should come from context/props
   
-  const hasAccess = ['professional', 'premium'].includes(currentTier);
+  const hasAccess = ['professional', 'premium'].includes(currentTier as string);
 
   if (!user) {
     return <Navigate to="/auth" replace />;
@@ -59,7 +59,7 @@ const GrowthDashboard = () => {
               <p className="text-muted-foreground">Développez votre entreprise avec nos outils avancés</p>
             </div>
             
-            {currentTier === 'premium' && (
+            {(currentTier as string) === 'premium' && (
               <Badge variant="secondary" className="flex items-center gap-2">
                 <Brain className="w-4 h-4" />
                 Marketing Automatisé: Actif
@@ -237,7 +237,7 @@ const GrowthDashboard = () => {
           </div>
 
           {/* Premium Features */}
-          {currentTier === 'premium' && (
+          {(currentTier as string) === 'premium' && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
