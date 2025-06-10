@@ -14,6 +14,39 @@ export interface MenuItemConfig {
   showNotification?: boolean;
 }
 
+// Helper function to check if tier is Starter or higher
+export const hasStarterOrHigher = (tier: SubscriptionTier): boolean => {
+  return [SubscriptionTier.STARTER, SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM].includes(tier);
+};
+
+// Helper function to get tier information
+export const getTierInfo = (tier: SubscriptionTier) => {
+  const tierInfo = {
+    [SubscriptionTier.FREE]: { 
+      name: 'Free', 
+      label: 'CRA Ready',
+      color: 'secondary' as const
+    },
+    [SubscriptionTier.STARTER]: { 
+      name: 'Starter', 
+      label: 'Tax Basics',
+      color: 'default' as const
+    },
+    [SubscriptionTier.PROFESSIONAL]: { 
+      name: 'Professional', 
+      label: 'Most Popular',
+      color: 'default' as const
+    },
+    [SubscriptionTier.PREMIUM]: { 
+      name: 'Premium', 
+      label: 'Business Intelligence',
+      color: 'destructive' as const
+    }
+  };
+  
+  return tierInfo[tier];
+};
+
 export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
   const baseItems: MenuItemConfig[] = [
     { path: '/my-profile', labelKey: 'Mon Profil', icon: 'User' },

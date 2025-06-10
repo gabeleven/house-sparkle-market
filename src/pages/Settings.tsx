@@ -31,7 +31,7 @@ const Settings = () => {
   const { user } = useAuth();
   
   // Mock tier - in real app this would come from subscription simulator context
-  const currentTier = 'professional' as SubscriptionTier;
+  const currentTier = SubscriptionTier.PROFESSIONAL;
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
@@ -69,8 +69,8 @@ const Settings = () => {
   };
 
   const isPremium = currentTier === SubscriptionTier.PREMIUM;
-  const isStarterPlus = [SubscriptionTier.STARTER, SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM].includes(currentTier);
-  const isProfessionalPlus = [SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM].includes(currentTier);
+  const isStarterPlus = ([SubscriptionTier.STARTER, SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM] as const).includes(currentTier);
+  const isProfessionalPlus = ([SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM] as const).includes(currentTier);
 
   return (
     <div className="min-h-screen bg-background">
