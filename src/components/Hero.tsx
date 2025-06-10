@@ -37,15 +37,13 @@ const Hero = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                Votre entreprise de{' '}
+                The Trusted Marketplace for{' '}
                 <span className="bg-gradient-to-r from-purple-600 to-green-600 bg-clip-text text-transparent">
-                  ménage
+                  Home Services
                 </span>
-                , simplifiée
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Nous gérons les réservations, les taxes et la paperasse, 
-                pour que vous puissiez vous concentrer sur ce que vous faites de mieux.
+                We connect you with verified, CRA-compliant professionals for cleaning, lawn care, and more.
               </p>
             </div>
 

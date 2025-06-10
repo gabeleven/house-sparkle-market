@@ -17,7 +17,7 @@ const CleanerBenefits = () => {
     {
       icon: Users,
       title: "Trouvez plus de clients, instantanément",
-      description: "Accédez à un flux constant de clients locaux cherchant des professionnels vérifiés comme vous."
+      description: "Accédez à un flux constant de clients locaux cherchant des professionnels de services bien notés."
     },
     {
       icon: Shield,
