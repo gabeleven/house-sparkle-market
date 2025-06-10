@@ -38,13 +38,13 @@ const Header = () => {
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - now positioned on the left */}
+          {/* Logo - positioned on the left with proper sizing */}
           <Link to="/" className="flex items-center">
-            <div className="h-10 w-10 overflow-hidden">
+            <div className="h-12 w-12 overflow-hidden rounded">
               <img 
                 src="/lovable-uploads/9c75838a-e1e7-4d81-84b5-eac483f98d8f.png" 
                 alt="Logo" 
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             </div>
           </Link>
