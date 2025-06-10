@@ -62,7 +62,7 @@ const Header = () => {
               HOUSIE Pro
             </Link>
             <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
-              Centre d'aide
+              Support
             </Link>
             
             {/* Language Toggle */}
@@ -150,7 +150,7 @@ const Header = () => {
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Centre d'aide
+                Support
               </Link>
               
               {/* Mobile Language Toggle */}
