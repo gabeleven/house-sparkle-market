@@ -36,20 +36,18 @@ const Header = () => {
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
-      {/* Banner Image */}
-      <div className="w-full h-16 bg-gradient-to-r from-purple-500 to-blue-500 relative overflow-hidden">
-        <img 
-          src="/lovable-uploads/9c75838a-e1e7-4d81-84b5-eac483f98d8f.png" 
-          alt="Header Banner" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/20"></div>
-      </div>
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Empty left section - logo removed */}
-          <div></div>
+          {/* Logo - now positioned on the left */}
+          <Link to="/" className="flex items-center">
+            <div className="h-10 w-10 overflow-hidden">
+              <img 
+                src="/lovable-uploads/9c75838a-e1e7-4d81-84b5-eac483f98d8f.png" 
+                alt="Logo" 
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
