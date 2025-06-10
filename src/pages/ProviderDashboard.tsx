@@ -1,35 +1,49 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Download, FileText, TrendingUp, DollarSign, Calendar, Users } from 'lucide-react';
+import { Download, FileText, TrendingUp, DollarSign, Calendar, Users, Plus } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useTaxData } from '@/hooks/useTaxData';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProviderDashboard = () => {
-  // Mock data for demonstration
-  const mockTaxSummary = {
-    totalEarnings: 28750,
-    taxableIncome: 26890,
-    estimatedTax: 4033.50,
-    transactions: 127
-  };
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const { taxSummary, quarterlyData, recentTransactions, loading, addSampleData } = useTaxData();
 
-  const quarterlyData = [
-    { quarter: 'Q1 2024', earnings: 6500, transactions: 28 },
-    { quarter: 'Q2 2024', earnings: 7200, transactions: 31 },
-    { quarter: 'Q3 2024', earnings: 8150, transactions: 35 },
-    { quarter: 'Q4 2024', earnings: 6900, transactions: 33 }
-  ];
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, authLoading, navigate]);
 
-  const recentTransactions = [
-    { date: '2024-12-08', client: 'Marie L.', amount: 120, status: 'Payé' },
-    { date: '2024-12-07', client: 'Jean D.', amount: 95, status: 'Payé' },
-    { date: '2024-12-06', client: 'Sophie M.', amount: 150, status: 'En attente' },
-    { date: '2024-12-05', client: 'Pierre R.', amount: 110, status: 'Payé' },
-    { date: '2024-12-04', client: 'Claire B.', amount: 80, status: 'Payé' }
-  ];
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <div className="grid md:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-32" />
+              ))}
+            </div>
+            <Skeleton className="h-64" />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,6 +58,19 @@ const ProviderDashboard = () => {
           <p className="text-muted-foreground">
             Gérez vos revenus, consultez vos documents fiscaux et suivez vos performances
           </p>
+          
+          {/* Sample data button for demo */}
+          {taxSummary && taxSummary.totalEarnings === 0 && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-blue-800 mb-2">
+                Aucune donnée trouvée. Voulez-vous ajouter des données d'exemple pour voir le tableau de bord en action ?
+              </p>
+              <Button onClick={addSampleData} size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Ajouter des données d'exemple
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Summary Cards */}
@@ -54,8 +81,10 @@ const ProviderDashboard = () => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockTaxSummary.totalEarnings.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}</div>
-              <p className="text-xs text-muted-foreground">+12% vs année précédente</p>
+              <div className="text-2xl font-bold">
+                {taxSummary?.totalEarnings.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' }) || '0 $'}
+              </div>
+              <p className="text-xs text-muted-foreground">Année en cours</p>
             </CardContent>
           </Card>
 
@@ -65,8 +94,8 @@ const ProviderDashboard = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockTaxSummary.transactions}</div>
-              <p className="text-xs text-muted-foreground">Ce trimestre</p>
+              <div className="text-2xl font-bold">{taxSummary?.transactions || 0}</div>
+              <p className="text-xs text-muted-foreground">Année en cours</p>
             </CardContent>
           </Card>
 
@@ -76,7 +105,9 @@ const ProviderDashboard = () => {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockTaxSummary.estimatedTax.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}</div>
+              <div className="text-2xl font-bold">
+                {taxSummary?.estimatedTax.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' }) || '0 $'}
+              </div>
               <p className="text-xs text-muted-foreground">Basé sur 15% d'impôt</p>
             </CardContent>
           </Card>
@@ -87,7 +118,9 @@ const ProviderDashboard = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{(mockTaxSummary.totalEarnings / 12).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}</div>
+              <div className="text-2xl font-bold">
+                {((taxSummary?.totalEarnings || 0) / 12).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
+              </div>
               <p className="text-xs text-muted-foreground">Revenu mensuel moyen</p>
             </CardContent>
           </Card>
@@ -103,26 +136,32 @@ const ProviderDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Trimestre</TableHead>
-                    <TableHead className="text-right">Revenus</TableHead>
-                    <TableHead className="text-right">Transactions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {quarterlyData.map((quarter) => (
-                    <TableRow key={quarter.quarter}>
-                      <TableCell className="font-medium">{quarter.quarter}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        {quarter.earnings.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
-                      </TableCell>
-                      <TableCell className="text-right">{quarter.transactions}</TableCell>
+              {quarterlyData.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Trimestre</TableHead>
+                      <TableHead className="text-right">Revenus</TableHead>
+                      <TableHead className="text-right">Transactions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {quarterlyData.map((quarter) => (
+                      <TableRow key={quarter.quarter}>
+                        <TableCell className="font-medium">{quarter.quarter}</TableCell>
+                        <TableCell className="text-right font-medium">
+                          {quarter.earnings.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
+                        </TableCell>
+                        <TableCell className="text-right">{quarter.transactions}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  Aucune donnée trimestrielle disponible
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -177,36 +216,42 @@ const ProviderDashboard = () => {
             <CardTitle>Transactions Récentes</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead className="text-right">Montant</TableHead>
-                  <TableHead className="text-right">Statut</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentTransactions.map((transaction, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{new Date(transaction.date).toLocaleDateString('fr-CA')}</TableCell>
-                    <TableCell className="font-medium">{transaction.client}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {transaction.amount.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        transaction.status === 'Payé' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {transaction.status}
-                      </span>
-                    </TableCell>
+            {recentTransactions.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Client</TableHead>
+                    <TableHead className="text-right">Montant</TableHead>
+                    <TableHead className="text-right">Statut</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {recentTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>{new Date(transaction.date).toLocaleDateString('fr-CA')}</TableCell>
+                      <TableCell className="font-medium">{transaction.client}</TableCell>
+                      <TableCell className="text-right font-medium">
+                        {transaction.amount.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          transaction.status === 'Payé' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {transaction.status}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                Aucune transaction récente
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>

@@ -599,6 +599,87 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_tax_information: {
+        Row: {
+          business_address: string | null
+          business_name: string | null
+          business_phone: string | null
+          created_at: string | null
+          estimated_tax: number | null
+          id: string
+          provider_id: string
+          tax_id_number: string | null
+          tax_year: number
+          taxable_income: number | null
+          total_earnings: number | null
+          total_transactions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          business_address?: string | null
+          business_name?: string | null
+          business_phone?: string | null
+          created_at?: string | null
+          estimated_tax?: number | null
+          id?: string
+          provider_id: string
+          tax_id_number?: string | null
+          tax_year: number
+          taxable_income?: number | null
+          total_earnings?: number | null
+          total_transactions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          business_address?: string | null
+          business_name?: string | null
+          business_phone?: string | null
+          created_at?: string | null
+          estimated_tax?: number | null
+          id?: string
+          provider_id?: string
+          tax_id_number?: string | null
+          tax_year?: number
+          taxable_income?: number | null
+          total_earnings?: number | null
+          total_transactions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      quarterly_summaries: {
+        Row: {
+          created_at: string | null
+          id: string
+          provider_id: string
+          quarter: number
+          total_earnings: number | null
+          total_transactions: number | null
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          provider_id: string
+          quarter: number
+          total_earnings?: number | null
+          total_transactions?: number | null
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          provider_id?: string
+          quarter?: number
+          total_earnings?: number | null
+          total_transactions?: number | null
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
       review_photos: {
         Row: {
           caption: string | null
@@ -798,6 +879,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          customer_name: string | null
+          description: string | null
+          id: string
+          payment_method: string | null
+          provider_id: string
+          receipt_number: string | null
+          service_type: string | null
+          status: string | null
+          transaction_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          customer_name?: string | null
+          description?: string | null
+          id?: string
+          payment_method?: string | null
+          provider_id: string
+          receipt_number?: string | null
+          service_type?: string | null
+          status?: string | null
+          transaction_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          customer_name?: string | null
+          description?: string | null
+          id?: string
+          payment_method?: string | null
+          provider_id?: string
+          receipt_number?: string | null
+          service_type?: string | null
+          status?: string | null
+          transaction_date?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       user_presence: {
         Row: {

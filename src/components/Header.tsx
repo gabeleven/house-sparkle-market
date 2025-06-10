@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -61,7 +60,7 @@ const Header = () => {
               HOUSIE Pro
             </Link>
             
-            {/* Dashboards Dropdown */}
+            {/* Dashboards Dropdown - Only show if user is logged in */}
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -175,6 +174,7 @@ const Header = () => {
               >
                 HOUSIE Pro
               </Link>
+              {/* Mobile Dashboard Links - Only show if user is logged in */}
               {user && (
                 <>
                   <Link 
