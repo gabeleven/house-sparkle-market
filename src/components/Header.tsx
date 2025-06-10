@@ -1,11 +1,14 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, ChevronDown, Calendar, BarChart3 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Menu, X, Bell, ChevronDown, Calendar, BarChart3, User, CalendarCheck, FileText, Shield, BookOpen, MessageSquare, TrendingUp, Brain, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
+import SubscriptionSimulator from '@/components/SubscriptionSimulator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,23 +18,38 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SubscriptionTier, getMenuItems } from '@/types/subscription';
 
+const iconMap = {
+  User,
+  Calendar,
+  CalendarCheck,
+  BarChart3,
+  FileText,
+  Shield,
+  BookOpen,
+  MessageSquare,
+  TrendingUp,
+  Brain,
+  Settings
+};
+
 const Header = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [simulatedTier, setSimulatedTier] = useState<SubscriptionTier>(SubscriptionTier.FREE);
   const navigate = useNavigate();
-
-  // Mock user subscription - in a real app, this would come from user subscription data
-  const userSubscription: SubscriptionTier = SubscriptionTier.FREE; // Default to free, can be changed dynamically
-  
-  // In a real app, you would fetch this from the user's subscription data
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
 
-  const dropdownItems = getMenuItems(userSubscription);
+  const dropdownItems = getMenuItems(simulatedTier);
+
+  const getIcon = (iconName: string) => {
+    const IconComponent = iconMap[iconName as keyof typeof iconMap];
+    return IconComponent ? <IconComponent className="w-4 h-4" /> : <Settings className="w-4 h-4" />;
+  };
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
@@ -94,6 +112,14 @@ const Header = () => {
               Support
             </Link>
             
+            {/* Subscription Simulator - Only show when logged in */}
+            {user && (
+              <SubscriptionSimulator 
+                currentTier={simulatedTier} 
+                onTierChange={setSimulatedTier} 
+              />
+            )}
+            
             {/* Language Toggle */}
             <LanguageToggle />
             
@@ -105,14 +131,23 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
                     <span>{user.email?.split('@')[0] || 'User'}</span>
+                    <Badge variant="outline" className="text-xs">
+                      {simulatedTier.toUpperCase()}
+                    </Badge>
                     <ChevronDown className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-64">
                   {dropdownItems.map((item, index) => (
                     <DropdownMenuItem key={item.path} asChild>
                       <Link to={item.path} className="flex items-center justify-between w-full">
-                        <span>{t(item.labelKey)}</span>
+                        <div className="flex items-center space-x-2">
+                          {getIcon(item.icon)}
+                          <span>{item.labelKey}</span>
+                          {item.tierNote && (
+                            <span className="text-xs text-muted-foreground">{item.tierNote}</span>
+                          )}
+                        </div>
                         {item.showNotification && (
                           <Bell className="w-4 h-4 text-muted-foreground" />
                         )}
@@ -174,6 +209,17 @@ const Header = () => {
               >
                 HOUSIE Pro
               </Link>
+              
+              {/* Mobile Subscription Simulator */}
+              {user && (
+                <div className="py-2">
+                  <SubscriptionSimulator 
+                    currentTier={simulatedTier} 
+                    onTierChange={setSimulatedTier} 
+                  />
+                </div>
+              )}
+              
               {/* Mobile Dashboard Links - Only show if user is logged in */}
               {user && (
                 <>
@@ -225,7 +271,13 @@ const Header = () => {
                   {dropdownItems.map((item) => (
                     <Link key={item.path} to={item.path} onClick={() => setIsMenuOpen(false)}>
                       <Button variant="ghost" className="w-full justify-start">
-                        {t(item.labelKey)}
+                        <div className="flex items-center space-x-2">
+                          {getIcon(item.icon)}
+                          <span>{item.labelKey}</span>
+                          {item.tierNote && (
+                            <span className="text-xs text-muted-foreground">{item.tierNote}</span>
+                          )}
+                        </div>
                         {item.showNotification && <Bell className="w-4 h-4 ml-2" />}
                       </Button>
                     </Link>

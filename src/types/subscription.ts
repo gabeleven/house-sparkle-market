@@ -22,32 +22,31 @@ export const hasStarterOrHigher = (plan: string) => {
 
 export const hasFeature = (plan: string, feature: string) => {
   const features = {
-    [SubscriptionTier.FREE]: ['messages', 'profile', 'income_tracking', 'tax_summary'],
-    [SubscriptionTier.STARTER]: ['messages', 'profile', 'income_tracking', 'tax_summary', 'calendar', 'enhanced_tax_tracking', 'unlimited_bookings', 'verified_badge'],
-    [SubscriptionTier.PROFESSIONAL]: ['messages', 'profile', 'income_tracking', 'tax_summary', 'calendar', 'enhanced_tax_tracking', 'unlimited_bookings', 'verified_badge', 'bookmarks', 'earnings', 'position', 'advanced_tax_suite', 'analytics_dashboard', 'automated_invoicing'],
-    [SubscriptionTier.PREMIUM]: ['messages', 'profile', 'income_tracking', 'tax_summary', 'calendar', 'enhanced_tax_tracking', 'unlimited_bookings', 'verified_badge', 'bookmarks', 'earnings', 'position', 'advanced_tax_suite', 'analytics_dashboard', 'automated_invoicing', 'dashboard', 'market_intelligence', 'growth_acceleration', 'api_access']
+    [SubscriptionTier.FREE]: ['messages', 'profile', 'basic_calendar', 'basic_compliance', 'bookings_limited', 'settings'],
+    [SubscriptionTier.STARTER]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'settings'],
+    [SubscriptionTier.PROFESSIONAL]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'advanced_analytics', 'automated_invoicing', 'priority_support', 'settings'],
+    [SubscriptionTier.PREMIUM]: ['messages', 'profile', 'synced_calendar', 'provider_dashboard', 'advanced_tax_compliance', 'bookings_unlimited', 'client_communications', 'advanced_analytics', 'automated_invoicing', 'priority_support', 'market_intelligence', 'api_access', 'dedicated_manager', 'white_label_reports', 'settings']
   };
   return features[plan as keyof typeof features]?.includes(feature) || false;
 };
 
 export const getMenuItems = (plan: string) => {
-  const baseItems = [
-    { labelKey: 'nav.messages', path: '/chat', showNotification: true, feature: 'messages' },
-    { labelKey: 'nav.profile', path: '/my-profile', showNotification: false, feature: 'profile' },
+  const allItems = [
+    { labelKey: 'Mon Profil', englishKey: 'My Profile', path: '/my-profile', showNotification: false, feature: 'profile', icon: 'User' },
+    { labelKey: 'Calendrier de Base', englishKey: 'Basic Calendar', path: '/calendar-basic', showNotification: false, feature: 'basic_calendar', icon: 'Calendar' },
+    { labelKey: 'Calendrier Synchronisé', englishKey: 'Synced Calendar', path: '/calendar', showNotification: false, feature: 'synced_calendar', icon: 'CalendarCheck' },
+    { labelKey: 'Tableau Prestataire', englishKey: 'Provider Dashboard', path: '/provider-dashboard', showNotification: false, feature: 'provider_dashboard', icon: 'BarChart3' },
+    { labelKey: 'Conformité de Base', englishKey: 'Basic Compliance', path: '/tax-compliance-basic', showNotification: false, feature: 'basic_compliance', icon: 'FileText' },
+    { labelKey: 'Conformité Fiscale Avancée', englishKey: 'Advanced Tax Compliance', path: '/tax-compliance', showNotification: false, feature: 'advanced_tax_compliance', icon: 'Shield' },
+    { labelKey: 'Mes Réservations', englishKey: 'My Bookings', path: '/bookings', showNotification: false, feature: 'bookings_limited', icon: 'BookOpen', tierNote: '(jusqu\'à 10/mois)' },
+    { labelKey: 'Mes Réservations', englishKey: 'My Bookings', path: '/bookings', showNotification: false, feature: 'bookings_unlimited', icon: 'BookOpen', tierNote: '(illimitées)' },
+    { labelKey: 'Communications Client', englishKey: 'Client Communications', path: '/chat', showNotification: true, feature: 'client_communications', icon: 'MessageSquare' },
+    { labelKey: 'Analytiques Avancées', englishKey: 'Advanced Analytics', path: '/analytics', showNotification: false, feature: 'advanced_analytics', icon: 'TrendingUp' },
+    { labelKey: 'Intelligence Marché', englishKey: 'Market Intelligence', path: '/market-intelligence', showNotification: false, feature: 'market_intelligence', icon: 'Brain' },
+    { labelKey: 'Paramètres', englishKey: 'Settings', path: '/settings', showNotification: false, feature: 'settings', icon: 'Settings' },
   ];
 
-  const tierItems = [
-    { labelKey: 'nav.calendar', path: '/calendar', showNotification: false, feature: 'calendar' },
-    { labelKey: 'nav.bookmarks', path: '/bookmarks', showNotification: false, feature: 'bookmarks' },
-    { labelKey: 'nav.earnings', path: '/earnings', showNotification: false, feature: 'earnings' },
-    { labelKey: 'nav.position', path: '/position', showNotification: false, feature: 'position' },
-    { labelKey: 'nav.dashboard', path: '/dashboard', showNotification: false, feature: 'dashboard' },
-  ];
-
-  return [
-    ...baseItems,
-    ...tierItems.filter(item => hasFeature(plan, item.feature))
-  ];
+  return allItems.filter(item => hasFeature(plan, item.feature));
 };
 
 // New tier definitions with tax-focused messaging
