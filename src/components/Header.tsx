@@ -40,11 +40,11 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center">
               <img 
-                src="/lovable-uploads/ec7e538c-d91e-427d-b524-a7bed56347a3.png" 
-                alt="Housie Cleaner" 
-                className="w-8 h-8 object-contain rounded-full"
+                src="/lovable-uploads/9c75838a-e1e7-4d81-84b5-eac483f98d8f.png" 
+                alt="HOUSIE Logo" 
+                className="w-10 h-10 object-contain"
               />
             </div>
             <span className="text-xl font-bold text-foreground">HOUSIE</span>
@@ -53,16 +53,16 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link to="/comment-ca-marche" className="text-muted-foreground hover:text-primary transition-colors">
-              {t('nav.howItWorks')}
+              Comment ça fonctionne
             </Link>
             <Link to="/browse-cleaners" className="text-muted-foreground hover:text-primary transition-colors">
-              {t('nav.findService')}
+              Trouver un service
             </Link>
             <Link to="/prestataires" className="text-muted-foreground hover:text-primary transition-colors">
-              {t('nav.housePro')}
+              HOUSIE Pro
             </Link>
             <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
-              {t('nav.support')}
+              Centre d'aide
             </Link>
             
             {/* Language Toggle */}
@@ -99,10 +99,10 @@ const Header = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link to="/auth">
-                  <Button variant="ghost">{t('nav.login')}</Button>
+                  <Button variant="ghost">Connexion</Button>
                 </Link>
                 <Link to="/auth">
-                  <Button>{t('nav.signup')}</Button>
+                  <Button>S'inscrire</Button>
                 </Link>
               </div>
             )}
@@ -129,28 +129,28 @@ const Header = () => {
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('nav.howItWorks')}
+                Comment ça fonctionne
               </Link>
               <Link 
                 to="/browse-cleaners" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('nav.findService')}
+                Trouver un service
               </Link>
               <Link 
                 to="/prestataires" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('nav.housePro')}
+                HOUSIE Pro
               </Link>
               <Link 
                 to="/support" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('nav.support')}
+                Centre d'aide
               </Link>
               
               {/* Mobile Language Toggle */}
@@ -174,16 +174,16 @@ const Header = () => {
                     </Link>
                   ))}
                   <Button onClick={handleSignOut} variant="outline" className="w-full justify-start">
-                    {t('nav.logout')}
+                    Déconnexion
                   </Button>
                 </>
               ) : (
                 <>
                   <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start">{t('nav.login')}</Button>
+                    <Button variant="ghost" className="w-full justify-start">Connexion</Button>
                   </Link>
                   <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full justify-start">{t('nav.signup')}</Button>
+                    <Button className="w-full justify-start">S'inscrire</Button>
                   </Link>
                 </>
               )}

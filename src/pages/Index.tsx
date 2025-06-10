@@ -1,7 +1,8 @@
 
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
+import TaxComplianceSection from "@/components/TaxComplianceSection";
+import ServiceProviderCTA from "@/components/ServiceProviderCTA";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -9,7 +10,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
-      <Features />
+      <TaxComplianceSection />
+      <ServiceProviderCTA />
       <Footer />
     </div>
   );

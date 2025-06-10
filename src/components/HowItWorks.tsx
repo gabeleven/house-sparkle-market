@@ -8,25 +8,25 @@ const HowItWorks = () => {
       step: "1",
       icon: MapPin,
       title: "Recherchez dans votre région",
-      description: "Entrez votre ville ou code postal pour trouver des professionnels de ménage vérifiés près de chez vous."
+      description: "Entrez votre ville ou code postal pour trouver des professionnels de ménage vérifiés et conformes ARC près de chez vous."
     },
     {
       step: "2",
       icon: Search,
       title: "Parcourez et comparez",
-      description: "Consultez les profils, lisez les avis, vérifiez les notes et comparez les prix de plusieurs ménagers."
+      description: "Consultez les profils détaillés, lisez les avis clients, vérifiez les notes et comparez les tarifs de plusieurs professionnels."
     },
     {
       step: "3",
       icon: Calendar,
       title: "Réservez et planifiez",
-      description: "Choisissez votre ménager préféré, sélectionnez votre date de service et réservez instantanément en ligne."
+      description: "Sélectionnez votre professionnel préféré, choisissez votre date de service et réservez instantanément en ligne."
     },
     {
       step: "4",
       icon: Star,
       title: "Profitez et évaluez",
-      description: "Détendez-vous pendant que votre ménager fait sa magie, puis laissez un avis pour aider les autres."
+      description: "Détendez-vous pendant que votre professionnel effectue son travail, puis laissez un avis pour aider la communauté."
     }
   ];
 
@@ -38,8 +38,8 @@ const HowItWorks = () => {
             Comment fonctionne HOUSIE
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Trouver des services de ménage de qualité n'a jamais été aussi facile. 
-            Suivez ces étapes simples pour que votre maison soit impeccable.
+            Trouver des services de ménage de qualité et conformes aux nouvelles exigences fiscales 
+            n'a jamais été aussi simple. Suivez ces étapes pour bénéficier d'un service impeccable.
           </p>
         </div>
 
