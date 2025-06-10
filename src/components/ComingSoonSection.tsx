@@ -1,11 +1,11 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { LawnMower, PawPrint, Toolbox } from "lucide-react";
+import { Leaf, PawPrint, Wrench } from "lucide-react";
 
 const ComingSoonSection = () => {
   const upcomingServices = [
     {
-      icon: LawnMower,
+      icon: Leaf,
       name: "Entretien de pelouse"
     },
     {
@@ -13,7 +13,7 @@ const ComingSoonSection = () => {
       name: "Garde d'animaux"
     },
     {
-      icon: Toolbox,
+      icon: Wrench,
       name: "Réparations"
     }
   ];
