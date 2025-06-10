@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, ChevronDown, Calendar } from 'lucide-react';
+import { Menu, X, Bell, ChevronDown, Calendar, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -49,26 +50,48 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/comment-ca-marche" className="text-muted-foreground hover:text-primary transition-colors">
-              Comment ça fonctionne
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/comment-ca-marche" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+              Comment ça marche
             </Link>
-            <Link to="/browse-cleaners" className="text-muted-foreground hover:text-primary transition-colors">
-              Trouver un service
+            <Link to="/browse-cleaners" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+              Trouver service
             </Link>
-            <Link to="/prestataires" className="text-muted-foreground hover:text-primary transition-colors">
+            <Link to="/prestataires" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               HOUSIE Pro
             </Link>
+            
+            {/* Dashboards Dropdown */}
             {user && (
-              <Link to="/bookings" className="text-muted-foreground hover:text-primary transition-colors flex items-center space-x-1">
-                <Calendar className="w-4 h-4" />
-                <span>Bookings</span>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-1 text-sm">
+                    <BarChart3 className="w-4 h-4" />
+                    <span>Tableaux de bord</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/bookings" className="flex items-center space-x-2 w-full">
+                      <Calendar className="w-4 h-4" />
+                      <span>Mes Réservations</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/provider-dashboard" className="flex items-center space-x-2 w-full">
+                      <BarChart3 className="w-4 h-4" />
+                      <span>Tableau Prestataire</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
-            <Link to="/tax-compliance" className="text-muted-foreground hover:text-primary transition-colors">
-              Conformité fiscale
+            
+            <Link to="/tax-compliance" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+              Conformité
             </Link>
-            <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
+            <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               Support
             </Link>
             
@@ -136,14 +159,14 @@ const Header = () => {
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Comment ça fonctionne
+                Comment ça marche
               </Link>
               <Link 
                 to="/browse-cleaners" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Trouver un service
+                Trouver service
               </Link>
               <Link 
                 to="/prestataires" 
@@ -153,21 +176,31 @@ const Header = () => {
                 HOUSIE Pro
               </Link>
               {user && (
-                <Link 
-                  to="/bookings" 
-                  className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>Bookings</span>
-                </Link>
+                <>
+                  <Link 
+                    to="/bookings" 
+                    className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>Mes Réservations</span>
+                  </Link>
+                  <Link 
+                    to="/provider-dashboard" 
+                    className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    <span>Tableau Prestataire</span>
+                  </Link>
+                </>
               )}
               <Link 
                 to="/tax-compliance" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Conformité fiscale
+                Conformité
               </Link>
               <Link 
                 to="/support" 

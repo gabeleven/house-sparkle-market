@@ -20,6 +20,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import CleanerReviews from "./pages/CleanerReviews";
 import Bookings from "./pages/Bookings";
 import TaxCompliancePage from "./pages/TaxCompliancePage";
+import ProviderDashboard from "./pages/ProviderDashboard";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./components/auth/AuthPage";
 
@@ -49,6 +50,7 @@ const App = () => (
                   <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
                   <Route path="/bookings" element={<Bookings />} />
                   <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                  <Route path="/provider-dashboard" element={<ProviderDashboard />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

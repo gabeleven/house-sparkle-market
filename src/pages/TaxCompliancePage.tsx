@@ -3,7 +3,10 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, FileText, Calculator, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CheckCircle, FileText, Calculator, Shield, Download, BarChart3, DollarSign, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const TaxCompliancePage = () => {
   return (
@@ -65,6 +68,106 @@ const TaxCompliancePage = () => {
                   that your business activities are fully compliant with Canadian tax law.
                 </p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Provider Dashboard Preview */}
+        <Card className="mb-8">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <BarChart3 className="w-8 h-8 text-blue-600" />
+            </div>
+            <CardTitle className="text-2xl">Tableau de Bord Prestataire</CardTitle>
+            <p className="text-muted-foreground mt-2">
+              Accédez à tous vos documents fiscaux et suivez vos revenus en temps réel
+            </p>
+          </CardHeader>
+          <CardContent>
+            {/* Mini Dashboard Preview */}
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 mb-6">
+              <div className="grid md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Revenus Totaux</span>
+                    <DollarSign className="h-4 w-4 text-green-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">28 750 $</div>
+                  <p className="text-xs text-green-600">+12% vs année précédente</p>
+                </div>
+                
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Transactions</span>
+                    <TrendingUp className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">127</div>
+                  <p className="text-xs text-blue-600">Ce trimestre</p>
+                </div>
+                
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Impôt Estimé</span>
+                    <FileText className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">4 033 $</div>
+                  <p className="text-xs text-purple-600">Basé sur 15% d'impôt</p>
+                </div>
+              </div>
+
+              {/* Mock Table */}
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="font-semibold">Trimestre</TableHead>
+                      <TableHead className="text-right font-semibold">Revenus</TableHead>
+                      <TableHead className="text-right font-semibold">Transactions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Q1 2024</TableCell>
+                      <TableCell className="text-right font-medium">6 500 $</TableCell>
+                      <TableCell className="text-right">28</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Q2 2024</TableCell>
+                      <TableCell className="text-right font-medium">7 200 $</TableCell>
+                      <TableCell className="text-right">31</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Q3 2024</TableCell>
+                      <TableCell className="text-right font-medium">8 150 $</TableCell>
+                      <TableCell className="text-right">35</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Download Buttons */}
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button variant="outline" size="sm" className="bg-white">
+                  <Download className="w-4 h-4 mr-2" />
+                  Résumé Fiscal 2024
+                </Button>
+                <Button variant="outline" size="sm" className="bg-white">
+                  <Download className="w-4 h-4 mr-2" />
+                  Feuillet T4A
+                </Button>
+                <Button variant="outline" size="sm" className="bg-white">
+                  <Download className="w-4 h-4 mr-2" />
+                  Détail Transactions
+                </Button>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link to="/provider-dashboard">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                  Accéder au Tableau de Bord Complet
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
