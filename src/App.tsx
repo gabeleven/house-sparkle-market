@@ -24,6 +24,7 @@ import ProviderDashboard from "./pages/ProviderDashboard";
 import CalendarDashboard from "./pages/CalendarDashboard";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import GrowthDashboard from "./pages/GrowthDashboard";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./components/auth/AuthPage";
 
@@ -57,6 +58,7 @@ const App = () => (
                   <Route path="/calendar" element={<CalendarDashboard />} />
                   <Route path="/analytics" element={<AnalyticsDashboard />} />
                   <Route path="/growth" element={<GrowthDashboard />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
