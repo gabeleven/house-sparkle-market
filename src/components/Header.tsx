@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, ChevronDown } from 'lucide-react';
+import { Menu, X, Bell, ChevronDown, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -61,6 +61,12 @@ const Header = () => {
             <Link to="/prestataires" className="text-muted-foreground hover:text-primary transition-colors">
               HOUSIE Pro
             </Link>
+            {user && (
+              <Link to="/bookings" className="text-muted-foreground hover:text-primary transition-colors flex items-center space-x-1">
+                <Calendar className="w-4 h-4" />
+                <span>Bookings</span>
+              </Link>
+            )}
             <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
               Support
             </Link>
@@ -145,6 +151,16 @@ const Header = () => {
               >
                 HOUSIE Pro
               </Link>
+              {user && (
+                <Link 
+                  to="/bookings" 
+                  className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>Bookings</span>
+                </Link>
+              )}
               <Link 
                 to="/support" 
                 className="text-muted-foreground hover:text-primary transition-colors py-2"

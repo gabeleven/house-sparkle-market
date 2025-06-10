@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Clock, DollarSign, User } from 'lucide-react';
+import { Star, MapPin, Clock, DollarSign, User, Calendar } from 'lucide-react';
 import { ContactViaHousieButton } from './ContactViaHousieButton';
 import { ProfileViewDialog } from './ProfileViewDialog';
 import { useProfileDialog } from '@/hooks/useProfileDialog';
+import { BookingSlideOut } from './booking/BookingSlideOut';
 
 interface CleanerCardProps {
   cleaner: {
@@ -38,6 +39,8 @@ const CleanerCard: React.FC<CleanerCardProps> = ({ cleaner, distance }) => {
     closeProfileDialog, 
     confirmViewProfile 
   } = useProfileDialog();
+  
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const handleViewProfile = () => {
     openProfileDialog(cleaner.id, cleaner.business_name || cleaner.full_name);
@@ -45,6 +48,10 @@ const CleanerCard: React.FC<CleanerCardProps> = ({ cleaner, distance }) => {
 
   const handleNameClick = () => {
     openProfileDialog(cleaner.id, cleaner.business_name || cleaner.full_name);
+  };
+
+  const handleBookNow = () => {
+    setIsBookingOpen(true);
   };
 
   return (
@@ -139,9 +146,14 @@ const CleanerCard: React.FC<CleanerCardProps> = ({ cleaner, distance }) => {
             >
               View Profile
             </Button>
-            <ContactViaHousieButton 
-              cleanerId={cleaner.id}
-            />
+            <Button 
+              onClick={handleBookNow}
+              size="sm" 
+              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Book now
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -151,6 +163,12 @@ const CleanerCard: React.FC<CleanerCardProps> = ({ cleaner, distance }) => {
         onClose={closeProfileDialog}
         onConfirm={confirmViewProfile}
         userName={selectedUserName}
+      />
+
+      <BookingSlideOut
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        cleaner={cleaner}
       />
     </>
   );

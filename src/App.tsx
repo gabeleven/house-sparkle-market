@@ -4,22 +4,23 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ChatbotProvider } from "@/contexts/ChatbotContext";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
-import HowItWorksPage from "./pages/HowItWorksPage";
-import ServiceProvidersPage from "./pages/ServiceProvidersPage";
-import AuthPage from "./components/auth/AuthPage";
 import BrowseCleaners from "./pages/BrowseCleaners";
-import Chat from "./pages/Chat";
-import NotFound from "./pages/NotFound";
 import MyProfile from "./pages/MyProfile";
+import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
+import Chat from "./pages/Chat";
 import Support from "./pages/Support";
-import { DualModeChatbot } from "@/components/support/DualModeChatbot";
-import { FloatingChatButton } from "@/components/support/FloatingChatButton";
+import ServiceProvidersPage from "./pages/ServiceProvidersPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import CleanerReviews from "./pages/CleanerReviews";
+import Bookings from "./pages/Bookings";
+import NotFound from "./pages/NotFound";
+import { AuthPage } from "./components/auth/AuthPage";
 
 const queryClient = new QueryClient();
 
@@ -27,31 +28,31 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <LanguageProvider>
-        <AuthProvider>
-          <ChatbotProvider>
+        <ChatbotProvider>
+          <AuthProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
-                  <Route path="/prestataires" element={<ServiceProvidersPage />} />
-                  <Route path="/auth" element={<AuthPage />} />
                   <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-                  <Route path="/chat" element={<Chat />} />
                   <Route path="/my-profile" element={<MyProfile />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/profile/:userId" element={<PublicProfile />} />
+                  <Route path="/chat" element={<Chat />} />
                   <Route path="/support" element={<Support />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="/prestataires" element={<ServiceProvidersPage />} />
+                  <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
+                  <Route path="/bookings" element={<Bookings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-                <FloatingChatButton />
-                <DualModeChatbot />
               </BrowserRouter>
             </TooltipProvider>
-          </ChatbotProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </ChatbotProvider>
       </LanguageProvider>
     </ThemeProvider>
   </QueryClientProvider>
