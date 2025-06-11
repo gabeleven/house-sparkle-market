@@ -242,7 +242,7 @@ const ProviderDashboard = () => {
                     </TableRow>
                   ))}
                 </TableBody>
-              </TableBody>
+              </Table>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 Aucune transaction récente
