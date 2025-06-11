@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -531,87 +532,36 @@
     background: linear-gradient(135deg, rgba(61, 42, 145, 0.15), rgba(93, 58, 141, 0.08));
   }
 
-  /* SVG Logo and Mascot Overrides - Enhanced for Full Transparency */
+  /* SVG Logo and Mascot Color Matching - Restored Visibility */
   .svg-logo-orange {
+    /* Orange color filter for logo text */
     filter: brightness(0) saturate(100%) invert(56%) sepia(89%) saturate(2029%) hue-rotate(15deg) brightness(103%) contrast(101%);
-    background: transparent !important;
-    background-color: transparent !important;
   }
 
-  .svg-transparent {
-    background: transparent !important;
-    background-color: transparent !important;
-  }
-
-  /* Aggressive SVG background removal for logo */
-  .svg-logo-orange img,
-  .svg-logo-orange svg,
-  .svg-logo-orange svg *,
-  .svg-logo-orange::before,
-  .svg-logo-orange::after {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-  }
-
-  .svg-logo-orange svg rect,
-  .svg-logo-orange svg rect[fill],
+  /* Color matching for white backgrounds in SVGs */
   .svg-logo-orange svg rect[fill="white"],
   .svg-logo-orange svg rect[fill="#ffffff"],
   .svg-logo-orange svg rect[fill="#FFFFFF"],
   .svg-logo-orange svg rect[fill="#fff"],
   .svg-logo-orange svg rect[fill="#FFF"] {
-    fill: transparent !important;
-    display: none !important;
-    opacity: 0 !important;
+    fill: hsl(var(--background)) !important;
   }
 
+  .svg-transparent svg rect[fill="white"],
+  .svg-transparent svg rect[fill="#ffffff"],
+  .svg-transparent svg rect[fill="#FFFFFF"],
+  .svg-transparent svg rect[fill="#fff"],
+  .svg-transparent svg rect[fill="#FFF"] {
+    fill: hsl(var(--background)) !important;
+  }
+
+  /* Change white fills in paths and other elements to match background */
   .svg-logo-orange svg [fill="white"],
   .svg-logo-orange svg [fill="#ffffff"],
   .svg-logo-orange svg [fill="#FFFFFF"],
   .svg-logo-orange svg [fill="#fff"],
   .svg-logo-orange svg [fill="#FFF"] {
-    fill: #FF8C00 !important;
-  }
-
-  .svg-logo-orange svg [fill="black"],
-  .svg-logo-orange svg [fill="#000000"],
-  .svg-logo-orange svg [fill="#000"],
-  .svg-logo-orange svg [fill="#000000"],
-  .svg-logo-orange svg [stroke="black"],
-  .svg-logo-orange svg [stroke="#000000"],
-  .svg-logo-orange svg [stroke="#000"] {
-    fill: #FF8C00 !important;
-    stroke: #FF8C00 !important;
-  }
-
-  /* Aggressive SVG background removal for mascot */
-  .svg-transparent img,
-  .svg-transparent svg,
-  .svg-transparent svg *,
-  .svg-transparent::before,
-  .svg-transparent::after {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-  }
-
-  .svg-transparent svg rect,
-  .svg-transparent svg rect[fill],
-  .svg-transparent svg rect[fill="white"],
-  .svg-transparent svg rect[fill="#ffffff"],
-  .svg-transparent svg rect[fill="#FFFFFF"],
-  .svg-transparent svg rect[fill="#fff"],
-  .svg-transparent svg rect[fill="#FFF"],
-  .svg-transparent svg circle[fill="white"],
-  .svg-transparent svg circle[fill="#ffffff"],
-  .svg-transparent svg circle[fill="#FFFFFF"],
-  .svg-transparent svg path[fill="white"],
-  .svg-transparent svg path[fill="#ffffff"],
-  .svg-transparent svg path[fill="#FFFFFF"] {
-    fill: transparent !important;
-    display: none !important;
-    opacity: 0 !important;
+    fill: hsl(var(--background)) !important;
   }
 
   .svg-transparent svg [fill="white"],
@@ -619,20 +569,39 @@
   .svg-transparent svg [fill="#FFFFFF"],
   .svg-transparent svg [fill="#fff"],
   .svg-transparent svg [fill="#FFF"] {
-    fill: transparent !important;
-    opacity: 0 !important;
+    fill: hsl(var(--background)) !important;
   }
 
-  /* Additional transparency enforcement */
-  .svg-logo-orange,
-  .svg-transparent {
-    mix-blend-mode: multiply;
+  /* Ensure text elements in logo get orange color */
+  .svg-logo-orange svg text,
+  .svg-logo-orange svg [fill="black"],
+  .svg-logo-orange svg [fill="#000000"],
+  .svg-logo-orange svg [fill="#000"] {
+    fill: #FF8C00 !important;
   }
 
-  /* Force container transparency */
-  .svg-logo-orange > *,
-  .svg-transparent > * {
-    background: none !important;
-    background-color: transparent !important;
+  /* Dark mode specific adjustments */
+  .dark .svg-logo-orange svg rect[fill="white"],
+  .dark .svg-logo-orange svg rect[fill="#ffffff"],
+  .dark .svg-logo-orange svg rect[fill="#FFFFFF"] {
+    fill: #121212 !important; /* Dark background color */
+  }
+
+  .dark .svg-transparent svg rect[fill="white"],
+  .dark .svg-transparent svg rect[fill="#ffffff"],
+  .dark .svg-transparent svg rect[fill="#FFFFFF"] {
+    fill: #121212 !important; /* Dark background color */
+  }
+
+  .dark .svg-logo-orange svg [fill="white"],
+  .dark .svg-logo-orange svg [fill="#ffffff"],
+  .dark .svg-logo-orange svg [fill="#FFFFFF"] {
+    fill: #121212 !important; /* Dark background color */
+  }
+
+  .dark .svg-transparent svg [fill="white"],
+  .dark .svg-transparent svg [fill="#ffffff"],
+  .dark .svg-transparent svg [fill="#FFFFFF"] {
+    fill: #121212 !important; /* Dark background color */
   }
 }
