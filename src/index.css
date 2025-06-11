@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -446,5 +445,82 @@
 
   .text-yellow-800 {
     @apply text-[hsl(var(--pop-orange))];
+  }
+
+  /* MASCOT ANIMATIONS */
+  @keyframes gentle-float {
+    0%, 100% {
+      transform: translateY(0px) scale(1);
+    }
+    25% {
+      transform: translateY(-2px) scale(1.01);
+    }
+    50% {
+      transform: translateY(-4px) scale(1.02);
+    }
+    75% {
+      transform: translateY(-2px) scale(1.01);
+    }
+  }
+
+  @keyframes breathing {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+  }
+
+  .animate-gentle-float {
+    animation: gentle-float 3s ease-in-out infinite;
+  }
+
+  .animate-breathing {
+    animation: breathing 2.5s ease-in-out infinite;
+  }
+
+  .mascot-interactive {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .mascot-interactive:hover {
+    transform: scale(1.05) translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  /* Purple accent utilities */
+  .bg-purple-accent {
+    background: linear-gradient(135deg, #3D2A91, #5D3A8D);
+  }
+
+  .border-purple-accent {
+    border-color: #5D3A8D;
+  }
+
+  .text-purple-accent {
+    color: #5D3A8D;
+  }
+
+  /* Enhanced Ben-Day dots with purple variations */
+  .ben-day-dots-purple {
+    background-image: radial-gradient(circle, #3D2A91 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
+    opacity: 0.15;
+  }
+
+  .dark .ben-day-dots-purple {
+    background-image: radial-gradient(circle, #5D3A8D 1px, transparent 1px);
+    background-size: 10px 10px;
+    opacity: 0.08;
+  }
+
+  /* Purple gradient overlays */
+  .purple-overlay {
+    background: linear-gradient(135deg, rgba(61, 42, 145, 0.1), rgba(93, 58, 141, 0.05));
+  }
+
+  .dark .purple-overlay {
+    background: linear-gradient(135deg, rgba(61, 42, 145, 0.15), rgba(93, 58, 141, 0.08));
   }
 }

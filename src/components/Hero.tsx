@@ -30,35 +30,59 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-purple-50 to-green-50 dark:from-purple-950/20 dark:to-green-950/20 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative bg-gradient-to-br from-purple-950/30 via-purple-900/20 to-green-950/20 dark:from-purple-950/40 dark:via-purple-900/30 dark:to-green-950/30 py-20 overflow-hidden">
+      {/* Purple geometric background patterns */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-600/20 to-purple-800/30 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-20 w-48 h-48 bg-gradient-to-tl from-purple-700/15 to-purple-900/25 rounded-lg rotate-45 blur-lg"></div>
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-purple-600/10 rounded-full"></div>
+      </div>
+
+      {/* Purple Ben-Day dot overlay */}
+      <div className="absolute inset-0 opacity-30">
+        <div 
+          className="w-full h-full"
+          style={{
+            backgroundImage: 'radial-gradient(circle, #3D2A91 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+            opacity: 0.1
+          }}
+        ></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                The Trusted Marketplace for{' '}
-                <span className="bg-gradient-to-r from-[hsl(var(--pop-orange))] to-[hsl(var(--pop-blue))] bg-clip-text text-transparent">
-                  Home Services
-                </span>
-              </h1>
+              {/* Purple gradient behind headline */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-purple-500/10 to-transparent rounded-lg blur-sm"></div>
+                <h1 className="relative text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+                  The Trusted Marketplace for{' '}
+                  <span className="bg-gradient-to-r from-[hsl(var(--pop-orange))] via-purple-400 to-[hsl(var(--pop-blue))] bg-clip-text text-transparent">
+                    Home Services
+                  </span>
+                </h1>
+              </div>
               <p className="text-xl text-muted-foreground leading-relaxed">
                 We connect you with verified, CRA-compliant professionals for cleaning, lawn care, and more.
               </p>
             </div>
 
-            {/* Search Bar */}
-            <div className="pop-card bg-card p-2 rounded-full shadow-lg border border-border max-w-md">
-              <div className="flex items-center">
+            {/* Search Bar with purple accents */}
+            <div className="pop-card bg-card p-2 rounded-full shadow-lg border-2 border-purple-500/40 max-w-md relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-purple-400/5 rounded-full"></div>
+              <div className="flex items-center relative z-10">
                 <div className="flex items-center flex-1 px-4">
-                  <MapPin className="w-5 h-5 text-muted-foreground mr-3" />
+                  <MapPin className="w-5 h-5 text-purple-400 mr-3" />
                   <Input
                     type="text"
                     placeholder="Entrez votre ville ou code postal"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="border-0 focus:ring-0 text-base bg-transparent"
+                    className="border-0 focus:ring-2 focus:ring-purple-400/50 text-base bg-transparent"
                   />
                 </div>
                 <Button 
@@ -70,42 +94,43 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Trust Indicators */}
+            {/* Trust Indicators with purple highlights */}
             <div className="flex items-center space-x-8 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
-                <div className="status-blue w-2 h-2 rounded-full"></div>
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-[hsl(var(--pop-blue))]"></div>
                 <span>Conformité ARC garantie</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="status-orange w-2 h-2 rounded-full"></div>
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[hsl(var(--pop-orange))] to-purple-500"></div>
                 <span>Professionnels vérifiés</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="status-blue w-2 h-2 rounded-full"></div>
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-[hsl(var(--pop-blue))]"></div>
                 <span>Paiement sécurisé</span>
               </div>
             </div>
           </div>
 
-          {/* Right Content - Mascot */}
+          {/* Right Content - Animated Mascot */}
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
-              {/* Background circle with gradient */}
-              <div className="w-80 h-80 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.3)] to-[hsl(var(--pop-orange)/0.3)] dark:from-[hsl(var(--pop-blue)/0.2)] dark:to-[hsl(var(--pop-orange)/0.2)] flex items-center justify-center shadow-2xl ben-day-dots">
-                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.4)] to-[hsl(var(--pop-orange)/0.4)] dark:from-[hsl(var(--pop-blue)/0.3)] dark:to-[hsl(var(--pop-orange)/0.3)] flex items-center justify-center">
+              {/* Background circle with gradient including purple */}
+              <div className="w-80 h-80 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.3)] via-purple-500/20 to-[hsl(var(--pop-orange)/0.3)] dark:from-[hsl(var(--pop-blue)/0.2)] dark:via-purple-600/15 dark:to-[hsl(var(--pop-orange)/0.2)] flex items-center justify-center shadow-2xl ben-day-dots animate-breathing">
+                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.4)] via-purple-400/25 to-[hsl(var(--pop-orange)/0.4)] dark:from-[hsl(var(--pop-blue)/0.3)] dark:via-purple-500/20 dark:to-[hsl(var(--pop-orange)/0.3)] flex items-center justify-center">
                   <img 
-                    src="/lovable-uploads/07286e6b-b7fd-41bc-bcce-410276ead793.png" 
+                    src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/mascot_originale.svg"
                     alt="HOUSIE Assistant - Votre experte en conformité fiscale" 
-                    className="w-56 h-56 object-contain cursor-pointer hover:scale-105 transition-transform"
+                    className="w-56 h-56 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive"
                     onClick={handleMascotClick}
                   />
                 </div>
               </div>
               
-              {/* Welcome message from mascot */}
-              <div className="absolute -top-4 -left-8 chat-pop bg-card border border-border rounded-lg p-4 shadow-lg max-w-xs cursor-pointer hover:shadow-xl transition-shadow" onClick={handleMascotClick}>
-                <div className="flex items-start space-x-2">
-                  <MessageCircle className="w-5 h-5 text-[hsl(var(--pop-blue))] mt-1 flex-shrink-0" />
+              {/* Welcome message from mascot with purple accents */}
+              <div className="absolute -top-4 -left-8 chat-pop bg-card border-2 border-purple-400/30 rounded-lg p-4 shadow-lg max-w-xs cursor-pointer hover:shadow-xl hover:border-purple-400/50 transition-all duration-300" onClick={handleMascotClick}>
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-purple-400/5 rounded-lg"></div>
+                <div className="flex items-start space-x-2 relative z-10">
+                  <MessageCircle className="w-5 h-5 text-purple-400 mt-1 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-foreground font-medium">
                       Bonjour ! Je suis votre assistante HOUSIE.
