@@ -1,6 +1,8 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { IntensityThemeProvider } from '@/contexts/IntensityThemeContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
@@ -34,45 +36,47 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <IntensityThemeProvider>
-          <LanguageProvider>
-            <ChatbotProvider>
-              <Router>
-                <div className="min-h-screen bg-background text-foreground">
-                  <Header />
-                  <main>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-                      <Route path="/profile/:id" element={<Profile />} />
-                      <Route path="/public-profile/:id" element={<PublicProfile />} />
-                      <Route path="/my-profile" element={<MyProfile />} />
-                      <Route path="/auth" element={<Index />} />
-                      <Route path="/chat" element={<Chat />} />
-                      <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
-                      <Route path="/prestataires" element={<ServiceProvidersPage />} />
-                      <Route path="/support" element={<Support />} />
-                      <Route path="/provider-dashboard" element={<ProviderDashboard />} />
-                      <Route path="/analytics" element={<AnalyticsDashboard />} />
-                      <Route path="/growth" element={<GrowthDashboard />} />
-                      <Route path="/calendar" element={<CalendarDashboard />} />
-                      <Route path="/tax-compliance" element={<TaxCompliancePage />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/bookings" element={<Bookings />} />
-                      <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                  <FloatingChatButton />
-                  <Toaster />
-                </div>
-              </Router>
-            </ChatbotProvider>
-          </LanguageProvider>
-        </IntensityThemeProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <IntensityThemeProvider>
+            <LanguageProvider>
+              <ChatbotProvider>
+                <Router>
+                  <div className="min-h-screen bg-background text-foreground">
+                    <Header />
+                    <main>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+                        <Route path="/profile/:id" element={<Profile />} />
+                        <Route path="/public-profile/:id" element={<PublicProfile />} />
+                        <Route path="/my-profile" element={<MyProfile />} />
+                        <Route path="/auth" element={<Index />} />
+                        <Route path="/chat" element={<Chat />} />
+                        <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+                        <Route path="/prestataires" element={<ServiceProvidersPage />} />
+                        <Route path="/support" element={<Support />} />
+                        <Route path="/provider-dashboard" element={<ProviderDashboard />} />
+                        <Route path="/analytics" element={<AnalyticsDashboard />} />
+                        <Route path="/growth" element={<GrowthDashboard />} />
+                        <Route path="/calendar" element={<CalendarDashboard />} />
+                        <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/bookings" element={<Bookings />} />
+                        <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <Footer />
+                    <FloatingChatButton />
+                    <Toaster />
+                  </div>
+                </Router>
+              </ChatbotProvider>
+            </LanguageProvider>
+          </IntensityThemeProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
