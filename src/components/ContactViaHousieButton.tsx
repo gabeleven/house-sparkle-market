@@ -63,7 +63,7 @@ export const ContactViaHousieButton = ({ cleanerId, size = "default", className 
       onClick={handleContact}
       disabled={isLoading}
       size={size}
-      className={`bg-purple-600 hover:bg-purple-700 text-white ${className}`}
+      className={`pop-orange-btn text-white ${className}`}
     >
       <MessageCircle className="w-4 h-4 mr-2" />
       {isLoading ? 'Starting chat...' : 'Contact via Housie'}

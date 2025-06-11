@@ -38,7 +38,7 @@ const Hero = () => {
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                 The Trusted Marketplace for{' '}
-                <span className="bg-gradient-to-r from-purple-600 to-green-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[hsl(var(--pop-orange))] to-[hsl(var(--pop-blue))] bg-clip-text text-transparent">
                   Home Services
                 </span>
               </h1>
@@ -48,7 +48,7 @@ const Hero = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="bg-card p-2 rounded-full shadow-lg border border-border max-w-md">
+            <div className="pop-card bg-card p-2 rounded-full shadow-lg border border-border max-w-md">
               <div className="flex items-center">
                 <div className="flex items-center flex-1 px-4">
                   <MapPin className="w-5 h-5 text-muted-foreground mr-3" />
@@ -63,7 +63,7 @@ const Hero = () => {
                 </div>
                 <Button 
                   onClick={handleSearch}
-                  className="rounded-full h-12 px-6 bg-purple-600 hover:bg-purple-700"
+                  className="search-btn-pop rounded-full h-12 px-6"
                 >
                   <Search className="w-5 h-5" />
                 </Button>
@@ -73,15 +73,15 @@ const Hero = () => {
             {/* Trust Indicators */}
             <div className="flex items-center space-x-8 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="status-blue w-2 h-2 rounded-full"></div>
                 <span>Conformité ARC garantie</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="status-orange w-2 h-2 rounded-full"></div>
                 <span>Professionnels vérifiés</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="status-blue w-2 h-2 rounded-full"></div>
                 <span>Paiement sécurisé</span>
               </div>
             </div>
@@ -91,8 +91,8 @@ const Hero = () => {
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
               {/* Background circle with gradient */}
-              <div className="w-80 h-80 rounded-full bg-gradient-to-br from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30 flex items-center justify-center shadow-2xl">
-                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-blue-300 to-purple-300 dark:from-blue-700/50 dark:to-purple-700/50 flex items-center justify-center">
+              <div className="w-80 h-80 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.3)] to-[hsl(var(--pop-orange)/0.3)] dark:from-[hsl(var(--pop-blue)/0.2)] dark:to-[hsl(var(--pop-orange)/0.2)] flex items-center justify-center shadow-2xl ben-day-dots">
+                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.4)] to-[hsl(var(--pop-orange)/0.4)] dark:from-[hsl(var(--pop-blue)/0.3)] dark:to-[hsl(var(--pop-orange)/0.3)] flex items-center justify-center">
                   <img 
                     src="/lovable-uploads/07286e6b-b7fd-41bc-bcce-410276ead793.png" 
                     alt="HOUSIE Assistant - Votre experte en conformité fiscale" 
@@ -103,9 +103,9 @@ const Hero = () => {
               </div>
               
               {/* Welcome message from mascot */}
-              <div className="absolute -top-4 -left-8 bg-card border border-border rounded-lg p-4 shadow-lg max-w-xs cursor-pointer hover:shadow-xl transition-shadow" onClick={handleMascotClick}>
+              <div className="absolute -top-4 -left-8 chat-pop bg-card border border-border rounded-lg p-4 shadow-lg max-w-xs cursor-pointer hover:shadow-xl transition-shadow" onClick={handleMascotClick}>
                 <div className="flex items-start space-x-2">
-                  <MessageCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                  <MessageCircle className="w-5 h-5 text-[hsl(var(--pop-blue))] mt-1 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-foreground font-medium">
                       Bonjour ! Je suis votre assistante HOUSIE.
@@ -121,7 +121,7 @@ const Hero = () => {
               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
                 <Button 
                   onClick={handleSearch}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-3 rounded-full shadow-lg"
+                  className="pop-orange-btn font-bold px-8 py-3 rounded-full shadow-lg"
                 >
                   Commencer
                 </Button>

@@ -14,24 +14,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 262.1 83.3% 57.8%;
+    --primary: 18 100% 60%; /* Orange #FF6B35 */
     --primary-foreground: 210 20% 98%;
 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
+    --secondary: 178 68% 60%; /* Blue #4ECDC4 */
+    --secondary-foreground: 0 0% 3.9%;
 
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: 18 100% 60%; /* Orange accent */
+    --accent-foreground: 210 20% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 18 100% 60%; /* Orange ring */
 
     --radius: 0.5rem;
 
@@ -43,6 +43,10 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Pop Art Colors */
+    --pop-orange: 18 100% 60%; /* #FF6B35 */
+    --pop-blue: 178 68% 60%; /* #4ECDC4 */
   }
 
   .dark {
@@ -55,16 +59,16 @@
     --popover: 0 0% 11.8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 262.1 83.3% 67.8%; /* Brighter purple for dark mode */
+    --primary: 18 100% 60%; /* Orange #FF6B35 */
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 0 0% 14.9%; /* #262626 */
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 178 68% 60%; /* Blue #4ECDC4 */
+    --secondary-foreground: 0 0% 7.1%;
 
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 0 0% 14.9%;
+    --accent: 18 100% 60%; /* Orange accent */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -72,16 +76,20 @@
 
     --border: 0 0% 19.6%; /* #323232 */
     --input: 0 0% 14.9%;
-    --ring: 262.1 83.3% 67.8%;
+    --ring: 18 100% 60%; /* Orange ring */
 
     --sidebar-background: 0 0% 7.1%;
     --sidebar-foreground: 0 0% 63.9%;
-    --sidebar-primary: 262.1 83.3% 67.8%;
+    --sidebar-primary: 18 100% 60%; /* Orange primary */
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 14.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 19.6%;
-    --sidebar-ring: 262.1 83.3% 67.8%;
+    --sidebar-ring: 18 100% 60%; /* Orange ring */
+
+    /* Pop Art Colors for dark mode */
+    --pop-orange: 18 100% 60%; /* #FF6B35 */
+    --pop-blue: 178 68% 60%; /* #4ECDC4 */
   }
 }
 
@@ -115,21 +123,144 @@
     @apply text-muted-foreground;
   }
 
-  /* Button styling improvements for dark mode */
+  /* Pop Art Button Styling */
+  .pop-orange-btn {
+    background-color: hsl(var(--pop-orange));
+    color: white;
+    transition: all 0.2s ease;
+  }
+
+  .pop-orange-btn:hover {
+    background-color: hsl(var(--pop-orange) / 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsl(var(--pop-orange) / 0.3);
+  }
+
+  .pop-blue-btn {
+    background-color: hsl(var(--pop-blue));
+    color: hsl(var(--background));
+    transition: all 0.2s ease;
+  }
+
+  .pop-blue-btn:hover {
+    background-color: hsl(var(--pop-blue) / 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsl(var(--pop-blue) / 0.3);
+  }
+
+  /* Ben-Day Dot Pattern */
+  .ben-day-dots {
+    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.1) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+
+  .ben-day-dots-blue {
+    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.1) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+
+  /* Pop Art Card Accents */
+  .pop-card {
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(45deg, hsl(var(--pop-orange)), hsl(var(--pop-blue))) border-box;
+    position: relative;
+  }
+
+  .pop-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.05) 1px, transparent 1px);
+    background-size: 12px 12px;
+    pointer-events: none;
+  }
+
+  /* Navigation Hover Effects */
+  .nav-link-pop {
+    position: relative;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link-pop:hover {
+    color: hsl(var(--pop-orange));
+  }
+
+  .nav-link-pop::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(var(--pop-orange)), hsl(var(--pop-blue)));
+    transition: width 0.3s ease;
+  }
+
+  .nav-link-pop:hover::after {
+    width: 100%;
+  }
+
+  /* Chat Assistant Styling */
+  .chat-pop {
+    border-left: 4px solid hsl(var(--pop-blue));
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.95));
+  }
+
+  .chat-pop::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.03) 1px, transparent 1px);
+    background-size: 10px 10px;
+    pointer-events: none;
+  }
+
+  /* Status Indicators */
+  .status-orange {
+    background-color: hsl(var(--pop-orange));
+  }
+
+  .status-blue {
+    background-color: hsl(var(--pop-blue));
+  }
+
+  /* Search Button Enhancement */
+  .search-btn-pop {
+    background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .search-btn-pop:hover {
+    background: linear-gradient(135deg, hsl(var(--pop-orange) / 0.9), hsl(var(--pop-orange) / 0.8));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px hsl(var(--pop-orange) / 0.4);
+  }
+
+  /* Update existing purple styles to orange */
   .dark .bg-purple-600 {
-    @apply bg-primary;
+    @apply bg-[hsl(var(--pop-orange))];
   }
 
   .dark .hover\:bg-purple-700:hover {
-    @apply hover:bg-primary/90;
+    @apply hover:bg-[hsl(var(--pop-orange)/0.9)];
   }
 
   .dark .border-purple-600 {
-    @apply border-primary;
+    @apply border-[hsl(var(--pop-orange))];
   }
 
   .dark .text-purple-600 {
-    @apply text-primary;
+    @apply text-[hsl(var(--pop-orange))];
   }
 
   /* Background color fixes for dark mode */
@@ -207,7 +338,7 @@
 
   /* Chat specific dark mode improvements */
   .dark .bg-purple-50 {
-    @apply bg-primary/10;
+    @apply bg-[hsl(var(--pop-blue)/0.1)];
   }
 
   .dark .bg-red-50 {
@@ -228,11 +359,11 @@
 
   /* Form and input improvements */
   .dark .focus\:border-purple-500:focus {
-    @apply focus:border-primary;
+    @apply focus:border-[hsl(var(--pop-orange))];
   }
 
   .dark .focus\:ring-purple-500:focus {
-    @apply focus:ring-primary;
+    @apply focus:ring-[hsl(var(--pop-orange))];
   }
 
   /* Map and overlay improvements */
@@ -242,11 +373,11 @@
 
   /* Button variants for dark mode */
   .dark .bg-green-500 {
-    @apply bg-green-600;
+    @apply bg-[hsl(var(--pop-blue))];
   }
 
   .dark .hover\:bg-green-600:hover {
-    @apply hover:bg-green-700;
+    @apply hover:bg-[hsl(var(--pop-blue)/0.9)];
   }
 
   /* Ensure proper contrast for all text elements */
@@ -264,27 +395,27 @@
 
   /* Badge improvements for dark mode */
   .dark .bg-green-100 {
-    @apply bg-green-900/30;
+    @apply bg-[hsl(var(--pop-blue)/0.2)];
   }
 
   .dark .text-green-800 {
-    @apply text-green-400;
+    @apply text-[hsl(var(--pop-blue))];
   }
 
   .dark .bg-blue-100 {
-    @apply bg-blue-900/30;
+    @apply bg-[hsl(var(--pop-blue)/0.2)];
   }
 
   .dark .text-blue-800 {
-    @apply text-blue-400;
+    @apply text-[hsl(var(--pop-blue))];
   }
 
   .dark .bg-yellow-100 {
-    @apply bg-yellow-900/30;
+    @apply bg-[hsl(var(--pop-orange)/0.2)];
   }
 
   .dark .text-yellow-800 {
-    @apply text-yellow-400;
+    @apply text-[hsl(var(--pop-orange))];
   }
 
   /* Fix alert/notification background in dark mode */
@@ -296,20 +427,20 @@
     @apply text-red-300;
   }
 
-  /* Yellow button fixes for dark mode */
+  /* Orange button fixes for dark mode */
   .dark .bg-yellow-500 {
-    @apply bg-yellow-600;
+    @apply bg-[hsl(var(--pop-orange))];
   }
 
   .dark .hover\:bg-yellow-600:hover {
-    @apply hover:bg-yellow-700;
+    @apply hover:bg-[hsl(var(--pop-orange)/0.9)];
   }
 
   .dark .text-yellow-900 {
-    @apply text-yellow-100;
+    @apply text-foreground;
   }
 
   .dark .border-yellow-600 {
-    @apply border-yellow-500;
+    @apply border-[hsl(var(--pop-orange))];
   }
 }

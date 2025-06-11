@@ -32,7 +32,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   onRequestLocation,
 }) => {
   return (
-    <div className="bg-card rounded-lg shadow-sm p-6 mb-8 border border-border">
+    <div className="pop-card bg-card rounded-lg shadow-sm p-6 mb-8 border border-border ben-day-dots">
       <h1 className="text-3xl font-bold text-foreground mb-6">Find Cleaners Across Quebec</h1>
       
       <div className="flex flex-col md:flex-row gap-4">
@@ -62,7 +62,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           </div>
         </div>
 
-        <Button onClick={onSearch} className="bg-primary hover:bg-primary/90">
+        <Button onClick={onSearch} className="search-btn-pop">
           <Search className="w-4 h-4 mr-2" />
           Search
         </Button>
@@ -75,7 +75,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               variant="outline"
               size="sm"
               onClick={onRequestLocation}
-              className="text-primary border-primary hover:bg-primary/10"
+              className="text-[hsl(var(--pop-blue))] border-[hsl(var(--pop-blue))] hover:bg-[hsl(var(--pop-blue)/0.1)]"
             >
               <MapPin className="w-4 h-4 mr-2" />
               Use My Location
@@ -83,7 +83,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           )}
           
           {location && (
-            <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+            <span className="text-sm text-[hsl(var(--pop-blue))] font-medium">
               ✓ Using your location for better results
             </span>
           )}
@@ -91,7 +91,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-2 sm:mt-0">
+            <Button variant="outline" size="sm" className="mt-2 sm:mt-0 pop-blue-btn">
               <Filter className="w-4 h-4 mr-2" />
               Filters
             </Button>
