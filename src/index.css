@@ -44,7 +44,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Pop Art Colors */
+    /* Pop Art Colors - LIGHT MODE (Vibrant) */
     --pop-orange: 18 100% 60%; /* #FF6B35 */
     --pop-blue: 178 68% 60%; /* #4ECDC4 */
   }
@@ -59,16 +59,16 @@
     --popover: 0 0% 11.8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 18 100% 60%; /* Orange #FF6B35 */
+    --primary: 18 65% 48%; /* Muted Orange #CC5429 */
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 178 68% 60%; /* Blue #4ECDC4 */
-    --secondary-foreground: 0 0% 7.1%;
+    --secondary: 178 48% 42%; /* Muted Blue #3BA89A */
+    --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 18 100% 60%; /* Orange accent */
+    --accent: 18 65% 48%; /* Muted Orange accent */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -76,20 +76,20 @@
 
     --border: 0 0% 19.6%; /* #323232 */
     --input: 0 0% 14.9%;
-    --ring: 18 100% 60%; /* Orange ring */
+    --ring: 18 65% 48%; /* Muted Orange ring */
 
     --sidebar-background: 0 0% 7.1%;
     --sidebar-foreground: 0 0% 63.9%;
-    --sidebar-primary: 18 100% 60%; /* Orange primary */
+    --sidebar-primary: 18 65% 48%; /* Muted Orange primary */
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 14.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 19.6%;
-    --sidebar-ring: 18 100% 60%; /* Orange ring */
+    --sidebar-ring: 18 65% 48%; /* Muted Orange ring */
 
-    /* Pop Art Colors for dark mode */
-    --pop-orange: 18 100% 60%; /* #FF6B35 */
-    --pop-blue: 178 68% 60%; /* #4ECDC4 */
+    /* Pop Art Colors - DARK MODE (Sophisticated) */
+    --pop-orange: 18 65% 48%; /* #CC5429 */
+    --pop-blue: 178 48% 42%; /* #3BA89A */
   }
 }
 
@@ -101,6 +101,7 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
   /* Ensure all page backgrounds use the theme background */
@@ -123,48 +124,109 @@
     @apply text-muted-foreground;
   }
 
-  /* Pop Art Button Styling */
+  /* LIGHT MODE - Comic Book Style Buttons */
   .pop-orange-btn {
-    background-color: hsl(var(--pop-orange));
+    background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
     color: white;
     transition: all 0.2s ease;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    box-shadow: 0 4px 0 hsl(var(--pop-orange) / 0.6), 0 8px 20px hsl(var(--pop-orange) / 0.3);
   }
 
   .pop-orange-btn:hover {
-    background-color: hsl(var(--pop-orange) / 0.9);
+    background: linear-gradient(135deg, hsl(var(--pop-orange) / 0.95), hsl(var(--pop-orange) / 0.85));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 hsl(var(--pop-orange) / 0.6), 0 12px 25px hsl(var(--pop-orange) / 0.4);
+  }
+
+  .pop-orange-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 hsl(var(--pop-orange) / 0.6), 0 4px 15px hsl(var(--pop-orange) / 0.3);
+  }
+
+  .pop-blue-btn {
+    background: linear-gradient(135deg, hsl(var(--pop-blue)), hsl(var(--pop-blue) / 0.9));
+    color: hsl(var(--background));
+    transition: all 0.2s ease;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    box-shadow: 0 4px 0 hsl(var(--pop-blue) / 0.6), 0 8px 20px hsl(var(--pop-blue) / 0.3);
+  }
+
+  .pop-blue-btn:hover {
+    background: linear-gradient(135deg, hsl(var(--pop-blue) / 0.95), hsl(var(--pop-blue) / 0.85));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 hsl(var(--pop-blue) / 0.6), 0 12px 25px hsl(var(--pop-blue) / 0.4);
+  }
+
+  .pop-blue-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 hsl(var(--pop-blue) / 0.6), 0 4px 15px hsl(var(--pop-blue) / 0.3);
+  }
+
+  /* DARK MODE - Sophisticated Style Buttons */
+  .dark .pop-orange-btn {
+    background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
+    color: white;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: 0 2px 8px hsl(var(--pop-orange) / 0.2);
+  }
+
+  .dark .pop-orange-btn:hover {
+    background: linear-gradient(135deg, hsl(var(--pop-orange) / 0.9), hsl(var(--pop-orange) / 0.8));
     transform: translateY(-1px);
     box-shadow: 0 4px 12px hsl(var(--pop-orange) / 0.3);
   }
 
-  .pop-blue-btn {
-    background-color: hsl(var(--pop-blue));
-    color: hsl(var(--background));
-    transition: all 0.2s ease;
+  .dark .pop-blue-btn {
+    background: linear-gradient(135deg, hsl(var(--pop-blue)), hsl(var(--pop-blue) / 0.9));
+    color: white;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: 0 2px 8px hsl(var(--pop-blue) / 0.2);
   }
 
-  .pop-blue-btn:hover {
-    background-color: hsl(var(--pop-blue) / 0.9);
+  .dark .pop-blue-btn:hover {
+    background: linear-gradient(135deg, hsl(var(--pop-blue) / 0.9), hsl(var(--pop-blue) / 0.8));
     transform: translateY(-1px);
     box-shadow: 0 4px 12px hsl(var(--pop-blue) / 0.3);
   }
 
-  /* Ben-Day Dot Pattern */
+  /* Ben-Day Dot Pattern - More prominent in light mode */
   .ben-day-dots {
-    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.1) 1px, transparent 1px);
-    background-size: 8px 8px;
+    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.15) 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
   }
 
   .ben-day-dots-blue {
-    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.1) 1px, transparent 1px);
-    background-size: 8px 8px;
+    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.15) 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
   }
 
-  /* Pop Art Card Accents */
+  /* Dark mode - more subtle dots */
+  .dark .ben-day-dots {
+    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.08) 1px, transparent 1px);
+    background-size: 10px 10px;
+  }
+
+  .dark .ben-day-dots-blue {
+    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.08) 1px, transparent 1px);
+    background-size: 10px 10px;
+  }
+
+  /* Pop Art Card Accents - Dynamic based on theme */
   .pop-card {
     border: 2px solid transparent;
     background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
                 linear-gradient(45deg, hsl(var(--pop-orange)), hsl(var(--pop-blue))) border-box;
     position: relative;
+    transition: all 0.3s ease;
   }
 
   .pop-card::before {
@@ -177,12 +239,25 @@
     background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.05) 1px, transparent 1px);
     background-size: 12px 12px;
     pointer-events: none;
+    transition: opacity 0.3s ease;
   }
 
-  /* Navigation Hover Effects */
+  /* Light mode - more dramatic effects */
+  .pop-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px hsl(var(--pop-orange) / 0.2);
+  }
+
+  /* Dark mode - subtle effects */
+  .dark .pop-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px hsl(var(--pop-orange) / 0.1);
+  }
+
+  /* Navigation Hover Effects - Enhanced */
   .nav-link-pop {
     position: relative;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .nav-link-pop:hover {
@@ -195,7 +270,7 @@
     bottom: -2px;
     left: 0;
     width: 0;
-    height: 2px;
+    height: 3px;
     background: linear-gradient(90deg, hsl(var(--pop-orange)), hsl(var(--pop-blue)));
     transition: width 0.3s ease;
   }
@@ -204,10 +279,23 @@
     width: 100%;
   }
 
-  /* Chat Assistant Styling */
+  /* Light mode - more dramatic nav effects */
+  .nav-link-pop::after {
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  /* Dark mode - subtle nav effects */
+  .dark .nav-link-pop::after {
+    height: 2px;
+    border-radius: 1px;
+  }
+
+  /* Chat Assistant Styling - Dynamic */
   .chat-pop {
     border-left: 4px solid hsl(var(--pop-blue));
     background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.95));
+    transition: all 0.3s ease;
   }
 
   .chat-pop::before {
@@ -231,7 +319,7 @@
     background-color: hsl(var(--pop-blue));
   }
 
-  /* Search Button Enhancement */
+  /* Search Button Enhancement - Dynamic styling */
   .search-btn-pop {
     background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
     border: none;
@@ -246,201 +334,117 @@
     box-shadow: 0 6px 20px hsl(var(--pop-orange) / 0.4);
   }
 
-  /* Update existing purple styles to orange */
-  .dark .bg-purple-600 {
-    @apply bg-[hsl(var(--pop-orange))];
+  /* Light mode - comic book style search button */
+  .search-btn-pop {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    box-shadow: 0 4px 0 hsl(var(--pop-orange) / 0.6), 0 8px 20px hsl(var(--pop-orange) / 0.3);
   }
 
-  .dark .hover\:bg-purple-700:hover {
-    @apply hover:bg-[hsl(var(--pop-orange)/0.9)];
+  .search-btn-pop:hover {
+    box-shadow: 0 6px 0 hsl(var(--pop-orange) / 0.6), 0 12px 25px hsl(var(--pop-orange) / 0.4);
+    transform: translateY(-2px);
   }
 
-  .dark .border-purple-600 {
-    @apply border-[hsl(var(--pop-orange))];
+  /* Dark mode - sophisticated search button */
+  .dark .search-btn-pop {
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: 0 2px 8px hsl(var(--pop-orange) / 0.2);
   }
 
-  .dark .text-purple-600 {
-    @apply text-[hsl(var(--pop-orange))];
+  .dark .search-btn-pop:hover {
+    box-shadow: 0 4px 12px hsl(var(--pop-orange) / 0.3);
+    transform: translateY(-1px);
   }
 
-  /* Background color fixes for dark mode */
-  .dark .bg-gray-50 {
-    @apply bg-muted;
+  /* Enhanced theme transition effects */
+  * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .dark .bg-white {
-    @apply bg-card;
+  /* Light mode specific enhancements */
+  .light {
+    /* More vibrant gradients and effects */
   }
 
-  .dark .bg-gray-100 {
-    @apply bg-muted;
+  .light .pop-card {
+    border-width: 3px;
   }
 
-  .dark .bg-gray-200 {
-    @apply bg-secondary;
+  .light .ben-day-dots {
+    background-size: 15px 15px;
   }
 
-  /* Text color fixes for dark mode */
-  .dark .text-gray-900 {
-    @apply text-foreground;
+  /* Comic book style notifications in light mode */
+  .light .toast {
+    border: 3px solid hsl(var(--pop-orange));
+    box-shadow: 0 6px 0 hsl(var(--pop-orange) / 0.3), 0 12px 25px hsl(var(--pop-orange) / 0.2);
   }
 
-  .dark .text-gray-800 {
-    @apply text-foreground;
+  /* Professional notifications in dark mode */
+  .dark .toast {
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 4px 15px hsl(var(--background) / 0.2);
   }
 
-  .dark .text-gray-700 {
-    @apply text-foreground;
-  }
-
-  .dark .text-gray-600 {
-    @apply text-muted-foreground;
-  }
-
-  .dark .text-gray-500 {
-    @apply text-muted-foreground;
-  }
-
-  .dark .text-gray-400 {
-    @apply text-muted-foreground;
-  }
-
-  /* Border color fixes for dark mode */
-  .dark .border-gray-300 {
-    @apply border-border;
-  }
-
-  .dark .border-gray-200 {
-    @apply border-border;
-  }
-
-  /* Shadow fixes for dark mode */
-  .dark .shadow-sm {
-    @apply shadow-none border border-border;
-  }
-
-  .dark .shadow-md {
-    @apply shadow-none border border-border;
-  }
-
-  .dark .shadow-lg {
-    @apply shadow-none border border-border;
-  }
-
-  /* Hover effects for dark mode */
-  .dark .hover\:bg-gray-50:hover {
-    @apply hover:bg-accent;
-  }
-
-  .dark .hover\:bg-gray-100:hover {
-    @apply hover:bg-accent;
-  }
-
-  /* Chat specific dark mode improvements */
-  .dark .bg-purple-50 {
-    @apply bg-[hsl(var(--pop-blue)/0.1)];
-  }
-
-  .dark .bg-red-50 {
-    @apply bg-destructive/10;
-  }
-
-  .dark .text-red-800 {
-    @apply text-destructive-foreground;
-  }
-
-  .dark .text-red-700 {
-    @apply text-destructive-foreground;
-  }
-
-  .dark .text-red-600 {
-    @apply text-destructive;
-  }
-
-  /* Form and input improvements */
-  .dark .focus\:border-purple-500:focus {
-    @apply focus:border-[hsl(var(--pop-orange))];
-  }
-
-  .dark .focus\:ring-purple-500:focus {
-    @apply focus:ring-[hsl(var(--pop-orange))];
-  }
-
-  /* Map and overlay improvements */
-  .dark .bg-red-50 {
-    @apply bg-destructive/10;
-  }
-
-  /* Button variants for dark mode */
-  .dark .bg-green-500 {
+  /* Update existing color overrides for dynamic theming */
+  .bg-green-500 {
     @apply bg-[hsl(var(--pop-blue))];
   }
 
-  .dark .hover\:bg-green-600:hover {
+  .hover\:bg-green-600:hover {
     @apply hover:bg-[hsl(var(--pop-blue)/0.9)];
   }
 
-  /* Ensure proper contrast for all text elements */
-  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-    @apply text-foreground;
+  .border-green-500 {
+    @apply border-[hsl(var(--pop-blue))];
   }
 
-  .dark p {
-    @apply text-foreground;
-  }
-
-  .dark span {
-    @apply text-foreground;
-  }
-
-  /* Badge improvements for dark mode */
-  .dark .bg-green-100 {
-    @apply bg-[hsl(var(--pop-blue)/0.2)];
-  }
-
-  .dark .text-green-800 {
+  .text-green-600 {
     @apply text-[hsl(var(--pop-blue))];
   }
 
-  .dark .bg-blue-100 {
-    @apply bg-[hsl(var(--pop-blue)/0.2)];
-  }
-
-  .dark .text-blue-800 {
-    @apply text-[hsl(var(--pop-blue))];
-  }
-
-  .dark .bg-yellow-100 {
-    @apply bg-[hsl(var(--pop-orange)/0.2)];
-  }
-
-  .dark .text-yellow-800 {
-    @apply text-[hsl(var(--pop-orange))];
-  }
-
-  /* Fix alert/notification background in dark mode */
-  .dark .bg-red-100 {
-    @apply bg-red-900/30;
-  }
-
-  .dark .text-red-800 {
-    @apply text-red-300;
-  }
-
-  /* Orange button fixes for dark mode */
-  .dark .bg-yellow-500 {
+  .bg-yellow-500 {
     @apply bg-[hsl(var(--pop-orange))];
   }
 
-  .dark .hover\:bg-yellow-600:hover {
+  .hover\:bg-yellow-600:hover {
     @apply hover:bg-[hsl(var(--pop-orange)/0.9)];
   }
 
-  .dark .text-yellow-900 {
-    @apply text-foreground;
+  .border-yellow-500 {
+    @apply border-[hsl(var(--pop-orange))];
   }
 
-  .dark .border-yellow-600 {
-    @apply border-[hsl(var(--pop-orange))];
+  .text-yellow-600 {
+    @apply text-[hsl(var(--pop-orange))];
+  }
+
+  /* Dynamic badge colors */
+  .bg-green-100 {
+    @apply bg-[hsl(var(--pop-blue)/0.2)];
+  }
+
+  .text-green-800 {
+    @apply text-[hsl(var(--pop-blue))];
+  }
+
+  .bg-blue-100 {
+    @apply bg-[hsl(var(--pop-blue)/0.2)];
+  }
+
+  .text-blue-800 {
+    @apply text-[hsl(var(--pop-blue))];
+  }
+
+  .bg-yellow-100 {
+    @apply bg-[hsl(var(--pop-orange)/0.2)];
+  }
+
+  .text-yellow-800 {
+    @apply text-[hsl(var(--pop-orange))];
   }
 }
