@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -53,39 +52,29 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-background border-b-2 border-pop-orange sticky top-0 z-50 shadow-lg">
+    <header className="bg-background shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Pop Art Logo Section */}
-          <Link to="/" className="flex items-center space-x-4">
-            {/* Orange/Blue Graffiti Wordmark */}
-            <div className="h-12 w-auto">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo - positioned on the left with proper sizing */}
+          <Link to="/" className="flex items-center">
+            <div className="h-12 w-12 overflow-hidden rounded">
               <img 
-                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/HOUSIE_MARKETPLACE.png" 
-                alt="HOUSIE MARKETPLACE" 
-                className="h-full w-auto object-contain brand-wordmark"
-              />
-            </div>
-            
-            {/* Pop Art Cleaning Lady Mascot */}
-            <div className="hidden md:block h-16 w-16">
-              <img 
-                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/Default_Female_character_with_blue_eyes_wearing_construction_h_1_8daf96c5-174c-4c3b-bdcb-2586d46308bd_0.png" 
-                alt="HOUSIE Cleaning Expert" 
-                className="h-full w-full object-contain mascot-pop"
+                src="/lovable-uploads/9c75838a-e1e7-4d81-84b5-eac483f98d8f.png" 
+                alt="Logo" 
+                className="h-full w-full object-contain"
               />
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/comment-ca-marche" className="text-foreground hover:text-pop-orange transition-colors text-sm font-medium">
+            <Link to="/comment-ca-marche" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               Comment ça marche
             </Link>
-            <Link to="/browse-cleaners" className="text-foreground hover:text-pop-blue transition-colors text-sm font-medium">
+            <Link to="/browse-cleaners" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               Trouver service
             </Link>
-            <Link to="/prestataires" className="text-foreground hover:text-pop-orange transition-colors text-sm font-medium">
+            <Link to="/prestataires" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               HOUSIE Pro
             </Link>
             
@@ -93,22 +82,22 @@ const Header = () => {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-1 text-sm hover:bg-pop-orange/10">
-                    <BarChart3 className="w-4 h-4 text-pop-blue" />
+                  <Button variant="ghost" className="flex items-center space-x-1 text-sm">
+                    <BarChart3 className="w-4 h-4" />
                     <span>Tableaux de bord</span>
                     <ChevronDown className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48 bg-card border-2 border-pop-orange shadow-xl">
+                <DropdownMenuContent align="center" className="w-48">
                   <DropdownMenuItem asChild>
-                    <Link to="/bookings" className="flex items-center space-x-2 w-full hover:bg-pop-orange/10">
-                      <Calendar className="w-4 h-4 text-pop-blue" />
+                    <Link to="/bookings" className="flex items-center space-x-2 w-full">
+                      <Calendar className="w-4 h-4" />
                       <span>Mes Réservations</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/provider-dashboard" className="flex items-center space-x-2 w-full hover:bg-pop-orange/10">
-                      <BarChart3 className="w-4 h-4 text-pop-orange" />
+                    <Link to="/provider-dashboard" className="flex items-center space-x-2 w-full">
+                      <BarChart3 className="w-4 h-4" />
                       <span>Tableau Prestataire</span>
                     </Link>
                   </DropdownMenuItem>
@@ -116,10 +105,10 @@ const Header = () => {
               </DropdownMenu>
             )}
             
-            <Link to="/tax-compliance" className="text-foreground hover:text-pop-blue transition-colors text-sm font-medium">
+            <Link to="/tax-compliance" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               Conformité
             </Link>
-            <Link to="/support" className="text-foreground hover:text-pop-orange transition-colors text-sm font-medium">
+            <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors text-sm">
               Support
             </Link>
             
@@ -140,18 +129,18 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 hover:bg-pop-blue/10">
-                    <span className="text-foreground">{user.email?.split('@')[0] || 'User'}</span>
-                    <Badge className="badge-pop-orange text-xs">
+                  <Button variant="ghost" className="flex items-center space-x-2">
+                    <span>{user.email?.split('@')[0] || 'User'}</span>
+                    <Badge variant="outline" className="text-xs">
                       {simulatedTier.toUpperCase()}
                     </Badge>
                     <ChevronDown className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 bg-card border-2 border-pop-blue shadow-xl">
+                <DropdownMenuContent align="end" className="w-64">
                   {dropdownItems.map((item, index) => (
                     <DropdownMenuItem key={item.path} asChild>
-                      <Link to={item.path} className="flex items-center justify-between w-full hover:bg-pop-blue/10">
+                      <Link to={item.path} className="flex items-center justify-between w-full">
                         <div className="flex items-center space-x-2">
                           {getIcon(item.icon)}
                           <span>{item.labelKey}</span>
@@ -160,13 +149,13 @@ const Header = () => {
                           )}
                         </div>
                         {item.showNotification && (
-                          <Bell className="w-4 h-4 text-pop-orange" />
+                          <Bell className="w-4 h-4 text-muted-foreground" />
                         )}
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuSeparator className="bg-pop-orange/20" />
-                  <DropdownMenuItem onClick={handleSignOut} className="hover:bg-destructive/10">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
                     {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -174,10 +163,10 @@ const Header = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link to="/auth">
-                  <Button variant="ghost" className="hover:bg-pop-blue/10">Connexion</Button>
+                  <Button variant="ghost">Connexion</Button>
                 </Link>
                 <Link to="/auth">
-                  <Button className="btn-pop-orange">S'inscrire</Button>
+                  <Button>S'inscrire</Button>
                 </Link>
               </div>
             )}
@@ -189,7 +178,6 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="hover:bg-pop-orange/10"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -198,25 +186,25 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-pop-orange/20 dots-pattern-sm">
+          <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
               <Link 
                 to="/comment-ca-marche" 
-                className="text-foreground hover:text-pop-orange transition-colors py-2 font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Comment ça marche
               </Link>
               <Link 
                 to="/browse-cleaners" 
-                className="text-foreground hover:text-pop-blue transition-colors py-2 font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Trouver service
               </Link>
               <Link 
                 to="/prestataires" 
-                className="text-foreground hover:text-pop-orange transition-colors py-2 font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 HOUSIE Pro
@@ -237,32 +225,32 @@ const Header = () => {
                 <>
                   <Link 
                     to="/bookings" 
-                    className="text-foreground hover:text-pop-blue transition-colors py-2 flex items-center space-x-2 font-medium"
+                    className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Calendar className="w-4 h-4 text-pop-blue" />
+                    <Calendar className="w-4 h-4" />
                     <span>Mes Réservations</span>
                   </Link>
                   <Link 
                     to="/provider-dashboard" 
-                    className="text-foreground hover:text-pop-orange transition-colors py-2 flex items-center space-x-2 font-medium"
+                    className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <BarChart3 className="w-4 h-4 text-pop-orange" />
+                    <BarChart3 className="w-4 h-4" />
                     <span>Tableau Prestataire</span>
                   </Link>
                 </>
               )}
               <Link 
                 to="/tax-compliance" 
-                className="text-foreground hover:text-pop-blue transition-colors py-2 font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Conformité
               </Link>
               <Link 
                 to="/support" 
-                className="text-foreground hover:text-pop-orange transition-colors py-2 font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Support
@@ -282,7 +270,7 @@ const Header = () => {
                 <>
                   {dropdownItems.map((item) => (
                     <Link key={item.path} to={item.path} onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start hover:bg-pop-blue/10">
+                      <Button variant="ghost" className="w-full justify-start">
                         <div className="flex items-center space-x-2">
                           {getIcon(item.icon)}
                           <span>{item.labelKey}</span>
@@ -290,21 +278,21 @@ const Header = () => {
                             <span className="text-xs text-muted-foreground">{item.tierNote}</span>
                           )}
                         </div>
-                        {item.showNotification && <Bell className="w-4 h-4 ml-2 text-pop-orange" />}
+                        {item.showNotification && <Bell className="w-4 h-4 ml-2" />}
                       </Button>
                     </Link>
                   ))}
-                  <Button onClick={handleSignOut} variant="outline" className="w-full justify-start border-destructive/50 hover:bg-destructive/10">
+                  <Button onClick={handleSignOut} variant="outline" className="w-full justify-start">
                     Déconnexion
                   </Button>
                 </>
               ) : (
                 <>
                   <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start hover:bg-pop-blue/10">Connexion</Button>
+                    <Button variant="ghost" className="w-full justify-start">Connexion</Button>
                   </Link>
                   <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full justify-start btn-pop-orange">S'inscrire</Button>
+                    <Button className="w-full justify-start">S'inscrire</Button>
                   </Link>
                 </>
               )}

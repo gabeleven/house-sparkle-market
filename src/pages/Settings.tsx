@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,14 +48,14 @@ const Settings = () => {
 
   const getTierBadge = (tier: SubscriptionTier) => {
     const configs = {
-      [SubscriptionTier.FREE]: { label: 'CRA Ready', color: 'pop-blue' },
-      [SubscriptionTier.STARTER]: { label: 'Tax Basics', color: 'pop-orange' },
-      [SubscriptionTier.PROFESSIONAL]: { label: 'Most Popular', color: 'pop-orange' },
-      [SubscriptionTier.PREMIUM]: { label: 'Business Intelligence', color: 'pop-blue' }
+      [SubscriptionTier.FREE]: { label: 'CRA Ready', color: 'secondary' },
+      [SubscriptionTier.STARTER]: { label: 'Tax Basics', color: 'default' },
+      [SubscriptionTier.PROFESSIONAL]: { label: 'Most Popular', color: 'default' },
+      [SubscriptionTier.PREMIUM]: { label: 'Business Intelligence', color: 'destructive' }
     };
     
     const config = configs[tier];
-    return <Badge className={`badge-pop-${config.color === 'pop-orange' ? 'orange' : 'blue'}`}>{config.label}</Badge>;
+    return <Badge variant={config.color as any}>{config.label}</Badge>;
   };
 
   const getUsageMetrics = (tier: SubscriptionTier) => {
@@ -72,117 +73,109 @@ const Settings = () => {
   const isProfessionalPlus = (currentTier as string) === (SubscriptionTier.PROFESSIONAL as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
 
   return (
-    <div className="min-h-screen bg-background dots-pattern-sm">
+    <div className="min-h-screen bg-background">
       <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-6">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">
-              Paramètres
-              <span className="text-pop-orange">.</span>
-            </h1>
-            <p className="text-foreground/70 text-lg">Gérez votre compte et vos préférences</p>
+          <div>
+            <h1 className="text-3xl font-bold">Paramètres</h1>
+            <p className="text-muted-foreground">Gérez votre compte et vos préférences</p>
           </div>
 
           <Tabs defaultValue="account" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 bg-card border-2 border-pop-orange rounded-xl p-1">
-              <TabsTrigger value="account" className="data-[state=active]:bg-pop-orange data-[state=active]:text-white">Compte</TabsTrigger>
-              <TabsTrigger value="subscription" className="data-[state=active]:bg-pop-blue data-[state=active]:text-pop-dark">Abonnement</TabsTrigger>
-              <TabsTrigger value="integrations" className="data-[state=active]:bg-pop-orange data-[state=active]:text-white">Intégrations</TabsTrigger>
-              {isStarterPlus && <TabsTrigger value="business" className="data-[state=active]:bg-pop-blue data-[state=active]:text-pop-dark">Entreprise</TabsTrigger>}
-              {isPremium && <TabsTrigger value="intelligence" className="data-[state=active]:bg-pop-orange data-[state=active]:text-white">Intelligence</TabsTrigger>}
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+              <TabsTrigger value="account">Compte</TabsTrigger>
+              <TabsTrigger value="subscription">Abonnement</TabsTrigger>
+              <TabsTrigger value="integrations">Intégrations</TabsTrigger>
+              {isStarterPlus && <TabsTrigger value="business">Entreprise</TabsTrigger>}
+              {isPremium && <TabsTrigger value="intelligence">Intelligence</TabsTrigger>}
             </TabsList>
 
             {/* Account Settings */}
             <TabsContent value="account" className="space-y-6">
-              <Card className="card-pop-art border-pop-orange">
-                <CardHeader className="border-b border-pop-orange/20">
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <User className="w-5 h-5 text-pop-orange" />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="w-5 h-5" />
                     Informations du Profil
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 p-6">
+                <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-foreground font-medium">Prénom</Label>
+                      <Label htmlFor="firstName">Prénom</Label>
                       <Input 
                         id="firstName"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="border-2 border-border focus:border-pop-orange"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-foreground font-medium">Nom</Label>
+                      <Label htmlFor="lastName">Nom</Label>
                       <Input 
                         id="lastName"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="border-2 border-border focus:border-pop-blue"
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
+                    <Label htmlFor="email">Email</Label>
                     <Input 
                       id="email"
                       value={user.email || ''}
                       disabled
-                      className="bg-muted border-2 border-muted"
+                      className="bg-muted"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-foreground font-medium">Téléphone</Label>
+                    <Label htmlFor="phone">Téléphone</Label>
                     <Input 
                       id="phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="border-2 border-border focus:border-pop-orange"
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-pop-blue/5 rounded-lg border border-pop-blue/20">
+                  <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label className="text-foreground font-medium">Langue</Label>
-                      <p className="text-sm text-foreground/70">Français (Canada)</p>
+                      <Label>Langue</Label>
+                      <p className="text-sm text-muted-foreground">Français (Canada)</p>
                     </div>
-                    <Button variant="outline" size="sm" className="border-pop-blue text-pop-blue hover:bg-pop-blue hover:text-white">
-                      Changer
-                    </Button>
+                    <Button variant="outline" size="sm">Changer</Button>
                   </div>
 
-                  <Separator className="bg-pop-orange/20" />
+                  <Separator />
                   
                   <div className="flex justify-end space-x-2">
-                    <Button variant="outline" className="border-border hover:bg-muted">Annuler</Button>
-                    <Button className="btn-pop-orange">Sauvegarder</Button>
+                    <Button variant="outline">Annuler</Button>
+                    <Button>Sauvegarder</Button>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="card-pop-art border-pop-blue">
-                <CardHeader className="border-b border-pop-blue/20">
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Bell className="w-5 h-5 text-pop-blue" />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bell className="w-5 h-5" />
                     Préférences de Notification
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 p-6">
-                  <div className="flex items-center justify-between p-4 bg-pop-orange/5 rounded-lg border border-pop-orange/20">
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label className="text-foreground font-medium">Notifications par email</Label>
-                      <p className="text-sm text-foreground/70">Recevoir les mises à jour importantes</p>
+                      <Label>Notifications par email</Label>
+                      <p className="text-sm text-muted-foreground">Recevoir les mises à jour importantes</p>
                     </div>
                     <Switch checked={notifications} onCheckedChange={setNotifications} />
                   </div>
                   
-                  <div className="flex items-center justify-between p-4 bg-pop-blue/5 rounded-lg border border-pop-blue/20">
+                  <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label className="text-foreground font-medium">Emails marketing</Label>
-                      <p className="text-sm text-foreground/70">Conseils et promotions</p>
+                      <Label>Emails marketing</Label>
+                      <p className="text-sm text-muted-foreground">Conseils et promotions</p>
                     </div>
                     <Switch checked={marketingEmails} onCheckedChange={setMarketingEmails} />
                   </div>
@@ -192,59 +185,59 @@ const Settings = () => {
 
             {/* Subscription Management */}
             <TabsContent value="subscription" className="space-y-6">
-              <Card className="card-pop-art border-pop-orange">
-                <CardHeader className="border-b border-pop-orange/20">
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <CreditCard className="w-5 h-5 text-pop-orange" />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5" />
                     Plan Actuel
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 p-6">
+                <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-bold text-xl text-foreground">{currentTier.toUpperCase()}</h3>
-                      <p className="text-sm text-foreground/70">Plan actuel</p>
+                      <h3 className="font-medium">{currentTier.toUpperCase()}</h3>
+                      <p className="text-sm text-muted-foreground">Plan actuel</p>
                     </div>
                     {getTierBadge(currentTier)}
                   </div>
                   
-                  <Separator className="bg-pop-orange/20" />
+                  <Separator />
                   
                   <div className="space-y-3">
-                    <h4 className="font-medium text-foreground">Utilisation ce mois</h4>
+                    <h4 className="font-medium">Utilisation ce mois</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2 p-4 bg-pop-orange/5 rounded-lg border border-pop-orange/20">
+                      <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-foreground font-medium">Réservations</span>
-                          <span className="text-pop-orange font-bold">{getUsageMetrics(currentTier).bookings}</span>
+                          <span>Réservations</span>
+                          <span>{getUsageMetrics(currentTier).bookings}</span>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-3 border">
+                        <div className="w-full bg-muted rounded-full h-2">
                           <div 
-                            className="bg-gradient-to-r from-pop-orange to-pop-blue h-3 rounded-full transition-all duration-500" 
+                            className="bg-primary h-2 rounded-full" 
                             style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '70%' : '45%' }}
                           />
                         </div>
                       </div>
-                      <div className="space-y-2 p-4 bg-pop-blue/5 rounded-lg border border-pop-blue/20">
+                      <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-foreground font-medium">Stockage</span>
-                          <span className="text-pop-blue font-bold">{getUsageMetrics(currentTier).storage}</span>
+                          <span>Stockage</span>
+                          <span>{getUsageMetrics(currentTier).storage}</span>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-3 border">
-                          <div className="bg-gradient-to-r from-pop-blue to-pop-orange h-3 rounded-full transition-all duration-500" style={{ width: '25%' }} />
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div className="bg-primary h-2 rounded-full" style={{ width: '25%' }} />
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <Separator className="bg-pop-orange/20" />
+                  <Separator />
                   
-                  <div className="flex justify-between items-center p-4 bg-gradient-to-r from-pop-orange/10 to-pop-blue/10 rounded-lg border-2 border-pop-orange/20">
+                  <div className="flex justify-between items-center">
                     <div>
-                      <p className="font-medium text-foreground">Passer à un plan supérieur</p>
-                      <p className="text-sm text-foreground/70">Débloquez plus de fonctionnalités</p>
+                      <p className="font-medium">Passer à un plan supérieur</p>
+                      <p className="text-sm text-muted-foreground">Débloquez plus de fonctionnalités</p>
                     </div>
-                    <Button className="btn-pop-blue text-pop-dark">Voir les plans</Button>
+                    <Button>Voir les plans</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -252,64 +245,58 @@ const Settings = () => {
 
             {/* Integration Settings */}
             <TabsContent value="integrations" className="space-y-6">
-              <Card className="card-pop-art border-pop-blue">
-                <CardHeader className="border-b border-pop-blue/20">
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Plug className="w-5 h-5 text-pop-blue" />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Plug className="w-5 h-5" />
                     Intégrations Disponibles
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 p-6">
-                  <div className="flex items-center justify-between p-4 border-2 border-pop-orange/20 rounded-lg hover:bg-pop-orange/5 transition-colors">
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <Calendar className="w-6 h-6 text-pop-orange" />
+                      <Calendar className="w-6 h-6" />
                       <div>
-                        <h4 className="font-medium text-foreground">Google Calendar</h4>
-                        <p className="text-sm text-foreground/70">
+                        <h4 className="font-medium">Google Calendar</h4>
+                        <p className="text-sm text-muted-foreground">
                           {isStarterPlus ? 'Synchronisation bidirectionnelle' : 'Synchronisation basique'}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge className="badge-pop-blue">Connecté</Badge>
-                      <Button variant="outline" size="sm" className="border-pop-orange text-pop-orange hover:bg-pop-orange hover:text-white">
-                        Configurer
-                      </Button>
+                      <Badge variant="secondary">Connecté</Badge>
+                      <Button variant="outline" size="sm">Configurer</Button>
                     </div>
                   </div>
 
                   {isProfessionalPlus && (
-                    <div className="flex items-center justify-between p-4 border-2 border-pop-blue/20 rounded-lg hover:bg-pop-blue/5 transition-colors">
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <FileText className="w-6 h-6 text-pop-blue" />
+                        <FileText className="w-6 h-6" />
                         <div>
-                          <h4 className="font-medium text-foreground">QuickBooks</h4>
-                          <p className="text-sm text-foreground/70">Synchronisation comptable automatique</p>
+                          <h4 className="font-medium">QuickBooks</h4>
+                          <p className="text-sm text-muted-foreground">Synchronisation comptable automatique</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="border-muted text-foreground/60">Non connecté</Badge>
-                        <Button variant="outline" size="sm" className="border-pop-blue text-pop-blue hover:bg-pop-blue hover:text-white">
-                          Connecter
-                        </Button>
+                        <Badge variant="outline">Non connecté</Badge>
+                        <Button variant="outline" size="sm">Connecter</Button>
                       </div>
                     </div>
                   )}
 
                   {isPremium && (
-                    <div className="flex items-center justify-between p-4 border-2 border-pop-orange/20 rounded-lg hover:bg-pop-orange/5 transition-colors">
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <Brain className="w-6 h-6 text-pop-orange" />
+                        <Brain className="w-6 h-6" />
                         <div>
-                          <h4 className="font-medium text-foreground">Intelligence Marché IA</h4>
-                          <p className="text-sm text-foreground/70">Analyse prédictive et recommandations</p>
+                          <h4 className="font-medium">Intelligence Marché IA</h4>
+                          <p className="text-sm text-muted-foreground">Analyse prédictive et recommandations</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Badge className="badge-pop-orange">Actif</Badge>
-                        <Button variant="outline" size="sm" className="border-pop-orange text-pop-orange hover:bg-pop-orange hover:text-white">
-                          Paramètres IA
-                        </Button>
+                        <Badge variant="default">Actif</Badge>
+                        <Button variant="outline" size="sm">Paramètres IA</Button>
                       </div>
                     </div>
                   )}
@@ -320,14 +307,14 @@ const Settings = () => {
             {/* Business Preferences */}
             {isStarterPlus && (
               <TabsContent value="business" className="space-y-6">
-                <Card className="card-pop-art border-pop-orange">
-                  <CardHeader className="border-b border-pop-orange/20">
-                    <CardTitle className="flex items-center gap-2 text-foreground">
-                      <Building2 className="w-5 h-5 text-pop-orange" />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Building2 className="w-5 h-5" />
                       Informations d'Entreprise
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4 p-6">
+                  <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="businessName">Nom de l'entreprise</Label>
                       <Input 
@@ -366,8 +353,8 @@ const Settings = () => {
                     )}
                     
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" className="border-border hover:bg-muted">Annuler</Button>
-                      <Button className="btn-pop-orange">Sauvegarder</Button>
+                      <Button variant="outline">Annuler</Button>
+                      <Button>Sauvegarder</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -377,19 +364,19 @@ const Settings = () => {
             {/* Market Intelligence */}
             {isPremium && (
               <TabsContent value="intelligence" className="space-y-6">
-                <Card className="card-pop-art border-pop-blue">
-                  <CardHeader className="border-b border-pop-blue/20">
-                    <CardTitle className="flex items-center gap-2 text-foreground">
-                      <Brain className="w-5 h-5 text-pop-blue" />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Brain className="w-5 h-5" />
                       Intelligence Marché
-                      <Crown className="w-4 h-4 text-pop-orange" />
+                      <Crown className="w-4 h-4 text-yellow-500" />
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6 p-6">
-                    <div className="text-center py-12 dots-pattern-md rounded-lg">
-                      <Zap className="w-16 h-16 text-pop-orange mx-auto mb-4 animate-pulse" />
-                      <h3 className="text-2xl font-bold mb-2 text-foreground">Fonctionnalité à Venir</h3>
-                      <p className="text-foreground/70 max-w-md mx-auto text-lg">
+                  <CardContent className="space-y-6">
+                    <div className="text-center py-12">
+                      <Zap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-medium mb-2">Fonctionnalité à Venir</h3>
+                      <p className="text-muted-foreground max-w-md mx-auto">
                         L'intelligence marché alimentée par l'IA sera bientôt disponible pour analyser 
                         les tendances du marché et optimiser vos prix automatiquement.
                       </p>
@@ -401,39 +388,39 @@ const Settings = () => {
           </Tabs>
 
           {/* Privacy & Data Section */}
-          <Card className="card-pop-art border-pop-blue">
-            <CardHeader className="border-b border-pop-blue/20">
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <Shield className="w-5 h-5 text-pop-blue" />
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
                 Confidentialité et Données
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 p-6">
-              <div className="flex items-center justify-between p-4 bg-pop-orange/5 rounded-lg border border-pop-orange/20">
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <Label className="text-foreground font-medium">Partage de données anonymes</Label>
-                  <p className="text-sm text-foreground/70">
+                  <Label>Partage de données anonymes</Label>
+                  <p className="text-sm text-muted-foreground">
                     Aider à améliorer nos services avec des données anonymisées
                   </p>
                 </div>
                 <Switch checked={dataSharing} onCheckedChange={setDataSharing} />
               </div>
               
-              <Separator className="bg-pop-blue/20" />
+              <Separator />
               
               <div className="space-y-3">
-                <h4 className="font-medium text-foreground">Conformité RGPD</h4>
+                <h4 className="font-medium">Conformité RGPD</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button variant="outline" className="justify-start border-pop-blue text-pop-blue hover:bg-pop-blue hover:text-white">
+                  <Button variant="outline" className="justify-start">
                     <Globe className="w-4 h-4 mr-2" />
                     Télécharger mes données
                   </Button>
-                  <Button variant="outline" className="justify-start border-destructive text-destructive hover:bg-destructive hover:text-white">
+                  <Button variant="outline" className="justify-start text-destructive">
                     <Shield className="w-4 h-4 mr-2" />
                     Supprimer mon compte
                   </Button>
                 </div>
-                <p className="text-xs text-foreground/60 p-3 bg-muted/30 rounded-lg">
+                <p className="text-xs text-muted-foreground">
                   Conformément au RGPD, vous avez le droit d'accéder, de modifier ou de supprimer vos données personnelles.
                 </p>
               </div>
@@ -446,5 +433,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
-</edits_to_apply>
