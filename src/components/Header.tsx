@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -59,8 +60,8 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-3">
             <div className="h-12 w-12 overflow-hidden rounded">
               <img 
-                src="/lovable-uploads/9c75838a-e1e7-4d81-84b5-eac483f98d8f.png" 
-                alt="Logo" 
+                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/HOUSIE_MARKETPLACE.png" 
+                alt="HOUSIE MARKETPLACE" 
                 className="h-full w-full object-contain"
               />
             </div>
