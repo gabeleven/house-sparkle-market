@@ -25,7 +25,7 @@ const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
         <Link to="/auth">
           <Button variant="ghost" className="text-sm">Connexion</Button>
         </Link>
-        <Link to="/auth">
+        <Link to="/auth?tab=signup">
           <Button className="pop-orange-btn text-sm">S'inscrire</Button>
         </Link>
       </div>

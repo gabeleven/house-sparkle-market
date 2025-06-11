@@ -5,25 +5,13 @@ import { MessageCircle } from 'lucide-react';
 import { useChatbot } from '@/contexts/ChatbotContext';
 
 export const FloatingChatButton: React.FC = () => {
-  // Add error handling for chatbot context
-  let chatbotContext;
-  try {
-    chatbotContext = useChatbot();
-  } catch (error) {
-    console.error('FloatingChatButton: Chatbot context error:', error);
-    return null; // Don't render if context is broken
-  }
-
-  const { isOpen, openChatbot } = chatbotContext;
+  const { isOpen, openChatbot } = useChatbot();
 
   if (isOpen) return null;
 
   const handleClick = () => {
-    try {
-      openChatbot();
-    } catch (error) {
-      console.error('Error opening chatbot:', error);
-    }
+    console.log('FloatingChatButton clicked');
+    openChatbot();
   };
 
   return (

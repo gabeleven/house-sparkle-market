@@ -28,6 +28,7 @@ import TaxCompliancePage from '@/pages/TaxCompliancePage';
 import Settings from '@/pages/Settings';
 import Bookings from '@/pages/Bookings';
 import CleanerReviews from '@/pages/CleanerReviews';
+import Auth from '@/pages/Auth';
 import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -49,7 +50,7 @@ function App() {
                       <Route path="/profile/:id" element={<Profile />} />
                       <Route path="/public-profile/:id" element={<PublicProfile />} />
                       <Route path="/my-profile" element={<MyProfile />} />
-                      <Route path="/auth" element={<Index />} />
+                      <Route path="/auth" element={<Auth />} />
                       <Route path="/chat" element={<Chat />} />
                       <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
                       <Route path="/prestataires" element={<ServiceProvidersPage />} />
