@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, BarChart3, TrendingUp, Calculator, Briefcase } from "lucide-react";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SubscriptionTier, getTierInfo } from "@/types/subscription";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -41,8 +40,6 @@ const ServiceProvidersPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-green-800 to-yellow-700">
-      <Header />
-      
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
