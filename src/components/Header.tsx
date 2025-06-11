@@ -58,16 +58,16 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo with mascot - positioned on the left */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="h-12 w-12 overflow-hidden rounded">
+            <div className="h-12 w-28 overflow-hidden">
               <img 
-                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/HOUSIE_MARKETPLACE.png" 
+                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/HOUSIE-300PX.svg" 
                 alt="HOUSIE MARKETPLACE" 
                 className="h-full w-full object-contain"
               />
             </div>
-            <div className="h-10 w-10 overflow-hidden">
+            <div className="h-12 w-12 overflow-hidden">
               <img 
-                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/Default_Female_character_with_blue_eyes_wearing_construction_h_1_8daf96c5-174c-4c3b-bdcb-2586d46308bd_0.png" 
+                src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/image_2025-06-10_220433101.svg" 
                 alt="HOUSIE Cleaning Mascot" 
                 className="h-full w-full object-contain"
               />
