@@ -9,14 +9,14 @@ const HeaderLogo = () => {
         <img 
           src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/housie-bubbles.svg" 
           alt="HOUSIE MARKETPLACE" 
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain svg-logo-orange"
         />
       </div>
       <div className="h-12 w-12 overflow-hidden">
         <img 
           src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/mascot_originz.svg" 
           alt="HOUSIE Cleaning Mascot" 
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain svg-transparent"
         />
       </div>
     </Link>
