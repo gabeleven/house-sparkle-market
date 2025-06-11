@@ -2,8 +2,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Calendar, BarChart3, Bell, Settings } from 'lucide-react';
-import { SubscriptionTier, getMenuItems } from '@/types/subscription';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, BarChart3, MessageSquare, Settings, User } from 'lucide-react';
+import { SubscriptionTier } from '@/types/subscription';
 import SubscriptionSimulator from '@/components/SubscriptionSimulator';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -27,123 +28,119 @@ const MobileMenu = ({
 }: MobileMenuProps) => {
   if (!isOpen) return null;
 
-  const dropdownItems = getMenuItems(simulatedTier);
-
-  const getIcon = (iconName: string) => {
-    // Simplified icon handling for mobile menu
-    return <Settings className="w-4 h-4" />;
-  };
+  const essentialMenuItems = [
+    { path: '/my-profile', title: 'Profil', icon: <User className="w-4 h-4" /> },
+    { path: '/provider-dashboard', title: 'Dashboard', icon: <BarChart3 className="w-4 h-4" /> },
+    { path: '/bookings', title: 'Réservations', icon: <Calendar className="w-4 h-4" /> },
+    { path: '/chat', title: 'Messages', icon: <MessageSquare className="w-4 h-4" /> },
+    { path: '/settings', title: 'Paramètres', icon: <Settings className="w-4 h-4" /> },
+  ];
 
   return (
-    <div className="md:hidden py-4 border-t">
+    <div className="md:hidden py-4 border-t bg-card/50 backdrop-blur-sm">
       <div className="flex flex-col space-y-3">
-        <Link 
-          to="/comment-ca-marche" 
-          className="text-muted-foreground hover:text-primary transition-colors py-2"
-          onClick={onClose}
-        >
-          Comment ça marche
-        </Link>
-        <Link 
-          to="/browse-cleaners" 
-          className="text-muted-foreground hover:text-primary transition-colors py-2"
-          onClick={onClose}
-        >
-          Trouver service
-        </Link>
-        <Link 
-          to="/prestataires" 
-          className="text-muted-foreground hover:text-primary transition-colors py-2"
-          onClick={onClose}
-        >
-          HOUSIE Pro
-        </Link>
-        
-        {/* Mobile Subscription Simulator */}
+        {/* User Info */}
         {user && (
-          <div className="py-2">
-            <SubscriptionSimulator 
-              currentTier={simulatedTier} 
-              onTierChange={setSimulatedTier} 
-            />
+          <div className="px-4 py-2 bg-accent/30 rounded-lg mx-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
+              <Badge variant="outline" className="text-xs">
+                {simulatedTier.toUpperCase()}
+              </Badge>
+            </div>
           </div>
         )}
-        
-        {/* Mobile Dashboard Links - Only show if user is logged in */}
-        {user && (
+
+        {/* Navigation Items */}
+        {user ? (
           <>
+            {/* Essential menu items for logged in users */}
+            {essentialMenuItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
+                onClick={onClose}
+              >
+                <span className="text-[hsl(var(--pop-blue))]">{item.icon}</span>
+                <span className="text-sm font-medium">{item.title}</span>
+              </Link>
+            ))}
+            
+            {/* Mobile Subscription Simulator */}
+            <div className="px-4 py-2">
+              <SubscriptionSimulator 
+                currentTier={simulatedTier} 
+                onTierChange={setSimulatedTier} 
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Navigation for non-logged in users */}
             <Link 
-              to="/bookings" 
-              className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
+              to="/browse-cleaners" 
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
               onClick={onClose}
             >
-              <Calendar className="w-4 h-4" />
-              <span>Mes Réservations</span>
+              Services
             </Link>
             <Link 
-              to="/provider-dashboard" 
-              className="text-muted-foreground hover:text-primary transition-colors py-2 flex items-center space-x-1"
+              to="/comment-ca-marche" 
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
               onClick={onClose}
             >
-              <BarChart3 className="w-4 h-4" />
-              <span>Tableau Prestataire</span>
+              À Propos
+            </Link>
+            <Link 
+              to="/prestataires" 
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
+              onClick={onClose}
+            >
+              HOUSIE Pro
+            </Link>
+            <Link 
+              to="/support" 
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
+              onClick={onClose}
+            >
+              Support
             </Link>
           </>
         )}
-        <Link 
-          to="/tax-compliance" 
-          className="text-muted-foreground hover:text-primary transition-colors py-2"
-          onClick={onClose}
-        >
-          Conformité
-        </Link>
-        <Link 
-          to="/support" 
-          className="text-muted-foreground hover:text-primary transition-colors py-2"
-          onClick={onClose}
-        >
-          Support
-        </Link>
         
         {/* Mobile Language Toggle */}
-        <div className="py-2">
+        <div className="px-4 py-2">
           <LanguageToggle />
         </div>
         
         {/* Mobile Theme Toggle */}
-        <div className="py-2">
+        <div className="px-4 py-2">
           <ThemeToggle />
         </div>
         
+        {/* Auth Actions */}
         {user ? (
-          <>
-            {dropdownItems.map((item) => (
-              <Link key={item.path} to={item.path} onClick={onClose}>
-                <Button variant="ghost" className="w-full justify-start">
-                  <div className="flex items-center space-x-2">
-                    {getIcon(item.icon)}
-                    <span>{item.labelKey}</span>
-                    {item.tierNote && (
-                      <span className="text-xs text-muted-foreground">{item.tierNote}</span>
-                    )}
-                  </div>
-                  {item.showNotification && <Bell className="w-4 h-4 ml-2" />}
-                </Button>
-              </Link>
-            ))}
-            <Button onClick={handleSignOut} variant="outline" className="w-full justify-start">
-              Déconnexion
-            </Button>
-          </>
+          <Button 
+            onClick={handleSignOut} 
+            variant="outline" 
+            className="mx-4 justify-start"
+          >
+            Déconnexion
+          </Button>
         ) : (
-          <>
+          <div className="flex flex-col space-y-2 px-4">
             <Link to="/auth" onClick={onClose}>
-              <Button variant="ghost" className="w-full justify-start">Connexion</Button>
+              <Button variant="ghost" className="w-full justify-start">
+                Connexion
+              </Button>
             </Link>
             <Link to="/auth" onClick={onClose}>
-              <Button className="w-full justify-start">S'inscrire</Button>
+              <Button className="pop-orange-btn w-full justify-start">
+                S'inscrire
+              </Button>
             </Link>
-          </>
+          </div>
         )}
       </div>
     </div>

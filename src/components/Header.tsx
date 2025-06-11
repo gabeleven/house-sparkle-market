@@ -10,7 +10,6 @@ import SubscriptionSimulator from '@/components/SubscriptionSimulator';
 import { SubscriptionTier } from '@/types/subscription';
 import HeaderLogo from '@/components/header/HeaderLogo';
 import NavigationItems from '@/components/header/NavigationItems';
-import DashboardsDropdown from '@/components/header/DashboardsDropdown';
 import UserMenu from '@/components/header/UserMenu';
 import MobileMenu from '@/components/header/MobileMenu';
 
@@ -34,17 +33,19 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <NavigationItems />
+            <NavigationItems isLoggedIn={!!user} />
             
-            {/* Dashboards Dropdown - Only show if user is logged in */}
-            <DashboardsDropdown user={user} />
-            
-            <Link to="/tax-compliance" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-              Conformité
-            </Link>
-            <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-              Support
-            </Link>
+            {/* Show additional links for non-logged in users */}
+            {!user && (
+              <>
+                <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm">
+                  HOUSIE Pro
+                </Link>
+                <Link to="/support" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Support
+                </Link>
+              </>
+            )}
             
             {/* Subscription Simulator - Only show when logged in */}
             {user && (
