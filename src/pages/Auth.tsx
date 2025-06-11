@@ -12,6 +12,8 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('login');
+  const [currentView, setCurrentView] = useState('login');
+  const userType = searchParams.get('type') || 'customer';
 
   useEffect(() => {
     // Redirect authenticated users to home
@@ -25,6 +27,7 @@ const Auth = () => {
     const tab = searchParams.get('tab');
     if (tab === 'signup') {
       setActiveTab('signup');
+      setCurrentView('signup');
     }
   }, [searchParams]);
 
@@ -39,6 +42,20 @@ const Auth = () => {
   if (user) {
     return null; // Will redirect via useEffect
   }
+
+  const handleSwitchToSignup = () => {
+    setCurrentView('signup');
+    setActiveTab('signup');
+  };
+
+  const handleSwitchToLogin = () => {
+    setCurrentView('login');
+    setActiveTab('login');
+  };
+
+  const handleSwitchToForgot = () => {
+    setCurrentView('forgot');
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -67,11 +84,18 @@ const Auth = () => {
               </TabsList>
               
               <TabsContent value="login" className="mt-6">
-                <LoginForm />
+                <LoginForm 
+                  userType={userType}
+                  onSwitchToSignup={handleSwitchToSignup}
+                  onSwitchToForgot={handleSwitchToForgot}
+                />
               </TabsContent>
               
               <TabsContent value="signup" className="mt-6">
-                <SignupForm />
+                <SignupForm 
+                  userType={userType}
+                  onSwitchToLogin={handleSwitchToLogin}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
