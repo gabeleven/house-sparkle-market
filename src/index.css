@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -46,6 +47,11 @@
     /* Pop Art Colors - LIGHT MODE (Vibrant) */
     --pop-orange: 18 100% 60%; /* #FF6B35 */
     --pop-blue: 178 68% 60%; /* #4ECDC4 */
+
+    /* Intensity Theme - Default Vibrant */
+    --intensity-primary: 195 100% 50%; /* Electric Blue #00BFFF */
+    --intensity-secondary: 328 100% 54%; /* Hot Pink #FF1493 */
+    --intensity-accent: 123 100% 50%; /* Lime Green #32CD32 */
   }
 
   .dark {
@@ -90,6 +96,20 @@
     --pop-orange: 18 65% 48%; /* #CC5429 */
     --pop-blue: 178 48% 42%; /* #3BA89A */
   }
+
+  /* VIBRANT INTENSITY THEME */
+  .vibrant {
+    --intensity-primary: 195 100% 50%; /* Electric Blue #00BFFF */
+    --intensity-secondary: 328 100% 54%; /* Hot Pink #FF1493 */
+    --intensity-accent: 123 100% 50%; /* Lime Green #32CD32 */
+  }
+
+  /* MATTE INTENSITY THEME */
+  .matte {
+    --intensity-primary: 237 53% 15%; /* Deep Navy #1a1a2e */
+    --intensity-secondary: 263 52% 67%; /* Muted Purple #6c5ce7 */
+    --intensity-accent: 211 58% 70%; /* Soft Gray #74b9ff */
+  }
 }
 
 @layer base {
@@ -123,270 +143,300 @@
     @apply text-muted-foreground;
   }
 
-  /* LIGHT MODE - Comic Book Style Buttons */
-  .pop-orange-btn {
-    background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
+  /* INTENSITY-AWARE BUTTON STYLES */
+  /* VIBRANT MODE - Comic Book Style Buttons */
+  .vibrant .pop-orange-btn {
+    background: linear-gradient(135deg, hsl(var(--intensity-primary)), hsl(var(--intensity-primary) / 0.9));
     color: white;
     transition: all 0.2s ease;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    box-shadow: 0 4px 0 hsl(var(--pop-orange) / 0.6), 0 8px 20px hsl(var(--pop-orange) / 0.3);
+    box-shadow: 0 6px 0 hsl(var(--intensity-primary) / 0.6), 0 12px 30px hsl(var(--intensity-primary) / 0.4);
+    animation: energetic-pulse 2s ease-in-out infinite;
   }
 
-  .pop-orange-btn:hover {
-    background: linear-gradient(135deg, hsl(var(--pop-orange) / 0.95), hsl(var(--pop-orange) / 0.85));
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 hsl(var(--pop-orange) / 0.6), 0 12px 25px hsl(var(--pop-orange) / 0.4);
+  .vibrant .pop-orange-btn:hover {
+    background: linear-gradient(135deg, hsl(var(--intensity-secondary)), hsl(var(--intensity-secondary) / 0.9));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 0 hsl(var(--intensity-secondary) / 0.6), 0 16px 35px hsl(var(--intensity-secondary) / 0.5);
   }
 
-  .pop-orange-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 hsl(var(--pop-orange) / 0.6), 0 4px 15px hsl(var(--pop-orange) / 0.3);
-  }
-
-  .pop-blue-btn {
-    background: linear-gradient(135deg, hsl(var(--pop-blue)), hsl(var(--pop-blue) / 0.9));
-    color: hsl(var(--background));
+  .vibrant .pop-blue-btn {
+    background: linear-gradient(135deg, hsl(var(--intensity-accent)), hsl(var(--intensity-accent) / 0.9));
+    color: white;
     transition: all 0.2s ease;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    box-shadow: 0 4px 0 hsl(var(--pop-blue) / 0.6), 0 8px 20px hsl(var(--pop-blue) / 0.3);
+    box-shadow: 0 6px 0 hsl(var(--intensity-accent) / 0.6), 0 12px 30px hsl(var(--intensity-accent) / 0.4);
+    animation: energetic-pulse 2.5s ease-in-out infinite;
   }
 
-  .pop-blue-btn:hover {
-    background: linear-gradient(135deg, hsl(var(--pop-blue) / 0.95), hsl(var(--pop-blue) / 0.85));
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 hsl(var(--pop-blue) / 0.6), 0 12px 25px hsl(var(--pop-blue) / 0.4);
-  }
-
-  .pop-blue-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 hsl(var(--pop-blue) / 0.6), 0 4px 15px hsl(var(--pop-blue) / 0.3);
-  }
-
-  /* DARK MODE - Sophisticated Style Buttons */
-  .dark .pop-orange-btn {
-    background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
+  /* MATTE MODE - Sophisticated Style Buttons */
+  .matte .pop-orange-btn {
+    background: linear-gradient(135deg, hsl(var(--intensity-primary)), hsl(var(--intensity-primary) / 0.9));
     color: white;
     font-weight: 600;
     text-transform: none;
     letter-spacing: normal;
-    box-shadow: 0 2px 8px hsl(var(--pop-orange) / 0.2);
-  }
-
-  .dark .pop-orange-btn:hover {
-    background: linear-gradient(135deg, hsl(var(--pop-orange) / 0.9), hsl(var(--pop-orange) / 0.8));
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px hsl(var(--pop-orange) / 0.3);
-  }
-
-  .dark .pop-blue-btn {
-    background: linear-gradient(135deg, hsl(var(--pop-blue)), hsl(var(--pop-blue) / 0.9));
-    color: white;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: normal;
-    box-shadow: 0 2px 8px hsl(var(--pop-blue) / 0.2);
-  }
-
-  .dark .pop-blue-btn:hover {
-    background: linear-gradient(135deg, hsl(var(--pop-blue) / 0.9), hsl(var(--pop-blue) / 0.8));
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px hsl(var(--pop-blue) / 0.3);
-  }
-
-  /* Ben-Day Dot Pattern - More prominent in light mode */
-  .ben-day-dots {
-    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.15) 1.5px, transparent 1.5px);
-    background-size: 12px 12px;
-  }
-
-  .ben-day-dots-blue {
-    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.15) 1.5px, transparent 1.5px);
-    background-size: 12px 12px;
-  }
-
-  /* Dark mode - more subtle dots */
-  .dark .ben-day-dots {
-    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.08) 1px, transparent 1px);
-    background-size: 10px 10px;
-  }
-
-  .dark .ben-day-dots-blue {
-    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.08) 1px, transparent 1px);
-    background-size: 10px 10px;
-  }
-
-  /* Pop Art Card Accents - Dynamic based on theme */
-  .pop-card {
-    border: 2px solid transparent;
-    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
-                linear-gradient(45deg, hsl(var(--pop-orange)), hsl(var(--pop-blue))) border-box;
-    position: relative;
+    box-shadow: 0 3px 12px hsl(var(--intensity-primary) / 0.3);
     transition: all 0.3s ease;
   }
 
-  .pop-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(circle, hsl(var(--pop-orange) / 0.05) 1px, transparent 1px);
-    background-size: 12px 12px;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-
-  /* Light mode - more dramatic effects */
-  .pop-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px hsl(var(--pop-orange) / 0.2);
-  }
-
-  /* Dark mode - subtle effects */
-  .dark .pop-card:hover {
+  .matte .pop-orange-btn:hover {
+    background: linear-gradient(135deg, hsl(var(--intensity-secondary)), hsl(var(--intensity-secondary) / 0.9));
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px hsl(var(--pop-orange) / 0.1);
+    box-shadow: 0 5px 15px hsl(var(--intensity-secondary) / 0.4);
   }
 
-  /* Navigation Hover Effects - Enhanced */
-  .nav-link-pop {
-    position: relative;
-    transition: all 0.2s ease;
+  .matte .pop-blue-btn {
+    background: linear-gradient(135deg, hsl(var(--intensity-accent)), hsl(var(--intensity-accent) / 0.9));
+    color: white;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: 0 3px 12px hsl(var(--intensity-accent) / 0.3);
+    transition: all 0.3s ease;
   }
 
-  .nav-link-pop:hover {
-    color: hsl(var(--pop-orange));
+  /* INTENSITY-AWARE ANIMATIONS */
+  @keyframes energetic-pulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(1.02);
+      filter: brightness(1.1);
+    }
   }
 
-  .nav-link-pop::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, hsl(var(--pop-orange)), hsl(var(--pop-blue)));
-    transition: width 0.3s ease;
+  @keyframes gentle-glow {
+    0%, 100% {
+      box-shadow: 0 0 5px hsl(var(--intensity-primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 15px hsl(var(--intensity-primary) / 0.5);
+    }
   }
 
-  .nav-link-pop:hover::after {
-    width: 100%;
+  /* Ben-Day Dot Pattern - Intensity Aware */
+  .vibrant .ben-day-dots {
+    background-image: radial-gradient(circle, hsl(var(--intensity-secondary) / 0.25) 2px, transparent 2px);
+    background-size: 15px 15px;
+    animation: dot-shift 4s ease-in-out infinite;
   }
 
-  /* Light mode - more dramatic nav effects */
-  .nav-link-pop::after {
+  .matte .ben-day-dots {
+    background-image: radial-gradient(circle, hsl(var(--intensity-primary) / 0.1) 1px, transparent 1px);
+    background-size: 12px 12px;
+  }
+
+  @keyframes dot-shift {
+    0%, 100% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 7.5px 7.5px;
+    }
+  }
+
+  /* Pop Art Card Accents - Intensity Dynamic */
+  .vibrant .pop-card {
+    border: 3px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(45deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary)), hsl(var(--intensity-accent))) border-box;
+    animation: vibrant-border 3s ease-in-out infinite;
+  }
+
+  .matte .pop-card {
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(45deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary))) border-box;
+    transition: all 0.4s ease;
+  }
+
+  @keyframes vibrant-border {
+    0%, 100% {
+      filter: hue-rotate(0deg);
+    }
+    33% {
+      filter: hue-rotate(120deg);
+    }
+    66% {
+      filter: hue-rotate(240deg);
+    }
+  }
+
+  /* Navigation Hover Effects - Intensity Enhanced */
+  .vibrant .nav-link-pop:hover {
+    color: hsl(var(--intensity-secondary));
+    animation: vibrant-text-glow 0.3s ease-in-out;
+  }
+
+  .vibrant .nav-link-pop::after {
+    background: linear-gradient(90deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary)), hsl(var(--intensity-accent)));
     height: 4px;
     border-radius: 2px;
   }
 
-  /* Dark mode - subtle nav effects */
-  .dark .nav-link-pop::after {
+  .matte .nav-link-pop:hover {
+    color: hsl(var(--intensity-secondary));
+  }
+
+  .matte .nav-link-pop::after {
+    background: linear-gradient(90deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary)));
     height: 2px;
     border-radius: 1px;
   }
 
-  /* Chat Assistant Styling - Dynamic */
-  .chat-pop {
-    border-left: 4px solid hsl(var(--pop-blue));
-    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.95));
-    transition: all 0.3s ease;
+  @keyframes vibrant-text-glow {
+    0%, 100% {
+      text-shadow: none;
+    }
+    50% {
+      text-shadow: 0 0 8px hsl(var(--intensity-secondary) / 0.6);
+    }
   }
 
-  .chat-pop::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(circle, hsl(var(--pop-blue) / 0.03) 1px, transparent 1px);
-    background-size: 10px 10px;
-    pointer-events: none;
-  }
-
-  /* Status Indicators */
-  .status-orange {
-    background-color: hsl(var(--pop-orange));
-  }
-
-  .status-blue {
-    background-color: hsl(var(--pop-blue));
-  }
-
-  /* Search Button Enhancement - Dynamic styling */
-  .search-btn-pop {
-    background: linear-gradient(135deg, hsl(var(--pop-orange)), hsl(var(--pop-orange) / 0.9));
-    border: none;
-    color: white;
-    font-weight: 600;
-    transition: all 0.2s ease;
-  }
-
-  .search-btn-pop:hover {
-    background: linear-gradient(135deg, hsl(var(--pop-orange) / 0.9), hsl(var(--pop-orange) / 0.8));
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px hsl(var(--pop-orange) / 0.4);
-  }
-
-  /* Light mode - comic book style search button */
-  .search-btn-pop {
+  /* Search Button Enhancement - Intensity Dynamic */
+  .vibrant .search-btn-pop {
+    background: linear-gradient(135deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary)));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    box-shadow: 0 4px 0 hsl(var(--pop-orange) / 0.6), 0 8px 20px hsl(var(--pop-orange) / 0.3);
+    box-shadow: 0 6px 0 hsl(var(--intensity-primary) / 0.6), 0 12px 30px hsl(var(--intensity-primary) / 0.4);
+    animation: energetic-pulse 2s ease-in-out infinite;
   }
 
-  .search-btn-pop:hover {
-    box-shadow: 0 6px 0 hsl(var(--pop-orange) / 0.6), 0 12px 25px hsl(var(--pop-orange) / 0.4);
-    transform: translateY(-2px);
+  .vibrant .search-btn-pop:hover {
+    background: linear-gradient(135deg, hsl(var(--intensity-accent)), hsl(var(--intensity-secondary)));
+    box-shadow: 0 8px 0 hsl(var(--intensity-accent) / 0.6), 0 16px 35px hsl(var(--intensity-accent) / 0.5);
+    transform: translateY(-3px);
   }
 
-  /* Dark mode - sophisticated search button */
-  .dark .search-btn-pop {
+  .matte .search-btn-pop {
+    background: linear-gradient(135deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary)));
     font-weight: 600;
     text-transform: none;
     letter-spacing: normal;
-    box-shadow: 0 2px 8px hsl(var(--pop-orange) / 0.2);
+    box-shadow: 0 3px 12px hsl(var(--intensity-primary) / 0.3);
   }
 
-  .dark .search-btn-pop:hover {
-    box-shadow: 0 4px 12px hsl(var(--pop-orange) / 0.3);
+  .matte .search-btn-pop:hover {
+    background: linear-gradient(135deg, hsl(var(--intensity-secondary)), hsl(var(--intensity-accent)));
+    box-shadow: 0 5px 15px hsl(var(--intensity-secondary) / 0.4);
     transform: translateY(-1px);
   }
 
-  /* Enhanced theme transition effects */
+  /* Enhanced theme transition effects with intensity */
   * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   }
 
-  /* Light mode specific enhancements */
-  .light {
-    /* More vibrant gradients and effects */
+  /* Intensity-aware utility classes */
+  .text-intensity-primary {
+    color: hsl(var(--intensity-primary));
   }
 
-  .light .pop-card {
-    border-width: 3px;
+  .text-intensity-secondary {
+    color: hsl(var(--intensity-secondary));
   }
 
-  .light .ben-day-dots {
-    background-size: 15px 15px;
+  .text-intensity-accent {
+    color: hsl(var(--intensity-accent));
   }
 
-  /* Comic book style notifications in light mode */
-  .light .toast {
-    border: 3px solid hsl(var(--pop-orange));
-    box-shadow: 0 6px 0 hsl(var(--pop-orange) / 0.3), 0 12px 25px hsl(var(--pop-orange) / 0.2);
+  .bg-intensity-primary {
+    background-color: hsl(var(--intensity-primary));
   }
 
-  /* Professional notifications in dark mode */
-  .dark .toast {
-    border: 1px solid hsl(var(--border));
-    box-shadow: 0 4px 15px hsl(var(--background) / 0.2);
+  .bg-intensity-secondary {
+    background-color: hsl(var(--intensity-secondary));
+  }
+
+  .bg-intensity-accent {
+    background-color: hsl(var(--intensity-accent));
+  }
+
+  .border-intensity-primary {
+    border-color: hsl(var(--intensity-primary));
+  }
+
+  .border-intensity-secondary {
+    border-color: hsl(var(--intensity-secondary));
+  }
+
+  .border-intensity-accent {
+    border-color: hsl(var(--intensity-accent));
+  }
+
+  /* MASCOT ANIMATIONS - Intensity Enhanced */
+  .vibrant .animate-gentle-float {
+    animation: vibrant-float 2s ease-in-out infinite;
+  }
+
+  .matte .animate-gentle-float {
+    animation: gentle-float 4s ease-in-out infinite;
+  }
+
+  @keyframes vibrant-float {
+    0%, 100% {
+      transform: translateY(0px) scale(1) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-3px) scale(1.02) rotate(1deg);
+    }
+    50% {
+      transform: translateY(-6px) scale(1.03) rotate(0deg);
+    }
+    75% {
+      transform: translateY(-3px) scale(1.02) rotate(-1deg);
+    }
+  }
+
+  @keyframes gentle-float {
+    0%, 100% {
+      transform: translateY(0px) scale(1);
+    }
+    25% {
+      transform: translateY(-2px) scale(1.01);
+    }
+    50% {
+      transform: translateY(-4px) scale(1.02);
+    }
+    75% {
+      transform: translateY(-2px) scale(1.01);
+    }
+  }
+
+  .vibrant .animate-breathing {
+    animation: vibrant-breathing 1.8s ease-in-out infinite;
+  }
+
+  .matte .animate-breathing {
+    animation: breathing 3s ease-in-out infinite;
+  }
+
+  @keyframes vibrant-breathing {
+    0%, 100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(1.03);
+      filter: brightness(1.1);
+    }
+  }
+
+  @keyframes breathing {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
   }
 
   /* Update existing color overrides for dynamic theming */
@@ -445,48 +495,6 @@
 
   .text-yellow-800 {
     @apply text-[hsl(var(--pop-orange))];
-  }
-
-  /* MASCOT ANIMATIONS */
-  @keyframes gentle-float {
-    0%, 100% {
-      transform: translateY(0px) scale(1);
-    }
-    25% {
-      transform: translateY(-2px) scale(1.01);
-    }
-    50% {
-      transform: translateY(-4px) scale(1.02);
-    }
-    75% {
-      transform: translateY(-2px) scale(1.01);
-    }
-  }
-
-  @keyframes breathing {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.02);
-    }
-  }
-
-  .animate-gentle-float {
-    animation: gentle-float 3s ease-in-out infinite;
-  }
-
-  .animate-breathing {
-    animation: breathing 2.5s ease-in-out infinite;
-  }
-
-  .mascot-interactive {
-    transition: all 0.3s ease-in-out;
-  }
-
-  .mascot-interactive:hover {
-    transform: scale(1.05) translateY(-2px);
-    filter: brightness(1.1);
   }
 
   /* Purple accent utilities */

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import HeaderLogo from '@/components/header/HeaderLogo';
 import NavigationItems from '@/components/header/NavigationItems';
 import UserMenu from '@/components/header/UserMenu';
 import MobileMenu from '@/components/header/MobileMenu';
+import { IntensityThemeToggle } from '@/components/IntensityThemeToggle';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -54,6 +54,9 @@ const Header = () => {
                 onTierChange={setSimulatedTier} 
               />
             )}
+            
+            {/* Intensity Theme Toggle */}
+            <IntensityThemeToggle />
             
             {/* Language Toggle */}
             <LanguageToggle />
