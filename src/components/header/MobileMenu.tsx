@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,6 @@ import { SubscriptionTier } from '@/types/subscription';
 import SubscriptionSimulator from '@/components/SubscriptionSimulator';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
-import { IntensityThemeToggle } from '@/components/IntensityThemeToggle';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -108,11 +108,6 @@ const MobileMenu = ({
             </Link>
           </>
         )}
-        
-        {/* Mobile Intensity Theme Toggle */}
-        <div className="px-4 py-2">
-          <IntensityThemeToggle />
-        </div>
         
         {/* Mobile Language Toggle */}
         <div className="px-4 py-2">

@@ -3,7 +3,7 @@ import React from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Moon, Sun, Palette } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 
 export const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -20,14 +20,8 @@ export const ThemeToggle = () => {
         />
         <Moon className="h-4 w-4 text-[hsl(var(--pop-blue))]" />
       </div>
-      <div className="flex items-center space-x-1">
-        <Palette className="h-3 w-3 text-muted-foreground" />
-        <span className="text-xs font-medium text-muted-foreground">
-          {theme === 'light' ? 'Pop' : 'Pro'}
-        </span>
-      </div>
       <Label htmlFor="theme-toggle" className="sr-only">
-        Toggle between Pop Art and Professional theme
+        Toggle between light and dark theme
       </Label>
     </div>
   );
