@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,6 @@ const ProviderDashboard = () => {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
             <Skeleton className="h-8 w-64" />
@@ -47,8 +45,6 @@ const ProviderDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -246,7 +242,7 @@ const ProviderDashboard = () => {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+              </TableBody>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 Aucune transaction récente
