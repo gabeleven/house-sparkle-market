@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Send, Bot, User, X, MessageCircle, ArrowRight } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useChatbot } from '@/contexts/ChatbotContext';
 
 interface ChatMessage {
   id: string;
@@ -14,12 +15,6 @@ interface ChatMessage {
   timestamp: Date;
   options?: string[];
   isTyping?: boolean;
-}
-
-interface ChatbotProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onHandoffToHuman: (context: string) => void;
 }
 
 const commonQuestions = [
@@ -114,11 +109,8 @@ Voulez-vous que je vous connecte au support maintenant, ou préférez-vous d'abo
   }
 };
 
-export const IntelligentChatbot: React.FC<ChatbotProps> = ({
-  isOpen,
-  onClose,
-  onHandoffToHuman
-}) => {
+export const IntelligentChatbot: React.FC = () => {
+  const { isOpen, closeChatbot } = useChatbot();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -141,6 +133,8 @@ export const IntelligentChatbot: React.FC<ChatbotProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  console.log('IntelligentChatbot render - isOpen:', isOpen);
 
   const detectLanguage = (text: string): 'en' | 'fr' => {
     const frenchWords = ['bonjour', 'salut', 'merci', 'comment', 'aide', 'problème', 'réservation'];
@@ -234,15 +228,10 @@ export const IntelligentChatbot: React.FC<ChatbotProps> = ({
   const handleOptionClick = (option: string) => {
     if (option.includes('human support') || option.includes('support humaine')) {
       const context = messages.map(m => `${m.type}: ${m.content}`).join('\n');
-      onHandoffToHuman(context);
+      console.log('Handing off to human support with context:', context);
       return;
     }
     handleSendMessage(option);
-  };
-
-  const handleHandoffToHuman = () => {
-    const context = messages.map(m => `${m.type}: ${m.content}`).join('\n');
-    onHandoffToHuman(context);
   };
 
   if (!isOpen) return null;
@@ -261,7 +250,7 @@ export const IntelligentChatbot: React.FC<ChatbotProps> = ({
             <Badge variant="outline" className="text-xs">
               {language === 'fr' ? 'Français' : 'English'}
             </Badge>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={closeChatbot}>
               <X className="w-4 h-4" />
             </Button>
           </div>
@@ -341,7 +330,7 @@ export const IntelligentChatbot: React.FC<ChatbotProps> = ({
               variant="ghost" 
               size="sm" 
               className="text-xs"
-              onClick={handleHandoffToHuman}
+              onClick={() => console.log('Connect to human support')}
             >
               <MessageCircle className="w-3 h-3 mr-1" />
               {language === 'fr' ? 'Parler à un humain' : 'Talk to human'}

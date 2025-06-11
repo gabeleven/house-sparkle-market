@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
@@ -9,6 +8,7 @@ import { ChatbotProvider } from '@/contexts/ChatbotContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { FloatingChatButton } from '@/components/support/FloatingChatButton';
+import { IntelligentChatbot } from '@/components/support/IntelligentChatbot';
 
 // Pages
 import Index from '@/pages/Index';
@@ -68,6 +68,7 @@ function App() {
                   </main>
                   <Footer />
                   <FloatingChatButton />
+                  <IntelligentChatbot />
                   <Toaster />
                 </div>
               </Router>
