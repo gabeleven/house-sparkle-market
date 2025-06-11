@@ -3,15 +3,18 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Bot, Users, Clock } from 'lucide-react';
-import { IntelligentChatbot } from './IntelligentChatbot';
+import { useChatbot } from '@/contexts/ChatbotContext';
 
 export const LiveChatWidget = () => {
-  const [showChatbot, setShowChatbot] = useState(false);
+  const { openChatbot } = useChatbot();
   const [showHumanChat, setShowHumanChat] = useState(false);
+
+  const handleChatbotClick = () => {
+    openChatbot('live-chat-widget');
+  };
 
   const handleChatbotHandoff = (context: string) => {
     console.log('Handing off to human support with context:', context);
-    setShowChatbot(false);
     setShowHumanChat(true);
     // In a real implementation, this would send the context to your human support system
   };
@@ -20,7 +23,7 @@ export const LiveChatWidget = () => {
     <div className="space-y-6">
       <div className="grid md:grid-cols-2 gap-6">
         {/* AI Assistant Card */}
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setShowChatbot(true)}>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={handleChatbotClick}>
           <CardHeader>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
@@ -143,13 +146,6 @@ export const LiveChatWidget = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Chatbot Component */}
-      <IntelligentChatbot
-        isOpen={showChatbot}
-        onClose={() => setShowChatbot(false)}
-        onHandoffToHuman={handleChatbotHandoff}
-      />
 
       {/* Human Chat Placeholder */}
       {showHumanChat && (
