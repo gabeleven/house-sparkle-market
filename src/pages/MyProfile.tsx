@@ -4,7 +4,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { UnifiedProfileToggle } from '@/components/profile/UnifiedProfileToggle';
 import { CustomerModeView } from '@/components/profile/CustomerModeView';
 import { CleanerModeView } from '@/components/profile/CleanerModeView';
-import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +53,6 @@ const MyProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Breadcrumb>

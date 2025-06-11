@@ -2,7 +2,6 @@
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { ProfileEditor } from '@/components/profile/ProfileEditor';
-import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -30,7 +29,6 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProfileEditor />
       </div>

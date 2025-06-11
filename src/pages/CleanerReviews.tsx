@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '@/components/Header';
 import { useReviews } from '@/hooks/useReviews';
 import { ReviewCard } from '@/components/reviews/ReviewCard';
 import { ReviewSummary } from '@/components/reviews/ReviewSummary';
@@ -25,8 +24,6 @@ const CleanerReviews = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button

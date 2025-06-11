@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Header from "@/components/Header";
 import { useCleaners } from "@/hooks/useCleaners";
 import { useLocation } from "@/hooks/useLocation";
 import { MapPreview } from "@/components/map/MapPreview";
@@ -69,8 +68,6 @@ const BrowseCleaners = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SearchHeader
           searchTerm={searchTerm}

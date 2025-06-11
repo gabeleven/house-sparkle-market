@@ -6,7 +6,6 @@ import { ChatInterface } from '@/components/chat/ChatInterface';
 import { useAuth } from '@/hooks/useAuth';
 import { useChat } from '@/hooks/useChat';
 import { supabase } from '@/integrations/supabase/client';
-import Header from '@/components/Header';
 
 const Chat = () => {
   const { user, loading } = useAuth();
@@ -67,7 +66,6 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       <div className="h-[calc(100vh-4rem)]">
         {conversationId && conversationData ? (
           <ChatInterface
