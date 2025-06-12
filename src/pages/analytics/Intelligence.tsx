@@ -1,12 +1,14 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, TrendingUp, Users, DollarSign, MapPin, Lightbulb, Target, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Brain, TrendingUp, Users, DollarSign, MapPin, Lightbulb, Target, Zap, ArrowLeft } from "lucide-react";
 import { MarketIntelligenceDashboard } from "@/components/analytics/MarketIntelligenceDashboard";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useNavigate } from "react-router-dom";
 
 const Intelligence = () => {
   const { canAccessFeature } = useSubscription();
+  const navigate = useNavigate();
 
   // AI-powered insights for Canadian market
   const aiInsights = [
@@ -56,6 +58,18 @@ const Intelligence = () => {
     return (
       <div className="min-h-screen bg-background text-foreground p-6">
         <div className="max-w-4xl mx-auto">
+          {/* Back Navigation */}
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/analytics')}
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Analytics
+            </Button>
+          </div>
+          
           <div className="text-center py-12">
             <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Canadian Market Intelligence</h2>
@@ -74,6 +88,18 @@ const Intelligence = () => {
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Back Navigation */}
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/analytics')}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Analytics
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
