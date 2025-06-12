@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ import {
 import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { SubscriptionTier } from '@/types/subscription';
+import { SubscriptionTier, getTierInfo } from '@/types/subscription';
 
 const Settings = () => {
   const { user } = useAuth();
@@ -67,9 +68,9 @@ const Settings = () => {
     return metrics[tier];
   };
 
-  const isPremium = (currentTier as string) === (SubscriptionTier.PREMIUM as string);
-  const isStarterPlus = (currentTier as string) !== (SubscriptionTier.FREE as string);
-  const isProPlus = (currentTier as string) === (SubscriptionTier.PRO as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
+  const isPremium = currentTier === SubscriptionTier.PREMIUM;
+  const isStarterPlus = currentTier !== SubscriptionTier.FREE;
+  const isProPlus = currentTier === SubscriptionTier.PRO || currentTier === SubscriptionTier.PREMIUM;
 
   return (
     <div className="min-h-screen bg-background">
@@ -336,7 +337,7 @@ const Settings = () => {
                       </div>
                     </div>
 
-                    {isProfessionalPlus && (
+                    {isProPlus && (
                       <div className="space-y-3">
                         <Separator />
                         <h4 className="font-medium">Préférences Fiscales Avancées</h4>

@@ -58,7 +58,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
           icon: <BarChart3 className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
         },
-        ...(simulatedTier === SubscriptionTier.PROFESSIONAL || simulatedTier === SubscriptionTier.PREMIUM ? [{
+        ...(simulatedTier === SubscriptionTier.PRO || simulatedTier === SubscriptionTier.PREMIUM ? [{
           path: '/analytics',
           title: 'Analytics Avancées',
           description: 'Insights détaillés sur vos performances',
@@ -116,24 +116,24 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
       calendar: {
         [SubscriptionTier.FREE]: 'Calendrier de base',
         [SubscriptionTier.STARTER]: 'Calendrier synchronisé',
-        [SubscriptionTier.PROFESSIONAL]: 'Calendrier professionnel',
+        [SubscriptionTier.PRO]: 'Calendrier professionnel',
         [SubscriptionTier.PREMIUM]: 'Calendrier IA'
       },
       bookings: {
-        [SubscriptionTier.FREE]: 'Max 10 réservations/mois',
-        [SubscriptionTier.STARTER]: 'Réservations illimitées',
-        [SubscriptionTier.PROFESSIONAL]: 'Gestion avancée',
+        [SubscriptionTier.FREE]: 'Max 5 réservations/mois',
+        [SubscriptionTier.STARTER]: 'Max 25 réservations/mois',
+        [SubscriptionTier.PRO]: 'Gestion illimitée',
         [SubscriptionTier.PREMIUM]: 'Gestion intelligente'
       },
       chat: {
         [SubscriptionTier.STARTER]: 'Communications client',
-        [SubscriptionTier.PROFESSIONAL]: 'Communications pro',
+        [SubscriptionTier.PRO]: 'Communications pro',
         [SubscriptionTier.PREMIUM]: 'Communications IA'
       },
       tax: {
         [SubscriptionTier.FREE]: 'Conformité de base',
         [SubscriptionTier.STARTER]: 'Conformité avancée',
-        [SubscriptionTier.PROFESSIONAL]: 'Suite fiscale complète',
+        [SubscriptionTier.PRO]: 'Suite fiscale complète',
         [SubscriptionTier.PREMIUM]: 'Optimisation fiscale IA'
       }
     };
