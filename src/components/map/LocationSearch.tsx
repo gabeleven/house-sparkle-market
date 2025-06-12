@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -80,9 +79,9 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
 
         if (placeDetails.geometry?.location) {
           const location = placeDetails.geometry.location;
-          // Properly handle lat/lng whether they're functions or properties
-          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
-          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+          // Direct function calls since Google Maps LatLng objects always have lat() and lng() as methods
+          const lat = location.lat();
+          const lng = location.lng();
           
           onLocationSearch({
             lat: lat,
