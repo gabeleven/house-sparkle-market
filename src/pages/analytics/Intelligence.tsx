@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brain, TrendingUp, Users, DollarSign, MapPin, Lightbulb, Target, Zap, ArrowLeft } from "lucide-react";
-import { MarketIntelligenceDashboard } from "@/components/analytics/MarketIntelligenceDashboard";
+import MarketIntelligenceDashboard from "@/components/analytics/MarketIntelligenceDashboard";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useNavigate } from "react-router-dom";
 
