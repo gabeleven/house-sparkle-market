@@ -16,7 +16,7 @@ import MobileMenu from '@/components/header/MobileMenu';
 const Header = () => {
   const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [simulatedTier, setSimulatedTier] = useState<SubscriptionTier>(SubscriptionTier.FREE);
+  const [simulatedTier, setSimulatedTier] = useState<SubscriptionTier>('FREE');
   const navigate = useNavigate();
 
   const handleSignOut = async () => {

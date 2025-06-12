@@ -16,7 +16,7 @@ interface CleanerCardWithSubscriptionProps {
 
 export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionProps> = ({ 
   cleaner, 
-  userSubscription = SubscriptionTier.FREE 
+  userSubscription = 'FREE'
 }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const showServiceIcons = hasStarterOrHigher(userSubscription);

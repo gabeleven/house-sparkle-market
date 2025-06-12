@@ -22,7 +22,7 @@ export const ResultsContent: React.FC<ResultsContentProps> = ({
   error,
   hasLocation,
   onRequestLocation,
-  userSubscription = SubscriptionTier.FREE,
+  userSubscription = 'FREE',
 }) => {
   if (isLoading) {
     return <LoadingSkeleton />;

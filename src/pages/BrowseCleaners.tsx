@@ -26,7 +26,7 @@ const BrowseCleaners = () => {
   const { location, requestLocation } = useLocation();
   
   // Mock user subscription - in a real app, this would come from user subscription data
-  const userSubscription = SubscriptionTier.FREE; // This would be fetched from user's actual subscription
+  const userSubscription: SubscriptionTier = 'FREE'; // This would be fetched from user's actual subscription
   
   // Create a search location object for the DynamicRadiusSelector
   const searchLocation = location ? {

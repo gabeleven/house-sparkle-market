@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, BarChart3, TrendingUp, Calculator, Briefcase } from "lucide-react";
 import Footer from "@/components/Footer";
-import { SubscriptionTier, getTierInfo } from "@/types/subscription";
+import { getTierInfo } from "@/types/subscription";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const ServiceProvidersPage = () => {
@@ -33,10 +33,10 @@ const ServiceProvidersPage = () => {
     }
   ];
 
-  const freeFeatures = getTierInfo(SubscriptionTier.FREE).features;
-  const starterFeatures = getTierInfo(SubscriptionTier.STARTER).features;
-  const professionalFeatures = getTierInfo(SubscriptionTier.PROFESSIONAL).features;
-  const premiumFeatures = getTierInfo(SubscriptionTier.PREMIUM).features;
+  const freeFeatures = getTierInfo('FREE').features;
+  const starterFeatures = getTierInfo('STARTER').features;
+  const professionalFeatures = getTierInfo('PRO').features;
+  const premiumFeatures = getTierInfo('PREMIUM').features;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-green-800 to-yellow-700">
