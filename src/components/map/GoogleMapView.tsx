@@ -18,13 +18,14 @@ const MONTREAL_CENTER = {
 };
 
 const mapOptions = {
-  disableDefaultUI: true,
+  disableDefaultUI: false,
   zoomControl: true,
   mapTypeControl: false,
   scaleControl: true,
   streetViewControl: false,
   rotateControl: false,
   fullscreenControl: true,
+  gestureHandling: 'cooperative',
   styles: [
     {
       featureType: 'poi',
@@ -33,6 +34,9 @@ const mapOptions = {
     }
   ]
 };
+
+// Required libraries for new Places API
+const libraries: ["places", "geometry"] = ["places", "geometry"];
 
 interface GoogleMapViewProps {
   cleaners: any[];
@@ -59,7 +63,9 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o'
+    googleMapsApiKey: 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o',
+    libraries: libraries,
+    version: '3.55'
   });
 
   const { userLocation, loading: locationLoading, error: locationError } = useUserLocation();
@@ -83,6 +89,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   } = useMapState({ userLocation: mapUserLocation });
 
   const [finalCenter, setFinalCenter] = useState(MONTREAL_CENTER);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // Update map center based on user location
   useEffect(() => {
@@ -97,12 +104,27 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   }, [userLocation]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
-    console.log('Google Map loaded successfully');
+    console.log('Google Map loaded successfully with Places API');
+    
+    // Verify Places API is available
+    if (window.google?.maps?.places) {
+      console.log('Places API is available and ready');
+    } else {
+      console.warn('Places API not available');
+    }
+    
     setMapInstance(map);
-  }, [setMapInstance]);
+    setIsMapReady(true);
+    
+    // Add click handler for map
+    map.addListener('click', () => {
+      setSelectedCleaner(null);
+    });
+  }, [setMapInstance, setSelectedCleaner]);
 
   const onUnmount = useCallback(() => {
     setMapInstance(null);
+    setIsMapReady(false);
   }, [setMapInstance]);
 
   const handleCleanerSelect = useCallback((cleaner: any) => {
@@ -125,8 +147,11 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
       <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
         <div className="text-center p-4">
           <p className="text-red-600 mb-2">Failed to load Google Maps</p>
-          <p className="text-sm text-gray-500">
-            Please check your internet connection and try again.
+          <p className="text-sm text-gray-500 mb-2">
+            {loadError.message}
+          </p>
+          <p className="text-xs text-gray-400">
+            Please ensure the Google Maps API key has Places API (New) enabled.
           </p>
         </div>
       </div>
@@ -139,7 +164,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         <div className="text-center p-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
           <p className="text-gray-600">
-            {locationLoading ? 'Getting your location...' : 'Loading Google Maps...'}
+            {locationLoading ? 'Getting your location...' : 'Loading Google Maps with Places API...'}
           </p>
         </div>
       </div>
@@ -156,15 +181,17 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         onLoad={onLoad}
         onUnmount={onUnmount}
       >
-        <MapMarkers
-          cleaners={cleaners}
-          userLocation={mapUserLocation}
-          radius={radiusKm}
-          selectedCleaner={mapSelectedCleaner || selectedCleaner}
-          onMarkerClick={handleCleanerSelect}
-          onInfoWindowClose={handleInfoWindowClose}
-          isGoogleMapsAvailable={() => !!(window.google && window.google.maps)}
-        />
+        {isMapReady && (
+          <MapMarkers
+            cleaners={cleaners}
+            userLocation={mapUserLocation}
+            radius={radiusKm}
+            selectedCleaner={mapSelectedCleaner || selectedCleaner}
+            onMarkerClick={handleCleanerSelect}
+            onInfoWindowClose={handleInfoWindowClose}
+            isGoogleMapsAvailable={() => !!(window.google && window.google.maps && window.google.maps.places)}
+          />
+        )}
         
         <MapControls
           cleanerCount={cleaners.length}

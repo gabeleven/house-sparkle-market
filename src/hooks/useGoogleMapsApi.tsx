@@ -9,13 +9,16 @@ export const useGoogleMapsApi = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
-  // Check if Google Maps is available - with better Edge compatibility
+  // Check if Google Maps is available with Places API
   const isGoogleMapsAvailable = useCallback(() => {
     return !!(
       typeof window !== 'undefined' && 
       window.google && 
       window.google.maps &&
-      window.google.maps.Map
+      window.google.maps.Map &&
+      window.google.maps.places &&
+      window.google.maps.places.PlacesService &&
+      window.google.maps.places.AutocompleteService
     );
   }, []);
 
@@ -28,8 +31,9 @@ export const useGoogleMapsApi = () => {
   }, []);
 
   const handleLoadSuccess = useCallback(() => {
-    console.log('Google Maps API loaded successfully');
+    console.log('Google Maps API with Places API loaded successfully');
     console.log('Google Maps version:', window.google?.maps?.version);
+    console.log('Places API available:', !!(window.google?.maps?.places));
     console.log('Browser:', navigator.userAgent);
     setScriptLoaded(true);
     setIsLoading(false);
@@ -48,7 +52,7 @@ export const useGoogleMapsApi = () => {
     
     setIsLoading(false);
     setHasError(true);
-    setErrorMessage(`Google Maps failed to load in ${navigator.userAgent.includes('Edge') ? 'Edge' : 'this browser'}. Error: ${error.message}`);
+    setErrorMessage(`Google Maps failed to load. Error: ${error.message}. Please check if the API key has Places API (New) enabled.`);
     
     // Automatically fall back to simple map after a short delay
     if (onError) {
@@ -59,10 +63,10 @@ export const useGoogleMapsApi = () => {
     }
   }, []);
 
-  // Enhanced script loading with Edge compatibility
+  // Enhanced script loading with new Places API
   const loadGoogleMapsScript = useCallback(() => {
     if (isGoogleMapsAvailable()) {
-      console.log('Google Maps already available');
+      console.log('Google Maps with Places API already available');
       setScriptLoaded(true);
       setIsLoading(false);
       return;
@@ -72,23 +76,46 @@ export const useGoogleMapsApi = () => {
     const existingScript = document.querySelector(`script[src*="maps.googleapis.com"]`);
     if (existingScript) {
       console.log('Google Maps script already exists, waiting for load...');
+      
+      // Add load event listener to existing script
+      existingScript.addEventListener('load', () => {
+        if (isGoogleMapsAvailable()) {
+          handleLoadSuccess();
+        } else {
+          handleLoadError(new Error('Places API not available after script load'));
+        }
+      });
+      
+      existingScript.addEventListener('error', (error) => {
+        handleLoadError(new Error('Script loading failed'));
+      });
+      
       return;
     }
 
-    console.log('Loading Google Maps script manually for better Edge compatibility...');
+    console.log('Loading Google Maps script with Places API (New)...');
     
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&v=3.55`;
+    // Updated to include the new Places API and required libraries
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,geometry&v=3.55&loading=async`;
     script.async = true;
     script.defer = true;
     
     script.onload = () => {
-      console.log('Google Maps script loaded via manual method');
-      handleLoadSuccess();
+      console.log('Google Maps script loaded, checking Places API availability...');
+      
+      // Wait a bit for all libraries to initialize
+      setTimeout(() => {
+        if (isGoogleMapsAvailable()) {
+          handleLoadSuccess();
+        } else {
+          handleLoadError(new Error('Places API not available after script load'));
+        }
+      }, 100);
     };
     
     script.onerror = (error) => {
-      console.error('Manual script loading failed:', error);
+      console.error('Google Maps script loading failed:', error);
       handleLoadError(new Error('Script loading failed'), undefined);
     };
     
@@ -97,30 +124,20 @@ export const useGoogleMapsApi = () => {
 
   // Check API key and load script
   useEffect(() => {
-    console.log('Initializing Google Maps API...');
+    console.log('Initializing Google Maps API with Places API (New)...');
     console.log('Browser:', navigator.userAgent);
     console.log('API key validity:', isApiKeyValid());
     
     if (!isApiKeyValid()) {
       setHasError(true);
       setIsLoading(false);
-      setErrorMessage('Google Maps API key is not properly configured.');
+      setErrorMessage('Google Maps API key is not properly configured. Please ensure Places API (New) is enabled.');
       return;
     }
 
-    // For Edge browser, use manual script loading
-    if (navigator.userAgent.includes('Edge') || navigator.userAgent.includes('Edg/')) {
-      console.log('Edge browser detected, using manual script loading');
-      loadGoogleMapsScript();
-    } else {
-      // For other browsers, check if already loaded
-      if (isGoogleMapsAvailable()) {
-        console.log('Google Maps already available');
-        setScriptLoaded(true);
-        setIsLoading(false);
-      }
-    }
-  }, [isApiKeyValid, isGoogleMapsAvailable, loadGoogleMapsScript]);
+    // Load the script with Places API
+    loadGoogleMapsScript();
+  }, [isApiKeyValid, loadGoogleMapsScript]);
 
   return {
     isLoading,

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin } from 'lucide-react';
@@ -12,12 +12,89 @@ interface LocationSearchProps {
 export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or postal code..." }: LocationSearchProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
+  const placesService = useRef<google.maps.places.PlacesService | null>(null);
+
+  useEffect(() => {
+    if (window.google && window.google.maps && window.google.maps.places) {
+      // Initialize the new Places API services
+      autocompleteService.current = new google.maps.places.AutocompleteService();
+      
+      // Create a dummy map for PlacesService (required by Google)
+      const dummyMap = new google.maps.Map(document.createElement('div'));
+      placesService.current = new google.maps.places.PlacesService(dummyMap);
+    }
+  }, []);
 
   const handleSearch = async () => {
-    if (!searchTerm.trim()) return;
+    if (!searchTerm.trim() || !autocompleteService.current || !placesService.current) return;
 
     setIsSearching(true);
     
+    try {
+      // Use the new Places API (New) approach
+      const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve, reject) => {
+        autocompleteService.current!.getPlacePredictions(
+          {
+            input: searchTerm,
+            componentRestrictions: { country: 'CA' },
+            types: ['geocode', 'establishment'],
+            locationBias: {
+              // Bias towards Quebec
+              center: { lat: 46.8139, lng: -71.2082 },
+              radius: 100000 // 100km radius
+            } as google.maps.LatLng
+          },
+          (predictions, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+              resolve(predictions);
+            } else {
+              reject(new Error(`Places prediction failed: ${status}`));
+            }
+          }
+        );
+      });
+
+      if (predictions.length > 0) {
+        // Get detailed place information using place_id
+        const placeDetails = await new Promise<google.maps.places.PlaceResult>((resolve, reject) => {
+          placesService.current!.getDetails(
+            {
+              placeId: predictions[0].place_id,
+              fields: ['geometry.location', 'formatted_address', 'name']
+            },
+            (place, status) => {
+              if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+                resolve(place);
+              } else {
+                reject(new Error(`Place details failed: ${status}`));
+              }
+            }
+          );
+        });
+
+        if (placeDetails.geometry?.location) {
+          const location = placeDetails.geometry.location;
+          onLocationSearch({
+            lat: typeof location.lat === 'function' ? location.lat() : location.lat,
+            lng: typeof location.lng === 'function' ? location.lng() : location.lng,
+            address: placeDetails.formatted_address || placeDetails.name || searchTerm
+          });
+        }
+      } else {
+        // Fallback to Geocoding API if no predictions
+        await fallbackGeocode();
+      }
+    } catch (error) {
+      console.error('Places API search error:', error);
+      // Fallback to Geocoding API
+      await fallbackGeocode();
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const fallbackGeocode = async () => {
     try {
       const geocoder = new google.maps.Geocoder();
       
@@ -47,9 +124,7 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
         });
       }
     } catch (error) {
-      console.error('Location search error:', error);
-    } finally {
-      setIsSearching(false);
+      console.error('Fallback geocoding error:', error);
     }
   };
 
@@ -77,7 +152,11 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
         disabled={isSearching || !searchTerm.trim()}
         size="sm"
       >
-        <Search className="w-4 h-4" />
+        {isSearching ? (
+          <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        ) : (
+          <Search className="w-4 h-4" />
+        )}
       </Button>
     </div>
   );

@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, Filter } from 'lucide-react';
+import { LocationSearch } from '@/components/map/LocationSearch';
 import {
   Sheet,
   SheetContent,
@@ -31,6 +32,18 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   location,
   onRequestLocation,
 }) => {
+  const [useLocationSearch, setUseLocationSearch] = useState(false);
+
+  const handleLocationSearchResult = (result: { lat: number; lng: number; address: string }) => {
+    console.log('Location search result:', result);
+    setLocationFilter(result.address);
+    setUseLocationSearch(false);
+    // Trigger search automatically after location is selected
+    setTimeout(() => {
+      onSearch();
+    }, 100);
+  };
+
   return (
     <div className="pop-card bg-card rounded-lg shadow-sm p-6 mb-8 border border-border ben-day-dots">
       <h1 className="text-3xl font-bold text-foreground mb-6">Find Cleaners Across Quebec</h1>
@@ -50,16 +63,24 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
         </div>
         
         <div className="md:w-64">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-            <Input
-              type="text"
-              placeholder="City or postal code..."
-              value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value)}
-              className="pl-10"
+          {useLocationSearch ? (
+            <LocationSearch
+              onLocationSearch={handleLocationSearchResult}
+              placeholder="Search location..."
             />
-          </div>
+          ) : (
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="City or postal code..."
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                onFocus={() => setUseLocationSearch(true)}
+                className="pl-10"
+              />
+            </div>
+          )}
         </div>
 
         <Button onClick={onSearch} className="search-btn-pop">
@@ -86,6 +107,17 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             <span className="text-sm text-[hsl(var(--pop-blue))] font-medium">
               ✓ Using your location for better results
             </span>
+          )}
+
+          {useLocationSearch && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setUseLocationSearch(false)}
+              className="text-sm"
+            >
+              Use Simple Search
+            </Button>
           )}
         </div>
 
