@@ -217,7 +217,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: currentTier === SubscriptionTier.FREE ? '60%' : '45%' }}
+                            style={{ width: [SubscriptionTier.FREE].includes(currentTier) ? '60%' : '45%' }}
                           />
                         </div>
                       </div>
