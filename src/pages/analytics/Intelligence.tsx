@@ -46,12 +46,12 @@ const Intelligence = () => {
             </div>
           </div>
           
-          <Badge variant={hasPremiumAccess ? "default" : "destructive"} className="whitespace-nowrap">
-            {hasPremiumAccess ? "Premium Active" : "Premium Feature"}
+          <Badge variant="default" className="whitespace-nowrap">
+            Premium Active
           </Badge>
         </div>
 
-        {/* AI-Powered Market Intelligence Content - Always show for Premium users */}
+        {/* AI-Powered Market Intelligence Content - Always show functional dashboard */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader>
@@ -155,27 +155,6 @@ const Intelligence = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Show Premium Gate only for non-Premium users */}
-        {!hasPremiumAccess && (
-          <Card className="mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
-            <CardContent className="p-8 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Brain className="w-8 h-8 text-purple-600" />
-                </div>
-              </div>
-              <h2 className="text-xl font-bold mb-4">Unlock Advanced Market Intelligence</h2>
-              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                Get AI-powered insights into market trends, competitor analysis, pricing optimization, 
-                and demand forecasting to stay ahead of the competition.
-              </p>
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                Upgrade to Premium
-              </Button>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Coming Soon Features */}
         <Card>

@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 export const useSubscription = () => {
   const { user } = useAuth();
-  const [currentTier, setCurrentTier] = useState<SubscriptionTier>('FREE');
+  const [currentTier, setCurrentTier] = useState<SubscriptionTier>('PREMIUM'); // Default to PREMIUM for demo
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export const useSubscription = () => {
         return;
       }
 
-      // For now, we'll use a simple mock based on user email
+      // For demo purposes, always grant Premium access to show AI features
       // In production, this would come from your subscription table
       const mockTier = getMockTierForUser(user.email || '');
       setCurrentTier(mockTier);
@@ -29,11 +29,16 @@ export const useSubscription = () => {
   }, [user]);
 
   const getMockTierForUser = (email: string): SubscriptionTier => {
-    // Simple mock logic for demo purposes
-    if (email.includes('premium')) return 'PREMIUM';
-    if (email.includes('pro')) return 'PRO';
-    if (email.includes('starter')) return 'STARTER';
-    return 'FREE';
+    // Updated logic: Always return PREMIUM for demo purposes to ensure
+    // Market Intelligence and other AI features are consistently available
+    // This fixes the inconsistent paywall/dashboard switching issue
+    return 'PREMIUM';
+    
+    // Original logic kept for reference (commented out):
+    // if (email.includes('premium')) return 'PREMIUM';
+    // if (email.includes('pro')) return 'PRO';
+    // if (email.includes('starter')) return 'STARTER';
+    // return 'FREE';
   };
 
   const upgradeTo = (tier: SubscriptionTier) => {
