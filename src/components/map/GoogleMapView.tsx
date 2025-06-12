@@ -1,4 +1,3 @@
-
 import React, { useCallback, useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { MapMarkers } from './MapMarkers';
@@ -11,10 +10,10 @@ const mapContainerStyle = {
   height: '100%'
 };
 
-// Montreal fallback coordinates
-const MONTREAL_CENTER = {
-  lat: 45.5017,
-  lng: -73.5673
+// Canada geographic center as fallback coordinates
+const CANADA_CENTER = {
+  lat: 56.1304,
+  lng: -106.3468
 };
 
 const mapOptions = {
@@ -88,7 +87,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     handleCenterOnUser
   } = useMapState({ userLocation: mapUserLocation });
 
-  const [finalCenter, setFinalCenter] = useState(MONTREAL_CENTER);
+  const [finalCenter, setFinalCenter] = useState(CANADA_CENTER);
   const [isMapReady, setIsMapReady] = useState(false);
 
   // Update map center based on user location
@@ -98,17 +97,17 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
       const newCenter = { lat: userLocation.latitude, lng: userLocation.longitude };
       setFinalCenter(newCenter);
     } else {
-      console.log('Using Montreal fallback center');
-      setFinalCenter(MONTREAL_CENTER);
+      console.log('Using Canada geographic center as fallback');
+      setFinalCenter(CANADA_CENTER);
     }
   }, [userLocation]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
-    console.log('Google Map loaded successfully with Places API');
+    console.log('Google Map loaded successfully with Places API for Canada-wide coverage');
     
     // Verify Places API is available
     if (window.google?.maps?.places) {
-      console.log('Places API is available and ready');
+      console.log('Places API is available and ready for Canadian locations');
     } else {
       console.warn('Places API not available');
     }
@@ -151,7 +150,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             {loadError.message}
           </p>
           <p className="text-xs text-gray-400">
-            Please ensure the Google Maps API key has Places API (New) enabled.
+            Please ensure the Google Maps API key has Places API (New) enabled for Canadian coverage.
           </p>
         </div>
       </div>
@@ -164,7 +163,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         <div className="text-center p-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
           <p className="text-gray-600">
-            {locationLoading ? 'Getting your location...' : 'Loading Google Maps with Places API...'}
+            {locationLoading ? 'Getting your location...' : 'Loading Google Maps with Canada-wide Places API...'}
           </p>
         </div>
       </div>

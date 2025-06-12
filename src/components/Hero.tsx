@@ -59,14 +59,14 @@ const Hero = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-purple-500/10 to-transparent rounded-lg blur-sm"></div>
                 <h1 className="relative text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                  The Trusted Marketplace for{' '}
+                  Canada's Trusted Marketplace for{' '}
                   <span className="bg-gradient-to-r from-[hsl(var(--pop-orange))] via-purple-400 to-[hsl(var(--pop-blue))] bg-clip-text text-transparent">
                     Home Services
                   </span>
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                We connect you with verified, CRA-compliant professionals for cleaning, lawn care, and more.
+                We connect you with verified, CRA-compliant professionals for cleaning, lawn care, and more across all Canadian provinces.
               </p>
             </div>
 
@@ -78,7 +78,7 @@ const Hero = () => {
                   <MapPin className="w-5 h-5 text-purple-400 mr-3" />
                   <Input
                     type="text"
-                    placeholder="Entrez votre ville ou code postal"
+                    placeholder="Enter your city or postal code"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     onKeyPress={handleKeyPress}
@@ -98,15 +98,15 @@ const Hero = () => {
             <div className="flex items-center space-x-8 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-[hsl(var(--pop-blue))]"></div>
-                <span>Conformité ARC garantie</span>
+                <span>CRA compliance guaranteed</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[hsl(var(--pop-orange))] to-purple-500"></div>
-                <span>Professionnels vérifiés</span>
+                <span>Verified professionals</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-[hsl(var(--pop-blue))]"></div>
-                <span>Paiement sécurisé</span>
+                <span>Secure payment</span>
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@ const Hero = () => {
                 <div className="w-64 h-64 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.4)] via-purple-400/25 to-[hsl(var(--pop-orange)/0.4)] dark:from-[hsl(var(--pop-blue)/0.3)] dark:via-purple-500/20 dark:to-[hsl(var(--pop-orange)/0.3)] flex items-center justify-center">
                   <img 
                     src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/mascot_originale.svg"
-                    alt="HOUSIE Assistant - Votre experte en conformité fiscale" 
+                    alt="HOUSIE Assistant - Your Canadian tax compliance expert" 
                     className="w-56 h-56 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive"
                     onClick={handleMascotClick}
                   />
@@ -133,10 +133,10 @@ const Hero = () => {
                   <MessageCircle className="w-5 h-5 text-purple-400 mt-1 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-foreground font-medium">
-                      Bonjour ! Je suis votre assistante HOUSIE.
+                      Hello! I'm your HOUSIE assistant.
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Prête à vous aider avec la conformité ARC 2025 !
+                      Ready to help with CRA 2025 compliance across Canada!
                     </p>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ const Hero = () => {
                   onClick={handleSearch}
                   className="pop-orange-btn font-bold px-8 py-3 rounded-full shadow-lg"
                 >
-                  Commencer
+                  Get Started
                 </Button>
               </div>
             </div>

@@ -46,7 +46,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
 
   return (
     <div className="pop-card bg-card rounded-lg shadow-sm p-6 mb-8 border border-border ben-day-dots">
-      <h1 className="text-3xl font-bold text-foreground mb-6">Find Cleaners Across Quebec</h1>
+      <h1 className="text-3xl font-bold text-foreground mb-6">Find Professional Cleaners Across Canada</h1>
       
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
@@ -105,7 +105,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           
           {location && (
             <span className="text-sm text-[hsl(var(--pop-blue))] font-medium">
-              ✓ Using your location for better results
+              ✓ Using your location for better results across Canada
             </span>
           )}
 
@@ -132,7 +132,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             <SheetHeader>
               <SheetTitle>Filter Results</SheetTitle>
               <SheetDescription>
-                Refine your search to find the perfect cleaner.
+                Refine your search to find the perfect cleaner across Canada.
               </SheetDescription>
             </SheetHeader>
             <div className="py-4">

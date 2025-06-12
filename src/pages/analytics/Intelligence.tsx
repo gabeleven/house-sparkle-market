@@ -8,48 +8,48 @@ import { useSubscription } from "@/hooks/useSubscription";
 const Intelligence = () => {
   const { canAccessFeature } = useSubscription();
 
-  // AI-powered insights
+  // AI-powered insights for Canadian market
   const aiInsights = [
     {
       type: "opportunity",
-      title: "High-Value Service Gap",
-      description: "Post-construction cleaning shows 67% higher rates but low provider coverage in Laval area.",
-      confidence: 92,
+      title: "High-Value Service Gap in Atlantic Canada",
+      description: "Post-construction cleaning shows 72% higher rates but low provider coverage in Halifax and Maritime provinces.",
+      confidence: 94,
       impact: "High",
       icon: Target
     },
     {
       type: "trend",
-      title: "Weekend Demand Surge",
-      description: "Saturday bookings increased 34% this month. Consider weekend-focused providers.",
-      confidence: 87,
-      impact: "Medium",
+      title: "Winter Demand Surge Nationwide",
+      description: "Winter cleaning bookings increased 48% across all provinces. Consider seasonal-focused provider recruitment.",
+      confidence: 91,
+      impact: "High",
       icon: TrendingUp
     },
     {
       type: "optimization",
-      title: "Weather-Based Pricing",
-      description: "Implement dynamic pricing: +15% during rain forecasts could increase revenue by $2,340/month.",
-      confidence: 95,
+      title: "Provincial Weather-Based Pricing",
+      description: "Implement dynamic pricing: +20% during Canadian winter storms could increase revenue by $8,940/month nationally.",
+      confidence: 96,
       impact: "High",
       icon: Zap
     },
     {
       type: "market",
-      title: "Competitor Analysis",
-      description: "New competitor in Gatineau offering 20% lower rates. Monitor market response.",
-      confidence: 78,
+      title: "Competitive Analysis - Western Canada",
+      description: "New competitors in Calgary and Edmonton offering 15% lower rates. Monitor Western market response and adjust strategy.",
+      confidence: 85,
       impact: "Medium",
       icon: Users
     }
   ];
 
   const competitiveAdvantages = [
-    { feature: "AI-Powered Matching", advantage: "35% faster booking completion vs competitors" },
-    { feature: "Weather Integration", advantage: "Unique in Quebec market - no direct competitors" },
-    { feature: "Real-time Availability", advantage: "50% higher customer satisfaction scores" },
-    { feature: "Transparent Pricing", advantage: "22% lower customer acquisition cost" },
-    { feature: "Provider Analytics", advantage: "First platform offering demand forecasting" }
+    { feature: "AI-Powered Matching", advantage: "42% faster booking completion vs Canadian competitors" },
+    { feature: "National Weather Integration", advantage: "Only platform with Environment Canada integration" },
+    { feature: "Real-time Availability", advantage: "58% higher customer satisfaction scores nationally" },
+    { feature: "Transparent Pricing", advantage: "28% lower customer acquisition cost across provinces" },
+    { feature: "Provincial Analytics", advantage: "First platform offering Canadian market demand forecasting" }
   ];
 
   if (!canAccessFeature('PRO')) {
@@ -58,9 +58,9 @@ const Intelligence = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
             <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Market Intelligence</h2>
+            <h2 className="text-2xl font-bold mb-2">Canadian Market Intelligence</h2>
             <p className="text-muted-foreground mb-6">
-              Upgrade to Pro or Premium to access AI-powered market insights and competitive analysis.
+              Upgrade to Pro or Premium to access AI-powered Canadian market insights and competitive analysis.
             </p>
             <Badge variant="outline" className="text-lg px-4 py-2">
               Pro Feature Required
@@ -81,8 +81,8 @@ const Intelligence = () => {
               <Brain className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Market Intelligence</h1>
-              <p className="text-muted-foreground">AI-powered insights for strategic decision making</p>
+              <h1 className="text-3xl font-bold">Canadian Market Intelligence</h1>
+              <p className="text-muted-foreground">AI-powered insights for strategic decision making across all provinces</p>
             </div>
           </div>
           <Badge className="bg-gradient-to-r from-purple-500 to-blue-600 text-white">
@@ -96,10 +96,10 @@ const Intelligence = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className="w-5 h-5 text-intensity-secondary" />
-              AI-Generated Insights
+              AI-Generated Canadian Market Insights
             </CardTitle>
             <CardDescription>
-              Machine learning analysis of market trends, opportunities, and recommendations
+              Machine learning analysis of Canadian market trends, provincial opportunities, and strategic recommendations
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -156,11 +156,11 @@ const Intelligence = () => {
         <Card className="pop-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-intensity-accent" />
-              Competitive Advantages
+              <Target className="w-5 w-5 text-intensity-accent" />
+              National Competitive Advantages
             </CardTitle>
             <CardDescription>
-              How HOUSIE differentiates from competitors in the Quebec market
+              How HOUSIE differentiates from competitors across the Canadian market
             </CardDescription>
           </CardHeader>
           <CardContent>

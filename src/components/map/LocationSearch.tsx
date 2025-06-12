@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -31,15 +32,12 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
     setIsSearching(true);
     
     try {
-      // Use the new Places API (New) approach
+      // Use the new Places API (New) approach with Canada-wide bounds
       const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve, reject) => {
-        // Create proper LatLng for Quebec center
-        const quebecCenter = new google.maps.LatLng(46.8139, -71.2082);
-        
-        // Create proper LatLngBounds for location bias
-        const quebecBounds = new google.maps.LatLngBounds(
-          new google.maps.LatLng(45.0, -79.0), // Southwest
-          new google.maps.LatLng(62.0, -57.0)  // Northeast
+        // Create proper LatLngBounds for all of Canada
+        const canadaBounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(41.7, -141.0), // Southwest (includes southern Ontario to western BC)
+          new google.maps.LatLng(83.1, -52.6)   // Northeast (includes Arctic to Atlantic)
         );
 
         autocompleteService.current!.getPlacePredictions(
@@ -47,7 +45,7 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
             input: searchTerm,
             componentRestrictions: { country: 'CA' },
             types: ['geocode', 'establishment'],
-            locationBias: quebecBounds
+            locationBias: canadaBounds
           },
           (predictions, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
@@ -111,7 +109,7 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
           { 
             address: searchTerm,
             region: 'CA',
-            componentRestrictions: { country: 'CA', administrativeArea: 'QC' }
+            componentRestrictions: { country: 'CA' }
           },
           (results, status) => {
             if (status === 'OK' && results) {
