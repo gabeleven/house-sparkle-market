@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -147,8 +148,8 @@ const AnalyticsDashboard = () => {
                   <Tooltip />
                   <Line type="monotone" dataKey="revenue" stroke="#8884d8" strokeWidth={2} />
                 </LineChart>
-              </CardContent>
-            </CardHeader>
+              </ResponsiveContainer>
+            </CardContent>
           </Card>
 
           {/* Service Types */}
