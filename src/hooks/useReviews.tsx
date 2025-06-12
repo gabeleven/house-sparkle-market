@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 interface UseReviewsProps {
   cleanerId?: string;
   customerId?: string;
+  providerId?: string;
 }
 
 interface CreateReviewData {
@@ -17,14 +18,16 @@ interface CreateReviewData {
   title?: string;
   comment?: string;
   photos?: string[];
+  provider_id?: string;
+  service_category_id?: string;
 }
 
-export const useReviews = ({ cleanerId, customerId }: UseReviewsProps = {}) => {
+export const useReviews = ({ cleanerId, customerId, providerId }: UseReviewsProps = {}) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: reviews, isLoading, error } = useQuery({
-    queryKey: ['reviews', cleanerId, customerId],
+    queryKey: ['reviews', cleanerId, customerId, providerId],
     queryFn: async () => {
       let query = supabase
         .from('reviews')
@@ -33,14 +36,23 @@ export const useReviews = ({ cleanerId, customerId }: UseReviewsProps = {}) => {
           reviewer_profile:profiles!reviewer_id(
             full_name,
             profile_photo_url
+          ),
+          providers(
+            business_name,
+            user_id
+          ),
+          service_categories(
+            name
           )
         `)
         .order('created_at', { ascending: false });
 
-      if (cleanerId) {
+      if (providerId) {
+        query = query.eq('provider_id', providerId);
+      } else if (cleanerId) {
+        // For backward compatibility, also check by reviewee_id
         query = query.eq('reviewee_id', cleanerId);
-      }
-      if (customerId) {
+      } else if (customerId) {
         query = query.eq('reviewee_id', customerId);
       }
 
@@ -53,7 +65,7 @@ export const useReviews = ({ cleanerId, customerId }: UseReviewsProps = {}) => {
 
       return data as Review[];
     },
-    enabled: !!(cleanerId || customerId),
+    enabled: !!(cleanerId || customerId || providerId),
   });
 
   const createReview = useMutation({

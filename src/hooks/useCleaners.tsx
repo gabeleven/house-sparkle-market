@@ -1,7 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isValidCleanerData } from '@/utils/typeGuards';
 import { ServiceType } from '@/utils/serviceTypes';
 
 export interface CleanerProfile {
@@ -33,38 +32,30 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
   const { data: cleaners, isLoading, error } = useQuery({
     queryKey: ['cleaners', userLocation, searchTerm, locationFilter],
     queryFn: async () => {
-      console.log('Fetching cleaners from database...');
+      console.log('Fetching cleaners from providers table...');
       
-      // Use a direct query to cleaner_profiles joined with profiles to get email and other data
+      // Query providers that offer cleaning services
       let query = supabase
-        .from('profiles')
+        .from('providers')
         .select(`
-          id,
-          email,
-          full_name,
-          profile_photo_url,
-          cleaner_profiles!inner(
-            business_name,
-            brief_description,
-            latitude,
-            longitude,
-            service_radius_km,
-            years_experience,
-            service_area_city,
-            hourly_rate,
-            average_rating,
-            total_reviews
+          *,
+          profiles!providers_user_id_fkey(
+            full_name,
+            email
+          ),
+          provider_services!inner(
+            service_categories!inner(name)
           )
         `)
-        .eq('user_role', 'cleaner');
+        .eq('provider_services.service_categories.name', 'cleaning');
 
       // Apply search filters
       if (searchTerm) {
-        query = query.or(`full_name.ilike.%${searchTerm}%,cleaner_profiles.business_name.ilike.%${searchTerm}%,cleaner_profiles.brief_description.ilike.%${searchTerm}%`);
+        query = query.or(`business_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`);
       }
 
       if (locationFilter) {
-        query = query.ilike('cleaner_profiles.service_area_city', `%${locationFilter}%`);
+        query = query.ilike('address', `%${locationFilter}%`);
       }
 
       const { data, error } = await query;
@@ -74,57 +65,40 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
         throw error;
       }
 
-      console.log('Fetched cleaners:', data);
+      console.log('Fetched cleaners from providers:', data);
       console.log('Number of cleaners found:', data?.length || 0);
 
       let processedCleaners = (data || [])
-        .filter(cleaner => cleaner.cleaner_profiles)
-        .map((cleaner): CleanerProfile => {
-          const cleanerProfile = cleaner.cleaner_profiles;
+        .filter(provider => provider.profiles)
+        .map((provider): CleanerProfile => {
+          const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
           return {
-            id: cleaner.id || '',
-            email: cleaner.email || '',
-            full_name: cleaner.full_name || '',
-            business_name: cleanerProfile.business_name,
-            brief_description: cleanerProfile.brief_description,
-            profile_photo_url: cleaner.profile_photo_url,
-            latitude: cleanerProfile.latitude,
-            longitude: cleanerProfile.longitude,
-            service_radius_km: cleanerProfile.service_radius_km,
-            years_experience: cleanerProfile.years_experience,
-            service_area_city: cleanerProfile.service_area_city,
-            hourly_rate: cleanerProfile.hourly_rate,
-            average_rating: cleanerProfile.average_rating,
-            total_reviews: cleanerProfile.total_reviews,
-            services: [] // Will be fetched separately
+            id: provider.user_id, // Use user_id for backward compatibility
+            email: profile?.email || '',
+            full_name: profile?.full_name || '',
+            business_name: provider.business_name,
+            brief_description: provider.bio,
+            profile_photo_url: provider.profile_photo_url,
+            latitude: provider.latitude,
+            longitude: provider.longitude,
+            service_radius_km: provider.service_radius_km,
+            years_experience: provider.years_experience,
+            service_area_city: provider.address,
+            hourly_rate: provider.hourly_rate,
+            average_rating: provider.average_rating,
+            total_reviews: provider.total_reviews,
+            services: [] // Will be populated from provider_services if needed
           };
         });
 
-      // Fetch services for each cleaner
-      for (const cleaner of processedCleaners) {
-        try {
-          const { data: servicesData } = await supabase
-            .from('cleaner_service_types')
-            .select('service_type')
-            .eq('cleaner_id', cleaner.id);
-
-          cleaner.services = servicesData?.map(s => s.service_type as ServiceType) || [];
-        } catch (error) {
-          console.error(`Error fetching services for cleaner ${cleaner.id}:`, error);
-          cleaner.services = [];
-        }
-      }
-
-      // Sort by average rating first (highest first), then by service area city
+      // Sort by average rating first (highest first), then by address
       processedCleaners.sort((a, b) => {
-        // First sort by rating (descending)
         const ratingA = a.average_rating || 0;
         const ratingB = b.average_rating || 0;
         if (ratingB !== ratingA) {
           return ratingB - ratingA;
         }
         
-        // Then by city name
         if (a.service_area_city && b.service_area_city) {
           return a.service_area_city.localeCompare(b.service_area_city);
         }

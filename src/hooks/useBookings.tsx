@@ -6,7 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 export interface Booking {
   id: string;
   customer_id: string;
-  cleaner_id: string;
+  cleaner_id: string; // Keeping for backward compatibility
+  provider_id?: string;
+  service_category_id?: string;
   service_type?: string;
   service_date: string;
   service_time?: string;
@@ -20,6 +22,7 @@ export interface Booking {
   updated_at: string;
   confirmed_at?: string;
   cancelled_at?: string;
+  total_amount?: number;
 }
 
 export const useBookings = () => {
@@ -32,21 +35,32 @@ export const useBookings = () => {
     
     setLoading(true);
     try {
-      // Direct table query with proper error handling
+      // Query bookings with provider information
       const { data, error } = await supabase
         .from('bookings')
-        .select('*')
+        .select(`
+          *,
+          providers(
+            user_id,
+            business_name
+          ),
+          service_categories(
+            name
+          )
+        `)
         .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Transform the data to match our interface, handling missing columns gracefully
+      // Transform the data to match our interface
       const transformedBookings: Booking[] = (data || []).map((booking: any) => ({
         id: booking.id,
         customer_id: booking.customer_id,
-        cleaner_id: booking.cleaner_id,
-        service_type: booking.service_type || 'regular_clean',
+        cleaner_id: booking.cleaner_id || booking.providers?.user_id,
+        provider_id: booking.provider_id,
+        service_category_id: booking.service_category_id,
+        service_type: booking.service_categories?.name || 'cleaning',
         service_date: booking.service_date,
         service_time: booking.service_time || '09:00',
         estimated_duration: booking.estimated_duration || 120,
@@ -58,7 +72,8 @@ export const useBookings = () => {
         created_at: booking.created_at,
         updated_at: booking.updated_at,
         confirmed_at: booking.confirmed_at,
-        cancelled_at: booking.cancelled_at
+        cancelled_at: booking.cancelled_at,
+        total_amount: booking.total_amount
       }));
       
       setBookings(transformedBookings);

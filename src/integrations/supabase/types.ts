@@ -17,6 +17,8 @@ export type Database = {
           created_at: string | null
           customer_id: string
           id: string
+          provider_id: string | null
+          service_category_id: string | null
           service_date: string
           status: string | null
           total_amount: number | null
@@ -29,6 +31,8 @@ export type Database = {
           created_at?: string | null
           customer_id: string
           id?: string
+          provider_id?: string | null
+          service_category_id?: string | null
           service_date: string
           status?: string | null
           total_amount?: number | null
@@ -41,6 +45,8 @@ export type Database = {
           created_at?: string | null
           customer_id?: string
           id?: string
+          provider_id?: string | null
+          service_category_id?: string | null
           service_date?: string
           status?: string | null
           total_amount?: number | null
@@ -73,6 +79,20 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_service_category_id_fkey"
+            columns: ["service_category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -599,6 +619,54 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_services: {
+        Row: {
+          base_price: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_available: boolean | null
+          price_unit: string | null
+          provider_id: string
+          service_category_id: string
+        }
+        Insert: {
+          base_price?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_available?: boolean | null
+          price_unit?: string | null
+          provider_id: string
+          service_category_id: string
+        }
+        Update: {
+          base_price?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_available?: boolean | null
+          price_unit?: string | null
+          provider_id?: string
+          service_category_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_services_service_category_id_fkey"
+            columns: ["service_category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       provider_tax_information: {
         Row: {
           business_address: string | null
@@ -644,6 +712,72 @@ export type Database = {
           total_earnings?: number | null
           total_transactions?: number | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      providers: {
+        Row: {
+          address: string | null
+          average_rating: number | null
+          banner_image_url: string | null
+          bio: string | null
+          business_name: string | null
+          created_at: string | null
+          hourly_rate: number | null
+          id: string
+          is_featured: boolean | null
+          is_profile_complete: boolean | null
+          latitude: number | null
+          longitude: number | null
+          phone: string | null
+          profile_photo_url: string | null
+          service_radius_km: number | null
+          total_reviews: number | null
+          updated_at: string | null
+          user_id: string
+          years_experience: number | null
+        }
+        Insert: {
+          address?: string | null
+          average_rating?: number | null
+          banner_image_url?: string | null
+          bio?: string | null
+          business_name?: string | null
+          created_at?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_profile_complete?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          phone?: string | null
+          profile_photo_url?: string | null
+          service_radius_km?: number | null
+          total_reviews?: number | null
+          updated_at?: string | null
+          user_id: string
+          years_experience?: number | null
+        }
+        Update: {
+          address?: string | null
+          average_rating?: number | null
+          banner_image_url?: string | null
+          bio?: string | null
+          business_name?: string | null
+          created_at?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_profile_complete?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          phone?: string | null
+          profile_photo_url?: string | null
+          service_radius_km?: number | null
+          total_reviews?: number | null
+          updated_at?: string | null
+          user_id?: string
+          years_experience?: number | null
         }
         Relationships: []
       }
@@ -725,10 +859,12 @@ export type Database = {
           id: string
           is_verified: boolean | null
           photos: string[] | null
+          provider_id: string | null
           rating: number
           reviewee_id: string
           reviewer_id: string
           reviewer_type: string
+          service_category_id: string | null
           title: string | null
           updated_at: string | null
         }
@@ -741,10 +877,12 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           photos?: string[] | null
+          provider_id?: string | null
           rating: number
           reviewee_id: string
           reviewer_id: string
           reviewer_type: string
+          service_category_id?: string | null
           title?: string | null
           updated_at?: string | null
         }
@@ -757,10 +895,12 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           photos?: string[] | null
+          provider_id?: string | null
           rating?: number
           reviewee_id?: string
           reviewer_id?: string
           reviewer_type?: string
+          service_category_id?: string | null
           title?: string | null
           updated_at?: string | null
         }
@@ -773,6 +913,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "reviews_reviewee_id_fkey"
             columns: ["reviewee_id"]
             isOneToOne: false
@@ -798,6 +945,13 @@ export type Database = {
             columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_service_category_id_fkey"
+            columns: ["service_category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -826,6 +980,39 @@ export type Database = {
           icon_name?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      service_categories: {
+        Row: {
+          color_class: string | null
+          created_at: string | null
+          description: string | null
+          icon_name: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          color_class?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          color_class?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
