@@ -21,7 +21,7 @@ const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
 
   if (!user) {
     return (
-      <div className="hidden md:flex items-center space-x-4">
+      <div className="flex items-center space-x-4">
         <Link to="/auth">
           <Button variant="ghost" className="text-sm">Connexion</Button>
         </Link>
@@ -35,32 +35,30 @@ const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
   const userDisplayName = user.email?.split('@')[0] || 'User';
 
   return (
-    <div className="hidden md:block">
-      <MegaMenu
-        user={user}
-        simulatedTier={simulatedTier}
-        signOut={signOut}
-        trigger={
-          <Button variant="ghost" className="flex items-center space-x-2 hover:bg-accent/50">
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={user.avatar_url} />
-              <AvatarFallback className="bg-[hsl(var(--pop-blue))] text-white text-sm">
-                {userDisplayName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium truncate max-w-[100px]">
-                {truncateText(userDisplayName)}
-              </span>
-              <Badge variant="outline" className="text-xs px-2 py-0.5 flex-shrink-0">
-                {simulatedTier}
-              </Badge>
-            </div>
-            <ChevronDown className="w-4 h-4 flex-shrink-0" />
-          </Button>
-        }
-      />
-    </div>
+    <MegaMenu
+      user={user}
+      simulatedTier={simulatedTier}
+      signOut={signOut}
+      trigger={
+        <Button variant="ghost" className="flex items-center space-x-2 hover:bg-accent/50">
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={user.avatar_url} />
+            <AvatarFallback className="bg-[hsl(var(--pop-blue))] text-white text-sm">
+              {userDisplayName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium truncate max-w-[100px]">
+              {truncateText(userDisplayName)}
+            </span>
+            <Badge variant="outline" className="text-xs px-2 py-0.5 flex-shrink-0">
+              {simulatedTier}
+            </Badge>
+          </div>
+          <ChevronDown className="w-4 h-4 flex-shrink-0" />
+        </Button>
+      }
+    />
   );
 };
 

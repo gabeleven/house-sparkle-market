@@ -22,7 +22,7 @@ const Header = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
-    setIsMenuOpen(false); // Close mobile menu on sign out
+    setIsMenuOpen(false);
   };
 
   const closeMobileMenu = () => {
@@ -36,8 +36,8 @@ const Header = () => {
           {/* Logo - Always visible */}
           <HeaderLogo />
 
-          {/* Desktop Navigation - Only visible on md+ screens */}
-          <div className="hidden md:flex items-center justify-end flex-1 space-x-4">
+          {/* Desktop Navigation - Hidden on mobile with CSS */}
+          <div className="hidden lg:flex items-center justify-end flex-1 space-x-4">
             <nav className="flex items-center space-x-6">
               <NavigationItems isLoggedIn={!!user} />
               
@@ -76,17 +76,25 @@ const Header = () => {
                 <ThemeToggle />
               </div>
               
-              {/* User Menu */}
-              <UserMenu 
-                user={user} 
-                simulatedTier={simulatedTier} 
-                signOut={signOut}
-              />
+              {/* User Menu - Desktop only */}
+              <div className="hidden lg:block">
+                <UserMenu 
+                  user={user} 
+                  simulatedTier={simulatedTier} 
+                  signOut={signOut}
+                />
+              </div>
             </div>
           </div>
 
           {/* Mobile menu button - Only visible on smaller screens */}
-          <div className="flex md:hidden items-center">
+          <div className="flex lg:hidden items-center space-x-2">
+            {/* Theme and Language toggles for tablet */}
+            <div className="hidden md:flex lg:hidden items-center space-x-2">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
+            
             <Button
               variant="ghost"
               size="icon"
@@ -100,14 +108,16 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation - Only shows on smaller screens when menu is open */}
-        <MobileMenu
-          isOpen={isMenuOpen}
-          user={user}
-          simulatedTier={simulatedTier}
-          setSimulatedTier={setSimulatedTier}
-          onClose={closeMobileMenu}
-          handleSignOut={handleSignOut}
-        />
+        <div className="lg:hidden">
+          <MobileMenu
+            isOpen={isMenuOpen}
+            user={user}
+            simulatedTier={simulatedTier}
+            setSimulatedTier={setSimulatedTier}
+            onClose={closeMobileMenu}
+            handleSignOut={handleSignOut}
+          />
+        </div>
       </div>
     </header>
   );

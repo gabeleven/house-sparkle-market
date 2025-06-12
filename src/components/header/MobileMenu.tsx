@@ -36,7 +36,7 @@ const MobileMenu = ({
   onClose, 
   handleSignOut 
 }: MobileMenuProps) => {
-  // Early return if not open - prevents any rendering
+  // Defensive check - prevent rendering if not open
   if (!isOpen) return null;
 
   const essentialMenuItems = [
@@ -70,7 +70,7 @@ const MobileMenu = ({
   const analyticsItems = getAnalyticsItems();
 
   return (
-    <div className="md:hidden block py-4 border-t bg-card/95 backdrop-blur-sm animate-in slide-in-from-top-2 duration-200">
+    <div className="block py-4 border-t bg-card/95 backdrop-blur-sm animate-in slide-in-from-top-2 duration-200">
       <div className="flex flex-col space-y-3">
         {/* User Info */}
         {user && (
@@ -176,8 +176,8 @@ const MobileMenu = ({
           </>
         )}
         
-        {/* Mobile Controls */}
-        <div className="space-y-2 px-4">
+        {/* Mobile Controls - Only show on small screens */}
+        <div className="space-y-2 px-4 md:hidden">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Langue</span>
             <LanguageToggle />
