@@ -45,7 +45,7 @@ const MobileMenu = ({
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
               <Badge variant="outline" className="text-xs">
-                {simulatedTier.toUpperCase()}
+                {simulatedTier}
               </Badge>
             </div>
           </div>

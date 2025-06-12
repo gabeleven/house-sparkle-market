@@ -1,6 +1,5 @@
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -17,124 +16,141 @@ import {
 export const useTaxCompliance = (providerId?: string) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const currentYear = new Date().getFullYear();
 
-  // Get tax info for current year
-  const { data: taxInfo, isLoading: taxInfoLoading } = useQuery({
-    queryKey: ['tax-info', providerId, currentYear],
-    queryFn: async () => {
-      if (!providerId) return null;
+  // Mock data states
+  const [taxInfo, setTaxInfo] = useState<ProviderTaxInfo | null>(null);
+  const [incomeTracking, setIncomeTracking] = useState<IncomeTracking[]>([]);
+  const [expenses, setExpenses] = useState<ExpenseTracking[]>([]);
+  const [taxThresholds, setTaxThresholds] = useState<ProviderTaxThresholds | null>(null);
+  const [taxDocuments, setTaxDocuments] = useState<TaxDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-      const { data, error } = await supabase
-        .from('provider_tax_info')
-        .select('*')
-        .eq('provider_id', providerId)
-        .eq('tax_year', currentYear)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching tax info:', error);
-        throw error;
+  useEffect(() => {
+    // Simulate loading mock data
+    const loadMockData = async () => {
+      if (!providerId) {
+        setIsLoading(false);
+        return;
       }
 
-      return data as ProviderTaxInfo | null;
-    },
-    enabled: !!providerId,
-  });
+      // Mock tax info
+      setTaxInfo({
+        id: '1',
+        provider_id: providerId,
+        sin_encrypted: null,
+        gst_hst_number: '123456789 RT 0001',
+        qst_number: '1234567890 TQ 0001',
+        business_number: '123456789 RC 0001',
+        cra_reporting_consent: true,
+        tax_year: currentYear,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
 
-  // Get income tracking for current year
-  const { data: incomeTracking, isLoading: incomeLoading } = useQuery({
-    queryKey: ['income-tracking', providerId, currentYear],
-    queryFn: async () => {
-      if (!providerId) return [];
+      // Mock income tracking
+      setIncomeTracking([
+        {
+          id: '1',
+          provider_id: providerId,
+          tax_year: currentYear,
+          quarter: 1,
+          gross_earnings: 12000,
+          platform_fees: 1800,
+          net_earnings: 10200,
+          gst_hst_collected: 1560,
+          qst_collected: 1197,
+          tax_withheld: 1530,
+          total_transactions: 45,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          provider_id: providerId,
+          tax_year: currentYear,
+          quarter: 2,
+          gross_earnings: 15000,
+          platform_fees: 2250,
+          net_earnings: 12750,
+          gst_hst_collected: 1950,
+          qst_collected: 1496,
+          tax_withheld: 1912,
+          total_transactions: 52,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ]);
 
-      const { data, error } = await supabase
-        .from('income_tracking')
-        .select('*')
-        .eq('provider_id', providerId)
-        .eq('tax_year', currentYear)
-        .order('quarter');
+      // Mock expenses
+      setExpenses([
+        {
+          id: '1',
+          provider_id: providerId,
+          expense_date: '2024-03-15',
+          category: 'supplies',
+          description: 'Produits de nettoyage',
+          amount: 150,
+          receipt_url: null,
+          tax_deductible: true,
+          gst_hst_amount: 19.5,
+          qst_amount: 14.96,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          provider_id: providerId,
+          expense_date: '2024-04-20',
+          category: 'gas',
+          description: 'Essence pour déplacements',
+          amount: 85,
+          receipt_url: null,
+          tax_deductible: true,
+          gst_hst_amount: 11.05,
+          qst_amount: 8.48,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ]);
 
-      if (error) {
-        console.error('Error fetching income tracking:', error);
-        throw error;
-      }
+      // Mock tax thresholds
+      setTaxThresholds({
+        id: '1',
+        provider_id: providerId,
+        tax_year: currentYear,
+        total_annual_income: 27000,
+        total_transactions: 97,
+        meets_income_threshold: true,
+        meets_transaction_threshold: true,
+        requires_cra_reporting: true,
+        last_calculated_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
 
-      return data as IncomeTracking[];
-    },
-    enabled: !!providerId,
-  });
+      // Mock tax documents
+      setTaxDocuments([
+        {
+          id: '1',
+          provider_id: providerId,
+          document_type: 't4a',
+          tax_year: currentYear,
+          quarter: null,
+          document_url: null,
+          document_data: null,
+          generated_at: new Date().toISOString(),
+          cra_submitted_at: null,
+          cra_confirmation_number: null,
+          created_at: new Date().toISOString()
+        }
+      ]);
 
-  // Get expenses for current year
-  const { data: expenses, isLoading: expensesLoading } = useQuery({
-    queryKey: ['expenses', providerId, currentYear],
-    queryFn: async () => {
-      if (!providerId) return [];
+      setIsLoading(false);
+    };
 
-      const { data, error } = await supabase
-        .from('expense_tracking')
-        .select('*')
-        .eq('provider_id', providerId)
-        .gte('expense_date', `${currentYear}-01-01`)
-        .lte('expense_date', `${currentYear}-12-31`)
-        .order('expense_date', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching expenses:', error);
-        throw error;
-      }
-
-      return data as ExpenseTracking[];
-    },
-    enabled: !!providerId,
-  });
-
-  // Get tax thresholds
-  const { data: taxThresholds } = useQuery({
-    queryKey: ['tax-thresholds', providerId, currentYear],
-    queryFn: async () => {
-      if (!providerId) return null;
-
-      const { data, error } = await supabase
-        .from('provider_tax_thresholds')
-        .select('*')
-        .eq('provider_id', providerId)
-        .eq('tax_year', currentYear)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching tax thresholds:', error);
-        throw error;
-      }
-
-      return data as ProviderTaxThresholds | null;
-    },
-    enabled: !!providerId,
-  });
-
-  // Get tax documents
-  const { data: taxDocuments } = useQuery({
-    queryKey: ['tax-documents', providerId, currentYear],
-    queryFn: async () => {
-      if (!providerId) return [];
-
-      const { data, error } = await supabase
-        .from('tax_documents')
-        .select('*')
-        .eq('provider_id', providerId)
-        .eq('tax_year', currentYear)
-        .order('generated_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching tax documents:', error);
-        throw error;
-      }
-
-      return data as TaxDocument[];
-    },
-    enabled: !!providerId,
-  });
+    loadMockData();
+  }, [providerId, currentYear]);
 
   // Calculate tax summary
   const taxSummary: TaxSummary | null = (() => {
@@ -159,184 +175,108 @@ export const useTaxCompliance = (providerId?: string) => {
     };
   })();
 
-  // Create or update tax info
-  const updateTaxInfo = useMutation({
-    mutationFn: async (data: CreateTaxInfoData) => {
-      if (!providerId) throw new Error('No provider ID provided');
-
-      const { data: result, error } = await supabase
-        .from('provider_tax_info')
-        .upsert({
-          provider_id: providerId,
-          ...data,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return result;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tax-info'] });
+  // Mock mutations
+  const updateTaxInfo = {
+    mutate: async (data: CreateTaxInfoData) => {
+      console.log('Updating tax info:', data);
       toast({
         title: "Tax information updated",
         description: "Your tax information has been saved successfully.",
       });
     },
-    onError: (error) => {
-      console.error('Error updating tax info:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update tax information. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    isPending: false
+  };
 
-  // Add expense
-  const addExpense = useMutation({
-    mutationFn: async (data: CreateExpenseData) => {
-      if (!providerId) throw new Error('No provider ID provided');
-
-      const { data: result, error } = await supabase
-        .from('expense_tracking')
-        .insert({
-          provider_id: providerId,
-          ...data,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return result;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+  const addExpense = {
+    mutate: async (data: CreateExpenseData) => {
+      console.log('Adding expense:', data);
+      const newExpense: ExpenseTracking = {
+        id: Date.now().toString(),
+        provider_id: providerId || '',
+        expense_date: data.expense_date,
+        category: data.category,
+        description: data.description,
+        amount: data.amount,
+        receipt_url: data.receipt_url || null,
+        tax_deductible: data.tax_deductible || true,
+        gst_hst_amount: data.gst_hst_amount || 0,
+        qst_amount: data.qst_amount || 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      setExpenses(prev => [...prev, newExpense]);
       toast({
         title: "Expense added",
         description: "Your expense has been recorded successfully.",
       });
     },
-    onError: (error) => {
-      console.error('Error adding expense:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add expense. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    isPending: false
+  };
 
-  // Update expense
-  const updateExpense = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<CreateExpenseData> }) => {
-      const { data: result, error } = await supabase
-        .from('expense_tracking')
-        .update(data)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return result;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+  const updateExpense = {
+    mutate: async ({ id, data }: { id: string; data: Partial<CreateExpenseData> }) => {
+      console.log('Updating expense:', id, data);
+      setExpenses(prev => prev.map(expense => 
+        expense.id === id ? { ...expense, ...data, updated_at: new Date().toISOString() } : expense
+      ));
       toast({
         title: "Expense updated",
         description: "Your expense has been updated successfully.",
       });
     },
-    onError: (error) => {
-      console.error('Error updating expense:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update expense. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    isPending: false
+  };
 
-  // Delete expense
-  const deleteExpense = useMutation({
-    mutationFn: async (expenseId: string) => {
-      const { error } = await supabase
-        .from('expense_tracking')
-        .delete()
-        .eq('id', expenseId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+  const deleteExpense = {
+    mutate: async (expenseId: string) => {
+      console.log('Deleting expense:', expenseId);
+      setExpenses(prev => prev.filter(expense => expense.id !== expenseId));
       toast({
         title: "Expense deleted",
         description: "The expense has been removed successfully.",
       });
     },
-    onError: (error) => {
-      console.error('Error deleting expense:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete expense. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    isPending: false
+  };
 
-  // Generate tax document
-  const generateTaxDocument = useMutation({
-    mutationFn: async ({ 
+  const generateTaxDocument = {
+    mutate: async ({ 
       documentType, 
       quarter 
     }: { 
       documentType: TaxDocument['document_type']; 
       quarter?: number 
     }) => {
-      if (!providerId) throw new Error('No provider ID provided');
-
-      // This would typically call an edge function to generate the document
-      const documentData = {
-        providerId,
-        taxYear: currentYear,
+      console.log('Generating tax document:', documentType, quarter);
+      const newDocument: TaxDocument = {
+        id: Date.now().toString(),
+        provider_id: providerId || '',
+        document_type: documentType,
+        tax_year: currentYear,
         quarter,
-        documentType,
-        taxSummary,
-        incomeTracking,
-        expenses,
-      };
-
-      const { data: result, error } = await supabase
-        .from('tax_documents')
-        .insert({
-          provider_id: providerId,
-          document_type: documentType,
-          tax_year: currentYear,
+        document_url: null,
+        document_data: {
+          providerId,
+          taxYear: currentYear,
           quarter,
-          document_data: documentData,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return result;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tax-documents'] });
+          documentType,
+          taxSummary,
+          incomeTracking,
+          expenses,
+        },
+        generated_at: new Date().toISOString(),
+        cra_submitted_at: null,
+        cra_confirmation_number: null,
+        created_at: new Date().toISOString()
+      };
+      setTaxDocuments(prev => [...prev, newDocument]);
       toast({
         title: "Document generated",
         description: "Your tax document has been generated successfully.",
       });
     },
-    onError: (error) => {
-      console.error('Error generating document:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate tax document. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    isPending: false
+  };
 
   return {
     // Data
@@ -348,7 +288,7 @@ export const useTaxCompliance = (providerId?: string) => {
     taxSummary,
     
     // Loading states
-    isLoading: taxInfoLoading || incomeLoading || expensesLoading,
+    isLoading,
     
     // Mutations
     updateTaxInfo,

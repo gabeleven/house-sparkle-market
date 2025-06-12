@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SubscriptionTier } from '@/types/subscription';
+import { SubscriptionTier, SUBSCRIPTION_PLANS } from '@/types/subscription';
 import { Settings, Crown, Zap, Star } from 'lucide-react';
 
 interface SubscriptionSimulatorProps {
@@ -20,48 +20,35 @@ interface SubscriptionSimulatorProps {
 const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimulatorProps) => {
   const getTierIcon = (tier: SubscriptionTier) => {
     switch (tier) {
-      case SubscriptionTier.FREE:
+      case 'FREE':
         return <Settings className="w-4 h-4" />;
-      case SubscriptionTier.STARTER:
+      case 'STARTER':
         return <Zap className="w-4 h-4" />;
-      case SubscriptionTier.PROFESSIONAL:
+      case 'PRO':
         return <Star className="w-4 h-4" />;
-      case SubscriptionTier.PREMIUM:
+      case 'PREMIUM':
         return <Crown className="w-4 h-4" />;
       default:
         return <Settings className="w-4 h-4" />;
     }
   };
 
-  const getTierLabel = (tier: SubscriptionTier) => {
-    switch (tier) {
-      case SubscriptionTier.FREE:
-        return 'CRA Ready';
-      case SubscriptionTier.STARTER:
-        return 'Tax Basics';
-      case SubscriptionTier.PROFESSIONAL:
-        return 'Most Popular';
-      case SubscriptionTier.PREMIUM:
-        return 'Business Intelligence';
-      default:
-        return 'CRA Ready';
-    }
-  };
-
   const getTierColor = (tier: SubscriptionTier) => {
     switch (tier) {
-      case SubscriptionTier.FREE:
+      case 'FREE':
         return 'default';
-      case SubscriptionTier.STARTER:
+      case 'STARTER':
         return 'secondary';
-      case SubscriptionTier.PROFESSIONAL:
+      case 'PRO':
         return 'default';
-      case SubscriptionTier.PREMIUM:
+      case 'PREMIUM':
         return 'destructive';
       default:
         return 'default';
     }
   };
+
+  const currentPlan = SUBSCRIPTION_PLANS[currentTier];
 
   return (
     <div className="flex items-center space-x-2">
@@ -74,34 +61,18 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={SubscriptionTier.FREE}>
-            <div className="flex items-center space-x-2 w-full">
-              <Settings className="w-4 h-4" />
-              <span>FREE - CRA Ready</span>
-            </div>
-          </SelectItem>
-          <SelectItem value={SubscriptionTier.STARTER}>
-            <div className="flex items-center space-x-2 w-full">
-              <Zap className="w-4 h-4" />
-              <span>STARTER - Tax Basics</span>
-            </div>
-          </SelectItem>
-          <SelectItem value={SubscriptionTier.PROFESSIONAL}>
-            <div className="flex items-center space-x-2 w-full">
-              <Star className="w-4 h-4" />
-              <span>PRO - Most Popular</span>
-            </div>
-          </SelectItem>
-          <SelectItem value={SubscriptionTier.PREMIUM}>
-            <div className="flex items-center space-x-2 w-full">
-              <Crown className="w-4 h-4" />
-              <span>PREMIUM - Business Intelligence</span>
-            </div>
-          </SelectItem>
+          {Object.entries(SUBSCRIPTION_PLANS).map(([tier, plan]) => (
+            <SelectItem key={tier} value={tier}>
+              <div className="flex items-center space-x-2 w-full">
+                {getTierIcon(tier as SubscriptionTier)}
+                <span>{tier} - {plan.name}</span>
+              </div>
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
       <Badge variant={getTierColor(currentTier) as any} className="text-xs">
-        {getTierLabel(currentTier)}
+        {currentPlan.name}
       </Badge>
     </div>
   );

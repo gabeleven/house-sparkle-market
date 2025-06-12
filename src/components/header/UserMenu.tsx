@@ -52,7 +52,7 @@ const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
               {truncateText(userDisplayName)}
             </span>
             <Badge variant="outline" className="text-xs px-2 py-0.5">
-              {simulatedTier.toUpperCase()}
+              {simulatedTier}
             </Badge>
           </div>
           <ChevronDown className="w-4 h-4 hidden md:block" />

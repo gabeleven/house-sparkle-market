@@ -25,13 +25,13 @@ import {
 import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { SubscriptionTier } from '@/types/subscription';
+import { SubscriptionTier, SUBSCRIPTION_PLANS, hasStarterOrHigher, hasProOrHigher, isPremium } from '@/types/subscription';
 
 const Settings = () => {
   const { user } = useAuth();
   
-  // Mock tier - in real app this would come from subscription simulator context
-  const currentTier = SubscriptionTier.PROFESSIONAL;
+  // Mock tier - in real app this would come from subscription hook
+  const currentTier: SubscriptionTier = 'PRO';
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
@@ -47,30 +47,31 @@ const Settings = () => {
   }
 
   const getTierBadge = (tier: SubscriptionTier) => {
-    const configs = {
-      [SubscriptionTier.FREE]: { label: 'CRA Ready', color: 'secondary' },
-      [SubscriptionTier.STARTER]: { label: 'Tax Basics', color: 'default' },
-      [SubscriptionTier.PROFESSIONAL]: { label: 'Most Popular', color: 'default' },
-      [SubscriptionTier.PREMIUM]: { label: 'Business Intelligence', color: 'destructive' }
+    const plan = SUBSCRIPTION_PLANS[tier];
+    const config = {
+      'FREE': { color: 'secondary' },
+      'STARTER': { color: 'default' },
+      'PRO': { color: 'default' },
+      'PREMIUM': { color: 'destructive' }
     };
     
-    const config = configs[tier];
-    return <Badge variant={config.color as any}>{config.label}</Badge>;
+    const tierConfig = config[tier];
+    return <Badge variant={tierConfig.color as any}>{plan.name}</Badge>;
   };
 
   const getUsageMetrics = (tier: SubscriptionTier) => {
     const metrics = {
-      [SubscriptionTier.FREE]: { bookings: '7/10', storage: '0.5/2 GB' },
-      [SubscriptionTier.STARTER]: { bookings: '28/∞', storage: '2.1/10 GB' },
-      [SubscriptionTier.PROFESSIONAL]: { bookings: '45/∞', storage: '8.5/50 GB' },
-      [SubscriptionTier.PREMIUM]: { bookings: '67/∞', storage: '15.2/100 GB' }
+      'FREE': { bookings: '7/10', storage: '0.5/2 GB' },
+      'STARTER': { bookings: '28/∞', storage: '2.1/10 GB' },
+      'PRO': { bookings: '45/∞', storage: '8.5/50 GB' },
+      'PREMIUM': { bookings: '67/∞', storage: '15.2/100 GB' }
     };
     return metrics[tier];
   };
 
-  const isPremium = (currentTier as string) === (SubscriptionTier.PREMIUM as string);
-  const isStarterPlus = (currentTier as string) !== (SubscriptionTier.FREE as string);
-  const isProfessionalPlus = (currentTier as string) === (SubscriptionTier.PROFESSIONAL as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
+  const isStarterPlus = hasStarterOrHigher(currentTier);
+  const isProfessionalPlus = hasProOrHigher(currentTier);
+  const isPremiumTier = isPremium(currentTier);
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,7 +89,7 @@ const Settings = () => {
               <TabsTrigger value="subscription">Abonnement</TabsTrigger>
               <TabsTrigger value="integrations">Intégrations</TabsTrigger>
               {isStarterPlus && <TabsTrigger value="business">Entreprise</TabsTrigger>}
-              {isPremium && <TabsTrigger value="intelligence">Intelligence</TabsTrigger>}
+              {isPremiumTier && <TabsTrigger value="intelligence">Intelligence</TabsTrigger>}
             </TabsList>
 
             {/* Account Settings */}
@@ -195,7 +196,7 @@ const Settings = () => {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium">{currentTier.toUpperCase()}</h3>
+                      <h3 className="font-medium">{currentTier}</h3>
                       <p className="text-sm text-muted-foreground">Plan actuel</p>
                     </div>
                     {getTierBadge(currentTier)}
@@ -214,7 +215,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '70%' : '45%' }}
+                            style={{ width: currentTier === 'FREE' ? '70%' : '45%' }}
                           />
                         </div>
                       </div>
@@ -285,7 +286,7 @@ const Settings = () => {
                     </div>
                   )}
 
-                  {isPremium && (
+                  {isPremiumTier && (
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <Brain className="w-6 h-6" />
@@ -362,7 +363,7 @@ const Settings = () => {
             )}
 
             {/* Market Intelligence */}
-            {isPremium && (
+            {isPremiumTier && (
               <TabsContent value="intelligence" className="space-y-6">
                 <Card>
                   <CardHeader>
