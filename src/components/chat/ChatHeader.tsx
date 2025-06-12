@@ -32,7 +32,7 @@ export const ChatHeader = ({
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b bg-white shadow-sm">
+    <div className="flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
       <div className="flex items-center gap-3">
         {onBack && (
           <Button variant="ghost" size="icon" onClick={onBack} className="md:hidden">
@@ -42,7 +42,7 @@ export const ChatHeader = ({
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+            <div className="flex items-center gap-3 cursor-pointer hover:bg-muted p-2 rounded-lg transition-colors">
               <div className="relative">
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={otherUserAvatar} />
@@ -51,13 +51,13 @@ export const ChatHeader = ({
                   </AvatarFallback>
                 </Avatar>
                 {isUserOnline(otherUserId) && (
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-card"></div>
                 )}
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-900">{otherUserName}</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="font-semibold text-foreground">{otherUserName}</h3>
+                <p className="text-sm text-muted-foreground">
                   {isUserOnline(otherUserId) ? 'Online' : 'Offline'}
                 </p>
               </div>

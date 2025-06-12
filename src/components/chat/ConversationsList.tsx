@@ -80,7 +80,7 @@ export const ConversationsList = ({ onSelectConversation, selectedConversationId
 
   if (conversations.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <div className="flex items-center justify-center h-full text-muted-foreground bg-background">
         <div className="text-center">
           <p className="text-lg font-semibold mb-2">No conversations yet</p>
           <p className="text-sm">Start a conversation with a cleaner to see it here.</p>
@@ -90,7 +90,7 @@ export const ConversationsList = ({ onSelectConversation, selectedConversationId
   }
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full bg-card">
       <div className="space-y-1 p-2">
         {conversations.map((conversation) => (
           <div
@@ -98,8 +98,8 @@ export const ConversationsList = ({ onSelectConversation, selectedConversationId
             onClick={() => onSelectConversation(conversation)}
             className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
               selectedConversationId === conversation.id
-                ? 'bg-purple-50 border-l-4 border-purple-600'
-                : 'hover:bg-gray-50'
+                ? 'bg-primary/10 border-l-4 border-primary'
+                : 'hover:bg-muted'
             }`}
           >
             <div className="relative">
@@ -110,13 +110,13 @@ export const ConversationsList = ({ onSelectConversation, selectedConversationId
                 </AvatarFallback>
               </Avatar>
               {isUserOnline(conversation.other_user_id) && (
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-card"></div>
               )}
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
-                <h4 className="font-semibold text-gray-900 truncate">
+                <h4 className="font-semibold text-foreground truncate">
                   {conversation.other_user_name}
                 </h4>
                 <div className="flex items-center gap-2">
@@ -125,13 +125,13 @@ export const ConversationsList = ({ onSelectConversation, selectedConversationId
                       {conversation.unread_count}
                     </Badge>
                   )}
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
                   </span>
                 </div>
               </div>
               
-              <p className="text-sm text-gray-600 truncate">
+              <p className="text-sm text-muted-foreground truncate">
                 {conversation.last_message || 'No messages yet'}
               </p>
             </div>

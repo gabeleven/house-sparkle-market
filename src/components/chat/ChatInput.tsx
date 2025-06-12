@@ -87,7 +87,7 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
   };
 
   return (
-    <div className="p-4 border-t bg-white">
+    <div className="p-4 border-t border-border bg-card">
       <div className="flex items-end gap-2">
         <input
           type="file"
@@ -114,7 +114,7 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
             disabled={isSending}
-            className="rounded-full border-gray-300 focus:border-purple-500"
+            className="rounded-full border-input focus:border-primary bg-background text-foreground placeholder:text-muted-foreground"
           />
         </div>
 
@@ -122,7 +122,7 @@ export const ChatInput = ({ conversationId }: ChatInputProps) => {
           onClick={handleSendMessage}
           disabled={!messageText.trim() || isSending}
           size="icon"
-          className="rounded-full bg-purple-600 hover:bg-purple-700 flex-shrink-0"
+          className="rounded-full bg-primary hover:bg-primary/90 flex-shrink-0"
         >
           <Send className="w-4 h-4" />
         </Button>
