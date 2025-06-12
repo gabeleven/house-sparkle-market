@@ -68,9 +68,10 @@ const Settings = () => {
     return metrics[tier];
   };
 
+  // Helper functions for tier comparisons
   const isPremium = currentTier === SubscriptionTier.PREMIUM;
-  const isStarterPlus = currentTier !== SubscriptionTier.FREE;
-  const isProPlus = currentTier === SubscriptionTier.PRO || currentTier === SubscriptionTier.PREMIUM;
+  const isStarterOrHigher = [SubscriptionTier.STARTER, SubscriptionTier.PRO, SubscriptionTier.PREMIUM].includes(currentTier);
+  const isProOrHigher = [SubscriptionTier.PRO, SubscriptionTier.PREMIUM].includes(currentTier);
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,7 +88,7 @@ const Settings = () => {
               <TabsTrigger value="account">Compte</TabsTrigger>
               <TabsTrigger value="subscription">Abonnement</TabsTrigger>
               <TabsTrigger value="integrations">Intégrations</TabsTrigger>
-              {isStarterPlus && <TabsTrigger value="business">Entreprise</TabsTrigger>}
+              {isStarterOrHigher && <TabsTrigger value="business">Entreprise</TabsTrigger>}
               {isPremium && <TabsTrigger value="intelligence">Intelligence</TabsTrigger>}
             </TabsList>
 
@@ -216,7 +217,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '60%' : '45%' }}
+                            style={{ width: currentTier === SubscriptionTier.FREE ? '60%' : '45%' }}
                           />
                         </div>
                       </div>
@@ -261,7 +262,7 @@ const Settings = () => {
                       <div>
                         <h4 className="font-medium">Google Calendar</h4>
                         <p className="text-sm text-muted-foreground">
-                          {isStarterPlus ? 'Synchronisation bidirectionnelle' : 'Synchronisation basique'}
+                          {isStarterOrHigher ? 'Synchronisation bidirectionnelle' : 'Synchronisation basique'}
                         </p>
                       </div>
                     </div>
@@ -271,7 +272,7 @@ const Settings = () => {
                     </div>
                   </div>
 
-                  {isProPlus && (
+                  {isProOrHigher && (
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <FileText className="w-6 h-6" />
@@ -307,7 +308,7 @@ const Settings = () => {
             </TabsContent>
 
             {/* Business Preferences */}
-            {isStarterPlus && (
+            {isStarterOrHigher && (
               <TabsContent value="business" className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -337,7 +338,7 @@ const Settings = () => {
                       </div>
                     </div>
 
-                    {isProPlus && (
+                    {isProOrHigher && (
                       <div className="space-y-3">
                         <Separator />
                         <h4 className="font-medium">Préférences Fiscales Avancées</h4>
