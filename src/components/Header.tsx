@@ -19,9 +19,6 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hide header on certain analytics sub-pages to prevent duplication
-  const hideHeader = location.pathname.startsWith('/analytics/') && location.pathname !== '/analytics';
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -32,10 +29,18 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  // Don't render header if it should be hidden
-  if (hideHeader) {
+  // Get page title based on current route
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path === '/analytics') return 'Analytiques';
+    if (path === '/analytics/insights') return 'Insights';
+    if (path === '/analytics/reports') return 'Reports';
+    if (path === '/analytics/intelligence') return 'Intelligence Marché';
+    if (path === '/analytics/performance') return 'Performance';
     return null;
-  }
+  };
+
+  const pageTitle = getPageTitle();
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
@@ -43,6 +48,13 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo - Always visible */}
           <HeaderLogo />
+
+          {/* Page Title for Analytics Pages */}
+          {pageTitle && (
+            <div className="hidden lg:block">
+              <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
+            </div>
+          )}
 
           {/* Desktop Navigation - Only visible on large screens */}
           <div className="hidden lg:flex items-center justify-end flex-1 space-x-4">

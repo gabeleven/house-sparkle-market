@@ -57,37 +57,34 @@ const Intelligence = () => {
 
   if (!canAccessFeature('PRO')) {
     return (
-      <div className="min-h-screen bg-background text-foreground p-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Back Navigation */}
-          <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/analytics')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Retour aux Analytiques
-            </Button>
-          </div>
-          
-          <div className="text-center py-12">
-            <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Intelligence Marché Canadien</h2>
-            <p className="text-muted-foreground mb-6">
-              Passez à Pro ou Premium pour accéder aux insights IA du marché canadien et à l'analyse concurrentielle.
-            </p>
-            <Badge variant="outline" className="text-lg px-4 py-2">
-              Fonctionnalité Pro Requise
-            </Badge>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/analytics')}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour aux Analytiques
+          </Button>
+        </div>
+        
+        <div className="text-center py-12">
+          <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Intelligence Marché Canadien</h2>
+          <p className="text-muted-foreground mb-6">
+            Passez à Pro ou Premium pour accéder aux insights IA du marché canadien et à l'analyse concurrentielle.
+          </p>
+          <Badge variant="outline" className="text-lg px-4 py-2">
+            Fonctionnalité Pro Requise
+          </Badge>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="container mx-auto px-4 py-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Back Navigation */}
         <div className="flex items-center justify-between">
