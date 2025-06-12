@@ -5,15 +5,25 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Download, FileText, TrendingUp, DollarSign, Calendar, Users, Plus } from 'lucide-react';
+import { Download, FileText, TrendingUp, DollarSign, Calendar, Users, Plus, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useTaxData } from '@/hooks/useTaxData';
+import { useProviderProfile } from '@/hooks/useProviderProfile';
+import { useTaxCompliance } from '@/hooks/useTaxCompliance';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const ProviderDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { taxSummary, quarterlyData, recentTransactions, loading, addSampleData } = useTaxData();
+  const { provider } = useProviderProfile();
+  const { 
+    taxSummary, 
+    incomeTracking, 
+    taxThresholds, 
+    taxDocuments,
+    isLoading: taxLoading,
+    generateTaxDocument 
+  } = useTaxCompliance(provider?.id);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -21,7 +31,7 @@ const ProviderDashboard = () => {
     }
   }, [user, authLoading, navigate]);
 
-  if (authLoading || loading) {
+  if (authLoading || taxLoading) {
     return (
       <div className="min-h-screen bg-background">
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -43,119 +53,127 @@ const ProviderDashboard = () => {
     return null;
   }
 
+  const handleGenerateDocument = (type: 't4a' | 'quarterly_summary' | 'annual_summary') => {
+    generateTaxDocument.mutate({ documentType: type });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Tableau de Bord Prestataire
+            Provider Tax Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Gérez vos revenus, consultez vos documents fiscaux et suivez vos performances
+            Comprehensive tax compliance and reporting for CRA Bill C-47 requirements
           </p>
-          
-          {/* Sample data button for demo */}
-          {taxSummary && taxSummary.totalEarnings === 0 && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-blue-800 mb-2">
-                Aucune donnée trouvée. Voulez-vous ajouter des données d'exemple pour voir le tableau de bord en action ?
-              </p>
-              <Button onClick={addSampleData} size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Ajouter des données d'exemple
-              </Button>
-            </div>
-          )}
         </div>
+
+        {/* CRA Compliance Alert */}
+        {taxThresholds?.requires_cra_reporting && (
+          <Alert className="mb-6 border-orange-200 bg-orange-50">
+            <AlertTriangle className="h-4 w-4 text-orange-600" />
+            <AlertDescription className="text-orange-800">
+              You meet CRA reporting requirements (${taxThresholds.total_annual_income.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })} income or {taxThresholds.total_transactions} transactions). 
+              Tax compliance documentation is mandatory.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Summary Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenus Totaux</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {taxSummary?.totalEarnings.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' }) || '0 $'}
+                {taxSummary?.totalEarnings.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
-              <p className="text-xs text-muted-foreground">Année en cours</p>
+              <p className="text-xs text-muted-foreground">Current tax year</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Transactions</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{taxSummary?.transactions || 0}</div>
-              <p className="text-xs text-muted-foreground">Année en cours</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Impôt Estimé</CardTitle>
+              <CardTitle className="text-sm font-medium">Business Expenses</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {taxSummary?.estimatedTax.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' }) || '0 $'}
+                {taxSummary?.totalExpenses.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
-              <p className="text-xs text-muted-foreground">Basé sur 15% d'impôt</p>
+              <p className="text-xs text-muted-foreground">Tax deductible</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Moyenne Mensuelle</CardTitle>
+              <CardTitle className="text-sm font-medium">Net Income</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {((taxSummary?.totalEarnings || 0) / 12).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
+                {taxSummary?.netIncome.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
-              <p className="text-xs text-muted-foreground">Revenu mensuel moyen</p>
+              <p className="text-xs text-muted-foreground">After expenses</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Estimated Tax</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {taxSummary?.estimatedTax.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
+              </div>
+              <p className="text-xs text-muted-foreground">15% rate estimate</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          {/* Quarterly Breakdown */}
+          {/* Quarterly Income */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calendar className="w-5 h-5" />
-                <span>Revenus par Trimestre</span>
+                <span>Quarterly Income Breakdown</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {quarterlyData.length > 0 ? (
+              {incomeTracking.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Trimestre</TableHead>
-                      <TableHead className="text-right">Revenus</TableHead>
+                      <TableHead>Quarter</TableHead>
+                      <TableHead className="text-right">Gross</TableHead>
+                      <TableHead className="text-right">Net</TableHead>
                       <TableHead className="text-right">Transactions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {quarterlyData.map((quarter) => (
-                      <TableRow key={quarter.quarter}>
-                        <TableCell className="font-medium">{quarter.quarter}</TableCell>
+                    {incomeTracking.map((quarter) => (
+                      <TableRow key={`${quarter.tax_year}-${quarter.quarter}`}>
+                        <TableCell className="font-medium">Q{quarter.quarter} {quarter.tax_year}</TableCell>
                         <TableCell className="text-right font-medium">
-                          {quarter.earnings.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
+                          {Number(quarter.gross_earnings).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}
                         </TableCell>
-                        <TableCell className="text-right">{quarter.transactions}</TableCell>
+                        <TableCell className="text-right">
+                          {Number(quarter.net_earnings).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}
+                        </TableCell>
+                        <TableCell className="text-right">{quarter.total_transactions}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  Aucune donnée trimestrielle disponible
+                  No quarterly data available for current tax year
                 </div>
               )}
             </CardContent>
@@ -166,88 +184,117 @@ const ProviderDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
-                <span>Documents Fiscaux</span>
+                <span>Tax Documents & Compliance</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Résumé Fiscal 2024</h4>
-                  <p className="text-sm text-muted-foreground">Rapport complet des revenus</p>
+                  <h4 className="font-medium">T4A Tax Slip</h4>
+                  <p className="text-sm text-muted-foreground">Official CRA tax document</p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleGenerateDocument('t4a')}
+                  disabled={generateTaxDocument.isPending}
+                >
                   <Download className="w-4 h-4 mr-2" />
-                  Télécharger
+                  Generate
                 </Button>
               </div>
               
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Feuillet T4A</h4>
-                  <p className="text-sm text-muted-foreground">Document officiel ARC</p>
+                  <h4 className="font-medium">Annual Tax Summary</h4>
+                  <p className="text-sm text-muted-foreground">Complete income and expense report</p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleGenerateDocument('annual_summary')}
+                  disabled={generateTaxDocument.isPending}
+                >
                   <Download className="w-4 h-4 mr-2" />
-                  Télécharger
+                  Generate
                 </Button>
               </div>
               
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Détail des Transactions</h4>
-                  <p className="text-sm text-muted-foreground">Liste complète des paiements</p>
+                  <h4 className="font-medium">Quarterly Summary</h4>
+                  <p className="text-sm text-muted-foreground">Q4 2024 earnings breakdown</p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleGenerateDocument('quarterly_summary')}
+                  disabled={generateTaxDocument.isPending}
+                >
                   <Download className="w-4 h-4 mr-2" />
-                  Télécharger
+                  Generate
                 </Button>
               </div>
+
+              {taxDocuments.length > 0 && (
+                <div className="mt-4">
+                  <h5 className="font-medium mb-2">Recent Documents</h5>
+                  <div className="space-y-2">
+                    {taxDocuments.slice(0, 3).map((doc) => (
+                      <div key={doc.id} className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded">
+                        <span>{doc.document_type.toUpperCase()} - {doc.tax_year}</span>
+                        <span className="text-muted-foreground">
+                          {new Date(doc.generated_at).toLocaleDateString('en-CA')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Recent Transactions */}
+        {/* CRA Compliance Status */}
         <Card>
           <CardHeader>
-            <CardTitle>Transactions Récentes</CardTitle>
+            <CardTitle>CRA Bill C-47 Compliance Status</CardTitle>
           </CardHeader>
           <CardContent>
-            {recentTransactions.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead className="text-right">Montant</TableHead>
-                    <TableHead className="text-right">Statut</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>{new Date(transaction.date).toLocaleDateString('fr-CA')}</TableCell>
-                      <TableCell className="font-medium">{transaction.client}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        {transaction.amount.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' })}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          transaction.status === 'Payé' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {transaction.status}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                Aucune transaction récente
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center p-4 border rounded-lg">
+                <div className="text-2xl font-bold mb-2">
+                  {taxThresholds?.total_annual_income.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
+                </div>
+                <p className="text-sm text-muted-foreground">Annual Income</p>
+                <p className="text-xs mt-1">
+                  Threshold: $2,800 {taxThresholds?.meets_income_threshold ? '✅' : '❌'}
+                </p>
               </div>
-            )}
+              
+              <div className="text-center p-4 border rounded-lg">
+                <div className="text-2xl font-bold mb-2">
+                  {taxThresholds?.total_transactions || 0}
+                </div>
+                <p className="text-sm text-muted-foreground">Total Transactions</p>
+                <p className="text-xs mt-1">
+                  Threshold: 30 services {taxThresholds?.meets_transaction_threshold ? '✅' : '❌'}
+                </p>
+              </div>
+              
+              <div className="text-center p-4 border rounded-lg">
+                <div className={`text-2xl font-bold mb-2 ${
+                  taxThresholds?.requires_cra_reporting ? 'text-orange-600' : 'text-green-600'
+                }`}>
+                  {taxThresholds?.requires_cra_reporting ? 'Required' : 'Not Required'}
+                </div>
+                <p className="text-sm text-muted-foreground">CRA Reporting</p>
+                <p className="text-xs mt-1">
+                  Last updated: {taxThresholds?.last_calculated_at ? 
+                    new Date(taxThresholds.last_calculated_at).toLocaleDateString('en-CA') : 'Never'}
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </main>
