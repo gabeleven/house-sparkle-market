@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Brain, Crown, Lock, TrendingUp, Users, Target, Zap, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { RevenueChart } from '@/components/analytics/RevenueChart';
+import { BookingChart } from '@/components/analytics/BookingChart';
+import { PerformanceChart } from '@/components/analytics/PerformanceChart';
 
 const Intelligence = () => {
   return (
@@ -54,7 +57,7 @@ const Intelligence = () => {
           </CardContent>
         </Card>
 
-        {/* Feature Preview */}
+        {/* Feature Preview with Real Charts */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card className="opacity-75">
             <CardHeader>
@@ -64,8 +67,8 @@ const Intelligence = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-gray-500">Chart Preview</span>
+              <div className="mb-4">
+                <RevenueChart />
               </div>
               <p className="text-sm text-muted-foreground">
                 Real-time market demand analysis and seasonal trend predictions for your service area.
@@ -81,8 +84,8 @@ const Intelligence = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-gray-500">Analysis Preview</span>
+              <div className="mb-4">
+                <BookingChart />
               </div>
               <p className="text-sm text-muted-foreground">
                 Compare your pricing, availability, and customer satisfaction against local competitors.
@@ -94,15 +97,15 @@ const Intelligence = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-orange-600" />
-                <span className="truncate">Price Optimization</span>
+                <span className="truncate">Performance Optimization</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-gray-500">Optimization Preview</span>
+              <div className="mb-4">
+                <PerformanceChart />
               </div>
               <p className="text-sm text-muted-foreground">
-                AI-recommended pricing strategies to maximize your earnings while staying competitive.
+                AI-recommended strategies to maximize your earnings while maintaining high quality.
               </p>
             </CardContent>
           </Card>

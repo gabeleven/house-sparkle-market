@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BarChart3, Target, Clock, Users, ArrowLeft, TrendingUp, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PerformanceChart } from '@/components/analytics/PerformanceChart';
+import { BookingChart } from '@/components/analytics/BookingChart';
 
 const Performance = () => {
   return (
@@ -103,12 +104,7 @@ const Performance = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-gradient-to-br from-blue-50 to-green-50 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Performance chart coming soon</p>
-                </div>
-              </div>
+              <PerformanceChart />
             </CardContent>
           </Card>
 
@@ -116,44 +112,11 @@ const Performance = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-green-600" />
-                <span className="truncate">Goal Progress</span>
+                <span className="truncate">Booking Trends</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">Monthly Revenue</span>
-                    <span className="text-sm">$28,750 / $30,000</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-600 h-2 rounded-full" style={{ width: '96%' }}></div>
-                  </div>
-                  <p className="text-xs text-green-600 mt-1">96% completed</p>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">Customer Rating</span>
-                    <span className="text-sm">4.8 / 5.0</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '96%' }}></div>
-                  </div>
-                  <p className="text-xs text-yellow-600 mt-1">Excellent performance</p>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">Response Time</span>
-                    <span className="text-sm">12m / 15m</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
-                  <p className="text-xs text-blue-600 mt-1">Exceeding target</p>
-                </div>
-              </div>
+              <BookingChart />
             </CardContent>
           </Card>
         </div>

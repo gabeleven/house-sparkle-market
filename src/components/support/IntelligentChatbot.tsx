@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Send, Bot, User, Minimize2, X } from 'lucide-react';
 import { useChatbot } from '@/contexts/ChatbotContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { webLLMService } from '@/services/webLLMService';
 
 interface Message {
   id: string;
@@ -31,9 +32,11 @@ export const IntelligentChatbot = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [userCanScroll, setUserCanScroll] = useState(false);
 
-  console.log('IntelligentChatbot render - isOpen:', isOpen);
+  // Initialize WebLLM on component mount
+  useEffect(() => {
+    webLLMService.initialize();
+  }, []);
 
-  // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = (smooth = true) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ 
@@ -43,27 +46,23 @@ export const IntelligentChatbot = () => {
     }
   };
 
-  // Check if user is scrolled to bottom
   const isScrolledToBottom = () => {
     if (!messagesContainerRef.current) return true;
     const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-    return scrollTop + clientHeight >= scrollHeight - 10; // 10px threshold
+    return scrollTop + clientHeight >= scrollHeight - 10;
   };
 
-  // Handle scroll events
   const handleScroll = () => {
     setUserCanScroll(!isScrolledToBottom());
   };
 
   useEffect(() => {
-    // Auto-scroll to bottom when messages change, but only if user hasn't scrolled up
     if (!userCanScroll) {
       scrollToBottom();
     }
   }, [messages, userCanScroll]);
 
   useEffect(() => {
-    // Force scroll to bottom when chat opens
     if (isOpen) {
       setTimeout(() => scrollToBottom(false), 100);
     }
@@ -82,41 +81,34 @@ export const IntelligentChatbot = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsTyping(true);
-    setUserCanScroll(false); // Auto-scroll for new messages
+    setUserCanScroll(false);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      // Use WebLLM for response generation
+      const aiResponse = await webLLMService.generateResponse(inputValue);
+      
+      const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getAIResponse(inputValue),
+        text: aiResponse,
         isUser: false,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiResponse]);
+      
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm having trouble processing your request right now. Please try again or contact our support team for assistance.",
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
-  };
-
-  const getAIResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase();
-    
-    if (input.includes('booking') || input.includes('réservation')) {
-      return "I can help you with bookings! You can make a booking by going to the 'Find a Service' page and selecting a cleaner in your area. Would you like me to guide you through the process?";
     }
-    
-    if (input.includes('price') || input.includes('cost') || input.includes('prix') || input.includes('coût')) {
-      return "Cleaning prices vary based on location, service type, and duration. Most cleaners charge between $25-45 per hour. You can see exact pricing when you select a specific cleaner on our platform.";
-    }
-    
-    if (input.includes('tax') || input.includes('fiscal')) {
-      return "HOUSIE automatically handles tax compliance for Canadian cleaning businesses. We track income, generate tax documents, and ensure you meet CRA reporting requirements. No manual paperwork needed!";
-    }
-    
-    if (input.includes('support') || input.includes('help') || input.includes('aide')) {
-      return "I'm here to help! You can ask me about bookings, pricing, tax compliance, or any other questions about using HOUSIE. What specific topic would you like assistance with?";
-    }
-    
-    return "Thank you for your message! I'm constantly learning to better assist you. For complex questions, you can also contact our support team directly. Is there anything specific about HOUSIE I can help you with?";
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -189,7 +181,7 @@ export const IntelligentChatbot = () => {
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
-                <p className="text-sm leading-relaxed">{message.text}</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.text}</p>
                 <p className="text-xs opacity-70 mt-1">
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
@@ -219,7 +211,6 @@ export const IntelligentChatbot = () => {
           <div ref={messagesEndRef} />
         </div>
         
-        {/* Scroll to bottom indicator */}
         {userCanScroll && (
           <div className="px-4 py-2">
             <Button 
