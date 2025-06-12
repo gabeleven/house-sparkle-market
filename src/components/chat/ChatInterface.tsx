@@ -126,7 +126,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-full bg-background text-foreground">
         <p>Please log in to view messages.</p>
       </div>
     );
@@ -136,7 +136,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const displayAvatar = otherUserInfo?.profile_photo_url || otherUserAvatar;
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full bg-card text-card-foreground border-border">
       <ChatHeader 
         otherUserId={otherUserId}
         otherUserName={displayName}
@@ -144,12 +144,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         onBack={onBack}
       />
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-background">
         <ChatMessages messages={messages} isLoading={false} />
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="border-t p-4">
+      <div className="border-t border-border bg-card p-4">
         <div className="flex gap-2">
           <Input
             value={newMessage}
@@ -157,12 +157,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
             disabled={sending}
-            className="flex-1"
+            className="flex-1 bg-background border-input text-foreground placeholder:text-muted-foreground"
           />
           <Button 
             onClick={handleSendMessage}
             disabled={!newMessage.trim() || sending}
             size="icon"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Send className="w-4 h-4" />
           </Button>

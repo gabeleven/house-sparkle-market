@@ -15,14 +15,14 @@ export const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+      <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
         <p>No messages yet.</p>
         <p className="text-sm">Start the conversation!</p>
       </div>

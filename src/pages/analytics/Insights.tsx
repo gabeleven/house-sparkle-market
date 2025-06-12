@@ -6,6 +6,36 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LineChart, BarChart3, PieChart, TrendingUp, ArrowLeft, Calendar, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
+
+// Sample data for charts
+const revenueData = [
+  { month: 'Jul', revenue: 22000 },
+  { month: 'Aug', revenue: 24500 },
+  { month: 'Sep', revenue: 26000 },
+  { month: 'Oct', revenue: 27200 },
+  { month: 'Nov', revenue: 28750 },
+  { month: 'Dec', revenue: 29500 }
+];
+
+const serviceDistributionData = [
+  { name: 'Regular Cleaning', value: 45, color: '#3b82f6' },
+  { name: 'Deep Cleaning', value: 30, color: '#10b981' },
+  { name: 'Move-in/out', value: 15, color: '#f59e0b' },
+  { name: 'Commercial', value: 10, color: '#ef4444' }
+];
+
+const chartConfig = {
+  revenue: {
+    label: "Revenue",
+    color: "hsl(var(--chart-1))",
+  },
+  bookings: {
+    label: "Bookings",
+    color: "hsl(var(--chart-2))",
+  },
+};
 
 const Insights = () => {
   return (
@@ -104,12 +134,25 @@ const Insights = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <LineChart className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Interactive chart coming soon</p>
-                </div>
-              </div>
+              <ChartContainer config={chartConfig} className="h-64 w-full">
+                <RechartsLineChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <ChartTooltip 
+                    content={<ChartTooltipContent />}
+                    formatter={(value) => [`$${value.toLocaleString()}`, 'Revenue']}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#3b82f6" 
+                    strokeWidth={2}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
+                  />
+                </RechartsLineChart>
+              </ChartContainer>
             </CardContent>
           </Card>
 
@@ -122,12 +165,26 @@ const Insights = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <PieChart className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Interactive chart coming soon</p>
-                </div>
-              </div>
+              <ChartContainer config={chartConfig} className="h-64 w-full">
+                <RechartsPieChart>
+                  <Pie
+                    data={serviceDistributionData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {serviceDistributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip 
+                    content={<ChartTooltipContent />}
+                    formatter={(value) => [`${value}%`, 'Percentage']}
+                  />
+                </RechartsPieChart>
+              </ChartContainer>
             </CardContent>
           </Card>
         </div>

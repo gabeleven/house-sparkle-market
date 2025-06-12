@@ -18,7 +18,7 @@ export const ChatBubble = ({ message, isOwnMessage, showAvatar = true }: ChatBub
       {showAvatar && !isOwnMessage && (
         <Avatar className="w-8 h-8 flex-shrink-0">
           <AvatarImage src={message.sender_avatar} />
-          <AvatarFallback className="text-xs">
+          <AvatarFallback className="text-xs bg-muted text-muted-foreground">
             {message.sender_name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
@@ -28,12 +28,12 @@ export const ChatBubble = ({ message, isOwnMessage, showAvatar = true }: ChatBub
         <div
           className={`inline-block px-4 py-2 rounded-2xl ${
             isOwnMessage
-              ? 'bg-purple-600 text-white rounded-br-md'
-              : 'bg-gray-100 text-gray-900 rounded-bl-md'
+              ? 'bg-primary text-primary-foreground rounded-br-md'
+              : 'bg-muted text-muted-foreground rounded-bl-md'
           }`}
         >
           {message.message_type === 'text' ? (
-            <p className="break-words">{message.message_content}</p>
+            <p className="break-words text-inherit">{message.message_content}</p>
           ) : (
             <img
               src={message.image_url || ''}
@@ -43,7 +43,7 @@ export const ChatBubble = ({ message, isOwnMessage, showAvatar = true }: ChatBub
           )}
         </div>
         
-        <div className={`text-xs text-gray-500 mt-1 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
+        <div className={`text-xs text-muted-foreground mt-1 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
           {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
           {isOwnMessage && (
             <span className="ml-1">
@@ -56,7 +56,7 @@ export const ChatBubble = ({ message, isOwnMessage, showAvatar = true }: ChatBub
       {showAvatar && isOwnMessage && (
         <Avatar className="w-8 h-8 flex-shrink-0">
           <AvatarImage src={user?.user_metadata?.avatar_url} />
-          <AvatarFallback className="text-xs">
+          <AvatarFallback className="text-xs bg-muted text-muted-foreground">
             {user?.user_metadata?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
