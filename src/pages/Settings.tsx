@@ -1,435 +1,293 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
+import Footer from '@/components/Footer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  User, 
-  CreditCard, 
-  Plug, 
-  Building2, 
-  Shield, 
-  Globe, 
-  Bell, 
-  Brain,
-  Calendar,
-  FileText,
-  Zap,
-  Crown
-} from 'lucide-react';
-import Header from '@/components/Header';
+import { Badge } from '@/components/ui/badge';
+import { Bell, Shield, User, CreditCard, Moon, Sun, Globe, Mail, Phone } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
-import { Navigate } from 'react-router-dom';
-import { SubscriptionTier, SUBSCRIPTION_PLANS, hasStarterOrHigher, hasProOrHigher, isPremium } from '@/types/subscription';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 const Settings = () => {
   const { user } = useAuth();
-  const { currentTier } = useSubscription();
-  
-  // Form states
-  const [firstName, setFirstName] = useState('Jean');
-  const [lastName, setLastName] = useState('Services de Ménage Pro');
-  const [businessName, setBusinessName] = useState('Services de Ménage Pro');
-  const [phone, setPhone] = useState('+1 (514) 555-0123');
-  const [notifications, setNotifications] = useState(true);
-  const [marketingEmails, setMarketingEmails] = useState(false);
-  const [dataSharing, setDataSharing] = useState(false);
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  const getTierBadge = (tier: SubscriptionTier) => {
-    const plan = SUBSCRIPTION_PLANS[tier];
-    const config = {
-      'FREE': { color: 'secondary' },
-      'STARTER': { color: 'default' },
-      'PRO': { color: 'default' },
-      'PREMIUM': { color: 'destructive' }
-    };
-    
-    const tierConfig = config[tier];
-    return <Badge variant={tierConfig.color as any} className="whitespace-nowrap">{plan.name}</Badge>;
-  };
-
-  const getUsageMetrics = (tier: SubscriptionTier) => {
-    const metrics = {
-      'FREE': { bookings: '7/10', storage: '0.5/2 GB' },
-      'STARTER': { bookings: '28/∞', storage: '2.1/10 GB' },
-      'PRO': { bookings: '45/∞', storage: '8.5/50 GB' },
-      'PREMIUM': { bookings: '67/∞', storage: '15.2/100 GB' }
-    };
-    return metrics[tier];
-  };
-
-  const isStarterPlus = hasStarterOrHigher(currentTier);
-  const isProfessionalPlus = hasProOrHigher(currentTier);
-  const isPremiumTier = isPremium(currentTier);
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="space-y-8">
+          {/* Header */}
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold">Paramètres</h1>
-            <p className="text-muted-foreground">Gérez votre compte et vos préférences</p>
+            <h1 className="text-3xl font-bold text-foreground">Paramètres</h1>
+            <p className="text-muted-foreground mt-2">
+              Gérez vos préférences de compte et de confidentialité
+            </p>
           </div>
 
-          <Tabs defaultValue="account" className="space-y-6">
-            <div className="overflow-x-auto">
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 min-w-max lg:min-w-0">
-                <TabsTrigger value="account" className="whitespace-nowrap">Compte</TabsTrigger>
-                <TabsTrigger value="subscription" className="whitespace-nowrap">Abonnement</TabsTrigger>
-                <TabsTrigger value="integrations" className="whitespace-nowrap">Intégrations</TabsTrigger>
-                {isStarterPlus && <TabsTrigger value="business" className="whitespace-nowrap">Entreprise</TabsTrigger>}
-                {isPremiumTier && <TabsTrigger value="intelligence" className="whitespace-nowrap">Intelligence</TabsTrigger>}
-              </TabsList>
-            </div>
-
-            {/* Account Settings */}
-            <TabsContent value="account" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="w-5 h-5 flex-shrink-0" />
-                    <span className="truncate">Informations du Profil</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Prénom</Label>
-                      <Input 
-                        id="firstName"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Nom</Label>
-                      <Input 
-                        id="lastName"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email"
-                      value={user.email || ''}
-                      disabled
-                      className="bg-muted"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Téléphone</Label>
-                    <Input 
-                      id="phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="space-y-1">
-                      <Label>Langue</Label>
-                      <p className="text-sm text-muted-foreground">Français (Canada)</p>
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full sm:w-auto">Changer</Button>
-                  </div>
-
-                  <Separator />
-                  
-                  <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-                    <Button variant="outline" className="w-full sm:w-auto">Annuler</Button>
-                    <Button className="w-full sm:w-auto">Sauvegarder</Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bell className="w-5 h-5 flex-shrink-0" />
-                    <span className="truncate">Préférences de Notification</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <Label>Notifications par email</Label>
-                      <p className="text-sm text-muted-foreground">Recevoir les mises à jour importantes</p>
-                    </div>
-                    <Switch checked={notifications} onCheckedChange={setNotifications} className="flex-shrink-0" />
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <Label>Emails marketing</Label>
-                      <p className="text-sm text-muted-foreground">Conseils et promotions</p>
-                    </div>
-                    <Switch checked={marketingEmails} onCheckedChange={setMarketingEmails} className="flex-shrink-0" />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Subscription Management */}
-            <TabsContent value="subscription" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 flex-shrink-0" />
-                    <span className="truncate">Plan Actuel</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="min-w-0">
-                      <h3 className="font-medium truncate">{currentTier}</h3>
-                      <p className="text-sm text-muted-foreground">Plan actuel</p>
-                    </div>
-                    {getTierBadge(currentTier)}
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Utilisation ce mois</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="truncate">Réservations</span>
-                          <span className="flex-shrink-0">{getUsageMetrics(currentTier).bookings}</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full" 
-                            style={{ width: currentTier === 'FREE' ? '70%' : '45%' }}
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="truncate">Stockage</span>
-                          <span className="flex-shrink-0">{getUsageMetrics(currentTier).storage}</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div className="bg-primary h-2 rounded-full" style={{ width: '25%' }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">Passer à un plan supérieur</p>
-                      <p className="text-sm text-muted-foreground">Débloquez plus de fonctionnalités</p>
-                    </div>
-                    <Button className="w-full sm:w-auto">Voir les plans</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Integration Settings */}
-            <TabsContent value="integrations" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Plug className="w-5 h-5 flex-shrink-0" />
-                    <span className="truncate">Intégrations Disponibles</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-4 border rounded-lg gap-4">
-                    <div className="flex items-center space-x-3 min-w-0 flex-1">
-                      <Calendar className="w-6 h-6 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <h4 className="font-medium truncate">Google Calendar</h4>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {isStarterPlus ? 'Synchronisation bidirectionnelle' : 'Synchronisation basique'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2 flex-shrink-0">
-                      <Badge variant="secondary">Connecté</Badge>
-                      <Button variant="outline" size="sm">Configurer</Button>
-                    </div>
-                  </div>
-
-                  {isProfessionalPlus && (
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-4 border rounded-lg gap-4">
-                      <div className="flex items-center space-x-3 min-w-0 flex-1">
-                        <FileText className="w-6 h-6 flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-medium truncate">QuickBooks</h4>
-                          <p className="text-sm text-muted-foreground truncate">Synchronisation comptable automatique</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 flex-shrink-0">
-                        <Badge variant="outline">Non connecté</Badge>
-                        <Button variant="outline" size="sm">Connecter</Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {isPremiumTier && (
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-4 border rounded-lg gap-4">
-                      <div className="flex items-center space-x-3 min-w-0 flex-1">
-                        <Brain className="w-6 h-6 flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-medium truncate">Intelligence Marché IA</h4>
-                          <p className="text-sm text-muted-foreground truncate">Analyse prédictive et recommandations</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 flex-shrink-0">
-                        <Badge variant="default">Actif</Badge>
-                        <Button variant="outline" size="sm">Paramètres IA</Button>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Business Preferences */}
-            {isStarterPlus && (
-              <TabsContent value="business" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Building2 className="w-5 h-5 flex-shrink-0" />
-                      <span className="truncate">Informations d'Entreprise</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="businessName">Nom de l'entreprise</Label>
-                      <Input 
-                        id="businessName"
-                        value={businessName}
-                        onChange={(e) => setBusinessName(e.target.value)}
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="businessNumber">Numéro d'entreprise</Label>
-                        <Input id="businessNumber" placeholder="123456789 RC 0001" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="gstNumber">Numéro de TPS/TVH</Label>
-                        <Input id="gstNumber" placeholder="123456789 RT 0001" />
-                      </div>
-                    </div>
-
-                    {isProfessionalPlus && (
-                      <div className="space-y-3">
-                        <Separator />
-                        <h4 className="font-medium">Préférences Fiscales Avancées</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <Label className="truncate">Calcul automatique TPS/TVQ</Label>
-                            <Switch defaultChecked className="flex-shrink-0" />
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <Label className="truncate">Rapports mensuels automatiques</Label>
-                            <Switch defaultChecked className="flex-shrink-0" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-                      <Button variant="outline" className="w-full sm:w-auto">Annuler</Button>
-                      <Button className="w-full sm:w-auto">Sauvegarder</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            )}
-
-            {/* Market Intelligence */}
-            {isPremiumTier && (
-              <TabsContent value="intelligence" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Brain className="w-5 h-5 flex-shrink-0" />
-                      <span className="truncate">Intelligence Marché</span>
-                      <Crown className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="text-center py-12">
-                      <Zap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium mb-2">Fonctionnalité à Venir</h3>
-                      <p className="text-muted-foreground max-w-md mx-auto">
-                        L'intelligence marché alimentée par l'IA sera bientôt disponible pour analyser 
-                        les tendances du marché et optimiser vos prix automatiquement.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            )}
-          </Tabs>
-
-          {/* Privacy & Data Section */}
+          {/* Profile Settings */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5 flex-shrink-0" />
-                <span className="truncate">Confidentialité et Données</span>
-              </CardTitle>
+              <div className="flex items-center space-x-2">
+                <User className="w-5 h-5 text-primary" />
+                <CardTitle>Profil</CardTitle>
+              </div>
+              <CardDescription>
+                Gérez vos informations personnelles et vos préférences de profil
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="space-y-1 min-w-0 flex-1">
-                  <Label>Partage de données anonymes</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={user?.email || ''}
+                    disabled
+                    className="bg-muted"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Téléphone</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Nom complet</Label>
+                <Input
+                  id="name"
+                  placeholder="Votre nom complet"
+                />
+              </div>
+              <Button>Sauvegarder les modifications</Button>
+            </CardContent>
+          </Card>
+
+          {/* Notifications */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <Bell className="w-5 h-5 text-primary" />
+                <CardTitle>Notifications</CardTitle>
+              </div>
+              <CardDescription>
+                Choisissez comment vous souhaitez être notifié
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Notifications par email</Label>
                   <p className="text-sm text-muted-foreground">
-                    Aider à améliorer nos services avec des données anonymisées
+                    Recevez des emails pour les nouvelles réservations et messages
                   </p>
                 </div>
-                <Switch checked={dataSharing} onCheckedChange={setDataSharing} className="flex-shrink-0" />
+                <Switch />
               </div>
-              
               <Separator />
-              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Notifications push</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Notifications instantanées dans votre navigateur
+                  </p>
+                </div>
+                <Switch />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Notifications SMS</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Recevez des SMS pour les réservations urgentes
+                  </p>
+                </div>
+                <Switch />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Appearance */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <Moon className="w-5 h-5 text-primary" />
+                <CardTitle>Apparence</CardTitle>
+              </div>
+              <CardDescription>
+                Personnalisez l'apparence de l'application
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Thème</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Basculer entre le mode clair et sombre
+                  </p>
+                </div>
+                <ThemeToggle />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Langue</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Choisir la langue de l'interface
+                  </p>
+                </div>
+                <LanguageToggle />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Privacy & Security */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <Shield className="w-5 h-5 text-primary" />
+                <CardTitle>Confidentialité et sécurité</CardTitle>
+              </div>
+              <CardDescription>
+                Gérez vos paramètres de confidentialité et de sécurité
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Profil public</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Permettre aux autres utilisateurs de voir votre profil
+                  </p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Données d'utilisation</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Partager des données anonymes pour améliorer le service
+                  </p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              <Separator />
               <div className="space-y-3">
-                <h4 className="font-medium">Conformité RGPD</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button variant="outline" className="justify-start">
-                    <Globe className="w-4 h-4 mr-2 flex-shrink-0" />
-                    <span className="truncate">Télécharger mes données</span>
-                  </Button>
-                  <Button variant="outline" className="justify-start text-destructive">
-                    <Shield className="w-4 h-4 mr-2 flex-shrink-0" />
-                    <span className="truncate">Supprimer mon compte</span>
+                <Label className="text-base">Authentification à deux facteurs</Label>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="text-orange-600 border-orange-600">
+                    Non configuré
+                  </Badge>
+                  <Button variant="outline" size="sm">
+                    Activer
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Conformément au RGPD, vous avez le droit d'accéder, de modifier ou de supprimer vos données personnelles.
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Billing */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <CreditCard className="w-5 h-5 text-primary" />
+                <CardTitle>Facturation</CardTitle>
+              </div>
+              <CardDescription>
+                Gérez votre abonnement et vos méthodes de paiement
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Plan actuel</p>
+                  <p className="text-sm text-muted-foreground">Plan Gratuit</p>
+                </div>
+                <Badge>Gratuit</Badge>
+              </div>
+              <Separator />
+              <div className="space-y-2">
+                <Button className="w-full">Mettre à niveau vers Pro</Button>
+                <Button variant="outline" className="w-full">
+                  Gérer les méthodes de paiement
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Support */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Support</CardTitle>
+              <CardDescription>
+                Besoin d'aide ? Contactez notre équipe support
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button variant="outline" className="h-auto p-4">
+                  <div className="flex items-center space-x-2">
+                    <Mail className="w-4 h-4" />
+                    <div className="text-left">
+                      <p className="font-medium">Email Support</p>
+                      <p className="text-sm text-muted-foreground">support@housie.ca</p>
+                    </div>
+                  </div>
+                </Button>
+                <Button variant="outline" className="h-auto p-4">
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4" />
+                    <div className="text-left">
+                      <p className="font-medium">Téléphone</p>
+                      <p className="text-sm text-muted-foreground">1-800-HOUSIE-1</p>
+                    </div>
+                  </div>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Account Actions */}
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <CardTitle className="text-destructive">Zone de danger</CardTitle>
+              <CardDescription>
+                Actions irréversibles concernant votre compte
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground">
+                  Désactiver le compte
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Votre compte sera désactivé temporairement
+                </p>
+              </div>
+              <Separator />
+              <div className="space-y-2">
+                <Button variant="destructive">
+                  Supprimer le compte
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Cette action est irréversible et supprimera toutes vos données
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
