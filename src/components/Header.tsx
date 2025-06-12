@@ -31,7 +31,7 @@ const Header = () => {
           {/* Logo with mascot - positioned on the left */}
           <HeaderLogo />
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center space-x-6">
             <NavigationItems isLoggedIn={!!user} />
             
@@ -74,27 +74,30 @@ const Header = () => {
             />
           </nav>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile menu button - Only visible on mobile */}
+          <div className="md:hidden flex items-center">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="relative z-50"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <MobileMenu
-          isOpen={isMenuOpen}
-          user={user}
-          simulatedTier={simulatedTier}
-          setSimulatedTier={setSimulatedTier}
-          onClose={() => setIsMenuOpen(false)}
-          handleSignOut={handleSignOut}
-        />
+        {/* Mobile Navigation - Only shows when menu is open and on mobile */}
+        <div className="md:hidden">
+          <MobileMenu
+            isOpen={isMenuOpen}
+            user={user}
+            simulatedTier={simulatedTier}
+            setSimulatedTier={setSimulatedTier}
+            onClose={() => setIsMenuOpen(false)}
+            handleSignOut={handleSignOut}
+          />
+        </div>
       </div>
     </header>
   );

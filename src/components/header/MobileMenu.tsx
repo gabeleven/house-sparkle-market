@@ -26,6 +26,7 @@ const MobileMenu = ({
   onClose, 
   handleSignOut 
 }: MobileMenuProps) => {
+  // Early return if not open - prevents any rendering
   if (!isOpen) return null;
 
   const essentialMenuItems = [
@@ -37,14 +38,14 @@ const MobileMenu = ({
   ];
 
   return (
-    <div className="md:hidden py-4 border-t bg-card/50 backdrop-blur-sm">
+    <div className="block md:hidden py-4 border-t bg-card/50 backdrop-blur-sm animate-in slide-in-from-top-2 duration-200">
       <div className="flex flex-col space-y-3">
         {/* User Info */}
         {user && (
           <div className="px-4 py-2 bg-accent/30 rounded-lg mx-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
-              <Badge variant="outline" className="text-xs">
+              <span className="text-sm font-medium truncate">{user.email?.split('@')[0]}</span>
+              <Badge variant="outline" className="text-xs flex-shrink-0">
                 {simulatedTier}
               </Badge>
             </div>
@@ -62,8 +63,8 @@ const MobileMenu = ({
                 className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
                 onClick={onClose}
               >
-                <span className="text-[hsl(var(--pop-blue))]">{item.icon}</span>
-                <span className="text-sm font-medium">{item.title}</span>
+                <span className="text-[hsl(var(--pop-blue))] flex-shrink-0">{item.icon}</span>
+                <span className="text-sm font-medium truncate">{item.title}</span>
               </Link>
             ))}
             
@@ -80,28 +81,28 @@ const MobileMenu = ({
             {/* Navigation for non-logged in users */}
             <Link 
               to="/browse-cleaners" 
-              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
               onClick={onClose}
             >
               Services
             </Link>
             <Link 
               to="/comment-ca-marche" 
-              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
               onClick={onClose}
             >
               À Propos
             </Link>
             <Link 
               to="/prestataires" 
-              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
               onClick={onClose}
             >
               HOUSIE Pro
             </Link>
             <Link 
               to="/support" 
-              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4"
+              className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
               onClick={onClose}
             >
               Support
@@ -109,14 +110,16 @@ const MobileMenu = ({
           </>
         )}
         
-        {/* Mobile Language Toggle */}
-        <div className="px-4 py-2">
-          <LanguageToggle />
-        </div>
-        
-        {/* Mobile Theme Toggle */}
-        <div className="px-4 py-2">
-          <ThemeToggle />
+        {/* Mobile Controls */}
+        <div className="space-y-2 px-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Langue</span>
+            <LanguageToggle />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Thème</span>
+            <ThemeToggle />
+          </div>
         </div>
         
         {/* Auth Actions */}
