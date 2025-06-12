@@ -35,6 +35,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   } | null>(null);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (conversationId) {
@@ -51,7 +52,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [conversationId, loadMessages, otherUserName, otherUserAvatar]);
 
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottomInstant();
   }, [messages]);
 
   useEffect(() => {
@@ -97,23 +98,39 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Instant scroll to bottom without animation
+  const scrollToBottomInstant = () => {
+    if (messagesEndRef.current && messagesEndRef.current.parentElement) {
+      messagesEndRef.current.parentElement.scrollTop = messagesEndRef.current.parentElement.scrollHeight;
+    }
   };
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !conversationId || sending) return;
 
     setSending(true);
+    const messageToSend = newMessage.trim();
+    setNewMessage('');
+
+    // Refocus input immediately after clearing
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 10);
+
     try {
-      await sendMessage(conversationId, newMessage.trim());
-      setNewMessage('');
+      await sendMessage(conversationId, messageToSend);
       // Reload messages to get the latest
       loadMessages(conversationId);
     } catch (error) {
       console.error('Error sending message:', error);
+      // Restore message if failed
+      setNewMessage(messageToSend);
     } finally {
       setSending(false);
+      // Ensure input stays focused
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   };
 
@@ -144,7 +161,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         onBack={onBack}
       />
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-background">
+      <div 
+        className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-background"
+        style={{ 
+          overscrollBehavior: 'none',
+          scrollBehavior: 'auto'
+        }}
+      >
         <ChatMessages messages={messages} isLoading={false} />
         <div ref={messagesEndRef} />
       </div>
@@ -152,12 +175,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="border-t border-border bg-card p-4">
         <div className="flex gap-2">
           <Input
+            ref={inputRef}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
             disabled={sending}
             className="flex-1 bg-background border-input text-foreground placeholder:text-muted-foreground"
+            autoFocus
           />
           <Button 
             onClick={handleSendMessage}

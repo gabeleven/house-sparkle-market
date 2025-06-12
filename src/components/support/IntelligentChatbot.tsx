@@ -28,43 +28,30 @@ export const IntelligentChatbot = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const [userCanScroll, setUserCanScroll] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Initialize WebLLM on component mount
   useEffect(() => {
     webLLMService.initialize();
   }, []);
 
-  const scrollToBottom = (smooth = true) => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: smooth ? 'auto' : 'auto',
-        block: 'end'
-      });
+  // Instant scroll to bottom without animation
+  const scrollToBottomInstant = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   };
 
-  const isScrolledToBottom = () => {
-    if (!messagesContainerRef.current) return true;
-    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-    return scrollTop + clientHeight >= scrollHeight - 10;
-  };
-
-  const handleScroll = () => {
-    setUserCanScroll(!isScrolledToBottom());
-  };
-
+  // Scroll to bottom when messages change
   useEffect(() => {
-    if (!userCanScroll) {
-      scrollToBottom();
-    }
-  }, [messages, userCanScroll]);
+    scrollToBottomInstant();
+  }, [messages]);
 
+  // Scroll to bottom when chatbot opens
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => scrollToBottom(false), 100);
+      setTimeout(() => scrollToBottomInstant(), 50);
     }
   }, [isOpen]);
 
@@ -81,7 +68,11 @@ export const IntelligentChatbot = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsTyping(true);
-    setUserCanScroll(false);
+
+    // Refocus input immediately after sending
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 10);
 
     try {
       // Use WebLLM for response generation
@@ -108,6 +99,10 @@ export const IntelligentChatbot = () => {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
+      // Ensure input stays focused after response
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   };
 
@@ -125,7 +120,10 @@ export const IntelligentChatbot = () => {
       isUser: false,
       timestamp: new Date()
     }]);
-    setUserCanScroll(false);
+    // Refocus input after restart
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 10);
   };
 
   if (!isOpen) return null;
@@ -160,11 +158,11 @@ export const IntelligentChatbot = () => {
       <CardContent className="p-0 flex flex-col h-full">
         <div 
           ref={messagesContainerRef}
-          onScroll={handleScroll}
           className="flex-1 overflow-y-auto p-4 space-y-4 bg-background max-h-[380px]"
           style={{ 
             scrollbarWidth: 'thin',
-            overscrollBehavior: 'none'
+            overscrollBehavior: 'none',
+            scrollBehavior: 'auto'
           }}
         >
           {messages.map((message) => (
@@ -211,34 +209,19 @@ export const IntelligentChatbot = () => {
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
         </div>
-        
-        {userCanScroll && (
-          <div className="px-4 py-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => {
-                setUserCanScroll(false);
-                scrollToBottom();
-              }}
-              className="w-full text-xs"
-            >
-              ↓ Scroll to bottom
-            </Button>
-          </div>
-        )}
         
         <div className="p-4 border-t border-border bg-card">
           <div className="flex gap-2 mb-2">
             <Input
+              ref={inputRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={t('chatbot.typeMessage')}
               className="flex-1 bg-background border-input text-foreground placeholder:text-muted-foreground"
               disabled={isTyping}
+              autoFocus
             />
             <Button 
               onClick={handleSendMessage} 
