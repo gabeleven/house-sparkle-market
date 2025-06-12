@@ -16,10 +16,10 @@ const TaxCompliancePage = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+          <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
             Tax Compliance & CRA Reporting
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
             Housie.ca is fully compliant with Canada Revenue Agency (CRA) requirements for Digital Platform Operators. 
             We ensure transparent reporting and provide comprehensive tax documentation for all service providers.
           </p>
@@ -31,7 +31,7 @@ const TaxCompliancePage = () => {
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-green-600" />
             </div>
-            <CardTitle className="text-2xl">CRA Digital Platform Operator Compliance</CardTitle>
+            <CardTitle className="text-xl lg:text-2xl">CRA Digital Platform Operator Compliance</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -78,7 +78,7 @@ const TaxCompliancePage = () => {
             <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <BarChart3 className="w-8 h-8 text-blue-600" />
             </div>
-            <CardTitle className="text-2xl">Tableau de Bord Prestataire</CardTitle>
+            <CardTitle className="text-xl lg:text-2xl">Tableau de Bord Prestataire</CardTitle>
             <p className="text-muted-foreground mt-2">
               Accédez à tous vos documents fiscaux et suivez vos revenus en temps réel
             </p>
@@ -86,78 +86,80 @@ const TaxCompliancePage = () => {
           <CardContent>
             {/* Mini Dashboard Preview */}
             <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 mb-6">
-              <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-muted-foreground">Revenus Totaux</span>
-                    <DollarSign className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium text-muted-foreground truncate">Revenus Totaux</span>
+                    <DollarSign className="h-4 w-4 text-green-600 flex-shrink-0" />
                   </div>
-                  <div className="text-2xl font-bold text-foreground">28 750 $</div>
-                  <p className="text-xs text-green-600">+12% vs année précédente</p>
+                  <div className="text-xl lg:text-2xl font-bold text-foreground">28 750 $</div>
+                  <p className="text-xs text-green-600 truncate">+12% vs année précédente</p>
                 </div>
                 
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-muted-foreground">Transactions</span>
-                    <TrendingUp className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-muted-foreground truncate">Transactions</span>
+                    <TrendingUp className="h-4 w-4 text-blue-600 flex-shrink-0" />
                   </div>
-                  <div className="text-2xl font-bold text-foreground">127</div>
-                  <p className="text-xs text-blue-600">Ce trimestre</p>
+                  <div className="text-xl lg:text-2xl font-bold text-foreground">127</div>
+                  <p className="text-xs text-blue-600 truncate">Ce trimestre</p>
                 </div>
                 
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-muted-foreground">Impôt Estimé</span>
-                    <FileText className="h-4 w-4 text-purple-600" />
+                    <span className="text-sm font-medium text-muted-foreground truncate">Impôt Estimé</span>
+                    <FileText className="h-4 w-4 text-purple-600 flex-shrink-0" />
                   </div>
-                  <div className="text-2xl font-bold text-foreground">4 033 $</div>
-                  <p className="text-xs text-purple-600">Basé sur 15% d'impôt</p>
+                  <div className="text-xl lg:text-2xl font-bold text-foreground">4 033 $</div>
+                  <p className="text-xs text-purple-600 truncate">Basé sur 15% d'impôt</p>
                 </div>
               </div>
 
               {/* Mock Table */}
               <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/50">
-                      <TableHead className="font-semibold">Trimestre</TableHead>
-                      <TableHead className="text-right font-semibold">Revenus</TableHead>
-                      <TableHead className="text-right font-semibold">Transactions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">Q1 2024</TableCell>
-                      <TableCell className="text-right font-medium">6 500 $</TableCell>
-                      <TableCell className="text-right">28</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Q2 2024</TableCell>
-                      <TableCell className="text-right font-medium">7 200 $</TableCell>
-                      <TableCell className="text-right">31</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Q3 2024</TableCell>
-                      <TableCell className="text-right font-medium">8 150 $</TableCell>
-                      <TableCell className="text-right">35</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead className="font-semibold whitespace-nowrap">Trimestre</TableHead>
+                        <TableHead className="text-right font-semibold whitespace-nowrap">Revenus</TableHead>
+                        <TableHead className="text-right font-semibold whitespace-nowrap">Transactions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium whitespace-nowrap">Q1 2024</TableCell>
+                        <TableCell className="text-right font-medium whitespace-nowrap">6 500 $</TableCell>
+                        <TableCell className="text-right">28</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium whitespace-nowrap">Q2 2024</TableCell>
+                        <TableCell className="text-right font-medium whitespace-nowrap">7 200 $</TableCell>
+                        <TableCell className="text-right">31</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium whitespace-nowrap">Q3 2024</TableCell>
+                        <TableCell className="text-right font-medium whitespace-nowrap">8 150 $</TableCell>
+                        <TableCell className="text-right">35</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
 
               {/* Download Buttons */}
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button variant="outline" size="sm" className="bg-white">
                   <Download className="w-4 h-4 mr-2" />
-                  Résumé Fiscal 2024
+                  <span className="truncate">Résumé Fiscal 2024</span>
                 </Button>
                 <Button variant="outline" size="sm" className="bg-white">
                   <Download className="w-4 h-4 mr-2" />
-                  Feuillet T4A
+                  <span className="truncate">Feuillet T4A</span>
                 </Button>
                 <Button variant="outline" size="sm" className="bg-white">
                   <Download className="w-4 h-4 mr-2" />
-                  Détail Transactions
+                  <span className="truncate">Détail Transactions</span>
                 </Button>
               </div>
             </div>
@@ -174,7 +176,7 @@ const TaxCompliancePage = () => {
 
         {/* Benefits for Service Providers */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
+          <h2 className="text-2xl lg:text-3xl font-bold text-center mb-8 text-foreground">
             Benefits for Service Providers
           </h2>
           
@@ -244,7 +246,7 @@ const TaxCompliancePage = () => {
               </div>
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-4 text-foreground">
+              <h3 className="text-lg lg:text-xl font-semibold mb-4 text-foreground">
                 Proudly Serving Quebec and Canada
               </h3>
               <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -258,7 +260,7 @@ const TaxCompliancePage = () => {
 
         {/* Contact Section */}
         <div className="text-center mt-12">
-          <h3 className="text-xl font-semibold mb-4 text-foreground">
+          <h3 className="text-lg lg:text-xl font-semibold mb-4 text-foreground">
             Questions About Tax Compliance?
           </h3>
           <p className="text-muted-foreground mb-6">

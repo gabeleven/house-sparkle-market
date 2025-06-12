@@ -70,7 +70,7 @@ const translations = {
 
     // Homepage
     'hero.title': 'Find trusted cleaning services in Quebec',
-    'hero.subtitle': 'Connect with verified cleaners in your area. Book instantly, track income, stay CRA compliant.',
+    'hero.subtitle': 'Connect with verified cleaners in your area. Book instantly, track income, stay compliant.',
     'hero.cta': 'Find a Cleaner',
     'hero.ctaProvider': 'Become a Provider',
 
@@ -83,14 +83,21 @@ const translations = {
     'providers.requirement3': 'Collection of SIN, address, and transaction details',
     'providers.requirement4': 'Providing tax documents to service providers',
     'providers.whyTitle': 'Why HOUSIE is now essential, not optional',
-    'providers.benefit1.title': 'CRA Compliance Built-In',
+    'providers.benefit1.title': 'Compliance Status Built-In',
     'providers.benefit1.desc': 'Automatic tax tracking and reporting to meet Canada\'s new 2025 legal requirements',
     'providers.benefit2.title': 'Save on Accounting Fees',
     'providers.benefit2.desc': 'Advanced tax features save $500-$2,000+ annually compared to hiring accountants',
     'providers.benefit3.title': 'Grow Your Client Base',
     'providers.benefit3.desc': 'Access thousands of potential clients in your area',
     'providers.benefit4.title': 'Legal Protection',
-    'providers.benefit4.desc': 'Stay compliant with CRA reporting requirements - avoid penalties and audits',
+    'providers.benefit4.desc': 'Stay compliant with reporting requirements - avoid penalties and audits',
+
+    // Analytics
+    'analytics.intelligence': 'Intelligence',
+    'analytics.insights': 'Insights',
+    'analytics.reports': 'Reports',
+    'analytics.performance': 'Performance',
+    'analytics.complianceStatus': 'Compliance Status',
 
     // Free Plan
     'plan.free.name': 'CRA Ready',
@@ -146,7 +153,7 @@ const translations = {
 
     // Homepage - Professional tone
     'hero.title': 'Trouvez des services de ménage de confiance au Québec',
-    'hero.subtitle': 'Connectez-vous avec des professionnels vérifiés dans votre région. Réservez instantanément, suivez vos revenus, restez conforme à l\'ARC.',
+    'hero.subtitle': 'Connectez-vous avec des professionnels vérifiés dans votre région. Réservez instantanément, suivez vos revenus, restez conforme.',
     'hero.cta': 'Trouver un Professionnel',
     'hero.ctaProvider': 'Devenir Prestataire',
 
@@ -159,14 +166,21 @@ const translations = {
     'providers.requirement3': 'Collecte du NAS, adresse et détails des transactions',
     'providers.requirement4': 'Fourniture de documents fiscaux aux prestataires de services',
     'providers.whyTitle': 'Pourquoi HOUSIE est maintenant essentiel, non optionnel',
-    'providers.benefit1.title': 'Conformité ARC Intégrée',
+    'providers.benefit1.title': 'Statut de Conformité Intégré',
     'providers.benefit1.desc': 'Suivi et déclaration fiscale automatiques pour respecter les nouvelles exigences légales 2025 du Canada',
     'providers.benefit2.title': 'Économisez sur les Frais Comptables',
     'providers.benefit2.desc': 'Les fonctionnalités fiscales avancées permettent d\'économiser 500 $ à 2 000 $ et plus annuellement par rapport à l\'embauche de comptables',
     'providers.benefit3.title': 'Développez votre Clientèle',
     'providers.benefit3.desc': 'Accédez à des milliers de clients potentiels dans votre région',
     'providers.benefit4.title': 'Protection Juridique',
-    'providers.benefit4.desc': 'Restez conforme aux exigences de déclaration ARC - évitez les pénalités et vérifications',
+    'providers.benefit4.desc': 'Restez conforme aux exigences de déclaration - évitez les pénalités et vérifications',
+
+    // Analytics - Professional business terms
+    'analytics.intelligence': 'Intelligence',
+    'analytics.insights': 'Analyses',
+    'analytics.reports': 'Rapports',
+    'analytics.performance': 'Performance',
+    'analytics.complianceStatus': 'Statut de Conformité',
 
     // Free Plan - Professional business language
     'plan.free.name': 'Conforme ARC',

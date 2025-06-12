@@ -38,10 +38,10 @@ const Header = () => {
             {/* Show additional links for non-logged in users */}
             {!user && (
               <>
-                <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm">
+                <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
                   HOUSIE Pro
                 </Link>
-                <Link to="/support" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm">
+                <Link to="/support" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
                   Support
                 </Link>
               </>
@@ -49,17 +49,23 @@ const Header = () => {
             
             {/* Subscription Simulator - Only show when logged in */}
             {user && (
-              <SubscriptionSimulator 
-                currentTier={simulatedTier} 
-                onTierChange={setSimulatedTier} 
-              />
+              <div className="flex-shrink-0">
+                <SubscriptionSimulator 
+                  currentTier={simulatedTier} 
+                  onTierChange={setSimulatedTier} 
+                />
+              </div>
             )}
             
             {/* Language Toggle */}
-            <LanguageToggle />
+            <div className="flex-shrink-0">
+              <LanguageToggle />
+            </div>
             
             {/* Theme Toggle */}
-            <ThemeToggle />
+            <div className="flex-shrink-0">
+              <ThemeToggle />
+            </div>
             
             <UserMenu 
               user={user} 
