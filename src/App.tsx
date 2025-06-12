@@ -50,7 +50,7 @@ function App() {
               <Router>
                 <div className="min-h-screen bg-background text-foreground">
                   <Header />
-                  <main>
+                  <main className="flex-1">
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/browse-cleaners" element={<BrowseCleaners />} />

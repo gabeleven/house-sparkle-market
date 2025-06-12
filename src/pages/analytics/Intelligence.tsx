@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,18 +67,18 @@ const Intelligence = () => {
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Analytics
+              Retour aux Analytiques
             </Button>
           </div>
           
           <div className="text-center py-12">
             <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Canadian Market Intelligence</h2>
+            <h2 className="text-2xl font-bold mb-2">Intelligence Marché Canadien</h2>
             <p className="text-muted-foreground mb-6">
-              Upgrade to Pro or Premium to access AI-powered Canadian market insights and competitive analysis.
+              Passez à Pro ou Premium pour accéder aux insights IA du marché canadien et à l'analyse concurrentielle.
             </p>
             <Badge variant="outline" className="text-lg px-4 py-2">
-              Pro Feature Required
+              Fonctionnalité Pro Requise
             </Badge>
           </div>
         </div>
@@ -96,7 +97,7 @@ const Intelligence = () => {
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Analytics
+            Retour aux Analytiques
           </Button>
         </div>
 
@@ -107,13 +108,13 @@ const Intelligence = () => {
               <Brain className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Canadian Market Intelligence</h1>
-              <p className="text-muted-foreground">AI-powered insights for strategic decision making across all provinces</p>
+              <h1 className="text-3xl font-bold">Intelligence Marché Canadien</h1>
+              <p className="text-muted-foreground">Insights IA pour la prise de décision stratégique dans toutes les provinces</p>
             </div>
           </div>
           <Badge className="bg-gradient-to-r from-purple-500 to-blue-600 text-white">
             <Lightbulb className="w-4 h-4 mr-1" />
-            AI-Powered
+            Alimenté par IA
           </Badge>
         </div>
 
@@ -122,10 +123,10 @@ const Intelligence = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className="w-5 h-5 text-intensity-secondary" />
-              AI-Generated Canadian Market Insights
+              Insights Marché Canadien Générés par IA
             </CardTitle>
             <CardDescription>
-              Machine learning analysis of Canadian market trends, provincial opportunities, and strategic recommendations
+              Analyse d'apprentissage automatique des tendances du marché canadien, des opportunités provinciales et des recommandations stratégiques
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -157,7 +158,7 @@ const Intelligence = () => {
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{insight.description}</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">Confidence:</span>
+                          <span className="text-xs text-muted-foreground">Confiance:</span>
                           <div className="flex-1 bg-muted rounded-full h-1.5">
                             <div 
                               className="bg-primary h-1.5 rounded-full" 
@@ -183,10 +184,10 @@ const Intelligence = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="w-5 w-5 text-intensity-accent" />
-              National Competitive Advantages
+              Avantages Concurrentiels Nationaux
             </CardTitle>
             <CardDescription>
-              How HOUSIE differentiates from competitors across the Canadian market
+              Comment HOUSIE se différencie de la concurrence sur le marché canadien
             </CardDescription>
           </CardHeader>
           <CardContent>

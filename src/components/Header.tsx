@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,6 +17,10 @@ const Header = () => {
   const { currentTier } = useSubscription();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Hide header on certain analytics sub-pages to prevent duplication
+  const hideHeader = location.pathname.startsWith('/analytics/') && location.pathname !== '/analytics';
 
   const handleSignOut = async () => {
     await signOut();
@@ -27,6 +31,11 @@ const Header = () => {
   const closeMobileMenu = () => {
     setIsMenuOpen(false);
   };
+
+  // Don't render header if it should be hidden
+  if (hideHeader) {
+    return null;
+  }
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
