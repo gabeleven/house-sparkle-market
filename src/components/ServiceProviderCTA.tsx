@@ -88,11 +88,11 @@ const ServiceProviderCTA = () => {
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-foreground mb-2">
-                  Plan Pro
+                  Abonnement professionnel
                 </h3>
                 <div className="flex items-baseline justify-center">
-                  <span className="text-4xl font-bold text-blue-600 dark:text-blue-400">$10</span>
-                  <span className="text-muted-foreground ml-2">CAD/mois</span>
+                  <span className="text-4xl font-bold text-blue-600 dark:text-blue-400">29€</span>
+                  <span className="text-muted-foreground ml-2">/mois</span>
                 </div>
                 <p className="text-muted-foreground mt-2">Tout ce dont vous avez besoin pour réussir</p>
               </div>
@@ -107,7 +107,7 @@ const ServiceProviderCTA = () => {
               </ul>
 
               <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-lg py-4 h-auto font-semibold">
-                Commencez votre essai gratuit de 14 jours
+                Commencez votre essai gratuit de 30 jours
               </Button>
               
               <p className="text-center text-sm text-muted-foreground mt-4">

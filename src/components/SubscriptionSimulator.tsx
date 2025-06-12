@@ -20,13 +20,13 @@ interface SubscriptionSimulatorProps {
 const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimulatorProps) => {
   const getTierIcon = (tier: SubscriptionTier) => {
     switch (tier) {
-      case 'FREE':
+      case SubscriptionTier.FREE:
         return <Settings className="w-4 h-4" />;
-      case 'STARTER':
+      case SubscriptionTier.STARTER:
         return <Zap className="w-4 h-4" />;
-      case 'PRO':
+      case SubscriptionTier.PROFESSIONAL:
         return <Star className="w-4 h-4" />;
-      case 'PREMIUM':
+      case SubscriptionTier.PREMIUM:
         return <Crown className="w-4 h-4" />;
       default:
         return <Settings className="w-4 h-4" />;
@@ -35,28 +35,28 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
 
   const getTierLabel = (tier: SubscriptionTier) => {
     switch (tier) {
-      case 'FREE':
-        return 'Basic Access';
-      case 'STARTER':
-        return 'Essential Tools';
-      case 'PRO':
-        return 'Professional Suite';
-      case 'PREMIUM':
+      case SubscriptionTier.FREE:
+        return 'CRA Ready';
+      case SubscriptionTier.STARTER:
+        return 'Tax Basics';
+      case SubscriptionTier.PROFESSIONAL:
+        return 'Most Popular';
+      case SubscriptionTier.PREMIUM:
         return 'Business Intelligence';
       default:
-        return 'Basic Access';
+        return 'CRA Ready';
     }
   };
 
   const getTierColor = (tier: SubscriptionTier) => {
     switch (tier) {
-      case 'FREE':
+      case SubscriptionTier.FREE:
         return 'default';
-      case 'STARTER':
+      case SubscriptionTier.STARTER:
         return 'secondary';
-      case 'PRO':
+      case SubscriptionTier.PROFESSIONAL:
         return 'default';
-      case 'PREMIUM':
+      case SubscriptionTier.PREMIUM:
         return 'destructive';
       default:
         return 'default';
@@ -67,35 +67,35 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
     <div className="flex items-center space-x-2">
       <span className="text-sm text-muted-foreground hidden sm:block">Simuler:</span>
       <Select value={currentTier} onValueChange={(value) => onTierChange(value as SubscriptionTier)}>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[180px]">
           <div className="flex items-center space-x-2">
             {getTierIcon(currentTier)}
             <SelectValue />
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="FREE">
+          <SelectItem value={SubscriptionTier.FREE}>
             <div className="flex items-center space-x-2 w-full">
               <Settings className="w-4 h-4" />
-              <span>FREE - Basic Access</span>
+              <span>FREE - CRA Ready</span>
             </div>
           </SelectItem>
-          <SelectItem value="STARTER">
+          <SelectItem value={SubscriptionTier.STARTER}>
             <div className="flex items-center space-x-2 w-full">
               <Zap className="w-4 h-4" />
-              <span>STARTER - $5 CAD/mo</span>
+              <span>STARTER - Tax Basics</span>
             </div>
           </SelectItem>
-          <SelectItem value="PRO">
+          <SelectItem value={SubscriptionTier.PROFESSIONAL}>
             <div className="flex items-center space-x-2 w-full">
               <Star className="w-4 h-4" />
-              <span>PRO - $10 CAD/mo</span>
+              <span>PRO - Most Popular</span>
             </div>
           </SelectItem>
-          <SelectItem value="PREMIUM">
+          <SelectItem value={SubscriptionTier.PREMIUM}>
             <div className="flex items-center space-x-2 w-full">
               <Crown className="w-4 h-4" />
-              <span>PREMIUM - $15 CAD/mo</span>
+              <span>PREMIUM - Business Intelligence</span>
             </div>
           </SelectItem>
         </SelectContent>

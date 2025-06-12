@@ -25,13 +25,13 @@ import {
 import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { SubscriptionTier, getTierInfo } from '@/types/subscription';
+import { SubscriptionTier } from '@/types/subscription';
 
 const Settings = () => {
   const { user } = useAuth();
   
   // Mock tier - in real app this would come from subscription simulator context
-  const currentTier: SubscriptionTier = 'PRO';
+  const currentTier = SubscriptionTier.PROFESSIONAL;
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
@@ -48,10 +48,10 @@ const Settings = () => {
 
   const getTierBadge = (tier: SubscriptionTier) => {
     const configs = {
-      'FREE': { label: 'Basic Access', color: 'secondary' },
-      'STARTER': { label: 'Essential Tools', color: 'default' },
-      'PRO': { label: 'Professional Suite', color: 'default' },
-      'PREMIUM': { label: 'Business Intelligence', color: 'destructive' }
+      [SubscriptionTier.FREE]: { label: 'CRA Ready', color: 'secondary' },
+      [SubscriptionTier.STARTER]: { label: 'Tax Basics', color: 'default' },
+      [SubscriptionTier.PROFESSIONAL]: { label: 'Most Popular', color: 'default' },
+      [SubscriptionTier.PREMIUM]: { label: 'Business Intelligence', color: 'destructive' }
     };
     
     const config = configs[tier];
@@ -60,18 +60,17 @@ const Settings = () => {
 
   const getUsageMetrics = (tier: SubscriptionTier) => {
     const metrics = {
-      'FREE': { bookings: '3/5', storage: '0.5/2 GB' },
-      'STARTER': { bookings: '18/25', storage: '2.1/10 GB' },
-      'PRO': { bookings: '45/∞', storage: '8.5/50 GB' },
-      'PREMIUM': { bookings: '67/∞', storage: '15.2/100 GB' }
+      [SubscriptionTier.FREE]: { bookings: '7/10', storage: '0.5/2 GB' },
+      [SubscriptionTier.STARTER]: { bookings: '28/∞', storage: '2.1/10 GB' },
+      [SubscriptionTier.PROFESSIONAL]: { bookings: '45/∞', storage: '8.5/50 GB' },
+      [SubscriptionTier.PREMIUM]: { bookings: '67/∞', storage: '15.2/100 GB' }
     };
     return metrics[tier];
   };
 
-  // Helper functions for tier comparisons
-  const isPremium = currentTier === 'PREMIUM';
-  const isStarterOrHigher = ['STARTER', 'PRO', 'PREMIUM'].includes(currentTier);
-  const isProOrHigher = ['PRO', 'PREMIUM'].includes(currentTier);
+  const isPremium = (currentTier as string) === (SubscriptionTier.PREMIUM as string);
+  const isStarterPlus = (currentTier as string) !== (SubscriptionTier.FREE as string);
+  const isProfessionalPlus = (currentTier as string) === (SubscriptionTier.PROFESSIONAL as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,7 +87,7 @@ const Settings = () => {
               <TabsTrigger value="account">Compte</TabsTrigger>
               <TabsTrigger value="subscription">Abonnement</TabsTrigger>
               <TabsTrigger value="integrations">Intégrations</TabsTrigger>
-              {isStarterOrHigher && <TabsTrigger value="business">Entreprise</TabsTrigger>}
+              {isStarterPlus && <TabsTrigger value="business">Entreprise</TabsTrigger>}
               {isPremium && <TabsTrigger value="intelligence">Intelligence</TabsTrigger>}
             </TabsList>
 
@@ -197,9 +196,7 @@ const Settings = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-medium">{currentTier.toUpperCase()}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {currentTier === 'FREE' ? 'Gratuit' : `$${getTierInfo(currentTier).price} CAD/mois`}
-                      </p>
+                      <p className="text-sm text-muted-foreground">Plan actuel</p>
                     </div>
                     {getTierBadge(currentTier)}
                   </div>
@@ -217,7 +214,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: currentTier === 'FREE' ? '60%' : '45%' }}
+                            style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '70%' : '45%' }}
                           />
                         </div>
                       </div>
@@ -262,7 +259,7 @@ const Settings = () => {
                       <div>
                         <h4 className="font-medium">Google Calendar</h4>
                         <p className="text-sm text-muted-foreground">
-                          {isStarterOrHigher ? 'Synchronisation bidirectionnelle' : 'Synchronisation basique'}
+                          {isStarterPlus ? 'Synchronisation bidirectionnelle' : 'Synchronisation basique'}
                         </p>
                       </div>
                     </div>
@@ -272,7 +269,7 @@ const Settings = () => {
                     </div>
                   </div>
 
-                  {isProOrHigher && (
+                  {isProfessionalPlus && (
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <FileText className="w-6 h-6" />
@@ -308,7 +305,7 @@ const Settings = () => {
             </TabsContent>
 
             {/* Business Preferences */}
-            {isStarterOrHigher && (
+            {isStarterPlus && (
               <TabsContent value="business" className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -338,7 +335,7 @@ const Settings = () => {
                       </div>
                     </div>
 
-                    {isProOrHigher && (
+                    {isProfessionalPlus && (
                       <div className="space-y-3">
                         <Separator />
                         <h4 className="font-medium">Préférences Fiscales Avancées</h4>
