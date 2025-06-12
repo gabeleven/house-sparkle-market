@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, BarChart3, TrendingUp, Calculator, Briefcase } from "lucide-react";
+import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, BarChart3, TrendingUp, Calculator, Briefcase, Zap } from "lucide-react";
 import Footer from "@/components/Footer";
 import { SubscriptionTier, getTierInfo } from "@/types/subscription";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -35,7 +35,7 @@ const ServiceProvidersPage = () => {
 
   const freeFeatures = getTierInfo(SubscriptionTier.FREE).features;
   const starterFeatures = getTierInfo(SubscriptionTier.STARTER).features;
-  const professionalFeatures = getTierInfo(SubscriptionTier.PROFESSIONAL).features;
+  const proFeatures = getTierInfo(SubscriptionTier.PRO).features;
   const premiumFeatures = getTierInfo(SubscriptionTier.PREMIUM).features;
 
   return (
@@ -92,10 +92,10 @@ const ServiceProvidersPage = () => {
           {/* Pricing Plans Section */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-white mb-4 text-center">
-              Tax compliance that grows with your business
+              Choose Your Plan - Canadian Pricing
             </h2>
             <p className="text-center text-green-100 mb-12 max-w-2xl mx-auto">
-              From legal compliance to market domination - choose the level of tax sophistication that matches your business goals
+              From basic compliance to advanced business intelligence - find the perfect plan for your cleaning business
             </p>
             
             <div className="grid lg:grid-cols-4 gap-6">
@@ -103,13 +103,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ {t('plan.free.name')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Free</h3>
+                    <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ Free</Badge>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Basic Access</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-blue-600">$0</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-gray-500 ml-2">CAD/month</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.free.tagline')}</p>
+                    <p className="text-gray-600 text-sm">Perfect for getting started</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -122,7 +122,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 font-semibold">
-                    {t('plan.free.cta')}
+                    Get Started Free
                   </Button>
                 </CardContent>
               </Card>
@@ -131,19 +131,19 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-green-100 text-green-800 mb-3">📊 {t('plan.starter.name')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
+                    <Badge className="bg-green-100 text-green-800 mb-3">🚀 Starter</Badge>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Essential Tools</h3>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-3xl font-bold text-green-600">$12</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-3xl font-bold text-green-600">$5</span>
+                      <span className="text-gray-500 ml-2">CAD/month</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.starter.savings')}</p>
+                    <p className="text-gray-600 text-sm">Save 40% vs daily fees</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {starterFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
-                        <Award className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <Zap className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span className={`text-gray-700 ${feature.includes('PLUS') ? 'font-semibold text-green-600' : ''}`}>
                           {feature}
                         </span>
@@ -152,28 +152,28 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-green-600 hover:bg-green-700 font-semibold">
-                    {t('plan.starter.cta')}
+                    Start 7-Day Trial
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Professional Plan */}
+              {/* Pro Plan */}
               <Card className="bg-white shadow-2xl border-0 ring-2 ring-purple-500 scale-105">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-purple-100 text-purple-800 mb-3">{t('plan.professional.popular')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Professional</h3>
+                    <Badge className="bg-purple-100 text-purple-800 mb-3">⭐ Most Popular</Badge>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Pro</h3>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-3xl font-bold text-purple-600">$25</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-3xl font-bold text-purple-600">$10</span>
+                      <span className="text-gray-500 ml-2">CAD/month</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.professional.savings')}</p>
+                    <p className="text-gray-600 text-sm">Best value for professionals</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
-                    {professionalFeatures.map((feature, index) => (
+                    {proFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
-                        <Briefcase className="w-4 h-4 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <Star className="w-4 h-4 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span className={`text-gray-700 ${feature.includes('PLUS') ? 'font-semibold text-purple-600' : ''}`}>
                           {feature}
                         </span>
@@ -182,7 +182,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-purple-600 hover:bg-purple-700 font-semibold">
-                    {t('plan.professional.cta')}
+                    Start Free Trial
                   </Button>
                 </CardContent>
               </Card>
@@ -191,13 +191,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-white shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-yellow-100 text-yellow-800 mb-3">👑 {t('plan.premium.name')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Premium</h3>
+                    <Badge className="bg-yellow-100 text-yellow-800 mb-3">👑 Premium</Badge>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Business Intelligence</h3>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-3xl font-bold text-yellow-600">$39</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-3xl font-bold text-yellow-600">$15</span>
+                      <span className="text-gray-500 ml-2">CAD/month</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.premium.tagline')}</p>
+                    <p className="text-gray-600 text-sm">Advanced AI & automation</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -212,7 +212,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-yellow-600 hover:bg-yellow-700 font-semibold">
-                    {t('plan.premium.cta')}
+                    Start Premium Trial
                   </Button>
                 </CardContent>
               </Card>
@@ -226,7 +226,7 @@ const ServiceProvidersPage = () => {
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { name: "Sarah M.", benefit: "Saved $1,200", quote: "HOUSIE's tax tracking saved me more than my accountant charged. Plus I got 3x more clients!" },
+                { name: "Sarah M.", benefit: "Saved $1,800 CAD", quote: "HOUSIE's tax tracking saved me more than my accountant charged. Plus I got 3x more clients!" },
                 { name: "Mike R.", benefit: "Zero Tax Stress", quote: "CRA compliance is automatic now. I just focus on cleaning - HOUSIE handles the paperwork." },
                 { name: "Lisa K.", benefit: "Business Growth", quote: "The market insights helped me raise my prices 30%. Tax compliance became profit optimization!" }
               ].map((story, index) => (

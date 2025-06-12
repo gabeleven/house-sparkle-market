@@ -2,7 +2,7 @@
 export enum SubscriptionTier {
   FREE = 'free',
   STARTER = 'starter',
-  PROFESSIONAL = 'professional',
+  PRO = 'pro',
   PREMIUM = 'premium'
 }
 
@@ -16,7 +16,7 @@ export interface MenuItemConfig {
 
 // Helper function to check if tier is Starter or higher
 export const hasStarterOrHigher = (tier: SubscriptionTier): boolean => {
-  return [SubscriptionTier.STARTER, SubscriptionTier.PROFESSIONAL, SubscriptionTier.PREMIUM].includes(tier);
+  return [SubscriptionTier.STARTER, SubscriptionTier.PRO, SubscriptionTier.PREMIUM].includes(tier);
 };
 
 // Helper function to get tier information
@@ -24,52 +24,62 @@ export const getTierInfo = (tier: SubscriptionTier) => {
   const tierInfo = {
     [SubscriptionTier.FREE]: { 
       name: 'Free', 
-      label: 'CRA Ready',
+      label: 'Basic Access',
       color: 'secondary' as const,
+      price: 0,
+      currency: 'CAD',
       features: [
         'Basic CRA compliance tracking',
-        'Up to 10 bookings per month',
+        'Up to 5 bookings per month',
         'Basic calendar integration',
         'Email support'
       ]
     },
     [SubscriptionTier.STARTER]: { 
       name: 'Starter', 
-      label: 'Tax Basics',
+      label: 'Essential Tools',
       color: 'default' as const,
+      price: 5,
+      currency: 'CAD',
       features: [
         'Everything in Free PLUS:',
-        'Unlimited bookings',
+        'Up to 25 bookings per month',
         'Advanced tax compliance',
         'Synchronized calendar',
         'Client communication tools',
         'Priority email support'
       ]
     },
-    [SubscriptionTier.PROFESSIONAL]: { 
-      name: 'Professional', 
-      label: 'Most Popular',
+    [SubscriptionTier.PRO]: { 
+      name: 'Pro', 
+      label: 'Professional Suite',
       color: 'default' as const,
+      price: 10,
+      currency: 'CAD',
       features: [
         'Everything in Starter PLUS:',
+        'Unlimited bookings',
         'Advanced analytics dashboard',
         'Growth tools and insights',
         'QuickBooks integration',
         'Complete tax suite',
-        'Professional support'
+        'Phone support'
       ]
     },
     [SubscriptionTier.PREMIUM]: { 
       name: 'Premium', 
       label: 'Business Intelligence',
       color: 'destructive' as const,
+      price: 15,
+      currency: 'CAD',
       features: [
-        'Everything in Professional PLUS:',
+        'Everything in Pro PLUS:',
         'AI-powered market intelligence',
         'Automated marketing tools',
         'Predictive analytics',
         'Tax optimization AI',
-        'White-glove support'
+        'White-glove support',
+        'Custom integrations'
       ]
     }
   };
@@ -88,7 +98,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier de Base', icon: 'Calendar' },
         { path: '/tax-compliance', labelKey: 'Conformité de Base', icon: 'FileText' },
-        { path: '/bookings', labelKey: 'Mes Réservations', icon: 'CalendarCheck', tierNote: 'max 10/mois' },
+        { path: '/bookings', labelKey: 'Mes Réservations', icon: 'CalendarCheck', tierNote: 'max 5/mois' },
         { path: '/settings', labelKey: 'Paramètres', icon: 'Settings' },
       ];
 
@@ -98,12 +108,12 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
         { path: '/calendar', labelKey: 'Calendrier Synchronisé', icon: 'Calendar' },
         { path: '/provider-dashboard', labelKey: 'Tableau Prestataire', icon: 'BarChart3' },
         { path: '/tax-compliance', labelKey: 'Conformité Fiscale Avancée', icon: 'FileText' },
-        { path: '/bookings', labelKey: 'Mes Réservations', icon: 'CalendarCheck', tierNote: 'illimitées' },
+        { path: '/bookings', labelKey: 'Mes Réservations', icon: 'CalendarCheck', tierNote: 'max 25/mois' },
         { path: '/chat', labelKey: 'Communications Client', icon: 'MessageSquare' },
         { path: '/settings', labelKey: 'Paramètres', icon: 'Settings' },
       ];
 
-    case SubscriptionTier.PROFESSIONAL:
+    case SubscriptionTier.PRO:
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier Pro', icon: 'Calendar' },
@@ -111,7 +121,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
         { path: '/analytics', labelKey: 'Analytiques Avancées', icon: 'TrendingUp' },
         { path: '/growth', labelKey: 'Outils de Croissance', icon: 'Target' },
         { path: '/tax-compliance', labelKey: 'Suite Fiscale Complète', icon: 'Shield' },
-        { path: '/bookings', labelKey: 'Gestion Avancée', icon: 'CalendarCheck' },
+        { path: '/bookings', labelKey: 'Gestion Illimitée', icon: 'CalendarCheck' },
         { path: '/chat', labelKey: 'Communications Pro', icon: 'MessageSquare' },
         { path: '/settings', labelKey: 'Paramètres', icon: 'Settings' },
       ];

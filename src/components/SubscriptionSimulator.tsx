@@ -24,7 +24,7 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
         return <Settings className="w-4 h-4" />;
       case SubscriptionTier.STARTER:
         return <Zap className="w-4 h-4" />;
-      case SubscriptionTier.PROFESSIONAL:
+      case SubscriptionTier.PRO:
         return <Star className="w-4 h-4" />;
       case SubscriptionTier.PREMIUM:
         return <Crown className="w-4 h-4" />;
@@ -36,15 +36,15 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
   const getTierLabel = (tier: SubscriptionTier) => {
     switch (tier) {
       case SubscriptionTier.FREE:
-        return 'CRA Ready';
+        return 'Basic Access';
       case SubscriptionTier.STARTER:
-        return 'Tax Basics';
-      case SubscriptionTier.PROFESSIONAL:
-        return 'Most Popular';
+        return 'Essential Tools';
+      case SubscriptionTier.PRO:
+        return 'Professional Suite';
       case SubscriptionTier.PREMIUM:
         return 'Business Intelligence';
       default:
-        return 'CRA Ready';
+        return 'Basic Access';
     }
   };
 
@@ -54,7 +54,7 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
         return 'default';
       case SubscriptionTier.STARTER:
         return 'secondary';
-      case SubscriptionTier.PROFESSIONAL:
+      case SubscriptionTier.PRO:
         return 'default';
       case SubscriptionTier.PREMIUM:
         return 'destructive';
@@ -67,7 +67,7 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
     <div className="flex items-center space-x-2">
       <span className="text-sm text-muted-foreground hidden sm:block">Simuler:</span>
       <Select value={currentTier} onValueChange={(value) => onTierChange(value as SubscriptionTier)}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[200px]">
           <div className="flex items-center space-x-2">
             {getTierIcon(currentTier)}
             <SelectValue />
@@ -77,25 +77,25 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
           <SelectItem value={SubscriptionTier.FREE}>
             <div className="flex items-center space-x-2 w-full">
               <Settings className="w-4 h-4" />
-              <span>FREE - CRA Ready</span>
+              <span>FREE - Basic Access</span>
             </div>
           </SelectItem>
           <SelectItem value={SubscriptionTier.STARTER}>
             <div className="flex items-center space-x-2 w-full">
               <Zap className="w-4 h-4" />
-              <span>STARTER - Tax Basics</span>
+              <span>STARTER - $5 CAD/mo</span>
             </div>
           </SelectItem>
-          <SelectItem value={SubscriptionTier.PROFESSIONAL}>
+          <SelectItem value={SubscriptionTier.PRO}>
             <div className="flex items-center space-x-2 w-full">
               <Star className="w-4 h-4" />
-              <span>PRO - Most Popular</span>
+              <span>PRO - $10 CAD/mo</span>
             </div>
           </SelectItem>
           <SelectItem value={SubscriptionTier.PREMIUM}>
             <div className="flex items-center space-x-2 w-full">
               <Crown className="w-4 h-4" />
-              <span>PREMIUM - Business Intelligence</span>
+              <span>PREMIUM - $15 CAD/mo</span>
             </div>
           </SelectItem>
         </SelectContent>

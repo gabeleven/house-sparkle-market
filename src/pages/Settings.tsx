@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,7 +30,7 @@ const Settings = () => {
   const { user } = useAuth();
   
   // Mock tier - in real app this would come from subscription simulator context
-  const currentTier = SubscriptionTier.PROFESSIONAL;
+  const currentTier = SubscriptionTier.PRO;
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
@@ -48,9 +47,9 @@ const Settings = () => {
 
   const getTierBadge = (tier: SubscriptionTier) => {
     const configs = {
-      [SubscriptionTier.FREE]: { label: 'CRA Ready', color: 'secondary' },
-      [SubscriptionTier.STARTER]: { label: 'Tax Basics', color: 'default' },
-      [SubscriptionTier.PROFESSIONAL]: { label: 'Most Popular', color: 'default' },
+      [SubscriptionTier.FREE]: { label: 'Basic Access', color: 'secondary' },
+      [SubscriptionTier.STARTER]: { label: 'Essential Tools', color: 'default' },
+      [SubscriptionTier.PRO]: { label: 'Professional Suite', color: 'default' },
       [SubscriptionTier.PREMIUM]: { label: 'Business Intelligence', color: 'destructive' }
     };
     
@@ -60,9 +59,9 @@ const Settings = () => {
 
   const getUsageMetrics = (tier: SubscriptionTier) => {
     const metrics = {
-      [SubscriptionTier.FREE]: { bookings: '7/10', storage: '0.5/2 GB' },
-      [SubscriptionTier.STARTER]: { bookings: '28/∞', storage: '2.1/10 GB' },
-      [SubscriptionTier.PROFESSIONAL]: { bookings: '45/∞', storage: '8.5/50 GB' },
+      [SubscriptionTier.FREE]: { bookings: '3/5', storage: '0.5/2 GB' },
+      [SubscriptionTier.STARTER]: { bookings: '18/25', storage: '2.1/10 GB' },
+      [SubscriptionTier.PRO]: { bookings: '45/∞', storage: '8.5/50 GB' },
       [SubscriptionTier.PREMIUM]: { bookings: '67/∞', storage: '15.2/100 GB' }
     };
     return metrics[tier];
@@ -70,7 +69,7 @@ const Settings = () => {
 
   const isPremium = (currentTier as string) === (SubscriptionTier.PREMIUM as string);
   const isStarterPlus = (currentTier as string) !== (SubscriptionTier.FREE as string);
-  const isProfessionalPlus = (currentTier as string) === (SubscriptionTier.PROFESSIONAL as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
+  const isProPlus = (currentTier as string) === (SubscriptionTier.PRO as string) || (currentTier as string) === (SubscriptionTier.PREMIUM as string);
 
   return (
     <div className="min-h-screen bg-background">
@@ -196,7 +195,9 @@ const Settings = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-medium">{currentTier.toUpperCase()}</h3>
-                      <p className="text-sm text-muted-foreground">Plan actuel</p>
+                      <p className="text-sm text-muted-foreground">
+                        {currentTier === SubscriptionTier.FREE ? 'Gratuit' : `$${getTierInfo(currentTier).price} CAD/mois`}
+                      </p>
                     </div>
                     {getTierBadge(currentTier)}
                   </div>
@@ -214,7 +215,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '70%' : '45%' }}
+                            style={{ width: (currentTier as string) === (SubscriptionTier.FREE as string) ? '60%' : '45%' }}
                           />
                         </div>
                       </div>
@@ -269,7 +270,7 @@ const Settings = () => {
                     </div>
                   </div>
 
-                  {isProfessionalPlus && (
+                  {isProPlus && (
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <FileText className="w-6 h-6" />
