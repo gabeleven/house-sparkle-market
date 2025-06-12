@@ -13,14 +13,14 @@ import {
 
 interface MegaMenuProps {
   user: any;
-  simulatedTier: SubscriptionTier;
+  currentTier: SubscriptionTier;
   signOut: () => Promise<void>;
   trigger: React.ReactNode;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange }: MegaMenuProps) => {
+const MegaMenu = ({ user, currentTier, signOut, trigger, isOpen, onOpenChange }: MegaMenuProps) => {
   const [searchTerm, setSearchTerm] = React.useState('');
 
   // Defensive check to prevent rendering if no user
@@ -42,14 +42,14 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange 
         {
           path: '/calendar',
           title: 'Calendrier',
-          description: getTierSpecificDesc(simulatedTier, 'calendar'),
+          description: getTierSpecificDesc(currentTier, 'calendar'),
           icon: <Calendar className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
         },
         {
           path: '/bookings',
           title: 'Réservations',
-          description: getTierSpecificDesc(simulatedTier, 'bookings'),
+          description: getTierSpecificDesc(currentTier, 'bookings'),
           icon: <Calendar className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-blue))]'
         }
@@ -65,7 +65,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange 
           icon: <BarChart3 className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
         },
-        ...(simulatedTier === 'PRO' || simulatedTier === 'PREMIUM' ? [
+        ...(currentTier === 'PRO' || currentTier === 'PREMIUM' ? [
           {
             path: '/analytics/insights',
             title: 'Insights Avancées',
@@ -81,7 +81,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange 
             color: 'text-[hsl(var(--pop-orange))]'
           }
         ] : []),
-        ...(simulatedTier === 'PREMIUM' ? [
+        ...(currentTier === 'PREMIUM' ? [
           {
             path: '/analytics/intelligence',
             title: 'Business Intelligence',
@@ -103,17 +103,17 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange 
     {
       title: "Communication & Support",
       items: [
-        ...(simulatedTier !== 'FREE' ? [{
+        ...(currentTier !== 'FREE' ? [{
           path: '/chat',
           title: 'Messages',
-          description: getTierSpecificDesc(simulatedTier, 'chat'),
+          description: getTierSpecificDesc(currentTier, 'chat'),
           icon: <MessageSquare className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-blue))]'
         }] : []),
         {
           path: '/tax-compliance',
           title: 'Statut de Conformité',
-          description: getTierSpecificDesc(simulatedTier, 'tax'),
+          description: getTierSpecificDesc(currentTier, 'tax'),
           icon: <Shield className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
         },
@@ -236,7 +236,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 min-w-0 flex-1">
               <Badge variant="outline" className="text-xs flex-shrink-0">
-                {simulatedTier}
+                {currentTier}
               </Badge>
               <span className="text-xs text-muted-foreground truncate">{user?.email?.split('@')[0]}</span>
             </div>

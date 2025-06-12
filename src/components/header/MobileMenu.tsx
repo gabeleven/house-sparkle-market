@@ -15,15 +15,13 @@ import {
   Target
 } from 'lucide-react';
 import { SubscriptionTier } from '@/types/subscription';
-import SubscriptionSimulator from '@/components/SubscriptionSimulator';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
 
 interface MobileMenuProps {
   isOpen: boolean;
   user: any;
-  simulatedTier: SubscriptionTier;
-  setSimulatedTier: (tier: SubscriptionTier) => void;
+  currentTier: SubscriptionTier;
   onClose: () => void;
   handleSignOut: () => Promise<void>;
 }
@@ -31,8 +29,7 @@ interface MobileMenuProps {
 const MobileMenu = ({ 
   isOpen, 
   user, 
-  simulatedTier, 
-  setSimulatedTier, 
+  currentTier, 
   onClose, 
   handleSignOut 
 }: MobileMenuProps) => {
@@ -50,14 +47,14 @@ const MobileMenu = ({
   const getAnalyticsItems = () => {
     const items = [];
     
-    if (simulatedTier === 'PRO' || simulatedTier === 'PREMIUM') {
+    if (currentTier === 'PRO' || currentTier === 'PREMIUM') {
       items.push(
         { path: '/analytics/insights', title: 'Insights', icon: <TrendingUp className="w-4 h-4" /> },
         { path: '/analytics/reports', title: 'Rapports', icon: <FileText className="w-4 h-4" /> }
       );
     }
     
-    if (simulatedTier === 'PREMIUM') {
+    if (currentTier === 'PREMIUM') {
       items.push(
         { path: '/analytics/intelligence', title: 'Intelligence', icon: <Brain className="w-4 h-4" /> },
         { path: '/analytics/performance', title: 'Performance', icon: <Target className="w-4 h-4" /> }
@@ -82,7 +79,7 @@ const MobileMenu = ({
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium truncate">{user.email?.split('@')[0]}</span>
               <Badge variant="outline" className="text-xs flex-shrink-0">
-                {simulatedTier}
+                {currentTier}
               </Badge>
             </div>
           </div>
@@ -137,14 +134,6 @@ const MobileMenu = ({
               </span>
               <span className="text-sm font-medium truncate">Paramètres</span>
             </Link>
-            
-            {/* Mobile Subscription Simulator */}
-            <div className="px-4 py-2">
-              <SubscriptionSimulator 
-                currentTier={simulatedTier} 
-                onTierChange={setSimulatedTier} 
-              />
-            </div>
           </>
         ) : (
           <>

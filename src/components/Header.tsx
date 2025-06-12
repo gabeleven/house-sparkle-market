@@ -4,10 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
-import SubscriptionSimulator from '@/components/SubscriptionSimulator';
-import { SubscriptionTier } from '@/types/subscription';
 import HeaderLogo from '@/components/header/HeaderLogo';
 import NavigationItems from '@/components/header/NavigationItems';
 import UserMenu from '@/components/header/UserMenu';
@@ -15,8 +14,8 @@ import MobileMenu from '@/components/header/MobileMenu';
 
 const Header = () => {
   const { user, signOut } = useAuth();
+  const { currentTier } = useSubscription();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [simulatedTier, setSimulatedTier] = useState<SubscriptionTier>('FREE');
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -56,16 +55,6 @@ const Header = () => {
             
             {/* Desktop Controls */}
             <div className="flex items-center space-x-3">
-              {/* Subscription Simulator - Only show when logged in */}
-              {user && (
-                <div className="flex-shrink-0">
-                  <SubscriptionSimulator 
-                    currentTier={simulatedTier} 
-                    onTierChange={setSimulatedTier} 
-                  />
-                </div>
-              )}
-              
               {/* Language Toggle */}
               <div className="flex-shrink-0">
                 <LanguageToggle />
@@ -80,7 +69,7 @@ const Header = () => {
               <div className="flex-shrink-0">
                 <UserMenu 
                   user={user} 
-                  simulatedTier={simulatedTier} 
+                  currentTier={currentTier} 
                   signOut={signOut}
                 />
               </div>
@@ -114,8 +103,7 @@ const Header = () => {
             <MobileMenu
               isOpen={isMenuOpen}
               user={user}
-              simulatedTier={simulatedTier}
-              setSimulatedTier={setSimulatedTier}
+              currentTier={currentTier}
               onClose={closeMobileMenu}
               handleSignOut={handleSignOut}
             />

@@ -10,11 +10,11 @@ import MegaMenu from './MegaMenu';
 
 interface UserMenuProps {
   user: any;
-  simulatedTier: SubscriptionTier;
+  currentTier: SubscriptionTier;
   signOut: () => Promise<void>;
 }
 
-const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
+const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +46,7 @@ const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
     <div ref={menuRef} className="relative">
       <MegaMenu
         user={user}
-        simulatedTier={simulatedTier}
+        currentTier={currentTier}
         signOut={signOut}
         isOpen={isOpen}
         onOpenChange={handleMenuToggle}
@@ -68,7 +68,7 @@ const UserMenu = ({ user, simulatedTier, signOut }: UserMenuProps) => {
                 {truncateText(userDisplayName)}
               </span>
               <Badge variant="outline" className="text-xs px-2 py-0.5 flex-shrink-0">
-                {simulatedTier}
+                {currentTier}
               </Badge>
             </div>
             <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
