@@ -45,6 +45,14 @@ export interface ProviderService {
   service_category?: ServiceCategory;
 }
 
+export interface CreateProviderServiceData {
+  service_category_id: string;
+  description?: string | null;
+  base_price?: number | null;
+  price_unit?: string;
+  is_available?: boolean;
+}
+
 export interface ProviderProfile extends Provider {
   full_name: string;
   email: string;

@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Provider, ProviderService } from '@/types/providers';
+import { Provider, CreateProviderServiceData } from '@/types/providers';
 import { useToast } from '@/hooks/use-toast';
 
 export const useProviderProfile = () => {
@@ -102,14 +102,18 @@ export const useProviderProfile = () => {
   });
 
   const addService = useMutation({
-    mutationFn: async (serviceData: Partial<ProviderService>) => {
+    mutationFn: async (serviceData: CreateProviderServiceData) => {
       if (!provider) throw new Error('No provider profile found');
 
       const { data, error } = await supabase
         .from('provider_services')
         .insert({
-          ...serviceData,
           provider_id: provider.id,
+          service_category_id: serviceData.service_category_id,
+          description: serviceData.description,
+          base_price: serviceData.base_price,
+          price_unit: serviceData.price_unit || 'hour',
+          is_available: serviceData.is_available ?? true,
         })
         .select()
         .single();
