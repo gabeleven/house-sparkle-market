@@ -9,8 +9,21 @@ import { Link } from 'react-router-dom';
 import { RevenueChart } from '@/components/analytics/RevenueChart';
 import { BookingChart } from '@/components/analytics/BookingChart';
 import { PerformanceChart } from '@/components/analytics/PerformanceChart';
+import { ServiceDistributionChart } from '@/components/analytics/ServiceDistributionChart';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const Intelligence = () => {
+  const { currentTier, isLoading } = useSubscription();
+  const hasPremiumAccess = currentTier === 'PREMIUM';
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -33,33 +46,35 @@ const Intelligence = () => {
             </div>
           </div>
           
-          <Badge variant="destructive" className="whitespace-nowrap">
-            Premium Feature
+          <Badge variant={hasPremiumAccess ? "default" : "destructive"} className="whitespace-nowrap">
+            {hasPremiumAccess ? "Premium Active" : "Premium Feature"}
           </Badge>
         </div>
 
-        {/* Premium Gate */}
-        <Card className="mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
-          <CardContent className="p-8 text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                <Lock className="w-8 h-8 text-purple-600" />
+        {/* Show Premium Gate only for non-Premium users */}
+        {!hasPremiumAccess && (
+          <Card className="mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+            <CardContent className="p-8 text-center">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Lock className="w-8 h-8 text-purple-600" />
+                </div>
               </div>
-            </div>
-            <h2 className="text-xl font-bold mb-4">Unlock Market Intelligence</h2>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Get AI-powered insights into market trends, competitor analysis, pricing optimization, 
-              and demand forecasting to stay ahead of the competition.
-            </p>
-            <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-              Upgrade to Premium
-            </Button>
-          </CardContent>
-        </Card>
+              <h2 className="text-xl font-bold mb-4">Unlock Market Intelligence</h2>
+              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                Get AI-powered insights into market trends, competitor analysis, pricing optimization, 
+                and demand forecasting to stay ahead of the competition.
+              </p>
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                Upgrade to Premium
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* Feature Preview with Real Charts */}
+        {/* Premium Content - Show full functionality for Premium users, preview for others */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="opacity-75">
+          <Card className={!hasPremiumAccess ? "opacity-75" : ""}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
@@ -76,7 +91,7 @@ const Intelligence = () => {
             </CardContent>
           </Card>
 
-          <Card className="opacity-75">
+          <Card className={!hasPremiumAccess ? "opacity-75" : ""}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-600" />
@@ -93,7 +108,7 @@ const Intelligence = () => {
             </CardContent>
           </Card>
 
-          <Card className="opacity-75">
+          <Card className={!hasPremiumAccess ? "opacity-75" : ""}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-orange-600" />
@@ -110,6 +125,53 @@ const Intelligence = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Additional Premium Features for Premium Users */}
+        {hasPremiumAccess && (
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-purple-600" />
+                  <span className="truncate">Service Distribution Analysis</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4">
+                  <ServiceDistributionChart />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Understand which services are most in demand in your area and optimize your offerings.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-yellow-600" />
+                  <span className="truncate">AI Insights Dashboard</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-green-700 mb-2">Peak Demand Alert</h4>
+                    <p className="text-sm text-green-600">
+                      📈 15% increase in deep cleaning requests expected next week. Consider adjusting your pricing.
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-orange-700 mb-2">Competitor Insight</h4>
+                    <p className="text-sm text-orange-600">
+                      💡 Your pricing is 8% below market average. You could increase rates by $5/hour.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Coming Soon Features */}
         <Card>
