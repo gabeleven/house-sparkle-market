@@ -36,12 +36,12 @@ const Header = () => {
           {/* Logo - Always visible */}
           <HeaderLogo />
 
-          {/* Desktop Navigation - Hidden on mobile with CSS */}
+          {/* Desktop Navigation - Only visible on large screens */}
           <div className="hidden lg:flex items-center justify-end flex-1 space-x-4">
             <nav className="flex items-center space-x-6">
               <NavigationItems isLoggedIn={!!user} />
               
-              {/* Show additional links for non-logged in users */}
+              {/* Additional links for non-logged in users */}
               {!user && (
                 <>
                   <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
@@ -76,8 +76,8 @@ const Header = () => {
                 <ThemeToggle />
               </div>
               
-              {/* User Menu - Desktop only */}
-              <div className="hidden lg:block">
+              {/* User Menu - Desktop only, with defensive check */}
+              <div className="flex-shrink-0">
                 <UserMenu 
                   user={user} 
                   simulatedTier={simulatedTier} 
@@ -87,14 +87,15 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Mobile menu button - Only visible on smaller screens */}
+          {/* Mobile/Tablet Controls - Only visible on smaller screens */}
           <div className="flex lg:hidden items-center space-x-2">
-            {/* Theme and Language toggles for tablet */}
+            {/* Theme and Language toggles for tablet only */}
             <div className="hidden md:flex lg:hidden items-center space-x-2">
               <LanguageToggle />
               <ThemeToggle />
             </div>
             
+            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="icon"
@@ -107,17 +108,19 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation - Only shows on smaller screens when menu is open */}
-        <div className="lg:hidden">
-          <MobileMenu
-            isOpen={isMenuOpen}
-            user={user}
-            simulatedTier={simulatedTier}
-            setSimulatedTier={setSimulatedTier}
-            onClose={closeMobileMenu}
-            handleSignOut={handleSignOut}
-          />
-        </div>
+        {/* Mobile Navigation - Only shows when menu is open AND on smaller screens */}
+        {isMenuOpen && (
+          <div className="lg:hidden">
+            <MobileMenu
+              isOpen={isMenuOpen}
+              user={user}
+              simulatedTier={simulatedTier}
+              setSimulatedTier={setSimulatedTier}
+              onClose={closeMobileMenu}
+              handleSignOut={handleSignOut}
+            />
+          </div>
+        )}
       </div>
     </header>
   );

@@ -16,10 +16,17 @@ interface MegaMenuProps {
   simulatedTier: SubscriptionTier;
   signOut: () => Promise<void>;
   trigger: React.ReactNode;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
+const MegaMenu = ({ user, simulatedTier, signOut, trigger, isOpen, onOpenChange }: MegaMenuProps) => {
   const [searchTerm, setSearchTerm] = React.useState('');
+
+  // Defensive check to prevent rendering if no user
+  if (!user) {
+    return null;
+  }
 
   const menuSections = [
     {
@@ -160,10 +167,15 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
 
   const handleSignOutClick = async () => {
     await signOut();
+    onOpenChange?.(false);
+  };
+
+  const handleLinkClick = () => {
+    onOpenChange?.(false);
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
         {trigger}
       </DropdownMenuTrigger>
@@ -197,6 +209,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
                   <Link
                     key={item.path}
                     to={item.path}
+                    onClick={handleLinkClick}
                     className="flex items-start space-x-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 group"
                   >
                     <div className={`${item.color} group-hover:scale-110 transition-transform duration-200 flex-shrink-0`}>

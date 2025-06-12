@@ -69,6 +69,10 @@ const MobileMenu = ({
 
   const analyticsItems = getAnalyticsItems();
 
+  const handleLinkClick = () => {
+    onClose();
+  };
+
   return (
     <div className="block py-4 border-t bg-card/95 backdrop-blur-sm animate-in slide-in-from-top-2 duration-200">
       <div className="flex flex-col space-y-3">
@@ -93,7 +97,7 @@ const MobileMenu = ({
                 key={item.path}
                 to={item.path}
                 className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
-                onClick={onClose}
+                onClick={handleLinkClick}
               >
                 <span className="text-[hsl(var(--pop-blue))] flex-shrink-0">{item.icon}</span>
                 <span className="text-sm font-medium truncate">{item.title}</span>
@@ -113,7 +117,7 @@ const MobileMenu = ({
                     key={item.path}
                     to={item.path}
                     className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
-                    onClick={onClose}
+                    onClick={handleLinkClick}
                   >
                     <span className="text-[hsl(var(--pop-orange))] flex-shrink-0">{item.icon}</span>
                     <span className="text-sm font-medium truncate">{item.title}</span>
@@ -126,7 +130,7 @@ const MobileMenu = ({
             <Link
               to="/settings"
               className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
-              onClick={onClose}
+              onClick={handleLinkClick}
             >
               <span className="text-[hsl(var(--pop-blue))] flex-shrink-0">
                 <Settings className="w-4 h-4" />
@@ -148,28 +152,28 @@ const MobileMenu = ({
             <Link 
               to="/browse-cleaners" 
               className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
-              onClick={onClose}
+              onClick={handleLinkClick}
             >
               Services
             </Link>
             <Link 
               to="/comment-ca-marche" 
               className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
-              onClick={onClose}
+              onClick={handleLinkClick}
             >
               À Propos
             </Link>
             <Link 
               to="/prestataires" 
               className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
-              onClick={onClose}
+              onClick={handleLinkClick}
             >
               HOUSIE Pro
             </Link>
             <Link 
               to="/support" 
               className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
-              onClick={onClose}
+              onClick={handleLinkClick}
             >
               Support
             </Link>
@@ -199,12 +203,12 @@ const MobileMenu = ({
           </Button>
         ) : (
           <div className="flex flex-col space-y-2 px-4">
-            <Link to="/auth" onClick={onClose}>
+            <Link to="/auth" onClick={handleLinkClick}>
               <Button variant="ghost" className="w-full justify-start">
                 Connexion
               </Button>
             </Link>
-            <Link to="/auth" onClick={onClose}>
+            <Link to="/auth" onClick={handleLinkClick}>
               <Button className="pop-orange-btn w-full justify-start">
                 S'inscrire
               </Button>
