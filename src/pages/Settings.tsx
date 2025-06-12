@@ -24,14 +24,13 @@ import {
 } from 'lucide-react';
 import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Navigate } from 'react-router-dom';
 import { SubscriptionTier, SUBSCRIPTION_PLANS, hasStarterOrHigher, hasProOrHigher, isPremium } from '@/types/subscription';
 
 const Settings = () => {
   const { user } = useAuth();
-  
-  // Mock tier - in real app this would come from subscription hook
-  const currentTier: SubscriptionTier = 'PRO';
+  const { currentTier } = useSubscription();
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
