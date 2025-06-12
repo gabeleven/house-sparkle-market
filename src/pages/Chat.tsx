@@ -54,7 +54,7 @@ const Chat = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <div>Loading...</div>
       </div>
     );
@@ -65,7 +65,7 @@ const Chat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="h-[calc(100vh-4rem)]">
         {conversationId && conversationData ? (
           <ChatInterface

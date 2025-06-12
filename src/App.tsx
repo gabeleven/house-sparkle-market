@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
@@ -31,6 +32,12 @@ import CleanerReviews from '@/pages/CleanerReviews';
 import Auth from '@/pages/Auth';
 import NotFound from '@/pages/NotFound';
 
+// Analytics Pages
+import Insights from '@/pages/analytics/Insights';
+import Reports from '@/pages/analytics/Reports';
+import Intelligence from '@/pages/analytics/Intelligence';
+import Performance from '@/pages/analytics/Performance';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -57,6 +64,10 @@ function App() {
                       <Route path="/support" element={<Support />} />
                       <Route path="/provider-dashboard" element={<ProviderDashboard />} />
                       <Route path="/analytics" element={<AnalyticsDashboard />} />
+                      <Route path="/analytics/insights" element={<Insights />} />
+                      <Route path="/analytics/reports" element={<Reports />} />
+                      <Route path="/analytics/intelligence" element={<Intelligence />} />
+                      <Route path="/analytics/performance" element={<Performance />} />
                       <Route path="/growth" element={<GrowthDashboard />} />
                       <Route path="/calendar" element={<CalendarDashboard />} />
                       <Route path="/tax-compliance" element={<TaxCompliancePage />} />
