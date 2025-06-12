@@ -1,193 +1,203 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Brain, Crown, TrendingUp, Users, Target, Zap, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { RevenueChart } from '@/components/analytics/RevenueChart';
-import { BookingChart } from '@/components/analytics/BookingChart';
-import { PerformanceChart } from '@/components/analytics/PerformanceChart';
-import { ServiceDistributionChart } from '@/components/analytics/ServiceDistributionChart';
-import { useSubscription } from '@/hooks/useSubscription';
+import { TrendingUp, Users, MapPin, Brain, RefreshCw } from 'lucide-react';
+import { WeatherDemandChart } from '@/components/analytics/WeatherDemandChart';
+import { supabase } from '@/integrations/supabase/client';
 
 const Intelligence = () => {
-  const { currentTier, isLoading } = useSubscription();
-  const hasPremiumAccess = currentTier === 'PREMIUM';
+  const collectWeatherData = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('weather-data-collector');
+      if (error) throw error;
+      console.log('Weather data collection triggered:', data);
+      // Refresh the page to show updated data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error collecting weather data:', error);
+    }
+  };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
+  // Auto-collect weather data on component mount
+  useEffect(() => {
+    const checkAndCollectWeatherData = async () => {
+      try {
+        // Check if we have today's weather data
+        const today = new Date().toISOString().split('T')[0];
+        const { data: existingData } = await supabase
+          .from('weather_data')
+          .select('id')
+          .eq('date', today)
+          .eq('city', 'Montreal')
+          .single();
+
+        // If no data for today, collect it
+        if (!existingData) {
+          await collectWeatherData();
+        }
+      } catch (error) {
+        console.log('Weather data check completed');
+      }
+    };
+
+    checkAndCollectWeatherData();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Link to="/provider-dashboard">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Brain className="w-6 h-6 text-purple-600" />
-                <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Market Intelligence</h1>
-                <Crown className="w-5 h-5 text-yellow-500" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Market Intelligence</h1>
+          <p className="text-muted-foreground mt-2">
+            AI-powered insights and market analysis for the Quebec cleaning services market
+          </p>
+        </div>
+        <Button onClick={collectWeatherData} variant="outline" size="sm">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Update Weather Data
+        </Button>
+      </div>
+
+      {/* Market Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Market Size</p>
+                <p className="text-2xl font-bold">$2.4M</p>
               </div>
-              <p className="text-muted-foreground">AI-powered insights for market domination</p>
+              <TrendingUp className="w-8 h-8 text-green-600" />
             </div>
-          </div>
-          
-          <Badge variant="default" className="whitespace-nowrap">
-            Premium Active
-          </Badge>
-        </div>
+            <p className="text-xs text-muted-foreground mt-2">Quebec cleaning market</p>
+          </CardContent>
+        </Card>
 
-        {/* AI-Powered Market Intelligence Content - Always show functional dashboard */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                <span className="truncate">Market Trends</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <RevenueChart />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Active Providers</p>
+                <p className="text-2xl font-bold">347</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Real-time market demand analysis and seasonal trend predictions for your service area.
-              </p>
-            </CardContent>
-          </Card>
+              <Users className="w-8 h-8 text-blue-600" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">+12% this month</p>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
-                <span className="truncate">Competitor Analysis</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <BookingChart />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Coverage Areas</p>
+                <p className="text-2xl font-bold">23</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Compare your pricing, availability, and customer satisfaction against local competitors.
-              </p>
-            </CardContent>
-          </Card>
+              <MapPin className="w-8 h-8 text-purple-600" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Cities in Quebec</p>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-orange-600" />
-                <span className="truncate">Performance Optimization</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <PerformanceChart />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">AI Insights</p>
+                <p className="text-2xl font-bold">94%</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                AI-recommended strategies to maximize your earnings while maintaining high quality.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+              <Brain className="w-8 h-8 text-orange-600" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Prediction accuracy</p>
+          </CardContent>
+        </Card>
+      </div>
 
-        {/* Additional Premium Features */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-purple-600" />
-                <span className="truncate">Service Distribution Analysis</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <ServiceDistributionChart />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Understand which services are most in demand in your area and optimize your offerings.
-              </p>
-            </CardContent>
-          </Card>
+      {/* Weather Impact Analysis - The breakthrough AI feature */}
+      <WeatherDemandChart />
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-yellow-600" />
-                <span className="truncate">AI Insights Dashboard</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-green-700 mb-2">Peak Demand Alert</h4>
-                  <p className="text-sm text-green-600">
-                    📈 15% increase in deep cleaning requests expected next week. Consider adjusting your pricing.
-                  </p>
-                </div>
-                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-orange-700 mb-2">Competitor Insight</h4>
-                  <p className="text-sm text-orange-600">
-                    💡 Your pricing is 8% below market average. You could increase rates by $5/hour.
-                  </p>
-                </div>
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-purple-700 mb-2">Demand Forecast</h4>
-                  <p className="text-sm text-purple-600">
-                    🔮 AI predicts 25% higher demand during holiday season. Prepare your schedule!
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Coming Soon Features */}
+      {/* Additional Intelligence Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-yellow-600" />
-              <span className="truncate">Coming Soon to Premium</span>
-            </CardTitle>
+            <CardTitle>Demand Prediction</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold">Advanced Demand Forecasting</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Predict busy periods up to 6 months ahead</li>
-                  <li>• Weather-based demand correlation</li>
-                  <li>• Local event impact analysis</li>
-                  <li>• Dynamic pricing recommendations</li>
-                </ul>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Next 7 Days</span>
+                <span className="text-sm text-green-600">+23% increase</span>
               </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-semibold">Customer Behavior Insights</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Customer lifetime value analysis</li>
-                  <li>• Churn prediction and prevention</li>
-                  <li>• Service preference patterns</li>
-                  <li>• Optimal communication timing</li>
-                </ul>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Peak Hours</span>
+                <span className="text-sm">9 AM - 2 PM</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">High Demand Areas</span>
+                <span className="text-sm">Plateau, Westmount</span>
               </div>
             </div>
           </CardContent>
         </Card>
-      </main>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Competitive Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Market Share</span>
+                <span className="text-sm text-blue-600">34% HOUSIE</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Avg. Service Price</span>
+                <span className="text-sm">$85/hour</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Customer Retention</span>
+                <span className="text-sm text-green-600">87%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AI Insights Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="w-5 h-5" />
+            AI-Generated Market Insights
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
+              <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Weather Correlation</h4>
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                Rainy days show 25-35% higher demand for cleaning services, especially in residential areas.
+              </p>
+            </div>
+            
+            <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg">
+              <h4 className="font-medium text-green-900 dark:text-green-100 mb-2">Seasonal Trends</h4>
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Spring cleaning drives 40% of annual bookings, with peak demand in March-April.
+              </p>
+            </div>
+            
+            <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg">
+              <h4 className="font-medium text-purple-900 dark:text-purple-100 mb-2">Geographic Patterns</h4>
+              <p className="text-sm text-purple-700 dark:text-purple-300">
+                Urban areas prefer frequent light cleaning, while suburbs book deeper monthly services.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

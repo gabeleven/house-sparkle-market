@@ -32,14 +32,14 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
   const { data: cleaners, isLoading, error } = useQuery({
     queryKey: ['cleaners', userLocation, searchTerm, locationFilter],
     queryFn: async () => {
-      console.log('Fetching cleaners from providers table...');
+      console.log('Fetching cleaners with fixed database relationships...');
       
-      // Query providers that offer cleaning services
+      // Query providers with proper join to profiles using the new foreign key constraint
       let query = supabase
         .from('providers')
         .select(`
           *,
-          profiles!providers_user_id_fkey(
+          profiles!fk_providers_user_id(
             full_name,
             email
           ),
@@ -65,7 +65,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
         throw error;
       }
 
-      console.log('Fetched cleaners from providers:', data);
+      console.log('Successfully fetched cleaners with fixed relationships:', data);
       console.log('Number of cleaners found:', data?.length || 0);
 
       let processedCleaners = (data || [])
@@ -73,7 +73,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
         .map((provider): CleanerProfile => {
           const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
           return {
-            id: provider.user_id, // Use user_id for backward compatibility
+            id: provider.user_id,
             email: profile?.email || '',
             full_name: profile?.full_name || '',
             business_name: provider.business_name,
@@ -87,7 +87,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
             hourly_rate: provider.hourly_rate,
             average_rating: provider.average_rating,
             total_reviews: provider.total_reviews,
-            services: [] // Will be populated from provider_services if needed
+            services: []
           };
         });
 

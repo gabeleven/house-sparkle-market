@@ -428,6 +428,36 @@ export type Database = {
           },
         ]
       }
+      daily_demand_stats: {
+        Row: {
+          booking_count: number | null
+          city: string
+          created_at: string | null
+          date: string
+          id: string
+          total_bookings_value: number | null
+          weather_correlation_score: number | null
+        }
+        Insert: {
+          booking_count?: number | null
+          city?: string
+          created_at?: string | null
+          date: string
+          id?: string
+          total_bookings_value?: number | null
+          weather_correlation_score?: number | null
+        }
+        Update: {
+          booking_count?: number | null
+          city?: string
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_bookings_value?: number | null
+          weather_correlation_score?: number | null
+        }
+        Relationships: []
+      }
       masked_communications: {
         Row: {
           cleaner_id: string
@@ -779,7 +809,22 @@ export type Database = {
           user_id?: string
           years_experience?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_providers_user_id"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "cleaners_with_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_providers_user_id"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quarterly_summaries: {
         Row: {
@@ -1148,6 +1193,42 @@ export type Database = {
           },
         ]
       }
+      weather_data: {
+        Row: {
+          city: string
+          created_at: string | null
+          date: string
+          humidity: number | null
+          id: string
+          precipitation: number | null
+          temperature: number | null
+          weather_condition: string | null
+          wind_speed: number | null
+        }
+        Insert: {
+          city?: string
+          created_at?: string | null
+          date: string
+          humidity?: number | null
+          id?: string
+          precipitation?: number | null
+          temperature?: number | null
+          weather_condition?: string | null
+          wind_speed?: number | null
+        }
+        Update: {
+          city?: string
+          created_at?: string | null
+          date?: string
+          humidity?: number | null
+          id?: string
+          precipitation?: number | null
+          temperature?: number | null
+          weather_condition?: string | null
+          wind_speed?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       cleaners_with_profiles: {
@@ -1177,6 +1258,15 @@ export type Database = {
       calculate_distance: {
         Args: { lat1: number; lon1: number; lat2: number; lon2: number }
         Returns: number
+      }
+      calculate_weather_demand_correlation: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          date: string
+          precipitation: number
+          booking_count: number
+          correlation_score: number
+        }[]
       }
     }
     Enums: {
