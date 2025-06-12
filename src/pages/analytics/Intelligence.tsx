@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Crown, Lock, TrendingUp, Users, Target, Zap, ArrowLeft } from 'lucide-react';
+import { Brain, Crown, TrendingUp, Users, Target, Zap, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RevenueChart } from '@/components/analytics/RevenueChart';
 import { BookingChart } from '@/components/analytics/BookingChart';
@@ -51,30 +51,9 @@ const Intelligence = () => {
           </Badge>
         </div>
 
-        {/* Show Premium Gate only for non-Premium users */}
-        {!hasPremiumAccess && (
-          <Card className="mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
-            <CardContent className="p-8 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Lock className="w-8 h-8 text-purple-600" />
-                </div>
-              </div>
-              <h2 className="text-xl font-bold mb-4">Unlock Market Intelligence</h2>
-              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                Get AI-powered insights into market trends, competitor analysis, pricing optimization, 
-                and demand forecasting to stay ahead of the competition.
-              </p>
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                Upgrade to Premium
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Premium Content - Show full functionality for Premium users, preview for others */}
+        {/* AI-Powered Market Intelligence Content - Always show for Premium users */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className={!hasPremiumAccess ? "opacity-75" : ""}>
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
@@ -91,7 +70,7 @@ const Intelligence = () => {
             </CardContent>
           </Card>
 
-          <Card className={!hasPremiumAccess ? "opacity-75" : ""}>
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-600" />
@@ -108,7 +87,7 @@ const Intelligence = () => {
             </CardContent>
           </Card>
 
-          <Card className={!hasPremiumAccess ? "opacity-75" : ""}>
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-orange-600" />
@@ -126,51 +105,76 @@ const Intelligence = () => {
           </Card>
         </div>
 
-        {/* Additional Premium Features for Premium Users */}
-        {hasPremiumAccess && (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5 text-purple-600" />
-                  <span className="truncate">Service Distribution Analysis</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <ServiceDistributionChart />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Understand which services are most in demand in your area and optimize your offerings.
-                </p>
-              </CardContent>
-            </Card>
+        {/* Additional Premium Features */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-600" />
+                <span className="truncate">Service Distribution Analysis</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <ServiceDistributionChart />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Understand which services are most in demand in your area and optimize your offerings.
+              </p>
+            </CardContent>
+          </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-600" />
-                  <span className="truncate">AI Insights Dashboard</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-green-700 mb-2">Peak Demand Alert</h4>
-                    <p className="text-sm text-green-600">
-                      📈 15% increase in deep cleaning requests expected next week. Consider adjusting your pricing.
-                    </p>
-                  </div>
-                  <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-orange-700 mb-2">Competitor Insight</h4>
-                    <p className="text-sm text-orange-600">
-                      💡 Your pricing is 8% below market average. You could increase rates by $5/hour.
-                    </p>
-                  </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-600" />
+                <span className="truncate">AI Insights Dashboard</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-green-700 mb-2">Peak Demand Alert</h4>
+                  <p className="text-sm text-green-600">
+                    📈 15% increase in deep cleaning requests expected next week. Consider adjusting your pricing.
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-orange-700 mb-2">Competitor Insight</h4>
+                  <p className="text-sm text-orange-600">
+                    💡 Your pricing is 8% below market average. You could increase rates by $5/hour.
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-purple-700 mb-2">Demand Forecast</h4>
+                  <p className="text-sm text-purple-600">
+                    🔮 AI predicts 25% higher demand during holiday season. Prepare your schedule!
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Show Premium Gate only for non-Premium users */}
+        {!hasPremiumAccess && (
+          <Card className="mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+            <CardContent className="p-8 text-center">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Brain className="w-8 h-8 text-purple-600" />
+                </div>
+              </div>
+              <h2 className="text-xl font-bold mb-4">Unlock Advanced Market Intelligence</h2>
+              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                Get AI-powered insights into market trends, competitor analysis, pricing optimization, 
+                and demand forecasting to stay ahead of the competition.
+              </p>
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                Upgrade to Premium
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
         {/* Coming Soon Features */}
@@ -184,12 +188,12 @@ const Intelligence = () => {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="font-semibold">Demand Forecasting</h3>
+                <h3 className="font-semibold">Advanced Demand Forecasting</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Predict busy periods up to 3 months ahead</li>
-                  <li>• Seasonal demand patterns analysis</li>
-                  <li>• Event-based demand spikes prediction</li>
-                  <li>• Optimal schedule recommendations</li>
+                  <li>• Predict busy periods up to 6 months ahead</li>
+                  <li>• Weather-based demand correlation</li>
+                  <li>• Local event impact analysis</li>
+                  <li>• Dynamic pricing recommendations</li>
                 </ul>
               </div>
               
