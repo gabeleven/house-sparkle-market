@@ -22,82 +22,92 @@ const Header = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+    setIsMenuOpen(false); // Close mobile menu on sign out
+  };
+
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo with mascot - positioned on the left */}
+          {/* Logo - Always visible */}
           <HeaderLogo />
 
-          {/* Desktop Navigation - Hidden on mobile */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <NavigationItems isLoggedIn={!!user} />
+          {/* Desktop Navigation - Only visible on md+ screens */}
+          <div className="hidden md:flex items-center justify-end flex-1 space-x-4">
+            <nav className="flex items-center space-x-6">
+              <NavigationItems isLoggedIn={!!user} />
+              
+              {/* Show additional links for non-logged in users */}
+              {!user && (
+                <>
+                  <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
+                    HOUSIE Pro
+                  </Link>
+                  <Link to="/support" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
+                    Support
+                  </Link>
+                </>
+              )}
+            </nav>
             
-            {/* Show additional links for non-logged in users */}
-            {!user && (
-              <>
-                <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
-                  HOUSIE Pro
-                </Link>
-                <Link to="/support" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
-                  Support
-                </Link>
-              </>
-            )}
-            
-            {/* Subscription Simulator - Only show when logged in */}
-            {user && (
+            {/* Desktop Controls */}
+            <div className="flex items-center space-x-3">
+              {/* Subscription Simulator - Only show when logged in */}
+              {user && (
+                <div className="flex-shrink-0">
+                  <SubscriptionSimulator 
+                    currentTier={simulatedTier} 
+                    onTierChange={setSimulatedTier} 
+                  />
+                </div>
+              )}
+              
+              {/* Language Toggle */}
               <div className="flex-shrink-0">
-                <SubscriptionSimulator 
-                  currentTier={simulatedTier} 
-                  onTierChange={setSimulatedTier} 
-                />
+                <LanguageToggle />
               </div>
-            )}
-            
-            {/* Language Toggle */}
-            <div className="flex-shrink-0">
-              <LanguageToggle />
+              
+              {/* Theme Toggle */}
+              <div className="flex-shrink-0">
+                <ThemeToggle />
+              </div>
+              
+              {/* User Menu */}
+              <UserMenu 
+                user={user} 
+                simulatedTier={simulatedTier} 
+                signOut={signOut}
+              />
             </div>
-            
-            {/* Theme Toggle */}
-            <div className="flex-shrink-0">
-              <ThemeToggle />
-            </div>
-            
-            <UserMenu 
-              user={user} 
-              simulatedTier={simulatedTier} 
-              signOut={signOut}
-            />
-          </nav>
+          </div>
 
-          {/* Mobile menu button - Only visible on mobile */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile menu button - Only visible on smaller screens */}
+          <div className="flex md:hidden items-center">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="relative z-50"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
 
-        {/* Mobile Navigation - Only shows when menu is open and on mobile */}
-        <div className="md:hidden">
-          <MobileMenu
-            isOpen={isMenuOpen}
-            user={user}
-            simulatedTier={simulatedTier}
-            setSimulatedTier={setSimulatedTier}
-            onClose={() => setIsMenuOpen(false)}
-            handleSignOut={handleSignOut}
-          />
-        </div>
+        {/* Mobile Navigation - Only shows on smaller screens when menu is open */}
+        <MobileMenu
+          isOpen={isMenuOpen}
+          user={user}
+          simulatedTier={simulatedTier}
+          setSimulatedTier={setSimulatedTier}
+          onClose={closeMobileMenu}
+          handleSignOut={handleSignOut}
+        />
       </div>
     </header>
   );

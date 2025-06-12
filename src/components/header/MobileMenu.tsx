@@ -3,7 +3,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, BarChart3, MessageSquare, Settings, User } from 'lucide-react';
+import { 
+  Calendar, 
+  BarChart3, 
+  MessageSquare, 
+  Settings, 
+  User, 
+  Brain,
+  TrendingUp,
+  FileText,
+  Target
+} from 'lucide-react';
 import { SubscriptionTier } from '@/types/subscription';
 import SubscriptionSimulator from '@/components/SubscriptionSimulator';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -34,11 +44,33 @@ const MobileMenu = ({
     { path: '/provider-dashboard', title: 'Dashboard', icon: <BarChart3 className="w-4 h-4" /> },
     { path: '/bookings', title: 'Réservations', icon: <Calendar className="w-4 h-4" /> },
     { path: '/chat', title: 'Messages', icon: <MessageSquare className="w-4 h-4" /> },
-    { path: '/settings', title: 'Paramètres', icon: <Settings className="w-4 h-4" /> },
   ];
 
+  // Analytics menu items based on subscription tier
+  const getAnalyticsItems = () => {
+    const items = [];
+    
+    if (simulatedTier === 'PRO' || simulatedTier === 'PREMIUM') {
+      items.push(
+        { path: '/analytics/insights', title: 'Insights', icon: <TrendingUp className="w-4 h-4" /> },
+        { path: '/analytics/reports', title: 'Rapports', icon: <FileText className="w-4 h-4" /> }
+      );
+    }
+    
+    if (simulatedTier === 'PREMIUM') {
+      items.push(
+        { path: '/analytics/intelligence', title: 'Intelligence', icon: <Brain className="w-4 h-4" /> },
+        { path: '/analytics/performance', title: 'Performance', icon: <Target className="w-4 h-4" /> }
+      );
+    }
+    
+    return items;
+  };
+
+  const analyticsItems = getAnalyticsItems();
+
   return (
-    <div className="block md:hidden py-4 border-t bg-card/50 backdrop-blur-sm animate-in slide-in-from-top-2 duration-200">
+    <div className="md:hidden block py-4 border-t bg-card/95 backdrop-blur-sm animate-in slide-in-from-top-2 duration-200">
       <div className="flex flex-col space-y-3">
         {/* User Info */}
         {user && (
@@ -67,6 +99,40 @@ const MobileMenu = ({
                 <span className="text-sm font-medium truncate">{item.title}</span>
               </Link>
             ))}
+
+            {/* Analytics section for qualified tiers */}
+            {analyticsItems.length > 0 && (
+              <>
+                <div className="px-4 py-2 mx-2">
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Analytics
+                  </h3>
+                </div>
+                {analyticsItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
+                    onClick={onClose}
+                  >
+                    <span className="text-[hsl(var(--pop-orange))] flex-shrink-0">{item.icon}</span>
+                    <span className="text-sm font-medium truncate">{item.title}</span>
+                  </Link>
+                ))}
+              </>
+            )}
+
+            {/* Settings */}
+            <Link
+              to="/settings"
+              className="flex items-center space-x-3 px-4 py-3 hover:bg-accent rounded-lg mx-2 transition-colors"
+              onClick={onClose}
+            >
+              <span className="text-[hsl(var(--pop-blue))] flex-shrink-0">
+                <Settings className="w-4 h-4" />
+              </span>
+              <span className="text-sm font-medium truncate">Paramètres</span>
+            </Link>
             
             {/* Mobile Subscription Simulator */}
             <div className="px-4 py-2">

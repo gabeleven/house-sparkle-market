@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, Settings, BarChart3, MessageSquare, Calendar, Shield, Target, Brain, User, TrendingUp, Bell } from 'lucide-react';
+import { Search, Settings, BarChart3, MessageSquare, Calendar, Shield, Target, Brain, User, TrendingUp, Bell, FileText } from 'lucide-react';
 import { SubscriptionTier } from '@/types/subscription';
 import {
   DropdownMenu,
@@ -58,21 +58,39 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
           icon: <BarChart3 className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
         },
-        ...(simulatedTier === 'PRO' || simulatedTier === 'PREMIUM' ? [{
-          path: '/analytics',
-          title: 'Analytics Avancées',
-          description: 'Insights détaillés sur vos performances',
-          icon: <TrendingUp className="w-5 h-5" />,
-          color: 'text-[hsl(var(--pop-blue))]'
-        }] : []),
-        ...(simulatedTier === 'PREMIUM' ? [{
-          path: '/growth',
-          title: 'Business Intelligence',
-          description: 'IA marketing + intelligence marché',
-          icon: <Brain className="w-5 h-5" />,
-          color: 'text-purple-500',
-          showNotification: true
-        }] : [])
+        ...(simulatedTier === 'PRO' || simulatedTier === 'PREMIUM' ? [
+          {
+            path: '/analytics/insights',
+            title: 'Insights Avancées',
+            description: 'Analyses détaillées de performance',
+            icon: <TrendingUp className="w-5 h-5" />,
+            color: 'text-[hsl(var(--pop-blue))]'
+          },
+          {
+            path: '/analytics/reports',
+            title: 'Rapports Professionnels',
+            description: 'Rapports détaillés et exportables',
+            icon: <FileText className="w-5 h-5" />,
+            color: 'text-[hsl(var(--pop-orange))]'
+          }
+        ] : []),
+        ...(simulatedTier === 'PREMIUM' ? [
+          {
+            path: '/analytics/intelligence',
+            title: 'Business Intelligence',
+            description: 'IA marketing + intelligence marché',
+            icon: <Brain className="w-5 h-5" />,
+            color: 'text-purple-500',
+            showNotification: true
+          },
+          {
+            path: '/analytics/performance',
+            title: 'Performance Optimization',
+            description: 'Optimisation intelligente des performances',
+            icon: <Target className="w-5 h-5" />,
+            color: 'text-green-500'
+          }
+        ] : [])
       ]
     },
     {
@@ -87,7 +105,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
         }] : []),
         {
           path: '/tax-compliance',
-          title: 'Conformité Fiscale',
+          title: 'Statut de Conformité',
           description: getTierSpecificDesc(simulatedTier, 'tax'),
           icon: <Shield className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
@@ -131,7 +149,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
         'PREMIUM': 'Communications IA'
       },
       tax: {
-        'FREE': 'Conformité de base',
+        'FREE': 'Statut de base',
         'STARTER': 'Conformité avancée',
         'PRO': 'Suite fiscale complète',
         'PREMIUM': 'Optimisation fiscale IA'
@@ -140,12 +158,20 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
     return descriptions[feature]?.[tier] || '';
   }
 
+  const handleSignOutClick = async () => {
+    await signOut();
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         {trigger}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-96 p-0 bg-card border border-border shadow-2xl">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-96 p-0 bg-card border border-border shadow-2xl z-50"
+        sideOffset={8}
+      >
         {/* Search Header */}
         <div className="p-4 border-b border-border bg-gradient-to-r from-[hsl(var(--pop-orange)/0.1)] to-[hsl(var(--pop-blue)/0.1)]">
           <div className="relative">
@@ -173,14 +199,14 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
                     to={item.path}
                     className="flex items-start space-x-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 group"
                   >
-                    <div className={`${item.color} group-hover:scale-110 transition-transform duration-200`}>
+                    <div className={`${item.color} group-hover:scale-110 transition-transform duration-200 flex-shrink-0`}>
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2">
                         <p className="font-medium text-sm text-foreground truncate">{item.title}</p>
                         {item.showNotification && (
-                          <Bell className="w-3 h-3 text-[hsl(var(--pop-orange))]" />
+                          <Bell className="w-3 h-3 text-[hsl(var(--pop-orange))] flex-shrink-0" />
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>
@@ -195,15 +221,15 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
         {/* Footer */}
         <div className="border-t border-border p-3 bg-muted/30">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Badge variant="outline" className="text-xs">
+            <div className="flex items-center space-x-2 min-w-0 flex-1">
+              <Badge variant="outline" className="text-xs flex-shrink-0">
                 {simulatedTier}
               </Badge>
-              <span className="text-xs text-muted-foreground">{user?.email?.split('@')[0]}</span>
+              <span className="text-xs text-muted-foreground truncate">{user?.email?.split('@')[0]}</span>
             </div>
             <button
-              onClick={signOut}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              onClick={handleSignOutClick}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 ml-2"
             >
               Déconnexion
             </button>
