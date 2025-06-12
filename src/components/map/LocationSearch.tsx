@@ -34,16 +34,21 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
     try {
       // Use the new Places API (New) approach
       const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve, reject) => {
+        // Create proper LatLng for Quebec center
+        const quebecCenter = new google.maps.LatLng(46.8139, -71.2082);
+        
+        // Create proper LatLngBounds for location bias
+        const quebecBounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(45.0, -79.0), // Southwest
+          new google.maps.LatLng(62.0, -57.0)  // Northeast
+        );
+
         autocompleteService.current!.getPlacePredictions(
           {
             input: searchTerm,
             componentRestrictions: { country: 'CA' },
             types: ['geocode', 'establishment'],
-            locationBias: {
-              // Bias towards Quebec
-              center: { lat: 46.8139, lng: -71.2082 },
-              radius: 100000 // 100km radius
-            } as google.maps.LatLng
+            locationBias: quebecBounds
           },
           (predictions, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
@@ -75,9 +80,13 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
 
         if (placeDetails.geometry?.location) {
           const location = placeDetails.geometry.location;
+          // Properly handle lat/lng whether they're functions or properties
+          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
+          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+          
           onLocationSearch({
-            lat: typeof location.lat === 'function' ? location.lat() : location.lat,
-            lng: typeof location.lng === 'function' ? location.lng() : location.lng,
+            lat: lat,
+            lng: lng,
             address: placeDetails.formatted_address || placeDetails.name || searchTerm
           });
         }
