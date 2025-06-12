@@ -31,7 +31,7 @@ const Settings = () => {
   const { user } = useAuth();
   
   // Mock tier - in real app this would come from subscription simulator context
-  const currentTier = SubscriptionTier.PRO;
+  const currentTier: SubscriptionTier = 'PRO';
   
   // Form states
   const [firstName, setFirstName] = useState('Jean');
@@ -48,10 +48,10 @@ const Settings = () => {
 
   const getTierBadge = (tier: SubscriptionTier) => {
     const configs = {
-      [SubscriptionTier.FREE]: { label: 'Basic Access', color: 'secondary' },
-      [SubscriptionTier.STARTER]: { label: 'Essential Tools', color: 'default' },
-      [SubscriptionTier.PRO]: { label: 'Professional Suite', color: 'default' },
-      [SubscriptionTier.PREMIUM]: { label: 'Business Intelligence', color: 'destructive' }
+      'FREE': { label: 'Basic Access', color: 'secondary' },
+      'STARTER': { label: 'Essential Tools', color: 'default' },
+      'PRO': { label: 'Professional Suite', color: 'default' },
+      'PREMIUM': { label: 'Business Intelligence', color: 'destructive' }
     };
     
     const config = configs[tier];
@@ -60,18 +60,18 @@ const Settings = () => {
 
   const getUsageMetrics = (tier: SubscriptionTier) => {
     const metrics = {
-      [SubscriptionTier.FREE]: { bookings: '3/5', storage: '0.5/2 GB' },
-      [SubscriptionTier.STARTER]: { bookings: '18/25', storage: '2.1/10 GB' },
-      [SubscriptionTier.PRO]: { bookings: '45/∞', storage: '8.5/50 GB' },
-      [SubscriptionTier.PREMIUM]: { bookings: '67/∞', storage: '15.2/100 GB' }
+      'FREE': { bookings: '3/5', storage: '0.5/2 GB' },
+      'STARTER': { bookings: '18/25', storage: '2.1/10 GB' },
+      'PRO': { bookings: '45/∞', storage: '8.5/50 GB' },
+      'PREMIUM': { bookings: '67/∞', storage: '15.2/100 GB' }
     };
     return metrics[tier];
   };
 
   // Helper functions for tier comparisons
-  const isPremium = currentTier === SubscriptionTier.PREMIUM;
-  const isStarterOrHigher = [SubscriptionTier.STARTER, SubscriptionTier.PRO, SubscriptionTier.PREMIUM].includes(currentTier);
-  const isProOrHigher = [SubscriptionTier.PRO, SubscriptionTier.PREMIUM].includes(currentTier);
+  const isPremium = currentTier === 'PREMIUM';
+  const isStarterOrHigher = ['STARTER', 'PRO', 'PREMIUM'].includes(currentTier);
+  const isProOrHigher = ['PRO', 'PREMIUM'].includes(currentTier);
 
   return (
     <div className="min-h-screen bg-background">
@@ -198,7 +198,7 @@ const Settings = () => {
                     <div>
                       <h3 className="font-medium">{currentTier.toUpperCase()}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {currentTier === SubscriptionTier.FREE ? 'Gratuit' : `$${getTierInfo(currentTier).price} CAD/mois`}
+                        {currentTier === 'FREE' ? 'Gratuit' : `$${getTierInfo(currentTier).price} CAD/mois`}
                       </p>
                     </div>
                     {getTierBadge(currentTier)}
@@ -217,7 +217,7 @@ const Settings = () => {
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: [SubscriptionTier.FREE].includes(currentTier) ? '60%' : '45%' }}
+                            style={{ width: currentTier === 'FREE' ? '60%' : '45%' }}
                           />
                         </div>
                       </div>

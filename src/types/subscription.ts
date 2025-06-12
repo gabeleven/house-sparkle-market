@@ -1,10 +1,5 @@
 
-export enum SubscriptionTier {
-  FREE = 'free',
-  STARTER = 'starter',
-  PRO = 'pro',
-  PREMIUM = 'premium'
-}
+export type SubscriptionTier = 'FREE' | 'STARTER' | 'PRO' | 'PREMIUM';
 
 export interface MenuItemConfig {
   path: string;
@@ -16,13 +11,13 @@ export interface MenuItemConfig {
 
 // Helper function to check if tier is Starter or higher
 export const hasStarterOrHigher = (tier: SubscriptionTier): boolean => {
-  return [SubscriptionTier.STARTER, SubscriptionTier.PRO, SubscriptionTier.PREMIUM].includes(tier);
+  return ['STARTER', 'PRO', 'PREMIUM'].includes(tier);
 };
 
 // Helper function to get tier information
 export const getTierInfo = (tier: SubscriptionTier) => {
   const tierInfo = {
-    [SubscriptionTier.FREE]: { 
+    'FREE': { 
       name: 'Free', 
       label: 'Basic Access',
       color: 'secondary' as const,
@@ -35,7 +30,7 @@ export const getTierInfo = (tier: SubscriptionTier) => {
         'Email support'
       ]
     },
-    [SubscriptionTier.STARTER]: { 
+    'STARTER': { 
       name: 'Starter', 
       label: 'Essential Tools',
       color: 'default' as const,
@@ -50,7 +45,7 @@ export const getTierInfo = (tier: SubscriptionTier) => {
         'Priority email support'
       ]
     },
-    [SubscriptionTier.PRO]: { 
+    'PRO': { 
       name: 'Pro', 
       label: 'Professional Suite',
       color: 'default' as const,
@@ -66,7 +61,7 @@ export const getTierInfo = (tier: SubscriptionTier) => {
         'Phone support'
       ]
     },
-    [SubscriptionTier.PREMIUM]: { 
+    'PREMIUM': { 
       name: 'Premium', 
       label: 'Business Intelligence',
       color: 'destructive' as const,
@@ -93,7 +88,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
   ];
 
   switch (tier) {
-    case SubscriptionTier.FREE:
+    case 'FREE':
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier de Base', icon: 'Calendar' },
@@ -102,7 +97,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
         { path: '/settings', labelKey: 'Paramètres', icon: 'Settings' },
       ];
 
-    case SubscriptionTier.STARTER:
+    case 'STARTER':
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier Synchronisé', icon: 'Calendar' },
@@ -113,7 +108,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
         { path: '/settings', labelKey: 'Paramètres', icon: 'Settings' },
       ];
 
-    case SubscriptionTier.PRO:
+    case 'PRO':
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier Pro', icon: 'Calendar' },
@@ -126,7 +121,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
         { path: '/settings', labelKey: 'Paramètres', icon: 'Settings' },
       ];
 
-    case SubscriptionTier.PREMIUM:
+    case 'PREMIUM':
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier IA', icon: 'Calendar' },

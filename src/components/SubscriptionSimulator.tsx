@@ -20,13 +20,13 @@ interface SubscriptionSimulatorProps {
 const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimulatorProps) => {
   const getTierIcon = (tier: SubscriptionTier) => {
     switch (tier) {
-      case SubscriptionTier.FREE:
+      case 'FREE':
         return <Settings className="w-4 h-4" />;
-      case SubscriptionTier.STARTER:
+      case 'STARTER':
         return <Zap className="w-4 h-4" />;
-      case SubscriptionTier.PRO:
+      case 'PRO':
         return <Star className="w-4 h-4" />;
-      case SubscriptionTier.PREMIUM:
+      case 'PREMIUM':
         return <Crown className="w-4 h-4" />;
       default:
         return <Settings className="w-4 h-4" />;
@@ -35,13 +35,13 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
 
   const getTierLabel = (tier: SubscriptionTier) => {
     switch (tier) {
-      case SubscriptionTier.FREE:
+      case 'FREE':
         return 'Basic Access';
-      case SubscriptionTier.STARTER:
+      case 'STARTER':
         return 'Essential Tools';
-      case SubscriptionTier.PRO:
+      case 'PRO':
         return 'Professional Suite';
-      case SubscriptionTier.PREMIUM:
+      case 'PREMIUM':
         return 'Business Intelligence';
       default:
         return 'Basic Access';
@@ -50,13 +50,13 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
 
   const getTierColor = (tier: SubscriptionTier) => {
     switch (tier) {
-      case SubscriptionTier.FREE:
+      case 'FREE':
         return 'default';
-      case SubscriptionTier.STARTER:
+      case 'STARTER':
         return 'secondary';
-      case SubscriptionTier.PRO:
+      case 'PRO':
         return 'default';
-      case SubscriptionTier.PREMIUM:
+      case 'PREMIUM':
         return 'destructive';
       default:
         return 'default';
@@ -74,25 +74,25 @@ const SubscriptionSimulator = ({ currentTier, onTierChange }: SubscriptionSimula
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={SubscriptionTier.FREE}>
+          <SelectItem value="FREE">
             <div className="flex items-center space-x-2 w-full">
               <Settings className="w-4 h-4" />
               <span>FREE - Basic Access</span>
             </div>
           </SelectItem>
-          <SelectItem value={SubscriptionTier.STARTER}>
+          <SelectItem value="STARTER">
             <div className="flex items-center space-x-2 w-full">
               <Zap className="w-4 h-4" />
               <span>STARTER - $5 CAD/mo</span>
             </div>
           </SelectItem>
-          <SelectItem value={SubscriptionTier.PRO}>
+          <SelectItem value="PRO">
             <div className="flex items-center space-x-2 w-full">
               <Star className="w-4 h-4" />
               <span>PRO - $10 CAD/mo</span>
             </div>
           </SelectItem>
-          <SelectItem value={SubscriptionTier.PREMIUM}>
+          <SelectItem value="PREMIUM">
             <div className="flex items-center space-x-2 w-full">
               <Crown className="w-4 h-4" />
               <span>PREMIUM - $15 CAD/mo</span>

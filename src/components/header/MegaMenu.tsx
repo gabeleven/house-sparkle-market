@@ -58,14 +58,14 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
           icon: <BarChart3 className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-orange))]'
         },
-        ...(simulatedTier === SubscriptionTier.PRO || simulatedTier === SubscriptionTier.PREMIUM ? [{
+        ...(simulatedTier === 'PRO' || simulatedTier === 'PREMIUM' ? [{
           path: '/analytics',
           title: 'Analytics Avancées',
           description: 'Insights détaillés sur vos performances',
           icon: <TrendingUp className="w-5 h-5" />,
           color: 'text-[hsl(var(--pop-blue))]'
         }] : []),
-        ...(simulatedTier === SubscriptionTier.PREMIUM ? [{
+        ...(simulatedTier === 'PREMIUM' ? [{
           path: '/growth',
           title: 'Business Intelligence',
           description: 'IA marketing + intelligence marché',
@@ -78,7 +78,7 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
     {
       title: "Communication & Support",
       items: [
-        ...(simulatedTier !== SubscriptionTier.FREE ? [{
+        ...(simulatedTier !== 'FREE' ? [{
           path: '/chat',
           title: 'Messages',
           description: getTierSpecificDesc(simulatedTier, 'chat'),
@@ -114,27 +114,27 @@ const MegaMenu = ({ user, simulatedTier, signOut, trigger }: MegaMenuProps) => {
   function getTierSpecificDesc(tier: SubscriptionTier, feature: string): string {
     const descriptions = {
       calendar: {
-        [SubscriptionTier.FREE]: 'Calendrier de base',
-        [SubscriptionTier.STARTER]: 'Calendrier synchronisé',
-        [SubscriptionTier.PRO]: 'Calendrier professionnel',
-        [SubscriptionTier.PREMIUM]: 'Calendrier IA'
+        'FREE': 'Calendrier de base',
+        'STARTER': 'Calendrier synchronisé',
+        'PRO': 'Calendrier professionnel',
+        'PREMIUM': 'Calendrier IA'
       },
       bookings: {
-        [SubscriptionTier.FREE]: 'Max 5 réservations/mois',
-        [SubscriptionTier.STARTER]: 'Max 25 réservations/mois',
-        [SubscriptionTier.PRO]: 'Gestion illimitée',
-        [SubscriptionTier.PREMIUM]: 'Gestion intelligente'
+        'FREE': 'Max 5 réservations/mois',
+        'STARTER': 'Max 25 réservations/mois',
+        'PRO': 'Gestion illimitée',
+        'PREMIUM': 'Gestion intelligente'
       },
       chat: {
-        [SubscriptionTier.STARTER]: 'Communications client',
-        [SubscriptionTier.PRO]: 'Communications pro',
-        [SubscriptionTier.PREMIUM]: 'Communications IA'
+        'STARTER': 'Communications client',
+        'PRO': 'Communications pro',
+        'PREMIUM': 'Communications IA'
       },
       tax: {
-        [SubscriptionTier.FREE]: 'Conformité de base',
-        [SubscriptionTier.STARTER]: 'Conformité avancée',
-        [SubscriptionTier.PRO]: 'Suite fiscale complète',
-        [SubscriptionTier.PREMIUM]: 'Optimisation fiscale IA'
+        'FREE': 'Conformité de base',
+        'STARTER': 'Conformité avancée',
+        'PRO': 'Suite fiscale complète',
+        'PREMIUM': 'Optimisation fiscale IA'
       }
     };
     return descriptions[feature]?.[tier] || '';
