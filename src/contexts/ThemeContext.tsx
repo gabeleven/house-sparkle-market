@@ -5,6 +5,7 @@ type Theme = 'light' | 'dark' | 'pop-art';
 
 interface ThemeContextType {
   theme: Theme;
+  toggleTheme: () => void;
   togglePopArt: () => void;
 }
 
@@ -26,12 +27,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   const togglePopArt = () => {
     setTheme(prev => prev === 'pop-art' ? 'light' : 'pop-art');
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, togglePopArt }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, togglePopArt }}>
       {children}
     </ThemeContext.Provider>
   );
