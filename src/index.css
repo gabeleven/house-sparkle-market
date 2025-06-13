@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,6 +96,55 @@
     --pop-blue: 178 48% 42%; /* #3BA89A */
   }
 
+  /* POP-ART THEME - Vibrant Easter Egg */
+  .pop-art {
+    --background: 328 100% 54%; /* Hot Pink background */
+    --foreground: 0 0% 0%; /* Black text */
+
+    --card: 195 100% 50%; /* Electric Blue cards */
+    --card-foreground: 0 0% 100%; /* White text on cards */
+
+    --popover: 123 100% 50%; /* Lime Green popover */
+    --popover-foreground: 0 0% 0%; /* Black text */
+
+    --primary: 60 100% 50%; /* Bright Yellow primary */
+    --primary-foreground: 0 0% 0%; /* Black text */
+
+    --secondary: 195 100% 50%; /* Electric Blue secondary */
+    --secondary-foreground: 0 0% 100%; /* White text */
+
+    --muted: 300 100% 75%; /* Bright Magenta muted */
+    --muted-foreground: 0 0% 0%; /* Black text */
+
+    --accent: 123 100% 50%; /* Lime Green accent */
+    --accent-foreground: 0 0% 0%; /* Black text */
+
+    --destructive: 0 100% 50%; /* Pure Red destructive */
+    --destructive-foreground: 0 0% 100%; /* White text */
+
+    --border: 0 0% 0%; /* Black borders */
+    --input: 0 0% 100%; /* White inputs */
+    --ring: 60 100% 50%; /* Bright Yellow ring */
+
+    --sidebar-background: 195 100% 50%; /* Electric Blue sidebar */
+    --sidebar-foreground: 0 0% 100%; /* White text */
+    --sidebar-primary: 60 100% 50%; /* Bright Yellow primary */
+    --sidebar-primary-foreground: 0 0% 0%; /* Black text */
+    --sidebar-accent: 123 100% 50%; /* Lime Green accent */
+    --sidebar-accent-foreground: 0 0% 0%; /* Black text */
+    --sidebar-border: 0 0% 0%; /* Black borders */
+    --sidebar-ring: 60 100% 50%; /* Bright Yellow ring */
+
+    /* Pop Art Colors - POP-ART MODE (Ultra Vibrant) */
+    --pop-orange: 60 100% 50%; /* Bright Yellow */
+    --pop-blue: 195 100% 50%; /* Electric Blue */
+
+    /* Intensity Theme - Ultra Vibrant for Pop Art */
+    --intensity-primary: 328 100% 54%; /* Hot Pink */
+    --intensity-secondary: 60 100% 50%; /* Bright Yellow */
+    --intensity-accent: 123 100% 50%; /* Lime Green */
+  }
+
   /* VIBRANT INTENSITY THEME */
   .vibrant {
     --intensity-primary: 195 100% 50%; /* Electric Blue #00BFFF */
@@ -134,6 +182,28 @@
     color-scheme: dark;
   }
 
+  /* Pop-art mode special effects */
+  .pop-art {
+    color-scheme: light;
+  }
+
+  .pop-art * {
+    font-weight: 600 !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .pop-art .uber-nav-item:hover {
+    background: linear-gradient(45deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary))) !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .pop-art header {
+    background: linear-gradient(90deg, hsl(var(--intensity-primary)), hsl(var(--intensity-secondary)), hsl(var(--intensity-accent))) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  }
+
   /* Input styling for dark mode */
   .dark input {
     @apply bg-input border-border text-foreground;
@@ -141,6 +211,19 @@
 
   .dark input::placeholder {
     @apply text-muted-foreground;
+  }
+
+  /* Pop-art input styling */
+  .pop-art input {
+    background: hsl(var(--input)) !important;
+    border: 3px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+    font-weight: 700 !important;
+  }
+
+  .pop-art input::placeholder {
+    color: hsl(var(--muted-foreground)) !important;
+    font-weight: 600 !important;
   }
 
   /* INTENSITY-AWARE BUTTON STYLES */

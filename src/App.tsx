@@ -50,10 +50,10 @@ function App() {
                 <div 
                   className="min-h-screen text-foreground"
                   style={{
-                    backgroundImage: 'url(https://raw.githubusercontent.com/gabeleven/Housie_Media/main/gradient.png)',
+                    background: 'linear-gradient(135deg, #FFF4A3, #FFCBA4)',
+                    backgroundAttachment: 'fixed',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundAttachment: 'fixed',
                     backgroundRepeat: 'no-repeat'
                   }}
                 >

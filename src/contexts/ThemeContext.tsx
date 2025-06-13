@@ -1,11 +1,11 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark';
+type Theme = 'light' | 'dark' | 'pop-art';
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
+  togglePopArt: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -19,19 +19,19 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Apply theme to document
-    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.remove('light', 'dark', 'pop-art');
     document.documentElement.classList.add(theme);
     
     // Save to localStorage
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const togglePopArt = () => {
+    setTheme(prev => prev === 'pop-art' ? 'light' : 'pop-art');
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, togglePopArt }}>
       {children}
     </ThemeContext.Provider>
   );

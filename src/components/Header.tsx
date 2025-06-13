@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import HeaderLogo from '@/components/header/HeaderLogo';
 import NavigationItems from '@/components/header/NavigationItems';
@@ -83,11 +82,6 @@ const Header = () => {
                 <LanguageToggle />
               </div>
               
-              {/* Theme Toggle */}
-              <div className="flex-shrink-0">
-                <ThemeToggle />
-              </div>
-              
               {/* User Menu - Desktop only */}
               <div className="flex-shrink-0">
                 <UserMenu 
@@ -101,10 +95,9 @@ const Header = () => {
 
           {/* Mobile/Tablet Controls */}
           <div className="flex lg:hidden items-center space-x-2">
-            {/* Theme and Language toggles for tablet only */}
+            {/* Language toggle for tablet only */}
             <div className="hidden md:flex lg:hidden items-center space-x-2">
               <LanguageToggle />
-              <ThemeToggle />
             </div>
             
             {/* Mobile menu button */}
