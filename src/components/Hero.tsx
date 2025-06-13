@@ -107,7 +107,7 @@ const Hero = () => {
                     <img 
                       src="https://raw.githubusercontent.com/gabeleven/Housie_Media/main/APPLOGOPNG.png"
                       alt="HOUSIE Assistant - Your Canadian tax compliance expert" 
-                      className="w-56 h-56 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive mascot-image"
+                      className="w-64 h-64 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive mascot-image"
                       onClick={handleMascotClick}
                       style={{
                         margin: 0,
