@@ -14,11 +14,14 @@ const HeaderLogo = () => {
 
   return (
     <Link to="/" className="flex items-center">
-      <div className="h-10 w-auto overflow-hidden relative">
+      <div className="h-10 w-auto overflow-hidden relative logo-text-blue">
         <img 
           src="https://raw.githubusercontent.com/gabeleven/Housie_Media/main/header_logo.png" 
           alt="HOUSIE" 
           className="h-full w-auto object-contain"
+          style={{
+            filter: 'brightness(0) saturate(100%) invert(29%) sepia(95%) saturate(4826%) hue-rotate(211deg) brightness(91%) contrast(95%)'
+          }}
         />
         {/* Invisible clickable area over the second "O" */}
         <div 

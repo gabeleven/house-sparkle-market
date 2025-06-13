@@ -32,11 +32,12 @@ const LoginForm = ({ userType, onSwitchToSignup, onSwitchToForgot, onSuccess }: 
       if (onSuccess) {
         onSuccess();
       } else {
-        // Default redirect behavior
+        // Default redirect behavior with auto-map for customers
         if (userType === 'cleaner') {
           navigate('/cleaner/onboarding');
         } else {
-          navigate('/browse-cleaners');
+          // Redirect customers to browse-cleaners with auto-map enabled
+          navigate('/browse-cleaners?autoMap=true');
         }
       }
     }

@@ -20,11 +20,12 @@ const BrowseCleaners = () => {
   const [searchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
   const initialLocation = searchParams.get('location') || '';
+  const autoOpenMap = searchParams.get('autoMap') === 'true';
   
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [locationFilter, setLocationFilter] = useState(initialLocation);
   const [searchRadius, setSearchRadius] = useState(25);
-  const [showMap, setShowMap] = useState(false);
+  const [showMap, setShowMap] = useState(autoOpenMap || false);
   const [useGoogleMaps, setUseGoogleMaps] = useState(true);
   const [selectedCleaner, setSelectedCleaner] = useState(null);
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
@@ -34,12 +35,20 @@ const BrowseCleaners = () => {
   // Mock user subscription - in a real app, this would come from user subscription data
   const userSubscription: SubscriptionTier = 'FREE'; // This would be fetched from user's actual subscription
   
+  // Auto-open map and request location when user is logged in and autoMap is true
+  useEffect(() => {
+    if (user && autoOpenMap && !location) {
+      requestLocation();
+      setShowMap(true);
+    }
+  }, [user, autoOpenMap, location, requestLocation]);
+  
   // Show location prompt when user first arrives with a postal code but no location permission
   useEffect(() => {
-    if (user && initialLocation && !location) {
+    if (user && initialLocation && !location && !autoOpenMap) {
       setShowLocationPrompt(true);
     }
-  }, [user, initialLocation, location]);
+  }, [user, initialLocation, location, autoOpenMap]);
   
   // Create a search location object for the DynamicRadiusSelector
   const searchLocation = location ? {
