@@ -19,7 +19,7 @@ const ComingSoonSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -31,7 +31,7 @@ const ComingSoonSection = () => {
           {upcomingServices.map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <Card key={index} className="border-0 shadow-md bg-card/50">
+              <Card key={index} className="border-0 shadow-md bg-card/70 backdrop-blur-sm">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <IconComponent className="w-6 h-6 text-primary" />
