@@ -10,7 +10,7 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
   if (isLoggedIn) {
     return (
       <>
-        <Link to="/provider-dashboard" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
+        <Link to="/analytics" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
           Dashboard
         </Link>
         <Link to="/browse-cleaners" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm">

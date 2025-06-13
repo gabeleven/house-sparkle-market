@@ -34,11 +34,11 @@ const Reports = () => {
 
   if (authLoading || taxLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen bg-background animate-fade-in">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           <div className="space-y-6">
             <Skeleton className="h-8 w-64" />
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {[1, 2, 3, 4].map((i) => (
                 <Skeleton key={i} className="h-32" />
               ))}
@@ -59,33 +59,33 @@ const Reports = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="mb-6 lg:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-start gap-3 lg:gap-4">
             <Link to="/analytics">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+              <Button variant="outline" size="sm" className="flex-shrink-0">
+                <ArrowLeft className="h-4 w-4 mr-1 lg:mr-2" />
+                <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <FileText className="w-6 h-6 text-green-600" />
-                <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Tax Reports & Compliance</h1>
+                <FileText className="w-5 h-5 lg:w-6 lg:h-6 text-green-600 flex-shrink-0" />
+                <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold text-foreground truncate">Tax Reports & Compliance</h1>
               </div>
-              <p className="text-muted-foreground">Tax compliance dashboard and official documents</p>
+              <p className="text-sm lg:text-base text-muted-foreground">Tax compliance dashboard and official documents</p>
             </div>
           </div>
           
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
+            <Button variant="outline" size="sm" className="flex-shrink-0">
+              <Filter className="h-4 w-4 mr-1 lg:mr-2" />
               <span className="hidden sm:inline">Filter</span>
             </Button>
-            <Button variant="outline" size="sm">
-              <Calendar className="h-4 w-4 mr-2" />
+            <Button variant="outline" size="sm" className="flex-shrink-0">
+              <Calendar className="h-4 w-4 mr-1 lg:mr-2" />
               <span className="hidden sm:inline">Date Range</span>
             </Button>
           </div>
@@ -93,9 +93,9 @@ const Reports = () => {
 
         {/* Compliance Alert */}
         {taxThresholds?.requires_cra_reporting && (
-          <Alert className="mb-6 border-orange-200 bg-orange-50">
+          <Alert className="mb-6 border-orange-200 bg-orange-50 dark:border-orange-900 dark:bg-orange-950">
             <AlertTriangle className="h-4 w-4 text-orange-600" />
-            <AlertDescription className="text-orange-800">
+            <AlertDescription className="text-orange-800 dark:text-orange-200">
               <span className="font-medium">Compliance Status:</span> Reporting required 
               (${taxThresholds.total_annual_income.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })} income or {taxThresholds.total_transactions} transactions). 
               Tax documentation is mandatory.
@@ -104,53 +104,53 @@ const Reports = () => {
         )}
 
         {/* Tax Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-          <Card>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-6 lg:mb-8">
+          <Card className="border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium truncate">Total Earnings</CardTitle>
+              <CardTitle className="text-xs lg:text-sm font-medium truncate text-foreground">Total Earnings</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
-            <CardContent>
-              <div className="text-xl lg:text-2xl font-bold truncate">
+            <CardContent className="pb-3">
+              <div className="text-lg lg:text-xl xl:text-2xl font-bold truncate text-foreground">
                 {taxSummary?.totalEarnings.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
               <p className="text-xs text-muted-foreground">Current tax year</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium truncate">Business Expenses</CardTitle>
+              <CardTitle className="text-xs lg:text-sm font-medium truncate text-foreground">Business Expenses</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
-            <CardContent>
-              <div className="text-xl lg:text-2xl font-bold truncate">
+            <CardContent className="pb-3">
+              <div className="text-lg lg:text-xl xl:text-2xl font-bold truncate text-foreground">
                 {taxSummary?.totalExpenses.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
               <p className="text-xs text-muted-foreground">Tax deductible</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium truncate">Net Income</CardTitle>
+              <CardTitle className="text-xs lg:text-sm font-medium truncate text-foreground">Net Income</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
-            <CardContent>
-              <div className="text-xl lg:text-2xl font-bold truncate">
+            <CardContent className="pb-3">
+              <div className="text-lg lg:text-xl xl:text-2xl font-bold truncate text-foreground">
                 {taxSummary?.netIncome.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
               <p className="text-xs text-muted-foreground">After expenses</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium truncate">Estimated Tax</CardTitle>
+              <CardTitle className="text-xs lg:text-sm font-medium truncate text-foreground">Estimated Tax</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
-            <CardContent>
-              <div className="text-xl lg:text-2xl font-bold truncate">
+            <CardContent className="pb-3">
+              <div className="text-lg lg:text-xl xl:text-2xl font-bold truncate text-foreground">
                 {taxSummary?.estimatedTax.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
               </div>
               <p className="text-xs text-muted-foreground">15% rate estimate</p>
@@ -158,11 +158,11 @@ const Reports = () => {
           </Card>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-6 lg:mb-8">
           {/* Quarterly Income */}
-          <Card>
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+              <CardTitle className="flex items-center space-x-2 text-foreground">
                 <Calendar className="w-5 h-5 flex-shrink-0" />
                 <span className="truncate">Quarterly Income Breakdown</span>
               </CardTitle>
@@ -173,23 +173,23 @@ const Reports = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="whitespace-nowrap">Quarter</TableHead>
-                        <TableHead className="text-right whitespace-nowrap">Gross</TableHead>
-                        <TableHead className="text-right whitespace-nowrap">Net</TableHead>
-                        <TableHead className="text-right whitespace-nowrap">Transactions</TableHead>
+                        <TableHead className="whitespace-nowrap text-muted-foreground">Quarter</TableHead>
+                        <TableHead className="text-right whitespace-nowrap text-muted-foreground">Gross</TableHead>
+                        <TableHead className="text-right whitespace-nowrap text-muted-foreground">Net</TableHead>
+                        <TableHead className="text-right whitespace-nowrap text-muted-foreground">Transactions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {incomeTracking.map((quarter) => (
                         <TableRow key={`${quarter.tax_year}-${quarter.quarter}`}>
-                          <TableCell className="font-medium whitespace-nowrap">Q{quarter.quarter} {quarter.tax_year}</TableCell>
-                          <TableCell className="text-right font-medium whitespace-nowrap">
+                          <TableCell className="font-medium whitespace-nowrap text-foreground">Q{quarter.quarter} {quarter.tax_year}</TableCell>
+                          <TableCell className="text-right font-medium whitespace-nowrap text-foreground">
                             {Number(quarter.gross_earnings).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}
                           </TableCell>
-                          <TableCell className="text-right whitespace-nowrap">
+                          <TableCell className="text-right whitespace-nowrap text-foreground">
                             {Number(quarter.net_earnings).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}
                           </TableCell>
-                          <TableCell className="text-right">{quarter.total_transactions}</TableCell>
+                          <TableCell className="text-right text-foreground">{quarter.total_transactions}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -204,17 +204,17 @@ const Reports = () => {
           </Card>
 
           {/* Tax Documents */}
-          <Card>
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+              <CardTitle className="flex items-center space-x-2 text-foreground">
                 <FileText className="w-5 h-5 flex-shrink-0" />
                 <span className="truncate">Tax Documents & Compliance</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center justify-between p-3 lg:p-4 border border-border rounded-lg bg-card">
                 <div className="min-w-0 flex-1">
-                  <h4 className="font-medium truncate">T4A Tax Slip</h4>
+                  <h4 className="font-medium truncate text-foreground">T4A Tax Slip</h4>
                   <p className="text-sm text-muted-foreground truncate">Official CRA tax document</p>
                 </div>
                 <Button 
@@ -222,16 +222,16 @@ const Reports = () => {
                   size="sm"
                   onClick={() => handleGenerateDocument('t4a')}
                   disabled={generateTaxDocument.isPending}
-                  className="flex-shrink-0 ml-4"
+                  className="flex-shrink-0 ml-2 lg:ml-4"
                 >
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="w-4 h-4 mr-1 lg:mr-2" />
                   <span className="hidden sm:inline">Generate</span>
                 </Button>
               </div>
               
-              <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center justify-between p-3 lg:p-4 border border-border rounded-lg bg-card">
                 <div className="min-w-0 flex-1">
-                  <h4 className="font-medium truncate">Annual Tax Summary</h4>
+                  <h4 className="font-medium truncate text-foreground">Annual Tax Summary</h4>
                   <p className="text-sm text-muted-foreground truncate">Complete income and expense report</p>
                 </div>
                 <Button 
@@ -239,16 +239,16 @@ const Reports = () => {
                   size="sm"
                   onClick={() => handleGenerateDocument('annual_summary')}
                   disabled={generateTaxDocument.isPending}
-                  className="flex-shrink-0 ml-4"
+                  className="flex-shrink-0 ml-2 lg:ml-4"
                 >
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="w-4 h-4 mr-1 lg:mr-2" />
                   <span className="hidden sm:inline">Generate</span>
                 </Button>
               </div>
               
-              <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center justify-between p-3 lg:p-4 border border-border rounded-lg bg-card">
                 <div className="min-w-0 flex-1">
-                  <h4 className="font-medium truncate">Quarterly Summary</h4>
+                  <h4 className="font-medium truncate text-foreground">Quarterly Summary</h4>
                   <p className="text-sm text-muted-foreground truncate">Q4 2024 earnings breakdown</p>
                 </div>
                 <Button 
@@ -256,20 +256,20 @@ const Reports = () => {
                   size="sm"
                   onClick={() => handleGenerateDocument('quarterly_summary')}
                   disabled={generateTaxDocument.isPending}
-                  className="flex-shrink-0 ml-4"
+                  className="flex-shrink-0 ml-2 lg:ml-4"
                 >
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="w-4 h-4 mr-1 lg:mr-2" />
                   <span className="hidden sm:inline">Generate</span>
                 </Button>
               </div>
 
               {taxDocuments.length > 0 && (
                 <div className="mt-4">
-                  <h5 className="font-medium mb-2">Recent Documents</h5>
+                  <h5 className="font-medium mb-2 text-foreground">Recent Documents</h5>
                   <div className="space-y-2">
                     {taxDocuments.slice(0, 3).map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded">
-                        <span className="truncate flex-1">{doc.document_type.toUpperCase()} - {doc.tax_year}</span>
+                      <div key={doc.id} className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded border border-border">
+                        <span className="truncate flex-1 text-foreground">{doc.document_type.toUpperCase()} - {doc.tax_year}</span>
                         <span className="text-muted-foreground flex-shrink-0 ml-2">
                           {new Date(doc.generated_at).toLocaleDateString('en-CA')}
                         </span>
@@ -283,40 +283,40 @@ const Reports = () => {
         </div>
 
         {/* Compliance Status */}
-        <Card>
+        <Card className="border-border">
           <CardHeader>
-            <CardTitle className="truncate">Compliance Status</CardTitle>
+            <CardTitle className="truncate text-foreground">Compliance Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 border rounded-lg">
-                <div className="text-xl lg:text-2xl font-bold mb-2 truncate">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+              <div className="text-center p-4 border border-border rounded-lg bg-card">
+                <div className="text-lg lg:text-xl xl:text-2xl font-bold mb-2 truncate text-foreground">
                   {taxThresholds?.total_annual_income.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }) || '$0'}
                 </div>
                 <p className="text-sm text-muted-foreground">Annual Income</p>
-                <p className="text-xs mt-1">
+                <p className="text-xs mt-1 text-muted-foreground">
                   Threshold: $2,800 {taxThresholds?.meets_income_threshold ? '✅' : '❌'}
                 </p>
               </div>
               
-              <div className="text-center p-4 border rounded-lg">
-                <div className="text-xl lg:text-2xl font-bold mb-2">
+              <div className="text-center p-4 border border-border rounded-lg bg-card">
+                <div className="text-lg lg:text-xl xl:text-2xl font-bold mb-2 text-foreground">
                   {taxThresholds?.total_transactions || 0}
                 </div>
                 <p className="text-sm text-muted-foreground">Total Transactions</p>
-                <p className="text-xs mt-1">
+                <p className="text-xs mt-1 text-muted-foreground">
                   Threshold: 30 services {taxThresholds?.meets_transaction_threshold ? '✅' : '❌'}
                 </p>
               </div>
               
-              <div className="text-center p-4 border rounded-lg">
-                <div className={`text-xl lg:text-2xl font-bold mb-2 truncate ${
+              <div className="text-center p-4 border border-border rounded-lg bg-card">
+                <div className={`text-lg lg:text-xl xl:text-2xl font-bold mb-2 truncate ${
                   taxThresholds?.requires_cra_reporting ? 'text-orange-600' : 'text-green-600'
                 }`}>
                   {taxThresholds?.requires_cra_reporting ? 'Required' : 'Not Required'}
                 </div>
                 <p className="text-sm text-muted-foreground">CRA Reporting</p>
-                <p className="text-xs mt-1 truncate">
+                <p className="text-xs mt-1 truncate text-muted-foreground">
                   Last updated: {taxThresholds?.last_calculated_at ? 
                     new Date(taxThresholds.last_calculated_at).toLocaleDateString('en-CA') : 'Never'}
                 </p>
