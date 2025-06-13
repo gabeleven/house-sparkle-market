@@ -11,9 +11,10 @@ interface LoginFormProps {
   userType: string;
   onSwitchToSignup: () => void;
   onSwitchToForgot: () => void;
+  onSuccess?: () => void;
 }
 
-const LoginForm = ({ userType, onSwitchToSignup, onSwitchToForgot }: LoginFormProps) => {
+const LoginForm = ({ userType, onSwitchToSignup, onSwitchToForgot, onSuccess }: LoginFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -28,11 +29,15 @@ const LoginForm = ({ userType, onSwitchToSignup, onSwitchToForgot }: LoginFormPr
     const { error } = await signIn(email, password);
     
     if (!error) {
-      // Redirect based on user type
-      if (userType === 'cleaner') {
-        navigate('/cleaner/onboarding');
+      if (onSuccess) {
+        onSuccess();
       } else {
-        navigate('/browse-cleaners');
+        // Default redirect behavior
+        if (userType === 'cleaner') {
+          navigate('/cleaner/onboarding');
+        } else {
+          navigate('/browse-cleaners');
+        }
       }
     }
 

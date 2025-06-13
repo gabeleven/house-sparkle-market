@@ -22,9 +22,10 @@ import {
 interface SignupFormProps {
   userType: string;
   onSwitchToLogin: () => void;
+  onSuccess?: () => void;
 }
 
-const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
+const SignupForm = ({ userType, onSwitchToLogin, onSuccess }: SignupFormProps & { onSuccess?: () => void }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -143,10 +144,14 @@ const SignupForm = ({ userType, onSwitchToLogin }: SignupFormProps) => {
     const { error } = await signUp(formData.email, formData.password, userData);
     
     if (!error) {
-      // Show success message and redirect to login
-      setTimeout(() => {
-        onSwitchToLogin();
-      }, 2000);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Show success message and redirect to login
+        setTimeout(() => {
+          onSwitchToLogin();
+        }, 2000);
+      }
     }
 
     setLoading(false);
