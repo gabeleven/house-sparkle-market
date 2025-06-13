@@ -50,7 +50,7 @@ function App() {
                 <div 
                   className="min-h-screen text-foreground"
                   style={{
-                    background: 'linear-gradient(135deg, #FFF4A3, #FFCBA4)',
+                    background: 'linear-gradient(135deg, #FFE066 0%, #FFF4A3 25%, #FFDB9A 50%, #FFCBA4 75%, #FFB89E 100%)',
                     backgroundAttachment: 'fixed',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
