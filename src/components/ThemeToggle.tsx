@@ -11,12 +11,12 @@ export const ThemeToggle = () => {
   return (
     <div className="flex items-center space-x-3 bg-card border border-border rounded-full px-4 py-2 shadow-sm hover:shadow-md transition-all">
       <div className="flex items-center space-x-2">
-        <Sun className="h-4 w-4 text-[hsl(var(--pop-orange))]" />
+        <Sun className="h-4 w-4 text-[#FF8F8F]" />
         <Switch
           id="theme-toggle"
           checked={theme === 'dark'}
           onCheckedChange={toggleTheme}
-          className="data-[state=checked]:bg-[hsl(var(--pop-blue))] data-[state=unchecked]:bg-[hsl(var(--pop-orange))]"
+          className="data-[state=checked]:bg-[hsl(var(--pop-blue))] data-[state=unchecked]:bg-[#FF8F8F]"
         />
         <Moon className="h-4 w-4 text-[hsl(var(--pop-blue))]" />
       </div>

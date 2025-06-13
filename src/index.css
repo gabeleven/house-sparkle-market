@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 18 100% 60%; /* Orange #FF6B35 */
+    --primary: 9 100% 77%; /* #FF8F8F */
     --primary-foreground: 210 20% 98%;
 
     --secondary: 178 68% 60%; /* Blue #4ECDC4 */
@@ -22,7 +23,7 @@
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 18 100% 60%; /* Orange accent */
+    --accent: 9 100% 77%; /* #FF8F8F accent */
     --accent-foreground: 210 20% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,7 +31,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 18 100% 60%; /* Orange ring */
+    --ring: 9 100% 77%; /* #FF8F8F ring */
 
     --radius: 0.5rem;
 
@@ -44,7 +45,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Pop Art Colors - LIGHT MODE (Vibrant) */
-    --pop-orange: 18 100% 60%; /* #FF6B35 */
+    --pop-orange: 9 100% 77%; /* #FF8F8F */
     --pop-blue: 178 68% 60%; /* #4ECDC4 */
 
     /* Intensity Theme - Default Vibrant */
@@ -63,7 +64,7 @@
     --popover: 0 0% 11.8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 18 65% 48%; /* Muted Orange #CC5429 */
+    --primary: 9 65% 68%; /* Muted #FF8F8F */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 178 48% 42%; /* Muted Blue #3BA89A */
@@ -72,7 +73,7 @@
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 18 65% 48%; /* Muted Orange accent */
+    --accent: 9 65% 68%; /* Muted #FF8F8F accent */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -80,19 +81,19 @@
 
     --border: 0 0% 19.6%; /* #323232 */
     --input: 0 0% 14.9%;
-    --ring: 18 65% 48%; /* Muted Orange ring */
+    --ring: 9 65% 68%; /* Muted #FF8F8F ring */
 
     --sidebar-background: 0 0% 7.1%;
     --sidebar-foreground: 0 0% 63.9%;
-    --sidebar-primary: 18 65% 48%; /* Muted Orange primary */
+    --sidebar-primary: 9 65% 68%; /* Muted #FF8F8F primary */
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 14.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 19.6%;
-    --sidebar-ring: 18 65% 48%; /* Muted Orange ring */
+    --sidebar-ring: 9 65% 68%; /* Muted #FF8F8F ring */
 
     /* Pop Art Colors - DARK MODE (Sophisticated) */
-    --pop-orange: 18 65% 48%; /* #CC5429 */
+    --pop-orange: 9 65% 68%; /* #FF8F8F */
     --pop-blue: 178 48% 42%; /* #3BA89A */
   }
 
@@ -533,8 +534,8 @@
 
   /* SVG Logo and Mascot Color Matching - Restored Visibility */
   .svg-logo-orange {
-    /* Orange color filter for logo text */
-    filter: brightness(0) saturate(100%) invert(56%) sepia(89%) saturate(2029%) hue-rotate(15deg) brightness(103%) contrast(101%);
+    /* #FF8F8F color filter for logo text */
+    filter: brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(2529%) hue-rotate(313deg) brightness(105%) contrast(101%);
   }
 
   /* Color matching for white backgrounds in SVGs */
@@ -571,12 +572,12 @@
     fill: hsl(var(--background)) !important;
   }
 
-  /* Ensure text elements in logo get orange color */
+  /* Ensure text elements in logo get #FF8F8F color */
   .svg-logo-orange svg text,
   .svg-logo-orange svg [fill="black"],
   .svg-logo-orange svg [fill="#000000"],
   .svg-logo-orange svg [fill="#000"] {
-    fill: #FF8C00 !important;
+    fill: #FF8F8F !important;
   }
 
   /* Dark mode specific adjustments */
