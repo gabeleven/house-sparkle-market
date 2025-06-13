@@ -100,15 +100,23 @@ const Hero = () => {
 
             {/* Right Content - Animated Mascot */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative">
+              <div className="relative mascot-container">
                 {/* Background circle with gradient */}
                 <div className="w-80 h-80 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.3)] via-purple-500/20 to-[hsl(var(--pop-orange)/0.3)] dark:from-[hsl(var(--pop-blue)/0.2)] dark:via-purple-600/15 dark:to-[hsl(var(--pop-orange)/0.2)] flex items-center justify-center shadow-2xl ben-day-dots animate-breathing">
                   <div className="w-64 h-64 rounded-full bg-gradient-to-br from-[hsl(var(--pop-blue)/0.4)] via-purple-400/25 to-[hsl(var(--pop-orange)/0.4)] dark:from-[hsl(var(--pop-blue)/0.3)] dark:via-purple-500/20 dark:to-[hsl(var(--pop-orange)/0.3)] flex items-center justify-center">
                     <img 
-                      src="https://raw.githubusercontent.com/rbnblndlrd/HOUSIE-MARKETPLACE/main/mascot_originale.svg"
+                      src="https://raw.githubusercontent.com/gabeleven/Housie_Media/main/APPLOGOPNG.png"
                       alt="HOUSIE Assistant - Your Canadian tax compliance expert" 
-                      className="w-56 h-56 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive"
+                      className="w-56 h-56 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive mascot-image"
                       onClick={handleMascotClick}
+                      style={{
+                        margin: 0,
+                        padding: 0,
+                        border: 0,
+                        outline: 'none',
+                        background: 'transparent',
+                        display: 'block'
+                      }}
                     />
                   </div>
                 </div>
