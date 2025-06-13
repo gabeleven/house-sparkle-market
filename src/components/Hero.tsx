@@ -38,18 +38,6 @@ const Hero = () => {
         <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-purple-600/10 rounded-full"></div>
       </div>
 
-      {/* Purple Ben-Day dot overlay */}
-      <div className="absolute inset-0 opacity-30">
-        <div 
-          className="w-full h-full"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #3D2A91 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-            opacity: 0.1
-          }}
-        ></div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}

@@ -65,10 +65,10 @@ const Header = () => {
               {/* Additional links for non-logged in users */}
               {!user && (
                 <>
-                  <Link to="/prestataires" className="uber-nav-item text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
+                  <Link to="/prestataires" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
                     HOUSIE Pro
                   </Link>
-                  <Link to="/support" className="uber-nav-item text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
+                  <Link to="/support" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
                     Support
                   </Link>
                 </>
