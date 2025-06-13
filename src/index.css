@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 340 100% 42%; /* #d50067 */
+    --primary: 344 100% 44%; /* #e60057 */
     --primary-foreground: 210 20% 98%;
 
     --secondary: 178 68% 60%; /* Blue #4ECDC4 */
@@ -22,7 +23,7 @@
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 340 100% 42%; /* #d50067 accent */
+    --accent: 344 100% 44%; /* #e60057 accent */
     --accent-foreground: 210 20% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,7 +31,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 340 100% 42%; /* #d50067 ring */
+    --ring: 344 100% 44%; /* #e60057 ring */
 
     --radius: 0.5rem;
 
@@ -44,7 +45,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Pop Art Colors - LIGHT MODE (Vibrant) */
-    --pop-orange: 340 100% 42%; /* #d50067 */
+    --pop-orange: 344 100% 44%; /* #e60057 */
     --pop-blue: 178 68% 60%; /* #4ECDC4 */
 
     /* Intensity Theme - Default Vibrant */
@@ -63,7 +64,7 @@
     --popover: 0 0% 11.8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 340 80% 38%; /* Muted #d50067 */
+    --primary: 344 80% 40%; /* Muted #e60057 */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 178 48% 42%; /* Muted Blue #3BA89A */
@@ -72,7 +73,7 @@
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 340 80% 38%; /* Muted #d50067 accent */
+    --accent: 344 80% 40%; /* Muted #e60057 accent */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -80,19 +81,19 @@
 
     --border: 0 0% 19.6%; /* #323232 */
     --input: 0 0% 14.9%;
-    --ring: 340 80% 38%; /* Muted #d50067 ring */
+    --ring: 344 80% 40%; /* Muted #e60057 ring */
 
     --sidebar-background: 0 0% 7.1%;
     --sidebar-foreground: 0 0% 63.9%;
-    --sidebar-primary: 340 80% 38%; /* Muted #d50067 primary */
+    --sidebar-primary: 344 80% 40%; /* Muted #e60057 primary */
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 14.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 19.6%;
-    --sidebar-ring: 340 80% 38%; /* Muted #d50067 ring */
+    --sidebar-ring: 344 80% 40%; /* Muted #e60057 ring */
 
     /* Pop Art Colors - DARK MODE (Sophisticated) */
-    --pop-orange: 340 80% 38%; /* #d50067 */
+    --pop-orange: 344 80% 40%; /* #e60057 */
     --pop-blue: 178 48% 42%; /* #3BA89A */
   }
 
@@ -619,10 +620,10 @@
     background: linear-gradient(135deg, rgba(61, 42, 145, 0.15), rgba(93, 58, 141, 0.08));
   }
 
-  /* SVG Logo and Mascot Color Matching - Updated for #d50067 */
+  /* SVG Logo and Mascot Color Matching - Restored Visibility */
   .svg-logo-orange {
-    /* #d50067 color filter for logo text */
-    filter: brightness(0) saturate(100%) invert(15%) sepia(94%) saturate(6239%) hue-rotate(320deg) brightness(95%) contrast(102%);
+    /* #e60057 color filter for logo text */
+    filter: brightness(0) saturate(100%) invert(20%) sepia(98%) saturate(5196%) hue-rotate(334deg) brightness(97%) contrast(98%);
   }
 
   /* Color matching for white backgrounds in SVGs */
@@ -659,12 +660,12 @@
     fill: hsl(var(--background)) !important;
   }
 
-  /* Ensure text elements in logo get #d50067 color */
+  /* Ensure text elements in logo get #e60057 color */
   .svg-logo-orange svg text,
   .svg-logo-orange svg [fill="black"],
   .svg-logo-orange svg [fill="#000000"],
   .svg-logo-orange svg [fill="#000"] {
-    fill: #d50067 !important;
+    fill: #e60057 !important;
   }
 
   /* Dark mode specific adjustments */
@@ -745,40 +746,6 @@
     outline: none;
     background: transparent;
     display: block;
-    
-    /* Soft Integration Blend Mode - Natural blending with gradient */
-    mix-blend-mode: soft-light;
-    
-    /* Enhanced Drop Shadow for Depth */
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-    
-    /* Subtle gradient overlay for harmony */
-    position: relative;
-  }
-
-  /* Alternative blending options for mascot */
-  .mascot-image.multiply-blend {
-    mix-blend-mode: multiply;
-  }
-
-  .mascot-image.overlay-blend {
-    mix-blend-mode: overlay;
-    background-blend-mode: normal;
-  }
-
-  /* Gradient harmony overlay */
-  .mascot-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #FFE066 0%, #FFF4A3 25%, #FFDB9A 50%, #FFCBA4 75%, #FFB89E 100%);
-    opacity: 0.15;
-    pointer-events: none;
-    border-radius: 50%;
-    mix-blend-mode: overlay;
   }
 
   /* Remove any container white backgrounds */
@@ -786,20 +753,5 @@
     margin: 0;
     padding: 0;
     background: transparent;
-    position: relative;
-  }
-
-  /* Enhanced mascot container for better blending */
-  .mascot-container::before {
-    content: '';
-    position: absolute;
-    top: -10%;
-    left: -10%;
-    right: -10%;
-    bottom: -10%;
-    background: radial-gradient(circle at center, rgba(255,224,102,0.1) 0%, rgba(255,203,164,0.05) 50%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: -1;
   }
 }
