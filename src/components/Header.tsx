@@ -43,31 +43,33 @@ const Header = () => {
   const pageTitle = getPageTitle();
 
   return (
-    <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50">
+    <header className="bg-black shadow-lg border-b border-gray-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - Always visible */}
-          <HeaderLogo />
+          {/* Logo - Far left in margin area */}
+          <div className="flex-shrink-0 mr-8">
+            <HeaderLogo />
+          </div>
 
           {/* Page Title for Analytics Pages */}
           {pageTitle && (
             <div className="hidden lg:block">
-              <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
+              <h1 className="text-lg font-semibold text-white">{pageTitle}</h1>
             </div>
           )}
 
-          {/* Desktop Navigation - Only visible on large screens */}
-          <div className="hidden lg:flex items-center justify-end flex-1 space-x-4">
-            <nav className="flex items-center space-x-6">
+          {/* Desktop Navigation - Premium black ribbon style */}
+          <div className="hidden lg:flex items-center justify-end flex-1 space-x-1">
+            <nav className="flex items-center space-x-1">
               <NavigationItems isLoggedIn={!!user} />
               
               {/* Additional links for non-logged in users */}
               {!user && (
                 <>
-                  <Link to="/prestataires" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
+                  <Link to="/prestataires" className="uber-nav-item text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
                     HOUSIE Pro
                   </Link>
-                  <Link to="/support" className="nav-link-pop text-muted-foreground hover:text-primary transition-colors text-sm whitespace-nowrap">
+                  <Link to="/support" className="uber-nav-item text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
                     Support
                   </Link>
                 </>
@@ -75,7 +77,7 @@ const Header = () => {
             </nav>
             
             {/* Desktop Controls */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 ml-6">
               {/* Language Toggle */}
               <div className="flex-shrink-0">
                 <LanguageToggle />
@@ -86,7 +88,7 @@ const Header = () => {
                 <ThemeToggle />
               </div>
               
-              {/* User Menu - Desktop only, with defensive check */}
+              {/* User Menu - Desktop only */}
               <div className="flex-shrink-0">
                 <UserMenu 
                   user={user} 
@@ -97,7 +99,7 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Mobile/Tablet Controls - Only visible on smaller screens */}
+          {/* Mobile/Tablet Controls */}
           <div className="flex lg:hidden items-center space-x-2">
             {/* Theme and Language toggles for tablet only */}
             <div className="hidden md:flex lg:hidden items-center space-x-2">
@@ -110,7 +112,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="relative z-50"
+              className="relative z-50 text-white hover:bg-gray-800"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -118,7 +120,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation - Only shows when menu is open AND on smaller screens */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="lg:hidden">
             <MobileMenu

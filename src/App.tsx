@@ -47,7 +47,16 @@ function App() {
           <LanguageProvider>
             <ChatbotProvider>
               <Router>
-                <div className="min-h-screen bg-background text-foreground">
+                <div 
+                  className="min-h-screen text-foreground"
+                  style={{
+                    backgroundImage: 'url(https://raw.githubusercontent.com/gabeleven/Housie_Media/main/gradient.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundAttachment: 'fixed',
+                    backgroundRepeat: 'no-repeat'
+                  }}
+                >
                   {/* Single Header for entire app */}
                   <Header />
                   

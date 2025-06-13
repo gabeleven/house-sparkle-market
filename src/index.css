@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -603,5 +602,50 @@
   .dark .svg-transparent svg [fill="#ffffff"],
   .dark .svg-transparent svg [fill="#FFFFFF"] {
     fill: #121212 !important; /* Dark background color */
+  }
+
+  /* Uber-style Navigation Effects */
+  .uber-nav-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .uber-nav-item:hover {
+    background-color: rgba(55, 65, 81, 0.8); /* gray-700 with opacity */
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .uber-nav-item:active {
+    transform: translateY(0);
+    background-color: rgba(31, 41, 55, 0.9); /* gray-800 with opacity */
+  }
+
+  /* Enhanced header background for premium feel */
+  header {
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.95) !important;
+  }
+
+  /* Ensure gradient background covers everything */
+  body {
+    background-attachment: fixed;
+  }
+
+  /* Responsive logo sizing */
+  @media (max-width: 768px) {
+    .logo-container {
+      height: 2rem;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .logo-container {
+      height: 2.5rem;
+    }
   }
 }
