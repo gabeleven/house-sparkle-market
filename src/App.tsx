@@ -48,19 +48,26 @@ function App() {
             <ChatbotProvider>
               <Router>
                 <div className="min-h-screen bg-background text-foreground">
+                  {/* Single Header for entire app */}
                   <Header />
+                  
+                  {/* Main content area */}
                   <main className="flex-1">
                     <Routes>
+                      {/* Public routes - accessible without authentication */}
                       <Route path="/" element={<Index />} />
                       <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-                      <Route path="/profile/:id" element={<Profile />} />
-                      <Route path="/public-profile/:id" element={<PublicProfile />} />
-                      <Route path="/my-profile" element={<MyProfile />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/chat" element={<Chat />} />
                       <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
                       <Route path="/prestataires" element={<ServiceProvidersPage />} />
                       <Route path="/support" element={<Support />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/public-profile/:id" element={<PublicProfile />} />
+                      <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
+                      
+                      {/* Protected routes - require authentication */}
+                      <Route path="/profile/:id" element={<Profile />} />
+                      <Route path="/my-profile" element={<MyProfile />} />
+                      <Route path="/chat" element={<Chat />} />
                       <Route path="/analytics" element={<AnalyticsDashboard />} />
                       <Route path="/analytics/insights" element={<Insights />} />
                       <Route path="/analytics/reports" element={<Reports />} />
@@ -71,11 +78,16 @@ function App() {
                       <Route path="/tax-compliance" element={<TaxCompliancePage />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/bookings" element={<Bookings />} />
-                      <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
+                      
+                      {/* 404 catch-all */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
+                  
+                  {/* Single Footer for entire app */}
                   <Footer />
+                  
+                  {/* Global components */}
                   <FloatingChatButton />
                   <IntelligentChatbot />
                   <Toaster />
