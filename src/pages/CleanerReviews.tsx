@@ -23,7 +23,7 @@ const CleanerReviews = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button
@@ -48,7 +48,7 @@ const CleanerReviews = () => {
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
+              <Card key={i} className="animate-pulse bg-card/60 backdrop-blur">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-muted rounded-full"></div>
@@ -64,13 +64,13 @@ const CleanerReviews = () => {
             ))}
           </div>
         ) : error ? (
-          <Card>
+          <Card className="bg-card/60 backdrop-blur">
             <CardContent className="p-6 text-center">
               <p className="text-destructive">Error loading reviews. Please try again.</p>
             </CardContent>
           </Card>
         ) : reviews.length === 0 ? (
-          <Card>
+          <Card className="bg-card/60 backdrop-blur">
             <CardContent className="p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
               <p className="text-muted-foreground">

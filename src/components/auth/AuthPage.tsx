@@ -19,22 +19,22 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-green-700 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">HOUSIE</span>
+            <span className="text-2xl font-bold text-foreground">HOUSIE</span>
           </div>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             {userType === 'cleaner' ? 'Rejoignez notre équipe de nettoyeurs' : 'Trouvez votre nettoyeur idéal'}
           </p>
         </div>
 
-        <Card>
+        <Card className="bg-card/80 backdrop-blur">
           <CardHeader>
             <CardTitle>
               {currentView === 'login' && 'Connexion'}

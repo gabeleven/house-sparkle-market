@@ -46,8 +46,8 @@ const HowItWorksPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <section className="py-20 bg-background">
+    <div className="min-h-screen">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-foreground mb-4">
@@ -66,10 +66,10 @@ const HowItWorksPage = () => {
                 <div key={index} className="relative">
                   {/* Connector Line */}
                   {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-purple-300 to-green-200 transform translate-x-4 -translate-y-1/2 z-0"></div>
+                    <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-primary/30 to-secondary/20 transform translate-x-4 -translate-y-1/2 z-0"></div>
                   )}
                   
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-card relative z-10">
+                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-card/70 backdrop-blur relative z-10">
                     <CardContent className="p-8 text-center">
                       {/* Step Number */}
                       <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">

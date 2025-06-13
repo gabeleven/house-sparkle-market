@@ -39,7 +39,7 @@ const ServiceProvidersPage = () => {
   const premiumFeatures = getTierInfo('PREMIUM').features;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-green-800 to-yellow-700">
+    <div className="min-h-screen">
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
@@ -47,15 +47,15 @@ const ServiceProvidersPage = () => {
             <Badge className="bg-red-100 text-red-800 px-4 py-2 text-lg mb-4">
               {t('providers.badge')}
             </Badge>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
               {t('providers.title')}
             </h1>
-            <p className="text-xl text-green-100 max-w-4xl mx-auto mb-8">
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
               {t('providers.subtitle')}
             </p>
-            <div className="bg-white/10 backdrop-blur rounded-lg p-6 max-w-3xl mx-auto">
-              <h3 className="text-xl font-semibold text-white mb-4">What the new laws require:</h3>
-              <div className="grid md:grid-cols-2 gap-4 text-green-100 text-left">
+            <div className="bg-black/10 backdrop-blur rounded-lg p-6 max-w-3xl mx-auto">
+              <h3 className="text-xl font-semibold text-foreground mb-4">What the new laws require:</h3>
+              <div className="grid md:grid-cols-2 gap-4 text-muted-foreground text-left">
                 <div>• {t('providers.requirement1')}</div>
                 <div>• {t('providers.requirement2')}</div>
                 <div>• {t('providers.requirement3')}</div>
@@ -66,7 +66,7 @@ const ServiceProvidersPage = () => {
 
           {/* Benefits Section */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-white mb-12 text-center">
+            <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
               {t('providers.whyTitle')}
             </h2>
             <div className="grid lg:grid-cols-4 gap-8">
@@ -74,13 +74,13 @@ const ServiceProvidersPage = () => {
                 const IconComponent = benefit.icon;
                 return (
                   <div key={index} className="text-center">
-                    <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <IconComponent className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="w-8 h-8 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-3">
+                    <h3 className="text-xl font-semibold text-foreground mb-3">
                       {t(benefit.titleKey)}
                     </h3>
-                    <p className="text-green-100">
+                    <p className="text-muted-foreground">
                       {t(benefit.descKey)}
                     </p>
                   </div>
@@ -91,32 +91,32 @@ const ServiceProvidersPage = () => {
 
           {/* Pricing Plans Section */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4 text-center">
+            <h2 className="text-3xl font-bold text-foreground mb-4 text-center">
               Tax compliance that grows with your business
             </h2>
-            <p className="text-center text-green-100 mb-12 max-w-2xl mx-auto">
+            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
               From legal compliance to market domination - choose the level of tax sophistication that matches your business goals
             </p>
             
             <div className="grid lg:grid-cols-4 gap-6">
               {/* Free Plan */}
-              <Card className="bg-white shadow-2xl border-0">
+              <Card className="bg-card/80 backdrop-blur shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ {t('plan.free.name')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Free</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Free</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-blue-600">$0</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.free.tagline')}</p>
+                    <p className="text-muted-foreground text-sm">{t('plan.free.tagline')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {freeFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
                         <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700">{feature}</span>
+                        <span className="text-foreground">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -128,23 +128,23 @@ const ServiceProvidersPage = () => {
               </Card>
 
               {/* Starter Plan */}
-              <Card className="bg-white shadow-2xl border-0">
+              <Card className="bg-card/80 backdrop-blur shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <Badge className="bg-green-100 text-green-800 mb-3">📊 {t('plan.starter.name')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Starter</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-green-600">$12</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.starter.savings')}</p>
+                    <p className="text-muted-foreground text-sm">{t('plan.starter.savings')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {starterFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
                         <Award className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className={`text-gray-700 ${feature.includes('PLUS') ? 'font-semibold text-green-600' : ''}`}>
+                        <span className={`text-foreground ${feature.includes('PLUS') ? 'font-semibold text-green-600' : ''}`}>
                           {feature}
                         </span>
                       </li>
@@ -158,23 +158,23 @@ const ServiceProvidersPage = () => {
               </Card>
 
               {/* Professional Plan */}
-              <Card className="bg-white shadow-2xl border-0 ring-2 ring-purple-500 scale-105">
+              <Card className="bg-card/80 backdrop-blur shadow-2xl border-0 ring-2 ring-purple-500 scale-105">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <Badge className="bg-purple-100 text-purple-800 mb-3">{t('plan.professional.popular')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Professional</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Professional</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-purple-600">$25</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.professional.savings')}</p>
+                    <p className="text-muted-foreground text-sm">{t('plan.professional.savings')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {professionalFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
                         <Briefcase className="w-4 h-4 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className={`text-gray-700 ${feature.includes('PLUS') ? 'font-semibold text-purple-600' : ''}`}>
+                        <span className={`text-foreground ${feature.includes('PLUS') ? 'font-semibold text-purple-600' : ''}`}>
                           {feature}
                         </span>
                       </li>
@@ -188,23 +188,23 @@ const ServiceProvidersPage = () => {
               </Card>
 
               {/* Premium Plan */}
-              <Card className="bg-white shadow-2xl border-0">
+              <Card className="bg-card/80 backdrop-blur shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <Badge className="bg-yellow-100 text-yellow-800 mb-3">👑 {t('plan.premium.name')}</Badge>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Premium</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Premium</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-yellow-600">$39</span>
-                      <span className="text-gray-500 ml-2">/{t('month')}</span>
+                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{t('plan.premium.tagline')}</p>
+                    <p className="text-muted-foreground text-sm">{t('plan.premium.tagline')}</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {premiumFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
                         <Crown className="w-4 h-4 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className={`text-gray-700 ${feature.includes('PLUS') ? 'font-semibold text-yellow-600' : ''}`}>
+                        <span className={`text-foreground ${feature.includes('PLUS') ? 'font-semibold text-yellow-600' : ''}`}>
                           {feature}
                         </span>
                       </li>
@@ -221,7 +221,7 @@ const ServiceProvidersPage = () => {
 
           {/* Success Stories with Tax Focus */}
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-8">
               How tax compliance became competitive advantage
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
@@ -230,11 +230,11 @@ const ServiceProvidersPage = () => {
                 { name: "Mike R.", benefit: "Zero Tax Stress", quote: "CRA compliance is automatic now. I just focus on cleaning - HOUSIE handles the paperwork." },
                 { name: "Lisa K.", benefit: "Business Growth", quote: "The market insights helped me raise my prices 30%. Tax compliance became profit optimization!" }
               ].map((story, index) => (
-                <Card key={index} className="bg-white/10 border-white/20 backdrop-blur">
+                <Card key={index} className="bg-card/60 border-card backdrop-blur">
                   <CardContent className="p-6 text-center">
-                    <div className="text-2xl font-bold text-green-200 mb-2">{story.benefit}</div>
-                    <div className="text-white font-semibold mb-3">{story.name}</div>
-                    <p className="text-green-100 text-sm">"{story.quote}"</p>
+                    <div className="text-2xl font-bold text-primary mb-2">{story.benefit}</div>
+                    <div className="text-foreground font-semibold mb-3">{story.name}</div>
+                    <p className="text-muted-foreground text-sm">"{story.quote}"</p>
                   </CardContent>
                 </Card>
               ))}
@@ -243,18 +243,18 @@ const ServiceProvidersPage = () => {
 
           {/* CTA Section */}
           <div className="text-center mt-16">
-            <div className="bg-white/5 backdrop-blur rounded-lg p-8 max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-white mb-4">
+            <div className="bg-card/40 backdrop-blur rounded-lg p-8 max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
                 Don't just comply with the law - use it as your competitive advantage
               </h2>
-              <p className="text-green-100 mb-6 text-lg">
+              <p className="text-muted-foreground mb-6 text-lg">
                 While your competitors scramble to meet basic tax requirements, 
                 you'll be using advanced tax intelligence to dominate your market.
               </p>
-              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8 py-4">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-4">
                 Start Your Tax-Compliant Business Today
               </Button>
-              <p className="text-green-200 mt-4 text-sm">
+              <p className="text-muted-foreground mt-4 text-sm">
                 ✅ Free tier keeps you CRA compliant • ✅ No setup fees • ✅ Cancel anytime
               </p>
             </div>
