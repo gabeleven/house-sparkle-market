@@ -47,16 +47,7 @@ function App() {
           <LanguageProvider>
             <ChatbotProvider>
               <Router>
-                <div 
-                  className="min-h-screen text-foreground"
-                  style={{
-                    background: 'linear-gradient(135deg, #FFE066 0%, #FFF4A3 25%, #FFDB9A 50%, #FFCBA4 75%, #FFB89E 100%)',
-                    backgroundAttachment: 'fixed',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
-                  }}
-                >
+                <div className="min-h-screen text-foreground">
                   {/* Single Header for entire app */}
                   <Header />
                   

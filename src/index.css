@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -165,15 +166,19 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  /* APPLY GRADIENT TO ROOT ELEMENTS */
+  html, body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FFE066 0%, #FFF4A3 25%, #FFDB9A 50%, #FFCBA4 75%, #FFB89E 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
     font-feature-settings: "rlig" 1, "calt" 1;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-  
-  /* Ensure all page backgrounds use the theme background */
-  .min-h-screen {
-    @apply bg-background;
+
+  body {
+    @apply text-foreground;
   }
 
   /* Enhanced dark mode styles for better consistency */
