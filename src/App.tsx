@@ -21,7 +21,6 @@ import Chat from '@/pages/Chat';
 import HowItWorksPage from '@/pages/HowItWorksPage';
 import ServiceProvidersPage from '@/pages/ServiceProvidersPage';
 import Support from '@/pages/Support';
-import ProviderDashboard from '@/pages/ProviderDashboard';
 import AnalyticsDashboard from '@/pages/AnalyticsDashboard';
 import GrowthDashboard from '@/pages/GrowthDashboard';
 import CalendarDashboard from '@/pages/CalendarDashboard';
@@ -62,7 +61,6 @@ function App() {
                       <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
                       <Route path="/prestataires" element={<ServiceProvidersPage />} />
                       <Route path="/support" element={<Support />} />
-                      <Route path="/provider-dashboard" element={<ProviderDashboard />} />
                       <Route path="/analytics" element={<AnalyticsDashboard />} />
                       <Route path="/analytics/insights" element={<Insights />} />
                       <Route path="/analytics/reports" element={<Reports />} />

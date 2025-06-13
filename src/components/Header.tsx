@@ -32,11 +32,11 @@ const Header = () => {
   // Get page title based on current route
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path === '/analytics') return 'Analytiques';
-    if (path === '/analytics/insights') return 'Insights';
-    if (path === '/analytics/reports') return 'Reports';
-    if (path === '/analytics/intelligence') return 'Intelligence Marché';
-    if (path === '/analytics/performance') return 'Performance';
+    if (path === '/analytics') return 'Business Analytics';
+    if (path === '/analytics/insights') return 'Business Insights';
+    if (path === '/analytics/reports') return 'Tax & Reports';
+    if (path === '/analytics/intelligence') return 'Market Intelligence';
+    if (path === '/analytics/performance') return 'Performance Dashboard';
     return null;
   };
 

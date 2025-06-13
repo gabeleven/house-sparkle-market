@@ -3,10 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, PieChart, BarChart3, Brain, Lock } from 'lucide-react';
+import { TrendingUp, PieChart, BarChart3, Brain, Lock, FileText, LineChart, Target } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Cell, BarChart, Bar, Pie } from 'recharts';
+import { Navigate, Link } from 'react-router-dom';
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Cell, BarChart, Bar, Pie } from 'recharts';
 
 const AnalyticsDashboard = () => {
   const { user } = useAuth();
@@ -73,8 +73,8 @@ const AnalyticsDashboard = () => {
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Analytiques</h1>
-            <p className="text-muted-foreground">Analysez vos performances et tendances</p>
+            <h1 className="text-3xl font-bold">Business Analytics</h1>
+            <p className="text-muted-foreground">Comprehensive business intelligence and performance insights</p>
           </div>
           
           {(currentTier as string) === 'premium' && (
@@ -83,6 +83,69 @@ const AnalyticsDashboard = () => {
               Intelligence Marché: Active
             </Badge>
           )}
+        </div>
+
+        {/* Analytics Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Link to="/analytics/insights">
+            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Business Insights</CardTitle>
+                <LineChart className="h-5 w-5 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">Revenue trends, service analytics, and customer insights</p>
+                <Button variant="ghost" size="sm" className="mt-2 p-0 h-auto">
+                  View Insights →
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/analytics/performance">
+            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Performance</CardTitle>
+                <Target className="h-5 w-5 text-orange-600" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">KPIs, efficiency metrics, and goal tracking</p>
+                <Button variant="ghost" size="sm" className="mt-2 p-0 h-auto">
+                  View Performance →
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/analytics/reports">
+            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Tax & Reports</CardTitle>
+                <FileText className="h-5 w-5 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">Tax compliance, earnings reports, and official documents</p>
+                <Button variant="ghost" size="sm" className="mt-2 p-0 h-auto">
+                  View Reports →
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/analytics/intelligence">
+            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Market Intelligence</CardTitle>
+                <Brain className="h-5 w-5 text-purple-600" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">AI-powered market analysis and competitive insights</p>
+                <Button variant="ghost" size="sm" className="mt-2 p-0 h-auto">
+                  View Intelligence →
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Performance Metrics Cards */}
@@ -141,13 +204,13 @@ const AnalyticsDashboard = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={revenueData}>
+                <RechartsLineChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
                   <Line type="monotone" dataKey="revenue" stroke="#8884d8" strokeWidth={2} />
-                </LineChart>
+                </RechartsLineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
