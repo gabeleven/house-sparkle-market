@@ -19,8 +19,16 @@ interface ServicesOfferedCardProps {
 
 export const ServicesOfferedCard: React.FC<ServicesOfferedCardProps> = ({ services }) => {
   const getServiceIcon = (serviceCategoryName: string) => {
+    if (!serviceCategoryName) return Settings;
+    
     const serviceNameLower = serviceCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
     
+    // Direct match first
+    if (serviceTypeIcons[serviceNameLower as keyof typeof serviceTypeIcons]) {
+      return serviceTypeIcons[serviceNameLower as keyof typeof serviceTypeIcons];
+    }
+    
+    // Partial match
     const matchingServiceType = Object.keys(serviceTypeIcons).find(key => 
       key.includes(serviceNameLower) || serviceNameLower.includes(key.replace(/_/g, ''))
     );

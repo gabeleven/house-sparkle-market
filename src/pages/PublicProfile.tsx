@@ -49,31 +49,55 @@ const PublicProfile = () => {
     try {
       console.log('Loading public profile for user ID:', id);
       
-      // Get provider profile with services
+      // First, get the provider data
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select(`
-          *,
-          profiles!providers_user_id_fkey(
-            full_name,
-            email,
-            user_role
-          ),
-          provider_services(
-            *,
-            service_categories(*)
-          )
-        `)
+        .select('*')
         .eq('user_id', id)
         .single();
 
-      if (providerData && providerData.profiles) {
-        const profiles = Array.isArray(providerData.profiles) ? providerData.profiles[0] : providerData.profiles;
+      if (providerError && providerError.code !== 'PGRST116') {
+        console.error('Provider error:', providerError);
+        throw providerError;
+      }
+
+      // Get the profile data separately
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (profileError) {
+        console.error('Profile error:', profileError);
+        throw profileError;
+      }
+
+      let services = [];
+      if (providerData) {
+        // Get provider services with categories
+        const { data: servicesData, error: servicesError } = await supabase
+          .from('provider_services')
+          .select(`
+            *,
+            service_categories(*)
+          `)
+          .eq('provider_id', providerData.id);
+
+        if (servicesError) {
+          console.error('Services error:', servicesError);
+        } else {
+          services = servicesData || [];
+        }
+      }
+
+      // Combine the data
+      if (providerData) {
         setProfile({
           id: providerData.id,
           user_id: providerData.user_id,
-          full_name: profiles.full_name,
-          email: profiles.email,
+          full_name: profileData.full_name,
+          email: profileData.email,
           profile_photo_url: providerData.profile_photo_url,
           business_name: providerData.business_name,
           bio: providerData.bio,
@@ -85,22 +109,11 @@ const PublicProfile = () => {
           longitude: providerData.longitude,
           average_rating: providerData.average_rating,
           total_reviews: providerData.total_reviews,
-          services: providerData.provider_services || [],
-          user_role: profiles.user_role
+          services: services,
+          user_role: profileData.user_role
         });
       } else {
         // Fallback to basic profile if no provider profile exists
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', id)
-          .single();
-
-        if (profileError) {
-          console.error('Profile error:', profileError);
-          throw profileError;
-        }
-
         setProfile({
           id: profileData.id,
           user_id: profileData.id,
