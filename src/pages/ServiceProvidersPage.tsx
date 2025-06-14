@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, BarChart3, TrendingUp, Calculator, Briefcase } from "lucide-react";
+import { Star, Shield, DollarSign, Users, Award, CheckCircle, Crown, FileText, BarChart3, TrendingUp, Calculator, Briefcase, Brain, Scan } from "lucide-react";
 import Footer from "@/components/Footer";
 import { getTierInfo } from "@/types/subscription";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -48,18 +48,18 @@ const ServiceProvidersPage = () => {
               {t('providers.badge')}
             </Badge>
             <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              {t('providers.title')}
+              The Financial Platform for Canadian Self-Employment
             </h1>
             <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
-              {t('providers.subtitle')}
+              From CRA compliance to AI-powered business intelligence. Choose the level of financial sophistication that matches your entrepreneurial ambitions.
             </p>
             <div className="bg-black/10 backdrop-blur rounded-lg p-6 max-w-3xl mx-auto">
-              <h3 className="text-xl font-semibold text-foreground mb-4">What the new laws require:</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">Why choose HOUSIE?</h3>
               <div className="grid md:grid-cols-2 gap-4 text-muted-foreground text-left">
-                <div>• {t('providers.requirement1')}</div>
-                <div>• {t('providers.requirement2')}</div>
-                <div>• {t('providers.requirement3')}</div>
-                <div>• {t('providers.requirement4')}</div>
+                <div>• Lowest marketplace fees (6% vs industry 15-30%)</div>
+                <div>• Automated CRA compliance & tax tracking</div>
+                <div>• AI-powered business intelligence</div>
+                <div>• Canadian-specific financial tools</div>
               </div>
             </div>
           </div>
@@ -67,7 +67,7 @@ const ServiceProvidersPage = () => {
           {/* Benefits Section */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
-              {t('providers.whyTitle')}
+              Built for Canadian Entrepreneurs
             </h2>
             <div className="grid lg:grid-cols-4 gap-8">
               {benefits.map((benefit, index) => {
@@ -92,10 +92,10 @@ const ServiceProvidersPage = () => {
           {/* Pricing Plans Section */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4 text-center">
-              Tax compliance that grows with your business
+              Financial Tools That Grow With Your Business
             </h2>
             <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              From legal compliance to market domination - choose the level of tax sophistication that matches your business goals
+              From basic CRA compliance to advanced AI business intelligence - choose your level of financial sophistication
             </p>
             
             <div className="grid lg:grid-cols-4 gap-6">
@@ -103,13 +103,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-card/80 backdrop-blur shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ {t('plan.free.name')}</Badge>
+                    <Badge className="bg-blue-100 text-blue-800 mb-3">🏛️ CRA Ready</Badge>
                     <h3 className="text-xl font-bold text-foreground mb-2">Free</h3>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-3xl font-bold text-blue-600">$0</span>
-                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
+                      <span className="text-muted-foreground ml-2">/month</span>
                     </div>
-                    <p className="text-muted-foreground text-sm">{t('plan.free.tagline')}</p>
+                    <p className="text-muted-foreground text-sm">Legal compliance foundation</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -122,7 +122,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 font-semibold">
-                    {t('plan.free.cta')}
+                    Start Free
                   </Button>
                 </CardContent>
               </Card>
@@ -131,13 +131,13 @@ const ServiceProvidersPage = () => {
               <Card className="bg-card/80 backdrop-blur shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-green-100 text-green-800 mb-3">📊 {t('plan.starter.name')}</Badge>
+                    <Badge className="bg-green-100 text-green-800 mb-3">📊 Tax Basics</Badge>
                     <h3 className="text-xl font-bold text-foreground mb-2">Starter</h3>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-3xl font-bold text-green-600">$12</span>
-                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
+                      <span className="text-3xl font-bold text-green-600">$8</span>
+                      <span className="text-muted-foreground ml-2">/month</span>
                     </div>
-                    <p className="text-muted-foreground text-sm">{t('plan.starter.savings')}</p>
+                    <p className="text-muted-foreground text-sm">Tax automation & tracking</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
@@ -152,7 +152,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-green-600 hover:bg-green-700 font-semibold">
-                    {t('plan.starter.cta')}
+                    Upgrade to Starter
                   </Button>
                 </CardContent>
               </Card>
@@ -161,19 +161,19 @@ const ServiceProvidersPage = () => {
               <Card className="bg-card/80 backdrop-blur shadow-2xl border-0 ring-2 ring-purple-500 scale-105">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-purple-100 text-purple-800 mb-3">{t('plan.professional.popular')}</Badge>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Professional</h3>
+                    <Badge className="bg-purple-100 text-purple-800 mb-3">🚀 Most Popular</Badge>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Pro</h3>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-3xl font-bold text-purple-600">$25</span>
-                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
+                      <span className="text-3xl font-bold text-purple-600">$15</span>
+                      <span className="text-muted-foreground ml-2">/month</span>
                     </div>
-                    <p className="text-muted-foreground text-sm">{t('plan.professional.savings')}</p>
+                    <p className="text-muted-foreground text-sm">Business intelligence & insights</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {professionalFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
-                        <Briefcase className="w-4 h-4 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <BarChart3 className="w-4 h-4 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span className={`text-foreground ${feature.includes('PLUS') ? 'font-semibold text-purple-600' : ''}`}>
                           {feature}
                         </span>
@@ -182,7 +182,7 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-purple-600 hover:bg-purple-700 font-semibold">
-                    {t('plan.professional.cta')}
+                    Get Pro Access
                   </Button>
                 </CardContent>
               </Card>
@@ -191,19 +191,19 @@ const ServiceProvidersPage = () => {
               <Card className="bg-card/80 backdrop-blur shadow-2xl border-0">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <Badge className="bg-yellow-100 text-yellow-800 mb-3">👑 {t('plan.premium.name')}</Badge>
+                    <Badge className="bg-yellow-100 text-yellow-800 mb-3">🤖 AI Suite</Badge>
                     <h3 className="text-xl font-bold text-foreground mb-2">Premium</h3>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-3xl font-bold text-yellow-600">$39</span>
-                      <span className="text-muted-foreground ml-2">/{t('month')}</span>
+                      <span className="text-3xl font-bold text-yellow-600">$25</span>
+                      <span className="text-muted-foreground ml-2">/month</span>
                     </div>
-                    <p className="text-muted-foreground text-sm">{t('plan.premium.tagline')}</p>
+                    <p className="text-muted-foreground text-sm">Advanced AI business tools</p>
                   </div>
 
                   <ul className="space-y-2 mb-6">
                     {premiumFeatures.map((feature, index) => (
                       <li key={index} className="flex items-start text-sm">
-                        <Crown className="w-4 h-4 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <Brain className="w-4 h-4 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span className={`text-foreground ${feature.includes('PLUS') ? 'font-semibold text-yellow-600' : ''}`}>
                           {feature}
                         </span>
@@ -212,23 +212,23 @@ const ServiceProvidersPage = () => {
                   </ul>
 
                   <Button className="w-full bg-yellow-600 hover:bg-yellow-700 font-semibold">
-                    {t('plan.premium.cta')}
+                    Get AI Suite
                   </Button>
                 </CardContent>
               </Card>
             </div>
           </div>
 
-          {/* Success Stories with Tax Focus */}
+          {/* Success Stories */}
           <div className="text-center">
             <h2 className="text-2xl font-bold text-foreground mb-8">
-              How tax compliance became competitive advantage
+              Real Results from Real Canadian Entrepreneurs
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { name: "Sarah M.", benefit: "Saved $1,200", quote: "HOUSIE's tax tracking saved me more than my accountant charged. Plus I got 3x more clients!" },
-                { name: "Mike R.", benefit: "Zero Tax Stress", quote: "CRA compliance is automatic now. I just focus on cleaning - HOUSIE handles the paperwork." },
-                { name: "Lisa K.", benefit: "Business Growth", quote: "The market insights helped me raise my prices 30%. Tax compliance became profit optimization!" }
+                { name: "Sarah M. - Cleaning Pro", benefit: "Saved $1,800/year", quote: "The 6% fee vs 20% elsewhere paid for my Pro subscription 10x over. Plus the tax automation saved me 8 hours a month!" },
+                { name: "Mike R. - Landscaper", benefit: "Zero Tax Stress", quote: "CRA compliance went from my biggest headache to completely automated. I just focus on growing my business now." },
+                { name: "Lisa K. - Home Services", benefit: "30% Revenue Growth", quote: "The market insights helped me optimize my pricing. I'm earning 30% more while working the same hours." }
               ].map((story, index) => (
                 <Card key={index} className="bg-card/60 border-card backdrop-blur">
                   <CardContent className="p-6 text-center">
@@ -245,17 +245,17 @@ const ServiceProvidersPage = () => {
           <div className="text-center mt-16">
             <div className="bg-card/40 backdrop-blur rounded-lg p-8 max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-foreground mb-4">
-                Don't just comply with the law - use it as your competitive advantage
+                Ready to Transform Your Self-Employment Journey?
               </h2>
               <p className="text-muted-foreground mb-6 text-lg">
-                While your competitors scramble to meet basic tax requirements, 
-                you'll be using advanced tax intelligence to dominate your market.
+                Join thousands of Canadian entrepreneurs who've discovered the power of 
+                intelligent financial automation. Start free, upgrade when ready.
               </p>
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-4">
-                Start Your Tax-Compliant Business Today
+                Start Your Free Journey Today
               </Button>
               <p className="text-muted-foreground mt-4 text-sm">
-                ✅ Free tier keeps you CRA compliant • ✅ No setup fees • ✅ Cancel anytime
+                ✅ No setup fees • ✅ No long-term contracts • ✅ Cancel anytime • ✅ CRA compliant from day one
               </p>
             </div>
           </div>

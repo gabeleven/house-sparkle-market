@@ -18,51 +18,56 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
     currency: 'CAD',
     features: [
       'Basic CRA compliance tracking',
-      'Up to 10 bookings per month',
-      'Basic calendar integration',
+      'Up to 3 service types',
+      'Standard search visibility',
+      'Basic profile listing',
+      'Transaction processing (6% fee)',
       'Email support'
     ]
   },
   STARTER: {
     tier: 'STARTER',
     name: 'Tax Basics',
-    price: 5,
+    price: 8,
     currency: 'CAD',
     features: [
       'Everything in Free PLUS:',
-      'Unlimited bookings',
-      'Advanced tax compliance',
-      'Synchronized calendar',
-      'Client communication tools',
+      'Up to 8 service types',
+      'Enhanced profile with photo gallery',
+      'Basic expense tracking',
+      'GST/HST calculations',
+      'Quarterly tax reports',
       'Priority email support'
     ]
   },
   PRO: {
     tier: 'PRO',
-    name: 'Most Popular',
-    price: 10,
+    name: 'Business Intelligence',
+    price: 15,
     currency: 'CAD',
     features: [
       'Everything in Starter PLUS:',
+      'Unlimited service types',
       'Advanced analytics dashboard',
-      'Growth tools and insights',
-      'QuickBooks integration',
-      'Complete tax suite',
+      'AI-powered pricing suggestions',
+      'Market demand insights',
+      'Featured listing boost',
       'Professional support'
     ],
     isPopular: true
   },
   PREMIUM: {
     tier: 'PREMIUM',
-    name: 'Business Intelligence',
-    price: 15,
+    name: 'AI Suite',
+    price: 25,
     currency: 'CAD',
     features: [
       'Everything in Pro PLUS:',
-      'AI-powered market intelligence',
-      'Automated marketing tools',
-      'Predictive analytics',
-      'Tax optimization AI',
+      'OCR invoice scanner',
+      'Custom expense widgets',
+      'Parking ticket verificator',
+      'Smart notifications & alerts',
+      'Advanced market forecasting',
       'White-glove support'
     ]
   }

@@ -23,6 +23,11 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
             Services
           </Link>
         )}
+        {currentPath !== '/analytics' && currentPath !== '/dashboard' && (
+          <Link to="/analytics" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+            Analytics
+          </Link>
+        )}
         {currentPath !== '/roadmap' && (
           <Link to="/roadmap" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
             Roadmap

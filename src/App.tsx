@@ -65,6 +65,7 @@ function App() {
                             <Route path="/browse-cleaners" element={<BrowseCleaners />} />
                             <Route path="/browse-services" element={<BrowseServices />} />
                             <Route path="/roadmap" element={<Roadmap />} />
+                            <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
                             <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
                             <Route path="/calendar" element={<CalendarDashboard />} />
                             <Route path="/dashboard" element={<ProviderDashboard />} />
