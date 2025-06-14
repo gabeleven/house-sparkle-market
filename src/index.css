@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -619,10 +620,10 @@
     background: linear-gradient(135deg, rgba(61, 42, 145, 0.15), rgba(93, 58, 141, 0.08));
   }
 
-  /* SVG Logo and Mascot Color Matching - Restored Visibility */
+  /* SVG Logo and Mascot Color Matching - Updated to #0067bd */
   .svg-logo-orange {
-    /* #d50067 color filter for logo text */
-    filter: brightness(0) saturate(100%) invert(20%) sepia(98%) saturate(5196%) hue-rotate(334deg) brightness(97%) contrast(98%);
+    /* #0067bd color filter for logo text */
+    filter: brightness(0) saturate(100%) invert(29%) sepia(95%) saturate(4826%) hue-rotate(211deg) brightness(91%) contrast(95%);
   }
 
   /* Color matching for white backgrounds in SVGs */
@@ -659,12 +660,12 @@
     fill: hsl(var(--background)) !important;
   }
 
-  /* Ensure text elements in logo get #d50067 color */
+  /* Ensure text elements in logo get #0067bd color */
   .svg-logo-orange svg text,
   .svg-logo-orange svg [fill="black"],
   .svg-logo-orange svg [fill="#000000"],
   .svg-logo-orange svg [fill="#000"] {
-    fill: #d50067 !important;
+    fill: #0067bd !important;
   }
 
   /* Dark mode specific adjustments */
@@ -737,7 +738,7 @@
     }
   }
 
-  /* Mascot CSS fixes with shadow */
+  /* Mascot CSS with shadow - keeping vibrant colors */
   .mascot-image {
     margin: 0;
     padding: 0;

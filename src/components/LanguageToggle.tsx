@@ -16,7 +16,7 @@ export const LanguageToggle = () => {
       variant="ghost"
       size="sm"
       onClick={toggleLanguage}
-      className="text-white hover:text-white hover:bg-gray-700 p-2"
+      className="text-white hover:text-white hover:bg-gray-700 p-2 language-toggle"
       title={`Switch to ${language === 'fr' ? 'English' : 'Français'}`}
     >
       <Globe className="w-4 h-4" />

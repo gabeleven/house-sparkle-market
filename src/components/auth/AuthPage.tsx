@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +9,10 @@ import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm';
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup' | 'forgot'>('login');
   const [userType, setUserType] = useState<'customer' | 'cleaner'>('customer');
+
+  const handleUserTypeChange = (value: string) => {
+    setUserType(value as 'customer' | 'cleaner');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center p-4">
@@ -24,10 +29,10 @@ const AuthPage = () => {
             </CardTitle>
             <p className="text-muted-foreground mt-2">
               {activeTab === 'login' 
-                ? 'Connectez-vous à votre compte' 
+                ? 'Connectez-vous pour continuer' 
                 : activeTab === 'signup' 
-                ? 'Créez votre compte' 
-                : 'Récupérez votre mot de passe'
+                ? 'Créez votre compte en quelques clics' 
+                : 'Récupérez votre accès'
               }
             </p>
           </CardHeader>
@@ -35,7 +40,7 @@ const AuthPage = () => {
             {/* User Type Selector */}
             {(activeTab === 'login' || activeTab === 'signup') && (
               <div className="mb-6">
-                <Tabs value={userType} onValueChange={setUserType} className="w-full">
+                <Tabs value={userType} onValueChange={handleUserTypeChange} className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="customer">Client</TabsTrigger>
                     <TabsTrigger value="cleaner">Ménagère</TabsTrigger>
