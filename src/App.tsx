@@ -20,6 +20,19 @@ import NotFound from './pages/NotFound';
 import { BookingsPage } from './pages/BookingsPage';
 import { TabbedChatbot } from '@/components/support/TabbedChatbot';
 import { FloatingChatButton } from '@/components/support/FloatingChatButton';
+import Auth from './pages/Auth';
+import MyProfile from './pages/MyProfile';
+import Profile from './pages/Profile';
+import PublicProfile from './pages/PublicProfile';
+import BrowseCleaners from './pages/BrowseCleaners';
+import BrowseServices from './pages/BrowseServices';
+import Chat from './pages/Chat';
+import CleanerReviews from './pages/CleanerReviews';
+import CalendarDashboard from './pages/CalendarDashboard';
+import GrowthDashboard from './pages/GrowthDashboard';
+import Settings from './pages/Settings';
+import TaxCompliancePage from './pages/TaxCompliancePage';
+import ServiceProvidersPage from './pages/ServiceProvidersPage';
 
 function App() {
   const queryClient = new QueryClient();
@@ -39,6 +52,19 @@ function App() {
                       <main className="relative z-10">
                         <Routes>
                           <Route path="/" element={<Index />} />
+                          <Route path="/auth" element={<Auth />} />
+                          <Route path="/my-profile" element={<MyProfile />} />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/public-profile/:id" element={<PublicProfile />} />
+                          <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+                          <Route path="/browse-services" element={<BrowseServices />} />
+                          <Route path="/chat" element={<Chat />} />
+                          <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
+                          <Route path="/calendar" element={<CalendarDashboard />} />
+                          <Route path="/growth-dashboard" element={<GrowthDashboard />} />
+                          <Route path="/settings" element={<Settings />} />
+                          <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                          <Route path="/service-providers" element={<ServiceProvidersPage />} />
                           <Route path="/support" element={<Support />} />
                           <Route path="/how-it-works" element={<HowItWorksPage />} />
                           <Route path="/messages" element={<ChatPage />} />
