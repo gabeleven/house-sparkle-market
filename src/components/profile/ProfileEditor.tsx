@@ -9,30 +9,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, DollarSign } from 'lucide-react';
-import { isValidProfileData, isValidCleanerProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
+import { isValidProfileData, isValidCustomerProfileData } from '@/utils/typeGuards';
 import { ServiceTypesSelector } from './ServiceTypesSelector';
 import { 
   validatePhone, 
-  validatePostalCode, 
   validateHourlyRate, 
   validateYearsExperience,
   validateServiceRadius,
-  formatPhoneNumber,
-  formatPostalCode 
+  formatPhoneNumber
 } from '@/utils/validation';
 
 interface ProfileData {
   full_name: string;
   phone_number: string;
   business_name?: string;
-  brief_description?: string;
-  service_area_city?: string;
+  bio?: string;
+  address?: string;
   service_radius_km?: number;
   years_experience?: number;
   hourly_rate?: number;
   banner_image_url?: string;
-  before_after_photos?: string[];
-  service_badges?: string[];
   is_featured?: boolean;
 }
 
@@ -43,14 +39,12 @@ export const ProfileEditor = () => {
     full_name: '',
     phone_number: '',
     business_name: '',
-    brief_description: '',
-    service_area_city: '',
+    bio: '',
+    address: '',
     service_radius_km: 10,
     years_experience: 0,
     hourly_rate: 25,
     banner_image_url: '',
-    before_after_photos: [],
-    service_badges: [],
     is_featured: false
   });
   const [loading, setLoading] = useState(true);
@@ -65,26 +59,24 @@ export const ProfileEditor = () => {
     }
   }, [user]);
 
-  const ensureCleanerProfile = async (userId: string) => {
-    console.log('Creating cleaner profile for user:', userId);
+  const ensureProviderProfile = async (userId: string) => {
+    console.log('Creating provider profile for user:', userId);
     const { error } = await supabase
-      .from('cleaner_profiles')
+      .from('providers')
       .upsert({
-        id: userId,
-        service_radius_km: 10,
+        user_id: userId,
+        service_radius_km: 25,
         years_experience: 0,
         hourly_rate: 25.00,
-        before_after_photos: [],
-        service_badges: [],
         is_featured: false,
         is_profile_complete: false
       });
 
     if (error) {
-      console.error('Error ensuring cleaner profile:', error);
+      console.error('Error ensuring provider profile:', error);
       throw error;
     }
-    console.log('Cleaner profile created successfully');
+    console.log('Provider profile created successfully');
   };
 
   const ensureCustomerProfile = async (userId: string) => {
@@ -144,58 +136,54 @@ export const ProfileEditor = () => {
 
         // Get role-specific data
         if (userRoleValue === 'cleaner') {
-          console.log('Loading cleaner-specific data...');
-          const { data: cleanerData, error: cleanerError } = await supabase
-            .from('cleaner_profiles')
+          console.log('Loading provider-specific data...');
+          const { data: providerData, error: providerError } = await supabase
+            .from('providers')
             .select('*')
-            .eq('id', user.id as any)
+            .eq('user_id', user.id as any)
             .maybeSingle();
 
-          if (cleanerError && cleanerError.code !== 'PGRST116') {
-            console.error('Cleaner profile error:', cleanerError);
+          if (providerError && providerError.code !== 'PGRST116') {
+            console.error('Provider profile error:', providerError);
           }
 
-          // If no cleaner profile exists, create one
-          if (!cleanerData) {
-            console.log('No cleaner profile found, creating one...');
-            await ensureCleanerProfile(user.id);
-            // Reload the cleaner data
-            const { data: newCleanerData } = await supabase
-              .from('cleaner_profiles')
+          // If no provider profile exists, create one
+          if (!providerData) {
+            console.log('No provider profile found, creating one...');
+            await ensureProviderProfile(user.id);
+            // Reload the provider data
+            const { data: newProviderData } = await supabase
+              .from('providers')
               .select('*')
-              .eq('id', user.id as any)
+              .eq('user_id', user.id as any)
               .single();
             
-            if (newCleanerData && isValidCleanerProfileData(newCleanerData)) {
-              console.log('Cleaner profile loaded:', newCleanerData);
+            if (newProviderData) {
+              console.log('Provider profile loaded:', newProviderData);
               setProfile(prev => ({
                 ...prev,
-                business_name: newCleanerData.business_name || '',
-                brief_description: newCleanerData.brief_description || '',
-                service_area_city: newCleanerData.service_area_city || '',
-                service_radius_km: newCleanerData.service_radius_km || 10,
-                years_experience: newCleanerData.years_experience || 0,
-                hourly_rate: newCleanerData.hourly_rate || 25,
-                banner_image_url: newCleanerData.banner_image_url || '',
-                before_after_photos: newCleanerData.before_after_photos || [],
-                service_badges: newCleanerData.service_badges || [],
-                is_featured: newCleanerData.is_featured || false
+                business_name: newProviderData.business_name || '',
+                bio: newProviderData.bio || '',
+                address: newProviderData.address || '',
+                service_radius_km: newProviderData.service_radius_km || 25,
+                years_experience: newProviderData.years_experience || 0,
+                hourly_rate: newProviderData.hourly_rate || 25,
+                banner_image_url: newProviderData.banner_image_url || '',
+                is_featured: newProviderData.is_featured || false
               }));
             }
-          } else if (isValidCleanerProfileData(cleanerData)) {
-            console.log('Existing cleaner profile loaded:', cleanerData);
+          } else {
+            console.log('Existing provider profile loaded:', providerData);
             setProfile(prev => ({
               ...prev,
-              business_name: cleanerData.business_name || '',
-              brief_description: cleanerData.brief_description || '',
-              service_area_city: cleanerData.service_area_city || '',
-              service_radius_km: cleanerData.service_radius_km || 10,
-              years_experience: cleanerData.years_experience || 0,
-              hourly_rate: cleanerData.hourly_rate || 25,
-              banner_image_url: cleanerData.banner_image_url || '',
-              before_after_photos: cleanerData.before_after_photos || [],
-              service_badges: cleanerData.service_badges || [],
-              is_featured: cleanerData.is_featured || false
+              business_name: providerData.business_name || '',
+              bio: providerData.bio || '',
+              address: providerData.address || '',
+              service_radius_km: providerData.service_radius_km || 25,
+              years_experience: providerData.years_experience || 0,
+              hourly_rate: providerData.hourly_rate || 25,
+              banner_image_url: providerData.banner_image_url || '',
+              is_featured: providerData.is_featured || false
             }));
           }
         } else {
@@ -222,14 +210,12 @@ export const ProfileEditor = () => {
           full_name: '',
           phone_number: '',
           business_name: '',
-          brief_description: '',
-          service_area_city: '',
-          service_radius_km: 10,
+          bio: '',
+          address: '',
+          service_radius_km: 25,
           years_experience: 0,
           hourly_rate: 25,
           banner_image_url: '',
-          before_after_photos: [],
-          service_badges: [],
           is_featured: false
         });
       }
@@ -248,7 +234,6 @@ export const ProfileEditor = () => {
   const validateForm = (): boolean => {
     const errors: {[key: string]: string} = {};
 
-    // Log validation inputs for debugging
     console.log('Validating form with values:', {
       phone_number: profile.phone_number,
       hourly_rate: profile.hourly_rate,
@@ -262,7 +247,6 @@ export const ProfileEditor = () => {
     }
 
     if (userRole === 'cleaner') {
-      // Convert to numbers and validate
       const hourlyRate = Number(profile.hourly_rate);
       const yearsExp = Number(profile.years_experience);
       const radius = Number(profile.service_radius_km);
@@ -322,29 +306,27 @@ export const ProfileEditor = () => {
 
       // Update role-specific data
       if (userRole === 'cleaner') {
-        const cleanerProfileData = {
-          id: user.id,
+        const providerProfileData = {
+          user_id: user.id,
           business_name: profile.business_name || null,
-          brief_description: profile.brief_description || null,
-          service_area_city: profile.service_area_city || null,
-          service_radius_km: Number(profile.service_radius_km) || 10,
+          bio: profile.bio || null,
+          address: profile.address || null,
+          service_radius_km: Number(profile.service_radius_km) || 25,
           years_experience: Number(profile.years_experience) || 0,
           hourly_rate: Number(profile.hourly_rate) || 25,
           banner_image_url: profile.banner_image_url || null,
-          before_after_photos: profile.before_after_photos || [],
-          service_badges: profile.service_badges || [],
           is_profile_complete: true
         };
 
-        console.log('Saving cleaner profile with data:', cleanerProfileData);
+        console.log('Saving provider profile with data:', providerProfileData);
 
-        const { error: cleanerError } = await supabase
-          .from('cleaner_profiles')
-          .upsert(cleanerProfileData as any);
+        const { error: providerError } = await supabase
+          .from('providers')
+          .upsert(providerProfileData as any);
 
-        if (cleanerError) {
-          console.error('Cleaner profile update error:', cleanerError);
-          throw cleanerError;
+        if (providerError) {
+          console.error('Provider profile update error:', providerError);
+          throw providerError;
         }
       }
 
@@ -435,22 +417,22 @@ export const ProfileEditor = () => {
               </div>
 
               <div>
-                <Label htmlFor="brief_description">Brief Description</Label>
+                <Label htmlFor="bio">Bio</Label>
                 <Textarea
-                  id="brief_description"
-                  value={profile.brief_description || ''}
-                  onChange={(e) => setProfile(prev => ({ ...prev, brief_description: e.target.value }))}
+                  id="bio"
+                  value={profile.bio || ''}
+                  onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
                   placeholder="Tell customers about your cleaning services..."
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="service_area_city">Service Area City</Label>
+                  <Label htmlFor="address">Service Area</Label>
                   <Input
-                    id="service_area_city"
-                    value={profile.service_area_city || ''}
-                    onChange={(e) => setProfile(prev => ({ ...prev, service_area_city: e.target.value }))}
+                    id="address"
+                    value={profile.address || ''}
+                    onChange={(e) => setProfile(prev => ({ ...prev, address: e.target.value }))}
                     placeholder="e.g. Montreal, Toronto, Vancouver"
                   />
                 </div>
@@ -461,8 +443,8 @@ export const ProfileEditor = () => {
                     type="number"
                     min="1"
                     max="100"
-                    value={profile.service_radius_km || 10}
-                    onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 10 }))}
+                    value={profile.service_radius_km || 25}
+                    onChange={(e) => setProfile(prev => ({ ...prev, service_radius_km: parseInt(e.target.value) || 25 }))}
                   />
                   {validationErrors.service_radius_km && (
                     <p className="text-sm text-destructive mt-1">{validationErrors.service_radius_km}</p>

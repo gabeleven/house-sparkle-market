@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 344 100% 41%; /* #d50067 */
+    --primary: 298 100% 32%; /* #8E00A4 - Updated purple color */
     --primary-foreground: 210 20% 98%;
 
     --secondary: 178 68% 60%; /* Blue #4ECDC4 */
@@ -23,7 +23,7 @@
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 344 100% 41%; /* #d50067 accent */
+    --accent: 298 100% 32%; /* #8E00A4 accent */
     --accent-foreground: 210 20% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,7 +31,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 344 100% 41%; /* #d50067 ring */
+    --ring: 298 100% 32%; /* #8E00A4 ring */
 
     --radius: 0.5rem;
 
@@ -45,7 +45,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Pop Art Colors - LIGHT MODE (Vibrant) */
-    --pop-orange: 344 100% 41%; /* #d50067 */
+    --pop-orange: 298 100% 32%; /* #8E00A4 */
     --pop-blue: 178 68% 60%; /* #4ECDC4 */
 
     /* Intensity Theme - Default Vibrant */
@@ -64,7 +64,7 @@
     --popover: 0 0% 11.8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 344 80% 37%; /* Muted #d50067 */
+    --primary: 298 80% 27%; /* Muted #8E00A4 */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 178 48% 42%; /* Muted Blue #3BA89A */
@@ -73,7 +73,7 @@
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 344 80% 37%; /* Muted #d50067 accent */
+    --accent: 298 80% 27%; /* Muted #8E00A4 accent */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -81,19 +81,19 @@
 
     --border: 0 0% 19.6%; /* #323232 */
     --input: 0 0% 14.9%;
-    --ring: 344 80% 37%; /* Muted #d50067 ring */
+    --ring: 298 80% 27%; /* Muted #8E00A4 ring */
 
     --sidebar-background: 0 0% 7.1%;
     --sidebar-foreground: 0 0% 63.9%;
-    --sidebar-primary: 344 80% 37%; /* Muted #d50067 primary */
+    --sidebar-primary: 298 80% 27%; /* Muted #8E00A4 primary */
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 14.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 19.6%;
-    --sidebar-ring: 344 80% 37%; /* Muted #d50067 ring */
+    --sidebar-ring: 298 80% 27%; /* Muted #8E00A4 ring */
 
     /* Pop Art Colors - DARK MODE (Sophisticated) */
-    --pop-orange: 344 80% 37%; /* #d50067 */
+    --pop-orange: 298 80% 27%; /* #8E00A4 */
     --pop-blue: 178 48% 42%; /* #3BA89A */
   }
 
@@ -620,10 +620,10 @@
     background: linear-gradient(135deg, rgba(61, 42, 145, 0.15), rgba(93, 58, 141, 0.08));
   }
 
-  /* SVG Logo and Mascot Color Matching - Updated to #0067bd */
+  /* SVG Logo and Mascot Color Matching - Updated to #8E00A4 */
   .svg-logo-orange {
-    /* #0067bd color filter for logo text */
-    filter: brightness(0) saturate(100%) invert(29%) sepia(95%) saturate(4826%) hue-rotate(211deg) brightness(91%) contrast(95%);
+    /* #8E00A4 color filter for logo text */
+    filter: brightness(0) saturate(100%) invert(24%) sepia(97%) saturate(7494%) hue-rotate(293deg) brightness(94%) contrast(118%);
   }
 
   /* Color matching for white backgrounds in SVGs */
@@ -660,12 +660,12 @@
     fill: hsl(var(--background)) !important;
   }
 
-  /* Ensure text elements in logo get #0067bd color */
+  /* Ensure text elements in logo get #8E00A4 color */
   .svg-logo-orange svg text,
   .svg-logo-orange svg [fill="black"],
   .svg-logo-orange svg [fill="#000000"],
   .svg-logo-orange svg [fill="#000"] {
-    fill: #0067bd !important;
+    fill: #8E00A4 !important;
   }
 
   /* Dark mode specific adjustments */
