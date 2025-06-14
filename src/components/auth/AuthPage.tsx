@@ -67,7 +67,7 @@ const AuthPage = () => {
 
             {activeTab === 'forgot' && (
               <ForgotPasswordForm
-                onSwitchToLogin={() => setActiveTab('login')}
+                onBackToLogin={() => setActiveTab('login')}
               />
             )}
           </CardContent>
