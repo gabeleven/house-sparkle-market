@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,8 +5,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Star, DollarSign, Clock, Award, MessageCircle, User } from 'lucide-react';
+import { MapPin, Star, DollarSign, Clock, Award, MessageCircle, User, Settings } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
+import { serviceTypeIcons, serviceTypeLabels } from '@/utils/serviceTypes';
 
 interface PublicProfileData {
   id: string;
@@ -116,6 +116,23 @@ const PublicProfile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getServiceIcon = (serviceCategoryName: string) => {
+    // Map service category names to service type keys for icons
+    const serviceNameLower = serviceCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
+    
+    // Try to match with predefined service types
+    const matchingServiceType = Object.keys(serviceTypeIcons).find(key => 
+      key.includes(serviceNameLower) || serviceNameLower.includes(key.replace(/_/g, ''))
+    );
+    
+    if (matchingServiceType && serviceTypeIcons[matchingServiceType as keyof typeof serviceTypeIcons]) {
+      return serviceTypeIcons[matchingServiceType as keyof typeof serviceTypeIcons];
+    }
+    
+    // Fallback icon
+    return Settings;
   };
 
   const getDisplayRate = () => {
@@ -240,35 +257,39 @@ const PublicProfile = () => {
               </CardContent>
             </Card>
 
-            {/* Services Offered - Prominent Section */}
+            {/* Services Offered - Enhanced Section */}
             {profile.services && profile.services.length > 0 && (
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Services Offered</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {profile.services.map((service, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border"
-                      >
-                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4 text-primary" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {profile.services.map((service, index) => {
+                      const IconComponent = getServiceIcon(service.service_categories?.name || '');
+                      
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg border hover:shadow-md transition-shadow"
+                        >
+                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <IconComponent className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900 mb-1">
+                              {service.service_categories?.name || 'Service'}
+                            </h4>
+                            {service.description && (
+                              <p className="text-sm text-gray-600 mb-2">{service.description}</p>
+                            )}
+                            {service.base_price && (
+                              <p className="text-sm text-green-600 font-medium">
+                                From ${service.base_price}/{service.price_unit || 'hour'}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <span className="font-medium text-gray-900">
-                            {service.service_categories?.name || 'Service'}
-                          </span>
-                          {service.description && (
-                            <p className="text-sm text-gray-600 mt-1">{service.description}</p>
-                          )}
-                          {service.base_price && (
-                            <p className="text-sm text-green-600 font-medium">
-                              From ${service.base_price}/{service.price_unit || 'hour'}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
