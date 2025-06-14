@@ -252,18 +252,17 @@ export const HierarchicalServiceTypesSelector = ({ cleanerId }: HierarchicalServ
                         return (
                           <div 
                             key={serviceType} 
-                            className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent/30 transition-colors cursor-pointer"
-                            onClick={() => handleServiceChange(serviceType, !isSelected)}
+                            className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent/30 transition-colors"
                           >
                             <Checkbox
                               id={`${category}-${serviceType}`}
                               checked={isSelected}
-                              onChange={() => {}} // Handled by parent div click
-                              className="pointer-events-none" // Prevent double handling
+                              onCheckedChange={(checked) => handleServiceChange(serviceType, checked as boolean)}
                             />
                             <Label 
                               htmlFor={`${category}-${serviceType}`}
-                              className="flex items-center space-x-2 cursor-pointer flex-1 pointer-events-none"
+                              className="flex items-center space-x-2 cursor-pointer flex-1"
+                              onClick={() => handleServiceChange(serviceType, !isSelected)}
                             >
                               <ServiceIcon className="w-4 h-4 text-muted-foreground" />
                               <span className="text-sm">{serviceTypeLabels[serviceType]}</span>
