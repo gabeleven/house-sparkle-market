@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type Language = 'en' | 'fr';
@@ -126,6 +125,10 @@ const translations = {
     'messages.newConversation': 'New Conversation',
     'messages.searchMessages': 'Search messages...',
     'messages.loading': 'Loading messages...',
+    'messages.welcomeTitle': 'Welcome to Housie Messages',
+    'messages.selectConversation': 'Select a conversation to start messaging',
+    'messages.loginRequired': 'Please log in to view messages.',
+    'messages.unknownUser': 'Unknown User',
 
     // Chatbot
     'chatbot.greeting': 'Hello! How can I help you today?',
@@ -278,6 +281,10 @@ const translations = {
     'messages.newConversation': 'Nouvelle Conversation',
     'messages.searchMessages': 'Rechercher dans les messages...',
     'messages.loading': 'Chargement des messages...',
+    'messages.welcomeTitle': 'Bienvenue dans Housie Messages',
+    'messages.selectConversation': 'Sélectionnez une conversation pour commencer à échanger',
+    'messages.loginRequired': 'Veuillez vous connecter pour voir les messages.',
+    'messages.unknownUser': 'Utilisateur Inconnu',
 
     // Chatbot - Professional assistance terms
     'chatbot.greeting': 'Bonjour ! Comment puis-je vous aider aujourd\'hui ?',

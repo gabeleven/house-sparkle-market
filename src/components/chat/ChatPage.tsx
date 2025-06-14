@@ -4,8 +4,10 @@ import { ConversationsList } from './ConversationsList';
 import { ChatInterface } from './ChatInterface';
 import { Conversation } from '@/hooks/useChat';
 import { Card } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const ChatPage = () => {
+  const { t } = useLanguage();
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [showChat, setShowChat] = useState(false);
 
@@ -27,7 +29,7 @@ export const ChatPage = () => {
       } w-full md:w-80 border-r border-border bg-card`}>
         <div className="w-full">
           <div className="p-4 border-b border-border bg-card">
-            <h2 className="text-xl font-bold text-foreground">Messages</h2>
+            <h2 className="text-xl font-bold text-foreground">{t('messages.title')}</h2>
           </div>
           <ConversationsList
             onSelectConversation={handleSelectConversation}
@@ -52,10 +54,10 @@ export const ChatPage = () => {
                 <span className="text-3xl">💬</span>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                Welcome to Housie Messages
+                {t('messages.welcomeTitle') || 'Welcome to Housie Messages'}
               </h3>
               <p className="text-muted-foreground">
-                Select a conversation to start messaging
+                {t('messages.selectConversation') || 'Select a conversation to start messaging'}
               </p>
             </div>
           </div>

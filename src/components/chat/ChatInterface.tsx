@@ -10,6 +10,7 @@ import { Send } from 'lucide-react';
 import { ChatMessages } from './ChatMessages';
 import { ChatHeader } from './ChatHeader';
 import { isValidProfileData } from '@/utils/typeGuards';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ChatInterfaceProps {
   conversationId: string;
@@ -27,6 +28,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onBack
 }) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { messages, loadMessages, sendMessage, markMessagesAsRead } = useChat();
   const [newMessage, setNewMessage] = useState('');
   const [otherUserInfo, setOtherUserInfo] = useState<{
@@ -34,8 +36,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     profile_photo_url?: string;
   } | null>(null);
   const [sending, setSending] = useState(false);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (conversationId) {
@@ -48,12 +52,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           profile_photo_url: otherUserAvatar
         });
       }
+      // Only scroll to bottom when initially loading a conversation
+      setShouldScrollToBottom(true);
     }
   }, [conversationId, loadMessages, otherUserName, otherUserAvatar]);
 
   useEffect(() => {
-    scrollToBottomInstant();
-  }, [messages]);
+    // Only scroll to bottom if we should (initial load or new message sent)
+    if (shouldScrollToBottom && messages.length > 0) {
+      scrollToBottomSmooth();
+      setShouldScrollToBottom(false);
+    }
+  }, [messages, shouldScrollToBottom]);
 
   useEffect(() => {
     // Mark messages as read when viewing conversation
@@ -98,10 +108,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  // Instant scroll to bottom without animation
-  const scrollToBottomInstant = () => {
-    if (messagesEndRef.current && messagesEndRef.current.parentElement) {
-      messagesEndRef.current.parentElement.scrollTop = messagesEndRef.current.parentElement.scrollHeight;
+  // Smooth scroll to bottom for better UX
+  const scrollToBottomSmooth = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -111,6 +124,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setSending(true);
     const messageToSend = newMessage.trim();
     setNewMessage('');
+    setShouldScrollToBottom(true); // Scroll to bottom when sending a new message
 
     // Refocus input immediately after clearing
     setTimeout(() => {
@@ -144,12 +158,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   if (!user) {
     return (
       <div className="flex items-center justify-center h-full bg-background text-foreground">
-        <p>Please log in to view messages.</p>
+        <p>{t('messages.loginRequired') || 'Please log in to view messages.'}</p>
       </div>
     );
   }
 
-  const displayName = otherUserInfo?.full_name || otherUserName || 'Unknown User';
+  const displayName = otherUserInfo?.full_name || otherUserName || t('messages.unknownUser') || 'Unknown User';
   const displayAvatar = otherUserInfo?.profile_photo_url || otherUserAvatar;
 
   return (
@@ -162,10 +176,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       />
       
       <div 
+        ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-background"
         style={{ 
-          overscrollBehavior: 'none',
-          scrollBehavior: 'auto'
+          overscrollBehavior: 'none'
         }}
       >
         <ChatMessages messages={messages} isLoading={false} />
@@ -179,7 +193,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type a message..."
+            placeholder={t('messages.typeMessage') || 'Type a message...'}
             disabled={sending}
             className="flex-1 bg-background border-input text-foreground placeholder:text-muted-foreground"
             autoFocus
