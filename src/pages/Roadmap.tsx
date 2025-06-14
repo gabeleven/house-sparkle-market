@@ -8,7 +8,7 @@ import RoadmapCTA from '@/components/roadmap/RoadmapCTA';
 
 const Roadmap = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300 text-foreground">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <RoadmapHero />
         <MarketStats />

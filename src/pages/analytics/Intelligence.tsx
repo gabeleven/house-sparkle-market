@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { AnalyticsProvider, useAnalytics } from '@/contexts/AnalyticsContext';
 import { DateRangeButton } from '@/components/analytics/DateRangeButton';
-import Header from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 
