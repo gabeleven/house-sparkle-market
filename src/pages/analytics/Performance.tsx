@@ -10,12 +10,21 @@ import { BookingChart } from '@/components/analytics/BookingChart';
 import { AnalyticsProvider, useAnalytics } from '@/contexts/AnalyticsContext';
 import { DateRangeButton } from '@/components/analytics/DateRangeButton';
 import { GoalsModal } from '@/components/analytics/GoalsModal';
+import Header from '@/components/Header';
+import { useAuth } from '@/hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 
 const PerformanceContent = () => {
   const { filters } = useAnalytics();
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
+      <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with styled back button */}
         <div className="mb-8">

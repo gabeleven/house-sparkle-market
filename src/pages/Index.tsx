@@ -8,7 +8,7 @@ import ServiceProviderCTA from "@/components/ServiceProviderCTA";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
       <Hero />
       <CleanerBenefits />
       <TestimonialSection />
