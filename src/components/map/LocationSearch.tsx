@@ -10,6 +10,23 @@ interface LocationSearchProps {
   initialValue?: string;
 }
 
+// Helper function to safely extract lat/lng from Google Maps location
+const getLatLng = (location: google.maps.LatLng | google.maps.LatLngLiteral): { lat: number; lng: number } => {
+  // Handle Google Maps LatLng object (which has functions)
+  if (typeof location.lat === 'function' && typeof location.lng === 'function') {
+    return {
+      lat: location.lat(),
+      lng: location.lng()
+    };
+  }
+  
+  // Handle LatLngLiteral object (which has properties)
+  return {
+    lat: location.lat as number,
+    lng: location.lng as number
+  };
+};
+
 export const LocationSearch = ({ 
   onLocationSearch, 
   placeholder = "Search area or postal code...",
@@ -100,14 +117,11 @@ export const LocationSearch = ({
         });
 
         if (placeDetails.geometry?.location) {
-          const location = placeDetails.geometry.location;
-          // Fix: Properly handle Google Maps location type
-          const lat = typeof location.lat === 'function' ? location.lat() : location.lat as number;
-          const lng = typeof location.lng === 'function' ? location.lng() : location.lng as number;
+          const { lat, lng } = getLatLng(placeDetails.geometry.location);
           
           onLocationSearch({
-            lat: lat,
-            lng: lng,
+            lat,
+            lng,
             address: placeDetails.formatted_address || placeDetails.name || searchTerm
           });
           return;
@@ -149,14 +163,11 @@ export const LocationSearch = ({
       });
 
       if (result.length > 0) {
-        const location = result[0].geometry.location;
-        // Fix: Properly handle Google Maps location type
-        const lat = typeof location.lat === 'function' ? location.lat() : location.lat as number;
-        const lng = typeof location.lng === 'function' ? location.lng() : location.lng as number;
+        const { lat, lng } = getLatLng(result[0].geometry.location);
         
         onLocationSearch({
-          lat: lat,
-          lng: lng,
+          lat,
+          lng,
           address: result[0].formatted_address
         });
       }
