@@ -7,6 +7,7 @@ import { ThemeProvider } from 'next-themes';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ChatbotProvider } from '@/contexts/ChatbotContext';
 import { IntensityThemeProvider } from "./contexts/IntensityThemeContext"
+import { AuthProvider } from '@/hooks/useAuth';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Index from './pages/Index';
@@ -27,30 +28,32 @@ function App() {
       <IntensityThemeProvider>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
           <LanguageProvider>
-            <ChatbotProvider>
-              <Toaster />
-              <BrowserRouter>
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
-                  <Header />
-                  <main className="relative z-10">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/support" element={<Support />} />
-                      <Route path="/how-it-works" element={<HowItWorksPage />} />
-                      <Route path="/messages" element={<ChatPage />} />
-                      <Route path="/analytics" element={<AnalyticsDashboard />} />
-                      <Route path="/bookings" element={<BookingsPage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                  
-                  {/* Floating Chat Components */}
-                  <FloatingChatButton />
-                  <TabbedChatbot />
-                </div>
-              </BrowserRouter>
-            </ChatbotProvider>
+            <AuthProvider>
+              <ChatbotProvider>
+                <Toaster />
+                <BrowserRouter>
+                  <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
+                    <Header />
+                    <main className="relative z-10">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/support" element={<Support />} />
+                        <Route path="/how-it-works" element={<HowItWorksPage />} />
+                        <Route path="/messages" element={<ChatPage />} />
+                        <Route path="/analytics" element={<AnalyticsDashboard />} />
+                        <Route path="/bookings" element={<BookingsPage />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <Footer />
+                    
+                    {/* Floating Chat Components */}
+                    <FloatingChatButton />
+                    <TabbedChatbot />
+                  </div>
+                </BrowserRouter>
+              </ChatbotProvider>
+            </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
       </IntensityThemeProvider>
