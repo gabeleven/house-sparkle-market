@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -27,7 +26,7 @@ import Profile from './pages/Profile';
 import PublicProfile from './pages/PublicProfile';
 import BrowseCleaners from './pages/BrowseCleaners';
 import BrowseServices from './pages/BrowseServices';
-import Chat from './pages/Chat';
+import Roadmap from './pages/Roadmap';
 import CleanerReviews from './pages/CleanerReviews';
 import CalendarDashboard from './pages/CalendarDashboard';
 import GrowthDashboard from './pages/GrowthDashboard';
@@ -65,7 +64,7 @@ function App() {
                             <Route path="/public-profile/:id" element={<PublicProfile />} />
                             <Route path="/browse-cleaners" element={<BrowseCleaners />} />
                             <Route path="/browse-services" element={<BrowseServices />} />
-                            <Route path="/chat" element={<Chat />} />
+                            <Route path="/roadmap" element={<Roadmap />} />
                             <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
                             <Route path="/calendar" element={<CalendarDashboard />} />
                             <Route path="/dashboard" element={<ProviderDashboard />} />

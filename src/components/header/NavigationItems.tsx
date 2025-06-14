@@ -23,9 +23,9 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
             Services
           </Link>
         )}
-        {currentPath !== '/chat' && (
-          <Link to="/chat" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
-            Messages
+        {currentPath !== '/roadmap' && (
+          <Link to="/roadmap" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+            Roadmap
           </Link>
         )}
       </>
@@ -37,6 +37,11 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
       {currentPath !== '/browse-services' && currentPath !== '/browse-providers' && (
         <Link to="/browse-services" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
           Services
+        </Link>
+      )}
+      {currentPath !== '/roadmap' && (
+        <Link to="/roadmap" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+          Roadmap
         </Link>
       )}
       {currentPath !== '/comment-ca-marche' && (
