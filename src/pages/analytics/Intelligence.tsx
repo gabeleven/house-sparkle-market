@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,7 +68,6 @@ const IntelligenceContent = () => {
   if (!canAccessFeature('PRO')) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
-        <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
             <Link to="/analytics">
@@ -97,7 +95,6 @@ const IntelligenceContent = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
-      <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with styled back button */}
         <div className="mb-8">
