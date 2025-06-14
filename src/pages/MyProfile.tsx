@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { ModernProfileSwitcher } from '@/components/profile/ModernProfileSwitcher';
-import { ServiceOfferings } from '@/components/profile/ServiceOfferings';
 import { CustomerModeView } from '@/components/profile/CustomerModeView';
 import { CleanerModeView } from '@/components/profile/CleanerModeView';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Eye, Star } from 'lucide-react';
 import { useReviews } from '@/hooks/useReviews';
 import { ReviewSummary } from '@/components/reviews/ReviewSummary';
-import { ServiceType } from '@/utils/serviceTypes';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,13 +25,6 @@ const MyProfile = () => {
   const [currentMode, setCurrentMode] = useState<'customer' | 'cleaner'>('customer');
   const [switcherLoading, setSwitcherLoading] = useState(false);
   const { reviews } = useReviews({ cleanerId: user?.id });
-
-  // Mock services data - in a real app, this would come from the user's profile
-  const [userServices] = useState<ServiceType[]>([
-    'residential_cleaning',
-    'deep_cleaning',
-    'commercial_cleaning'
-  ]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -63,11 +54,6 @@ const MyProfile = () => {
 
   const handleViewPublicProfile = () => {
     navigate(`/public-profile/${user.id}`);
-  };
-
-  const handleManageServices = () => {
-    // Navigate to services management or open modal
-    console.log('Manage services clicked');
   };
 
   const averageRating = reviews.length > 0 
@@ -124,13 +110,6 @@ const MyProfile = () => {
             currentMode={currentMode}
             onModeChange={handleModeChange}
             loading={switcherLoading}
-          />
-
-          {/* Services Offered - Now at the top */}
-          <ServiceOfferings
-            services={userServices}
-            isProvider={currentMode === 'cleaner'}
-            onManageServices={handleManageServices}
           />
           
           {/* Profile content based on current mode */}
