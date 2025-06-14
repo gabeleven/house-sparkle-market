@@ -3,6 +3,8 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Users, DollarSign, Calendar } from 'lucide-react';
 import { AnalyticsFilter } from '@/components/analytics/AnalyticsFilter';
+import { DashboardShortcuts } from '@/components/analytics/DashboardShortcuts';
+import { DashboardSearch } from '@/components/analytics/DashboardSearch';
 import { DateRange } from 'react-day-picker';
 import { isWithinInterval, parseISO } from 'date-fns';
 
@@ -12,6 +14,7 @@ const AnalyticsDashboard = () => {
     serviceType?: string;
     status?: string;
   }>({});
+  const [highlightedCategory, setHighlightedCategory] = useState<string>('');
 
   // Mock data - in real app, this would come from an API
   const mockBookings = [
@@ -63,6 +66,17 @@ const AnalyticsDashboard = () => {
     };
   }, [filteredBookings]);
 
+  const handleHighlight = (category: string) => {
+    setHighlightedCategory(category);
+    setTimeout(() => setHighlightedCategory(''), 3000);
+  };
+
+  const getCardClassName = (category: string) => {
+    return highlightedCategory === category 
+      ? 'ring-2 ring-primary ring-offset-2 transition-all duration-300' 
+      : '';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -71,12 +85,22 @@ const AnalyticsDashboard = () => {
           <p className="text-muted-foreground">Monitor your business performance and insights</p>
         </div>
 
+        {/* Search */}
+        <div className="mb-6">
+          <DashboardSearch onHighlight={handleHighlight} />
+        </div>
+
+        {/* Quick Navigation Shortcuts */}
+        <div className="mb-8">
+          <DashboardShortcuts />
+        </div>
+
         <AnalyticsFilter
           filters={filters}
           onFilterChange={setFilters}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 ${getCardClassName('metrics')}`}>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
@@ -131,7 +155,7 @@ const AnalyticsDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
+          <Card className={getCardClassName('recent')}>
             <CardHeader>
               <CardTitle>Recent Bookings</CardTitle>
             </CardHeader>
@@ -160,7 +184,7 @@ const AnalyticsDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className={getCardClassName('performance')}>
             <CardHeader>
               <CardTitle>Service Performance</CardTitle>
             </CardHeader>

@@ -47,7 +47,7 @@ export const ServiceCategoryMenu: React.FC<ServiceCategoryMenuProps> = ({
         </div>
       </NavigationMenuTrigger>
       
-      <NavigationMenuContent className="min-w-[400px] p-4 bg-background border shadow-lg">
+      <NavigationMenuContent className="min-w-[400px] p-4 bg-background border shadow-lg relative z-50">
         <div className="grid grid-cols-2 gap-4">
           {services.map((serviceType) => (
             <ServiceItem
