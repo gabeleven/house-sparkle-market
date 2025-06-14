@@ -68,7 +68,7 @@ const Header = () => {
               <NavigationItems isLoggedIn={!!user} />
               
               {/* HOUSIE Pro - Always visible */}
-              <Link to="/prestataires" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
+              <Link to="/pricing" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
                 HOUSIE Pro
               </Link>
             </nav>

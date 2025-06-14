@@ -8,6 +8,7 @@ import { ThemeProvider as CustomThemeProvider } from '@/contexts/ThemeContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ChatbotProvider } from '@/contexts/ChatbotContext';
 import { IntensityThemeProvider } from "./contexts/IntensityThemeContext"
+import { AnalyticsProvider } from '@/contexts/AnalyticsContext';
 import { AuthProvider } from '@/hooks/useAuth';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -33,6 +34,7 @@ import GrowthDashboard from './pages/GrowthDashboard';
 import Settings from './pages/Settings';
 import TaxCompliancePage from './pages/TaxCompliancePage';
 import ServiceProvidersPage from './pages/ServiceProvidersPage';
+import ProviderDashboard from './pages/ProviderDashboard';
 import Performance from './pages/analytics/Performance';
 import Intelligence from './pages/analytics/Intelligence';
 import Insights from './pages/analytics/Insights';
@@ -49,45 +51,48 @@ function App() {
             <LanguageProvider>
               <AuthProvider>
                 <ChatbotProvider>
-                  <Toaster />
-                  <BrowserRouter>
-                    <div className="min-h-screen">
-                      <Header />
-                      <main className="relative z-10">
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/auth" element={<Auth />} />
-                          <Route path="/my-profile" element={<MyProfile />} />
-                          <Route path="/profile" element={<Profile />} />
-                          <Route path="/public-profile/:id" element={<PublicProfile />} />
-                          <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-                          <Route path="/browse-services" element={<BrowseServices />} />
-                          <Route path="/chat" element={<Chat />} />
-                          <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
-                          <Route path="/calendar" element={<CalendarDashboard />} />
-                          <Route path="/growth-dashboard" element={<GrowthDashboard />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route path="/tax-compliance" element={<TaxCompliancePage />} />
-                          <Route path="/service-providers" element={<ServiceProvidersPage />} />
-                          <Route path="/support" element={<Support />} />
-                          <Route path="/how-it-works" element={<HowItWorksPage />} />
-                          <Route path="/messages" element={<ChatPage />} />
-                          <Route path="/analytics" element={<AnalyticsDashboard />} />
-                          <Route path="/analytics/performance" element={<Performance />} />
-                          <Route path="/analytics/intelligence" element={<Intelligence />} />
-                          <Route path="/analytics/insights" element={<Insights />} />
-                          <Route path="/analytics/reports" element={<Reports />} />
-                          <Route path="/bookings" element={<BookingsPage />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </main>
-                      <Footer />
-                      
-                      {/* Floating Chat Components */}
-                      <FloatingChatButton />
-                      <TabbedChatbot />
-                    </div>
-                  </BrowserRouter>
+                  <AnalyticsProvider>
+                    <Toaster />
+                    <BrowserRouter>
+                      <div className="min-h-screen">
+                        <Header />
+                        <main className="relative z-10">
+                          <Routes>
+                            <Route path="/" element={<Index />} />
+                            <Route path="/auth" element={<Auth />} />
+                            <Route path="/my-profile" element={<MyProfile />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/public-profile/:id" element={<PublicProfile />} />
+                            <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+                            <Route path="/browse-services" element={<BrowseServices />} />
+                            <Route path="/chat" element={<Chat />} />
+                            <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
+                            <Route path="/calendar" element={<CalendarDashboard />} />
+                            <Route path="/dashboard" element={<ProviderDashboard />} />
+                            <Route path="/growth-dashboard" element={<GrowthDashboard />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                            <Route path="/pricing" element={<ServiceProvidersPage />} />
+                            <Route path="/support" element={<Support />} />
+                            <Route path="/how-it-works" element={<HowItWorksPage />} />
+                            <Route path="/messages" element={<ChatPage />} />
+                            <Route path="/analytics" element={<AnalyticsDashboard />} />
+                            <Route path="/analytics/performance" element={<Performance />} />
+                            <Route path="/analytics/intelligence" element={<Intelligence />} />
+                            <Route path="/analytics/insights" element={<Insights />} />
+                            <Route path="/analytics/reports" element={<Reports />} />
+                            <Route path="/bookings" element={<BookingsPage />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </main>
+                        <Footer />
+                        
+                        {/* Floating Chat Components */}
+                        <FloatingChatButton />
+                        <TabbedChatbot />
+                      </div>
+                    </BrowserRouter>
+                  </AnalyticsProvider>
                 </ChatbotProvider>
               </AuthProvider>
             </LanguageProvider>

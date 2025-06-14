@@ -115,7 +115,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier Synchronisé', icon: 'Calendar' },
-        { path: '/provider-dashboard', labelKey: 'Tableau Prestataire', icon: 'BarChart3' },
+        { path: '/dashboard', labelKey: 'Tableau Prestataire', icon: 'BarChart3' },
         { path: '/tax-compliance', labelKey: 'Conformité Fiscale Avancée', icon: 'FileText' },
         { path: '/bookings', labelKey: 'Mes Réservations', icon: 'CalendarCheck', tierNote: 'illimitées' },
         { path: '/chat', labelKey: 'Communications Client', icon: 'MessageSquare' },
@@ -126,7 +126,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier Pro', icon: 'Calendar' },
-        { path: '/provider-dashboard', labelKey: 'Tableau Prestataire', icon: 'BarChart3' },
+        { path: '/dashboard', labelKey: 'Tableau Prestataire', icon: 'BarChart3' },
         { path: '/analytics', labelKey: 'Analytiques Avancées', icon: 'TrendingUp' },
         { path: '/growth', labelKey: 'Outils de Croissance', icon: 'Target' },
         { path: '/tax-compliance', labelKey: 'Suite Fiscale Complète', icon: 'Shield' },
@@ -139,7 +139,7 @@ export const getMenuItems = (tier: SubscriptionTier): MenuItemConfig[] => {
       return [
         ...baseItems,
         { path: '/calendar', labelKey: 'Calendrier IA', icon: 'Calendar' },
-        { path: '/provider-dashboard', labelKey: 'Tableau Exécutif', icon: 'BarChart3' },
+        { path: '/dashboard', labelKey: 'Tableau Exécutif', icon: 'BarChart3' },
         { path: '/analytics', labelKey: 'Intelligence Marché', icon: 'Brain', showNotification: true },
         { path: '/growth', labelKey: 'Marketing Automatisé', icon: 'Target' },
         { path: '/tax-compliance', labelKey: 'Optimisation Fiscale IA', icon: 'Shield' },
