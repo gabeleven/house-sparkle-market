@@ -6,26 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
-import { ServiceOfferings } from '@/components/profile/ServiceOfferings';
 import { ServiceTypesSelector } from '@/components/profile/ServiceTypesSelector';
-import { ServiceType } from '@/utils/serviceTypes';
-import { Briefcase, MapPin, DollarSign, Clock, Award, Star } from 'lucide-react';
+import { Briefcase, DollarSign, Clock, Award, Star } from 'lucide-react';
 
 export const CleanerModeView = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  
-  // Mock services data - in a real app, this would come from the user's profile
-  const [userServices] = useState<ServiceType[]>([
-    'residential_cleaning',
-    'deep_cleaning',
-    'commercial_cleaning'
-  ]);
-
-  const handleManageServices = () => {
-    // Navigate to services management or open modal
-    console.log('Manage services clicked');
-  };
 
   const handleSaveProfile = () => {
     setIsEditing(false);
@@ -110,13 +96,6 @@ export const CleanerModeView = () => {
           )}
         </CardContent>
       </Card>
-
-      {/* Services Offered */}
-      <ServiceOfferings
-        services={userServices}
-        isProvider={true}
-        onManageServices={handleManageServices}
-      />
 
       {/* Service Types Selector */}
       {user && (
