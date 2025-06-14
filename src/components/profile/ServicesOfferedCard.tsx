@@ -8,6 +8,9 @@ interface Service {
   service_categories?: {
     name: string;
   };
+  service_category?: {
+    name: string;
+  };
   description?: string;
   base_price?: number;
   price_unit?: string;
@@ -24,17 +27,13 @@ export const ServicesOfferedCard: React.FC<ServicesOfferedCardProps> = ({ servic
     // Convert service category name to match our service type keys
     const serviceNameLower = serviceCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
     
+    // Direct mapping for exact matches
+    if (serviceTypeIcons[serviceNameLower as ServiceType]) {
+      return serviceTypeIcons[serviceNameLower as ServiceType];
+    }
+
     // Map common service category names to our service types
     const serviceMapping: Record<string, ServiceType> = {
-      'residential_cleaning': 'residential_cleaning',
-      'end_of_lease_cleaning': 'end_of_lease_cleaning',
-      'commercial_cleaning': 'commercial_cleaning',
-      'chalet_airbnb_cleaning': 'chalet_airbnb_cleaning',
-      'window_washing': 'window_washing',
-      'ironing': 'ironing',
-      'light_housekeeping': 'light_housekeeping',
-      'deep_cleaning': 'deep_cleaning',
-      // Handle generic "cleaning" category
       'cleaning': 'residential_cleaning',
       'house_cleaning': 'residential_cleaning',
       'home_cleaning': 'residential_cleaning',
@@ -77,16 +76,13 @@ export const ServicesOfferedCard: React.FC<ServicesOfferedCardProps> = ({ servic
     
     const serviceNameLower = serviceCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
     
+    // Direct mapping for exact matches
+    if (serviceTypeLabels[serviceNameLower as ServiceType]) {
+      return serviceTypeLabels[serviceNameLower as ServiceType];
+    }
+
     // Map service category names to proper labels
     const labelMapping: Record<string, string> = {
-      'residential_cleaning': 'Residential Cleaning',
-      'end_of_lease_cleaning': 'End of Lease Cleaning',
-      'commercial_cleaning': 'Commercial Cleaning',
-      'chalet_airbnb_cleaning': 'Chalet/Airbnb Cleaning',
-      'window_washing': 'Window Washing',
-      'ironing': 'Ironing',
-      'light_housekeeping': 'Light Housekeeping',
-      'deep_cleaning': 'Deep Cleaning',
       'cleaning': 'General Cleaning',
       'house_cleaning': 'House Cleaning',
       'home_cleaning': 'Home Cleaning',
@@ -135,8 +131,10 @@ export const ServicesOfferedCard: React.FC<ServicesOfferedCardProps> = ({ servic
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Services Offered</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {services.map((service, index) => {
-            const IconComponent = getServiceIcon(service.service_categories?.name || '');
-            const serviceLabel = getServiceLabel(service.service_categories?.name || '');
+            // Handle both possible field names from the database
+            const categoryName = service.service_categories?.name || service.service_category?.name || '';
+            const IconComponent = getServiceIcon(categoryName);
+            const serviceLabel = getServiceLabel(categoryName);
             
             return (
               <div

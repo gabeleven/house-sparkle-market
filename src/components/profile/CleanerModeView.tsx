@@ -1,15 +1,14 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useProviderProfile } from '@/hooks/useProviderProfile';
 import { ServiceTypesSelector } from '@/components/profile/ServiceTypesSelector';
-import { serviceTypeIcons, ServiceType } from '@/utils/serviceTypes';
-import { Briefcase, DollarSign, Clock, Award, Star, MapPin, Settings } from 'lucide-react';
+import { Briefcase, DollarSign, Clock, Award, Star, MapPin } from 'lucide-react';
 
 export const CleanerModeView = () => {
   const { user } = useAuth();
@@ -49,37 +48,6 @@ export const CleanerModeView = () => {
     updateProvider.mutate(formData);
     setIsEditing(false);
   };
-
-  const getServiceIcon = (serviceCategoryName: string) => {
-    if (!serviceCategoryName) return Settings;
-    
-    const serviceNameLower = serviceCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-    
-    // Map common service category names to our service types
-    const serviceMapping: Record<string, ServiceType> = {
-      'residential_cleaning': 'residential_cleaning',
-      'end_of_lease_cleaning': 'end_of_lease_cleaning',
-      'commercial_cleaning': 'commercial_cleaning',
-      'chalet_airbnb_cleaning': 'chalet_airbnb_cleaning',
-      'window_washing': 'window_washing',
-      'ironing': 'ironing',
-      'light_housekeeping': 'light_housekeeping',
-      'deep_cleaning': 'deep_cleaning',
-      'cleaning': 'residential_cleaning',
-      'house_cleaning': 'residential_cleaning',
-      'office_cleaning': 'commercial_cleaning'
-    };
-
-    const mappedServiceType = serviceMapping[serviceNameLower];
-    if (mappedServiceType && serviceTypeIcons[mappedServiceType]) {
-      return serviceTypeIcons[mappedServiceType];
-    }
-    
-    return Settings;
-  };
-
-  // Get services from provider data
-  const providerServices = provider?.services || [];
 
   return (
     <div className="space-y-6">
@@ -224,39 +192,7 @@ export const CleanerModeView = () => {
         </CardContent>
       </Card>
 
-      {/* Services Offered Card - Only show if there are services */}
-      {providerServices.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              Services Offered
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {providerServices.map((service) => {
-                const categoryName = service.service_category?.name;
-                const IconComponent = getServiceIcon(categoryName || '');
-                
-                return (
-                  <Badge key={service.id} variant="secondary" className="flex items-center gap-1">
-                    <IconComponent className="w-3 h-3" />
-                    {service.service_category?.name || 'Service'}
-                    {service.base_price && (
-                      <span className="ml-1 text-green-600">
-                        ${service.base_price}/{service.price_unit}
-                      </span>
-                    )}
-                  </Badge>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Service Types Selector */}
+      {/* Service Types Selector - Now uses the unified provider system */}
       {user && (
         <ServiceTypesSelector cleanerId={user.id} />
       )}

@@ -20,41 +20,43 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
   const [selectedServices, setSelectedServices] = useState<ServiceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (cleanerId) {
-      console.log('ServiceTypesSelector: Loading services for cleaner:', cleanerId);
+      console.log('ServiceTypesSelector: Loading services for user:', cleanerId);
       loadSelectedServices();
     }
   }, [cleanerId]);
 
-  const verifyCleanerProfile = async () => {
+  const verifyProviderProfile = async () => {
     try {
-      console.log('ServiceTypesSelector: Verifying cleaner profile exists for:', cleanerId);
-      const { data: cleanerProfile, error } = await supabase
-        .from('cleaner_profiles')
+      console.log('ServiceTypesSelector: Verifying provider profile exists for:', cleanerId);
+      const { data: provider, error } = await supabase
+        .from('providers')
         .select('id')
-        .eq('id', cleanerId)
+        .eq('user_id', cleanerId)
         .maybeSingle();
 
       if (error) {
-        console.error('Error checking cleaner profile:', error);
-        setError('Unable to verify cleaner profile. Please refresh the page.');
-        return false;
+        console.error('Error checking provider profile:', error);
+        setError('Unable to verify provider profile. Please refresh the page.');
+        return null;
       }
 
-      if (!cleanerProfile) {
-        console.error('Cleaner profile not found for:', cleanerId);
-        setError('Cleaner profile not found. Please complete your profile setup first.');
-        return false;
+      if (!provider) {
+        console.error('Provider profile not found for:', cleanerId);
+        setError('Provider profile not found. Please complete your profile setup first.');
+        return null;
       }
 
-      console.log('ServiceTypesSelector: Cleaner profile verified');
-      return true;
+      console.log('ServiceTypesSelector: Provider profile verified, ID:', provider.id);
+      setProviderId(provider.id);
+      return provider.id;
     } catch (error) {
-      console.error('Error verifying cleaner profile:', error);
-      setError('Unable to verify cleaner profile. Please refresh the page.');
-      return false;
+      console.error('Error verifying provider profile:', error);
+      setError('Unable to verify provider profile. Please refresh the page.');
+      return null;
     }
   };
 
@@ -62,24 +64,27 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
     try {
       setError(null);
       
-      // First verify the cleaner profile exists
-      const profileExists = await verifyCleanerProfile();
-      if (!profileExists) {
+      // First verify the provider profile exists and get the provider ID
+      const providerIdResult = await verifyProviderProfile();
+      if (!providerIdResult) {
         setLoading(false);
         return;
       }
 
-      console.log('ServiceTypesSelector: Loading selected services for:', cleanerId);
+      console.log('ServiceTypesSelector: Loading selected services for provider:', providerIdResult);
       const { data, error } = await supabase
-        .from('cleaner_service_types')
-        .select('service_type')
-        .eq('cleaner_id', cleanerId);
+        .from('provider_services')
+        .select(`
+          service_categories(name)
+        `)
+        .eq('provider_id', providerIdResult)
+        .eq('is_available', true);
 
       if (error) {
         console.error('Error loading services:', error);
         setError('Failed to load service types. Please try again.');
       } else {
-        const services = data?.map(item => item.service_type as ServiceType) || [];
+        const services = data?.map(item => item.service_categories?.name as ServiceType).filter(Boolean) || [];
         console.log('ServiceTypesSelector: Loaded services:', services);
         setSelectedServices(services);
       }
@@ -92,8 +97,8 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
   };
 
   const handleServiceChange = async (serviceType: ServiceType, checked: boolean) => {
-    if (!user) {
-      console.error('ServiceTypesSelector: No user found');
+    if (!user || !providerId) {
+      console.error('ServiceTypesSelector: No user or provider ID found');
       return;
     }
 
@@ -101,24 +106,49 @@ export const ServiceTypesSelector = ({ cleanerId }: ServiceTypesSelectorProps) =
 
     try {
       if (checked) {
+        // Get the service category ID
+        const { data: category, error: categoryError } = await supabase
+          .from('service_categories')
+          .select('id')
+          .eq('name', serviceType)
+          .single();
+
+        if (categoryError) {
+          console.error('Error finding service category:', categoryError);
+          throw categoryError;
+        }
+
         // Add service
         const { error } = await supabase
-          .from('cleaner_service_types')
+          .from('provider_services')
           .insert({
-            cleaner_id: cleanerId,
-            service_type: serviceType
+            provider_id: providerId,
+            service_category_id: category.id,
+            is_available: true
           });
 
         if (error) throw error;
         setSelectedServices(prev => [...prev, serviceType]);
         console.log('ServiceTypesSelector: Added service:', serviceType);
       } else {
+        // Get the service category ID
+        const { data: category, error: categoryError } = await supabase
+          .from('service_categories')
+          .select('id')
+          .eq('name', serviceType)
+          .single();
+
+        if (categoryError) {
+          console.error('Error finding service category:', categoryError);
+          throw categoryError;
+        }
+
         // Remove service
         const { error } = await supabase
-          .from('cleaner_service_types')
+          .from('provider_services')
           .delete()
-          .eq('cleaner_id', cleanerId)
-          .eq('service_type', serviceType);
+          .eq('provider_id', providerId)
+          .eq('service_category_id', category.id);
 
         if (error) throw error;
         setSelectedServices(prev => prev.filter(s => s !== serviceType));

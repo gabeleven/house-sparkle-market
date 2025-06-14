@@ -57,21 +57,7 @@ export type Database = {
             foreignKeyName: "bookings_cleaner_id_fkey"
             columns: ["cleaner_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_cleaner_id_fkey"
-            columns: ["cleaner_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -143,156 +129,7 @@ export type Database = {
             foreignKeyName: "chat_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chat_messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      cleaner_profiles: {
-        Row: {
-          average_rating: number | null
-          banner_image_url: string | null
-          before_after_photos: string[] | null
-          brief_description: string | null
-          business_name: string | null
-          created_at: string | null
-          hourly_rate: number | null
-          id: string
-          is_featured: boolean | null
-          is_profile_complete: boolean | null
-          latitude: number | null
-          longitude: number | null
-          profile_photo_url: string | null
-          service_area_city: string | null
-          service_area_postal_code: string | null
-          service_badges: string[] | null
-          service_radius_km: number | null
-          total_reviews: number | null
-          updated_at: string | null
-          years_experience: number | null
-        }
-        Insert: {
-          average_rating?: number | null
-          banner_image_url?: string | null
-          before_after_photos?: string[] | null
-          brief_description?: string | null
-          business_name?: string | null
-          created_at?: string | null
-          hourly_rate?: number | null
-          id: string
-          is_featured?: boolean | null
-          is_profile_complete?: boolean | null
-          latitude?: number | null
-          longitude?: number | null
-          profile_photo_url?: string | null
-          service_area_city?: string | null
-          service_area_postal_code?: string | null
-          service_badges?: string[] | null
-          service_radius_km?: number | null
-          total_reviews?: number | null
-          updated_at?: string | null
-          years_experience?: number | null
-        }
-        Update: {
-          average_rating?: number | null
-          banner_image_url?: string | null
-          before_after_photos?: string[] | null
-          brief_description?: string | null
-          business_name?: string | null
-          created_at?: string | null
-          hourly_rate?: number | null
-          id?: string
-          is_featured?: boolean | null
-          is_profile_complete?: boolean | null
-          latitude?: number | null
-          longitude?: number | null
-          profile_photo_url?: string | null
-          service_area_city?: string | null
-          service_area_postal_code?: string | null
-          service_badges?: string[] | null
-          service_radius_km?: number | null
-          total_reviews?: number | null
-          updated_at?: string | null
-          years_experience?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "cleaner_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cleaner_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      cleaner_service_types: {
-        Row: {
-          cleaner_id: string
-          created_at: string
-          id: string
-          service_type: Database["public"]["Enums"]["service_type_new"]
-        }
-        Insert: {
-          cleaner_id: string
-          created_at?: string
-          id?: string
-          service_type: Database["public"]["Enums"]["service_type_new"]
-        }
-        Update: {
-          cleaner_id?: string
-          created_at?: string
-          id?: string
-          service_type?: Database["public"]["Enums"]["service_type_new"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "cleaner_service_types_cleaner_id_fkey"
-            columns: ["cleaner_id"]
-            isOneToOne: false
-            referencedRelation: "cleaner_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      cleaner_services: {
-        Row: {
-          cleaner_id: string | null
-          created_at: string | null
-          id: string
-          service_type: Database["public"]["Enums"]["service_type"]
-        }
-        Insert: {
-          cleaner_id?: string | null
-          created_at?: string | null
-          id?: string
-          service_type: Database["public"]["Enums"]["service_type"]
-        }
-        Update: {
-          cleaner_id?: string | null
-          created_at?: string | null
-          id?: string
-          service_type?: Database["public"]["Enums"]["service_type"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "cleaner_services_cleaner_id_fkey"
-            columns: ["cleaner_id"]
-            isOneToOne: false
-            referencedRelation: "cleaner_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -327,21 +164,7 @@ export type Database = {
             foreignKeyName: "conversations_cleaner_id_fkey"
             columns: ["cleaner_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversations_cleaner_id_fkey"
-            columns: ["cleaner_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversations_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -412,13 +235,6 @@ export type Database = {
           urgency_level?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "customer_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "customer_profiles_id_fkey"
             columns: ["id"]
@@ -494,21 +310,7 @@ export type Database = {
             foreignKeyName: "masked_communications_cleaner_id_fkey"
             columns: ["cleaner_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "masked_communications_cleaner_id_fkey"
-            columns: ["cleaner_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "masked_communications_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -566,21 +368,7 @@ export type Database = {
             foreignKeyName: "messages_recipient_id_fkey"
             columns: ["recipient_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_recipient_id_fkey"
-            columns: ["recipient_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -814,13 +602,6 @@ export type Database = {
             foreignKeyName: "fk_providers_user_id"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_providers_user_id"
-            columns: ["user_id"]
-            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -968,21 +749,7 @@ export type Database = {
             foreignKeyName: "reviews_reviewee_id_fkey"
             columns: ["reviewee_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_reviewee_id_fkey"
-            columns: ["reviewee_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_reviewer_id_fkey"
-            columns: ["reviewer_id"]
-            isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1100,13 +867,6 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1181,13 +941,6 @@ export type Database = {
             foreignKeyName: "user_presence_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "cleaners_with_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_presence_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1231,28 +984,7 @@ export type Database = {
       }
     }
     Views: {
-      cleaners_with_profiles: {
-        Row: {
-          brief_description: string | null
-          business_name: string | null
-          created_at: string | null
-          email: string | null
-          full_name: string | null
-          id: string | null
-          is_profile_complete: boolean | null
-          latitude: number | null
-          longitude: number | null
-          phone_number: string | null
-          profile_photo_url: string | null
-          service_area_city: string | null
-          service_area_postal_code: string | null
-          service_radius_km: number | null
-          services: Database["public"]["Enums"]["service_type"][] | null
-          updated_at: string | null
-          years_experience: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       calculate_distance: {
