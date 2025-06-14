@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Star, Eye, Calendar } from 'lucide-react';
 import { useProfileDialog } from '@/hooks/useProfileDialog';
 import { ProfileViewDialog } from '@/components/ProfileViewDialog';
+import { BookingSlideOut } from '@/components/booking/BookingSlideOut';
 
 interface CleanerMapPopupProps {
   cleaner: {
@@ -38,14 +39,15 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
     closeProfileDialog, 
     confirmViewProfile 
   } = useProfileDialog();
+  
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const handleViewProfile = () => {
     openProfileDialog(cleaner.id, cleaner.business_name || cleaner.full_name);
   };
 
   const handleBookNow = () => {
-    // Navigate to bookings page with provider parameter
-    window.location.href = `/bookings?provider=${cleaner.id}`;
+    setIsBookingOpen(true);
   };
 
   return (
@@ -152,6 +154,17 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
         onClose={closeProfileDialog}
         onConfirm={confirmViewProfile}
         userName={selectedUserName}
+      />
+
+      <BookingSlideOut
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        cleaner={{
+          id: cleaner.id,
+          full_name: cleaner.full_name,
+          business_name: cleaner.business_name,
+          profile_photo_url: cleaner.profile_photo_url
+        }}
       />
     </>
   );
