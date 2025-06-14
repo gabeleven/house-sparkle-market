@@ -45,8 +45,12 @@ const Header = () => {
     <header className="bg-black shadow-lg border-b border-gray-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - Far left in margin area */}
-          <div className="flex-shrink-0 mr-8">
+          {/* Logo with App Icon */}
+          <div className="flex items-center space-x-3 flex-shrink-0 mr-8">
+            {/* App Icon */}
+            <div className="w-10 h-10 bg-gradient-to-br from-[#d50067] to-[#0067bd] rounded-lg flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-lg">H</span>
+            </div>
             <HeaderLogo />
           </div>
 
@@ -57,22 +61,15 @@ const Header = () => {
             </div>
           )}
 
-          {/* Desktop Navigation - Premium black ribbon style */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center justify-end flex-1 space-x-1">
             <nav className="flex items-center space-x-1">
               <NavigationItems isLoggedIn={!!user} />
               
-              {/* Additional links for non-logged in users */}
-              {!user && (
-                <>
-                  <Link to="/prestataires" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
-                    HOUSIE Pro
-                  </Link>
-                  <Link to="/support" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
-                    Support
-                  </Link>
-                </>
-              )}
+              {/* HOUSIE Pro - Always visible */}
+              <Link to="/prestataires" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
+                HOUSIE Pro
+              </Link>
             </nav>
             
             {/* Desktop Controls */}

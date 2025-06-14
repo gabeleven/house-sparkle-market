@@ -1,39 +1,59 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationItemsProps {
   isLoggedIn?: boolean;
 }
 
 const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
   if (isLoggedIn) {
     return (
       <>
-        <Link to="/analytics" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm font-medium">
-          Dashboard
-        </Link>
-        <Link to="/browse-cleaners" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
-          Services
-        </Link>
-        <Link to="/chat" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
-          Messages
-        </Link>
+        {currentPath !== '/analytics' && (
+          <Link to="/analytics" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm font-medium">
+            Dashboard
+          </Link>
+        )}
+        {currentPath !== '/browse-cleaners' && (
+          <Link to="/browse-cleaners" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+            Services
+          </Link>
+        )}
+        {currentPath !== '/chat' && (
+          <Link to="/chat" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+            Messages
+          </Link>
+        )}
       </>
     );
   }
 
   return (
     <>
-      <Link to="/browse-cleaners" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
-        Services
-      </Link>
-      <Link to="/comment-ca-marche" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
-        À Propos
-      </Link>
-      <Link to="/auth" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm font-medium">
-        Connexion
-      </Link>
+      {currentPath !== '/browse-cleaners' && (
+        <Link to="/browse-cleaners" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+          Services
+        </Link>
+      )}
+      {currentPath !== '/comment-ca-marche' && (
+        <Link to="/comment-ca-marche" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+          À Propos
+        </Link>
+      )}
+      {currentPath !== '/support' && (
+        <Link to="/support" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+          Support
+        </Link>
+      )}
+      {currentPath !== '/auth' && (
+        <Link to="/auth" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm font-medium">
+          Connexion
+        </Link>
+      )}
     </>
   );
 };
