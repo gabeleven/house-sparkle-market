@@ -42,7 +42,7 @@ const Insights = () => {
         {/* Header with styled back button */}
         <div className="mb-8">
           <Link to="/analytics">
-            <Button className="mb-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full flex items-center gap-2 shadow-lg">
+            <Button className="mb-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <ArrowLeft className="h-4 w-4" />
               Retour aux Analytiques
             </Button>
@@ -51,7 +51,7 @@ const Insights = () => {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg">
+                <div className="p-2 bg-blue-100 rounded-lg shadow-md">
                   <LineChart className="w-6 h-6 text-blue-600" />
                 </div>
                 <h1 className="text-3xl font-bold text-gray-800">Business Insights</h1>
@@ -60,8 +60,8 @@ const Insights = () => {
             </div>
             
             <div className="flex gap-2">
-              <Badge variant="outline" className="bg-white/80">Pro+</Badge>
-              <Button variant="outline" size="sm" className="bg-white/80">
+              <Badge variant="outline" className="bg-white/80 shadow-md">Pro+</Badge>
+              <Button variant="outline" size="sm" className="bg-white/80 shadow-md hover:shadow-lg transition-shadow duration-300">
                 <Calendar className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Date Range</span>
               </Button>
@@ -71,7 +71,7 @@ const Insights = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -84,7 +84,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -97,7 +97,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -110,7 +110,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -127,7 +127,7 @@ const Insights = () => {
         {/* Charts Section */}
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Revenue Trend */}
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <LineChart className="w-5 h-5 text-blue-600" />
@@ -158,7 +158,7 @@ const Insights = () => {
           </Card>
 
           {/* Service Distribution */}
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PieChart className="w-5 h-5 text-green-600" />
@@ -192,7 +192,7 @@ const Insights = () => {
 
         {/* Performance Metrics */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-orange-600" />
@@ -204,8 +204,8 @@ const Insights = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm">10:00 - 12:00</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-16 bg-gray-200 rounded-full h-2">
-                      <div className="bg-orange-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                    <div className="w-16 bg-gray-200 rounded-full h-2 shadow-inner">
+                      <div className="bg-orange-600 h-2 rounded-full shadow-sm" style={{ width: '85%' }}></div>
                     </div>
                     <span className="text-sm font-medium">85%</span>
                   </div>
@@ -213,8 +213,8 @@ const Insights = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm">14:00 - 16:00</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-16 bg-gray-200 rounded-full h-2">
-                      <div className="bg-orange-600 h-2 rounded-full" style={{ width: '70%' }}></div>
+                    <div className="w-16 bg-gray-200 rounded-full h-2 shadow-inner">
+                      <div className="bg-orange-600 h-2 rounded-full shadow-sm" style={{ width: '70%' }}></div>
                     </div>
                     <span className="text-sm font-medium">70%</span>
                   </div>
@@ -222,8 +222,8 @@ const Insights = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm">09:00 - 10:00</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-16 bg-gray-200 rounded-full h-2">
-                      <div className="bg-orange-600 h-2 rounded-full" style={{ width: '60%' }}></div>
+                    <div className="w-16 bg-gray-200 rounded-full h-2 shadow-inner">
+                      <div className="bg-orange-600 h-2 rounded-full shadow-sm" style={{ width: '60%' }}></div>
                     </div>
                     <span className="text-sm font-medium">60%</span>
                   </div>
@@ -232,7 +232,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="truncate">Customer Satisfaction</CardTitle>
             </CardHeader>
@@ -260,7 +260,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="truncate">Booking Sources</CardTitle>
             </CardHeader>
