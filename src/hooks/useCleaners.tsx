@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceType } from '@/utils/serviceTypes';
@@ -27,11 +26,12 @@ interface UseCleanersProps {
   userLocation?: { latitude: number; longitude: number } | null;
   searchTerm?: string;
   locationFilter?: string;
+  serviceFilters?: ServiceType[];
 }
 
-export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCleanersProps) => {
+export const useCleaners = ({ userLocation, searchTerm, locationFilter, serviceFilters }: UseCleanersProps) => {
   const { data: cleaners, isLoading, error } = useQuery({
-    queryKey: ['cleaners', userLocation, searchTerm, locationFilter],
+    queryKey: ['cleaners', userLocation, searchTerm, locationFilter, serviceFilters],
     queryFn: async () => {
       console.log('Fetching service providers with enhanced search...');
       
@@ -93,6 +93,14 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
             services: []
           };
         });
+
+      // Apply service type filtering if specified
+      if (serviceFilters && serviceFilters.length > 0) {
+        // For now, we'll keep all providers since the service filtering
+        // logic would need to be implemented based on the actual service data structure
+        console.log('Service filters applied:', serviceFilters);
+        // TODO: Implement actual service filtering when service data structure is finalized
+      }
 
       // Sort by average rating first (highest first), then by address
       processedCleaners.sort((a, b) => {

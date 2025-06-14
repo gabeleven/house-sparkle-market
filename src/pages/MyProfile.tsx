@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { UnifiedProfileToggle } from '@/components/profile/UnifiedProfileToggle';
+import { ModernProfileSwitcher } from '@/components/profile/ModernProfileSwitcher';
+import { ServiceOfferings } from '@/components/profile/ServiceOfferings';
 import { CustomerModeView } from '@/components/profile/CustomerModeView';
 import { CleanerModeView } from '@/components/profile/CleanerModeView';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, Star } from 'lucide-react';
 import { useReviews } from '@/hooks/useReviews';
 import { ReviewSummary } from '@/components/reviews/ReviewSummary';
+import { ServiceType } from '@/utils/serviceTypes';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,7 +25,15 @@ const MyProfile = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [currentMode, setCurrentMode] = useState<'customer' | 'cleaner'>('customer');
+  const [switcherLoading, setSwitcherLoading] = useState(false);
   const { reviews } = useReviews({ cleanerId: user?.id });
+
+  // Mock services data - in a real app, this would come from the user's profile
+  const [userServices] = useState<ServiceType[]>([
+    'residential_cleaning',
+    'deep_cleaning',
+    'commercial_cleaning'
+  ]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -43,12 +53,21 @@ const MyProfile = () => {
     return null;
   }
 
-  const handleModeChange = (mode: 'customer' | 'cleaner') => {
+  const handleModeChange = async (mode: 'customer' | 'cleaner') => {
+    setSwitcherLoading(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
     setCurrentMode(mode);
+    setSwitcherLoading(false);
   };
 
   const handleViewPublicProfile = () => {
     navigate(`/public-profile/${user.id}`);
+  };
+
+  const handleManageServices = () => {
+    // Navigate to services management or open modal
+    console.log('Manage services clicked');
   };
 
   const averageRating = reviews.length > 0 
@@ -100,10 +119,21 @@ const MyProfile = () => {
         </div>
         
         <div className="space-y-6">
-          {/* Profile Mode Toggle moved to top */}
-          <UnifiedProfileToggle onModeChange={handleModeChange} />
+          {/* Modern Profile Mode Switcher */}
+          <ModernProfileSwitcher
+            currentMode={currentMode}
+            onModeChange={handleModeChange}
+            loading={switcherLoading}
+          />
+
+          {/* Services Offered - Now at the top */}
+          <ServiceOfferings
+            services={userServices}
+            isProvider={currentMode === 'cleaner'}
+            onManageServices={handleManageServices}
+          />
           
-          {/* Profile content based on current mode - sections are now organized within each mode view */}
+          {/* Profile content based on current mode */}
           {currentMode === 'customer' ? (
             <CustomerModeView />
           ) : (

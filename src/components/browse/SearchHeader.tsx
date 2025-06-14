@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, Filter } from 'lucide-react';
 import { LocationSearch } from '@/components/map/LocationSearch';
+import { ServiceFilters } from './ServiceFilters';
+import { ServiceType } from '@/utils/serviceTypes';
 import {
   Sheet,
   SheetContent,
@@ -18,6 +20,8 @@ interface SearchHeaderProps {
   setSearchTerm: (value: string) => void;
   locationFilter: string;
   setLocationFilter: (value: string) => void;
+  selectedServices: ServiceType[];
+  onServiceFiltersChange: (services: ServiceType[]) => void;
   onSearch: () => void;
   location: { latitude: number; longitude: number } | null;
   onRequestLocation: () => void;
@@ -28,6 +32,8 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   setSearchTerm,
   locationFilter,
   setLocationFilter,
+  selectedServices,
+  onServiceFiltersChange,
   onSearch,
   location,
   onRequestLocation,
@@ -119,13 +125,19 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               Use Simple Search
             </Button>
           )}
+
+          {selectedServices.length > 0 && (
+            <span className="text-sm text-primary font-medium">
+              {selectedServices.length} service{selectedServices.length !== 1 ? 's' : ''} selected
+            </span>
+          )}
         </div>
 
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="mt-2 sm:mt-0 pop-blue-btn">
               <Filter className="w-4 h-4 mr-2" />
-              Filters
+              Filters {selectedServices.length > 0 && `(${selectedServices.length})`}
             </Button>
           </SheetTrigger>
           <SheetContent>
@@ -136,7 +148,10 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               </SheetDescription>
             </SheetHeader>
             <div className="py-4">
-              <p className="text-sm text-muted-foreground">More filters coming soon...</p>
+              <ServiceFilters
+                selectedServices={selectedServices}
+                onServiceChange={onServiceFiltersChange}
+              />
             </div>
           </SheetContent>
         </Sheet>

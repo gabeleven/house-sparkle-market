@@ -15,6 +15,7 @@ import { ResultsContent } from "@/components/browse/ResultsContent";
 import { LocationAuthPrompt } from "@/components/browse/LocationAuthPrompt";
 import { SearchBreadcrumbs } from "@/components/browse/SearchBreadcrumbs";
 import { SubscriptionTier } from "@/types/subscription";
+import { ServiceType } from "@/utils/serviceTypes";
 
 const BrowseServices = () => {
   const [searchParams] = useSearchParams();
@@ -24,6 +25,7 @@ const BrowseServices = () => {
   
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [locationFilter, setLocationFilter] = useState(initialLocation);
+  const [selectedServices, setSelectedServices] = useState<ServiceType[]>([]);
   const [searchRadius, setSearchRadius] = useState(25);
   const [showMap, setShowMap] = useState(autoOpenMap || false);
   const [useGoogleMaps, setUseGoogleMaps] = useState(true);
@@ -60,11 +62,20 @@ const BrowseServices = () => {
   const { cleaners, isLoading, error } = useCleaners({
     userLocation: location,
     searchTerm: searchTerm,
-    locationFilter: locationFilter
+    locationFilter: locationFilter,
+    serviceFilters: selectedServices
   });
 
   const handleSearch = () => {
-    console.log('Search triggered with term:', searchTerm, 'and location:', locationFilter);
+    console.log('Search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
+  };
+
+  const handleServiceFiltersChange = (services: ServiceType[]) => {
+    setSelectedServices(services);
+    // Automatically trigger search when filters change
+    setTimeout(() => {
+      handleSearch();
+    }, 100);
   };
 
   const handleRadiusChange = (newRadius: number) => {
@@ -129,6 +140,8 @@ const BrowseServices = () => {
           setSearchTerm={setSearchTerm}
           locationFilter={locationFilter}
           setLocationFilter={setLocationFilter}
+          selectedServices={selectedServices}
+          onServiceFiltersChange={handleServiceFiltersChange}
           onSearch={handleSearch}
           location={location}
           onRequestLocation={requestLocation}
