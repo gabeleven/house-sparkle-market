@@ -4,8 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Star } from 'lucide-react';
-import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
+import { MapPin, Star, Eye, Calendar } from 'lucide-react';
 import { useProfileDialog } from '@/hooks/useProfileDialog';
 import { ProfileViewDialog } from '@/components/ProfileViewDialog';
 
@@ -44,6 +43,11 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
     openProfileDialog(cleaner.id, cleaner.business_name || cleaner.full_name);
   };
 
+  const handleBookNow = () => {
+    // Navigate to booking page or open booking modal
+    window.location.href = `/booking?provider=${cleaner.id}`;
+  };
+
   return (
     <>
       <div className="w-80 p-4">
@@ -71,11 +75,24 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
                 </div>
               )}
               {cleaner.distance && (
-                <span className="text-sm text-purple-600 font-medium">
+                <span className="text-sm text-primary font-medium">
                   {cleaner.distance.toFixed(1)} km away
                 </span>
               )}
             </div>
+
+            {/* Rating Display */}
+            {cleaner.average_rating && (
+              <div className="flex items-center mt-1">
+                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                <span className="text-sm font-medium ml-1">
+                  {cleaner.average_rating.toFixed(1)}
+                </span>
+                <span className="text-sm text-gray-500 ml-1">
+                  ({cleaner.total_reviews || 0})
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -83,6 +100,15 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">
             {cleaner.brief_description}
           </p>
+        )}
+
+        {/* Hourly Rate */}
+        {cleaner.hourly_rate && (
+          <div className="mb-3">
+            <span className="text-sm font-medium text-green-600">
+              ${cleaner.hourly_rate}/hour
+            </span>
+          </div>
         )}
 
         {cleaner.services && cleaner.services.length > 0 && (
@@ -101,13 +127,23 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
         )}
 
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1" onClick={handleViewProfile}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1" 
+            onClick={handleViewProfile}
+          >
+            <Eye className="w-3 h-3 mr-1" />
             View Profile
           </Button>
-          <ContactViaHousieButton 
-            cleanerId={cleaner.id} 
-            className="flex-1 text-xs px-2"
-          />
+          <Button 
+            size="sm" 
+            className="flex-1"
+            onClick={handleBookNow}
+          >
+            <Calendar className="w-3 h-3 mr-1" />
+            Book Now
+          </Button>
         </div>
       </div>
 

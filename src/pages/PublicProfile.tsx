@@ -6,13 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
-import { MapPin, Star, DollarSign, Clock, Award, MessageCircle } from 'lucide-react';
+import { MapPin, Star, DollarSign, Clock, Award, MessageCircle, User } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
-import { ServiceType, serviceTypeIcons, serviceTypeLabels } from '@/utils/serviceTypes';
 
 interface PublicProfileData {
   id: string;
+  user_id: string;
   full_name: string;
   email: string;
   profile_photo_url?: string;
@@ -49,7 +48,7 @@ const PublicProfile = () => {
     try {
       console.log('Loading public profile for user ID:', id);
       
-      // First try to get the provider profile
+      // Get provider profile with services
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
         .select(`
@@ -70,7 +69,8 @@ const PublicProfile = () => {
       if (providerData && providerData.profiles) {
         const profiles = Array.isArray(providerData.profiles) ? providerData.profiles[0] : providerData.profiles;
         setProfile({
-          id: providerData.user_id,
+          id: providerData.id,
+          user_id: providerData.user_id,
           full_name: profiles.full_name,
           email: profiles.email,
           profile_photo_url: providerData.profile_photo_url,
@@ -102,6 +102,7 @@ const PublicProfile = () => {
 
         setProfile({
           id: profileData.id,
+          user_id: profileData.id,
           full_name: profileData.full_name,
           email: profileData.email,
           profile_photo_url: profileData.profile_photo_url,
@@ -148,6 +149,12 @@ const PublicProfile = () => {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h1>
             <p className="text-gray-600">The profile you're looking for doesn't exist or isn't available.</p>
+            <Button 
+              onClick={() => navigate('/browse-services')} 
+              className="mt-4"
+            >
+              Browse Service Providers
+            </Button>
           </div>
         </div>
       </div>
@@ -158,14 +165,15 @@ const PublicProfile = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Info */}
-          <div className="lg:col-span-2">
-            <Card className="mb-6">
+          {/* Main Profile Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Provider Basic Information */}
+            <Card>
               <CardContent className="p-8">
                 <div className="flex items-start gap-6 mb-6">
                   <Avatar className="w-24 h-24">
                     <AvatarImage src={profile.profile_photo_url || ''} />
-                    <AvatarFallback className="bg-purple-100 text-purple-600 text-2xl font-semibold">
+                    <AvatarFallback className="bg-primary/10 text-primary text-2xl font-semibold">
                       {profile.full_name?.charAt(0)?.toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -176,7 +184,7 @@ const PublicProfile = () => {
                     </h1>
                     
                     {profile.business_name && (
-                      <p className="text-xl text-purple-600 font-medium mb-3">
+                      <p className="text-xl text-primary font-medium mb-3">
                         {profile.business_name}
                       </p>
                     )}
@@ -192,7 +200,7 @@ const PublicProfile = () => {
                         </span>
                       </div>
                       
-                      {profile.years_experience && (
+                      {profile.years_experience && profile.years_experience > 0 && (
                         <Badge variant="secondary" className="text-sm">
                           <Award className="w-4 h-4 mr-1" />
                           {profile.years_experience} years experience
@@ -200,6 +208,7 @@ const PublicProfile = () => {
                       )}
                     </div>
 
+                    {/* Service Area Information */}
                     {profile.address && (
                       <div className="flex items-center text-gray-600 mb-4">
                         <MapPin className="w-5 h-5 mr-2" />
@@ -210,44 +219,60 @@ const PublicProfile = () => {
                       </div>
                     )}
 
-                    {profile.hourly_rate && (
-                      <div className="flex items-center text-green-600 mb-4">
-                        <DollarSign className="w-5 h-5 mr-1" />
-                        <span className="font-semibold text-lg">${getDisplayRate()}/hour</span>
-                        <span className="text-gray-500 ml-1">
-                          {profile.hourly_rate && profile.hourly_rate > 0 ? 'quoted rate' : 'starting rate'}
-                        </span>
-                      </div>
-                    )}
+                    {/* Hourly Rate */}
+                    <div className="flex items-center text-green-600 mb-4">
+                      <DollarSign className="w-5 h-5 mr-1" />
+                      <span className="font-semibold text-lg">${getDisplayRate()}/hour</span>
+                      <span className="text-gray-500 ml-1">
+                        {profile.hourly_rate && profile.hourly_rate > 0 ? 'quoted rate' : 'starting rate'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
+                {/* Brief Description */}
                 {profile.bio && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
                     <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
                   </div>
                 )}
-
-                {profile.services && profile.services.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Services Offered</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {profile.services.map((service, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg"
-                        >
-                          <span className="text-sm font-medium text-gray-700">
-                            {service.service_category?.name || 'Service'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </CardContent>
             </Card>
+
+            {/* Services Offered - Prominent Section */}
+            {profile.services && profile.services.length > 0 && (
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Services Offered</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {profile.services.map((service, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border"
+                      >
+                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-900">
+                            {service.service_categories?.name || 'Service'}
+                          </span>
+                          {service.description && (
+                            <p className="text-sm text-gray-600 mt-1">{service.description}</p>
+                          )}
+                          {service.base_price && (
+                            <p className="text-sm text-green-600 font-medium">
+                              From ${service.base_price}/{service.price_unit || 'hour'}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Reviews Section */}
             <Card>
@@ -284,35 +309,28 @@ const PublicProfile = () => {
             </Card>
           </div>
 
-          {/* Contact Section */}
+          {/* Contact Sidebar */}
           <div className="lg:col-span-1">
             <Card className="sticky top-6">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
                 
-                {profile.hourly_rate && (
-                  <div className="mb-4 p-4 bg-green-50 rounded-lg">
-                    <div className="flex items-center text-green-700 mb-2">
-                      <DollarSign className="w-5 h-5 mr-2" />
-                      <span className="font-semibold">
-                        {profile.hourly_rate && profile.hourly_rate > 0 ? 'Quoted Rate' : 'Starting Rate'}
-                      </span>
-                    </div>
-                    <p className="text-2xl font-bold text-green-600">${getDisplayRate()}/hour</p>
-                    <p className="text-sm text-green-600">Custom quotes available</p>
+                {/* Rate Display */}
+                <div className="mb-4 p-4 bg-green-50 rounded-lg">
+                  <div className="flex items-center text-green-700 mb-2">
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    <span className="font-semibold">
+                      {profile.hourly_rate && profile.hourly_rate > 0 ? 'Quoted Rate' : 'Starting Rate'}
+                    </span>
                   </div>
-                )}
+                  <p className="text-2xl font-bold text-green-600">${getDisplayRate()}/hour</p>
+                  <p className="text-sm text-green-600">Custom quotes available</p>
+                </div>
 
+                {/* Contact Button */}
                 <div className="space-y-3">
-                  <ContactViaHousieButton 
-                    cleanerId={profile.id}
-                    size="lg"
-                    className="w-full"
-                  />
-
                   <Button
                     onClick={handleMessageProvider}
-                    variant="outline"
                     size="lg"
                     className="w-full"
                   >
@@ -322,12 +340,12 @@ const PublicProfile = () => {
                 </div>
 
                 <div className="text-center text-sm text-gray-500 mt-4">
-                  <p>All communications are handled through Housie's secure messaging system</p>
+                  <p>All communications are handled through our secure messaging system</p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Map Section */}
+            {/* Service Area Map Placeholder */}
             {profile.latitude && profile.longitude && (
               <Card className="mt-6">
                 <CardContent className="p-6">
@@ -339,6 +357,11 @@ const PublicProfile = () => {
                       <p className="text-sm">
                         Located in {profile.address}
                       </p>
+                      {profile.service_radius_km && (
+                        <p className="text-sm">
+                          Service radius: {profile.service_radius_km}km
+                        </p>
+                      )}
                     </div>
                   </div>
                 </CardContent>

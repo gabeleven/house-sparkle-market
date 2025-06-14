@@ -2,42 +2,67 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, Loader2 } from 'lucide-react';
 
 interface LocationSearchProps {
   onLocationSearch: (location: { lat: number; lng: number; address: string }) => void;
   placeholder?: string;
+  initialValue?: string;
 }
 
-export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or postal code..." }: LocationSearchProps) => {
-  const [searchTerm, setSearchTerm] = useState('');
+export const LocationSearch = ({ 
+  onLocationSearch, 
+  placeholder = "Search area or postal code...",
+  initialValue = ""
+}: LocationSearchProps) => {
+  const [searchTerm, setSearchTerm] = useState(initialValue);
   const [isSearching, setIsSearching] = useState(false);
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
 
   useEffect(() => {
+    setSearchTerm(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
     if (window.google && window.google.maps && window.google.maps.places) {
-      // Initialize the new Places API services
       autocompleteService.current = new google.maps.places.AutocompleteService();
       
-      // Create a dummy map for PlacesService (required by Google)
       const dummyMap = new google.maps.Map(document.createElement('div'));
       placesService.current = new google.maps.places.PlacesService(dummyMap);
     }
   }, []);
 
   const handleSearch = async () => {
-    if (!searchTerm.trim() || !autocompleteService.current || !placesService.current) return;
+    if (!searchTerm.trim()) return;
 
     setIsSearching(true);
     
     try {
-      // Use the new Places API (New) approach with Canada-wide bounds
+      // First try Places API if available
+      if (autocompleteService.current && placesService.current) {
+        await searchWithPlacesAPI();
+      } else {
+        // Fallback to Geocoding API
+        await fallbackGeocode();
+      }
+    } catch (error) {
+      console.error('Location search error:', error);
+      // Try fallback geocoding on any error
+      await fallbackGeocode();
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const searchWithPlacesAPI = async () => {
+    if (!autocompleteService.current || !placesService.current) return;
+
+    try {
       const predictions = await new Promise<google.maps.places.AutocompletePrediction[]>((resolve, reject) => {
-        // Create proper LatLngBounds for all of Canada
         const canadaBounds = new google.maps.LatLngBounds(
-          new google.maps.LatLng(41.7, -141.0), // Southwest (includes southern Ontario to western BC)
-          new google.maps.LatLng(83.1, -52.6)   // Northeast (includes Arctic to Atlantic)
+          new google.maps.LatLng(41.7, -141.0),
+          new google.maps.LatLng(83.1, -52.6)
         );
 
         autocompleteService.current!.getPlacePredictions(
@@ -58,7 +83,6 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
       });
 
       if (predictions.length > 0) {
-        // Get detailed place information using place_id
         const placeDetails = await new Promise<google.maps.places.PlaceResult>((resolve, reject) => {
           placesService.current!.getDetails(
             {
@@ -77,31 +101,33 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
 
         if (placeDetails.geometry?.location) {
           const location = placeDetails.geometry.location;
-          // Direct function calls since Google Maps LatLng objects always have lat() and lng() as methods
-          const lat = location.lat();
-          const lng = location.lng();
+          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
+          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
           
           onLocationSearch({
             lat: lat,
             lng: lng,
             address: placeDetails.formatted_address || placeDetails.name || searchTerm
           });
+          return;
         }
-      } else {
-        // Fallback to Geocoding API if no predictions
-        await fallbackGeocode();
       }
-    } catch (error) {
-      console.error('Places API search error:', error);
-      // Fallback to Geocoding API
+      
+      // If Places API doesn't work, fall back to geocoding
       await fallbackGeocode();
-    } finally {
-      setIsSearching(false);
+    } catch (error) {
+      console.error('Places API error:', error);
+      await fallbackGeocode();
     }
   };
 
   const fallbackGeocode = async () => {
     try {
+      if (!window.google?.maps?.Geocoder) {
+        console.error('Google Maps Geocoder not available');
+        return;
+      }
+
       const geocoder = new google.maps.Geocoder();
       
       const result = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
@@ -123,9 +149,12 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
 
       if (result.length > 0) {
         const location = result[0].geometry.location;
+        const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
+        const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+        
         onLocationSearch({
-          lat: location.lat(),
-          lng: location.lng(),
+          lat: lat,
+          lng: lng,
           address: result[0].formatted_address
         });
       }
@@ -136,6 +165,7 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleSearch();
     }
   };
@@ -151,6 +181,7 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyPress={handleKeyPress}
           className="pl-10"
+          disabled={isSearching}
         />
       </div>
       <Button 
@@ -159,7 +190,7 @@ export const LocationSearch = ({ onLocationSearch, placeholder = "Search area or
         size="sm"
       >
         {isSearching ? (
-          <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
           <Search className="w-4 h-4" />
         )}

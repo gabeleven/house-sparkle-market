@@ -1,152 +1,161 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Clock, DollarSign, MessageCircle, Calendar, Eye } from 'lucide-react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Star, MapPin, Clock, Eye, Calendar } from 'lucide-react';
+import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
 import { ServiceIcons } from './ServiceIcons';
-import { hasStarterOrHigher, SubscriptionTier } from '@/types/subscription';
-import { BookingSlideOut } from '@/components/booking/BookingSlideOut';
+import { ServiceType } from '@/utils/serviceTypes';
 import { useNavigate } from 'react-router-dom';
+
+interface CleanerProfile {
+  id: string;
+  user_id?: string;
+  full_name: string;
+  business_name?: string;
+  brief_description?: string;
+  profile_photo_url?: string;
+  service_area_city?: string;
+  years_experience?: number;
+  services?: ServiceType[];
+  average_rating?: number;
+  total_reviews?: number;
+  hourly_rate?: number;
+  distance?: number;
+}
 
 interface CleanerCardWithSubscriptionProps {
   cleaner: CleanerProfile;
-  userSubscription?: SubscriptionTier;
+  showSubscriptionBadge?: boolean;
+  showServiceIcons?: boolean;
+  compact?: boolean;
 }
 
-export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionProps> = ({ 
-  cleaner, 
-  userSubscription = 'FREE'
+export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionProps> = ({
+  cleaner,
+  showSubscriptionBadge = false,
+  showServiceIcons = true,
+  compact = false
 }) => {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const navigate = useNavigate();
-  const showServiceIcons = hasStarterOrHigher(userSubscription);
-
-  const handleBookNow = () => {
-    setIsBookingOpen(true);
-  };
 
   const handleViewProfile = () => {
-    navigate(`/public-profile/${cleaner.id}`);
+    // Use user_id if available, otherwise fall back to id
+    const profileId = cleaner.user_id || cleaner.id;
+    navigate(`/public-profile/${profileId}`);
   };
 
-  const handleMessage = () => {
-    navigate(`/chat?provider=${cleaner.id}`);
+  const handleBookService = () => {
+    // Navigate to booking page with the provider ID
+    const providerId = cleaner.user_id || cleaner.id;
+    navigate(`/booking?provider=${providerId}`);
   };
+
+  const displayName = cleaner.business_name || cleaner.full_name;
+  const displayRate = cleaner.hourly_rate || 25;
 
   return (
-    <>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="relative">
-          <div className="h-48 bg-gradient-to-br from-purple-100 to-green-100 flex items-center justify-center">
-            {cleaner.profile_photo_url ? (
-              <img 
-                src={cleaner.profile_photo_url} 
-                alt={cleaner.full_name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-gray-500">
-                  {cleaner.full_name.charAt(0)}
-                </span>
+    <Card className="hover:shadow-lg transition-shadow duration-200">
+      <CardContent className={compact ? "p-4" : "p-6"}>
+        <div className="flex items-start gap-4">
+          <div className="relative">
+            <Avatar className={compact ? "w-12 h-12" : "w-16 h-16"}>
+              <AvatarImage src={cleaner.profile_photo_url || ''} />
+              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                {displayName.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            {showSubscriptionBadge && (
+              <div className="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
+                PRO
               </div>
             )}
           </div>
-          {cleaner.average_rating && (
-            <Badge className="absolute top-2 right-2 bg-white/90 text-gray-800">
-              <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-              {cleaner.average_rating.toFixed(1)}
-            </Badge>
-          )}
-        </div>
 
-        <CardContent className="p-4">
-          <div className="space-y-3">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                {cleaner.business_name || cleaner.full_name}
-              </h3>
-              {cleaner.business_name && (
-                <p className="text-sm text-gray-600">{cleaner.full_name}</p>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <h3 className={`font-semibold text-gray-900 truncate ${compact ? 'text-base' : 'text-lg'}`}>
+                  {displayName}
+                </h3>
+                {cleaner.business_name && (
+                  <p className="text-sm text-gray-600">{cleaner.full_name}</p>
+                )}
+              </div>
+              
+              <div className="flex items-center text-sm text-green-600 font-semibold">
+                ${displayRate}/hr
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 mb-3">
+              {cleaner.average_rating && (
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  <span className="text-sm font-medium ml-1">
+                    {cleaner.average_rating.toFixed(1)}
+                  </span>
+                  <span className="text-sm text-gray-500 ml-1">
+                    ({cleaner.total_reviews || 0})
+                  </span>
+                </div>
+              )}
+
+              {cleaner.years_experience !== null && cleaner.years_experience > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {cleaner.years_experience} years
+                </Badge>
               )}
             </div>
 
-            {cleaner.brief_description && (
-              <p className="text-sm text-gray-600 line-clamp-2">
+            {cleaner.service_area_city && (
+              <div className="flex items-center text-sm text-gray-500 mb-3">
+                <MapPin className="w-4 h-4 mr-1" />
+                <span>{cleaner.service_area_city}</span>
+                {cleaner.distance && (
+                  <span className="ml-2 text-primary font-medium">
+                    {cleaner.distance.toFixed(1)} km away
+                  </span>
+                )}
+              </div>
+            )}
+
+            {cleaner.brief_description && !compact && (
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                 {cleaner.brief_description}
               </p>
             )}
 
             <ServiceIcons 
-              services={cleaner.services} 
-              showIcons={showServiceIcons}
+              services={cleaner.services || null} 
+              showIcons={showServiceIcons} 
             />
 
-            <div className="flex items-center text-sm text-gray-500">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span>{cleaner.service_area_city || 'Service area not specified'}</span>
-            </div>
-
-            {cleaner.years_experience !== null && (
-              <div className="flex items-center text-sm text-gray-500">
-                <Clock className="w-4 h-4 mr-1" />
-                <span>{cleaner.years_experience} years experience</span>
-              </div>
-            )}
-
-            {cleaner.hourly_rate && (
-              <div className="flex items-center text-sm font-medium text-green-600">
-                <DollarSign className="w-4 h-4 mr-1" />
-                <span>${cleaner.hourly_rate} / hour</span>
-              </div>
-            )}
-
-            {cleaner.total_reviews && cleaner.total_reviews > 0 && (
-              <div className="flex items-center text-sm text-gray-500">
-                <span>{cleaner.total_reviews} reviews</span>
-              </div>
-            )}
-
-            <div className="flex gap-2 pt-2">
-              <Button 
-                onClick={handleViewProfile}
-                size="sm" 
+            <div className="flex gap-2 mt-4">
+              <Button
                 variant="outline"
+                size={compact ? "sm" : "default"}
+                onClick={handleViewProfile}
                 className="flex-1"
               >
-                <Eye className="w-4 h-4 mr-1" />
+                <Eye className="w-4 h-4 mr-2" />
                 View Profile
               </Button>
-              <Button 
-                onClick={handleBookNow}
-                size="sm" 
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+              <Button
+                size={compact ? "sm" : "default"}
+                onClick={handleBookService}
+                className="flex-1"
               >
-                <Calendar className="w-4 h-4 mr-1" />
-                Book now
+                <Calendar className="w-4 h-4 mr-2" />
+                Book Now
               </Button>
             </div>
-            
-            <Button 
-              onClick={handleMessage}
-              size="sm" 
-              variant="outline" 
-              className="w-full"
-            >
-              <MessageCircle className="w-4 h-4 mr-1" />
-              Message
-            </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      <BookingSlideOut
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        cleaner={cleaner}
-      />
-    </>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
