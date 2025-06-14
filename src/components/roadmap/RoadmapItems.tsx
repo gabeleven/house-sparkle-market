@@ -25,7 +25,7 @@ const RoadmapItems = () => {
         "Service area mapping and filtering",
         "Basic booking and messaging system"
       ],
-      joke: "Where Canadian self-employed heroes find their customers (and customers find heroes who actually show up)."
+      joke: "Where Canadian self-employed heroes find their customers (and customers find heroes who actually show up on time - revolutionary concept, eh?)."
     },
     {
       phase: "Phase 2", 
@@ -40,7 +40,7 @@ const RoadmapItems = () => {
         "Photo verification for completed work",
         "Real-time booking notifications"
       ],
-      joke: "Because managing your business from your phone shouldn't feel like solving a Rubik's cube blindfolded."
+      joke: "Because managing your business from your phone shouldn't require the technical skills of a NASA engineer or the patience of a saint."
     },
     {
       phase: "Phase 3",
@@ -55,7 +55,7 @@ const RoadmapItems = () => {
         "CRA-ready quarterly reports",
         "Basic market demand analytics"
       ],
-      joke: "Making tax season less scary than a Toronto housing market report."
+      joke: "Making tax season less terrifying than running into your ex at the grocery store. CRA compliance so smooth, you'll actually look forward to April."
     },
     {
       phase: "Phase 4",
@@ -70,7 +70,7 @@ const RoadmapItems = () => {
         "Parking ticket verification system",
         "Smart business notifications and alerts"
       ],
-      joke: "Our AI is so smart, it can probably dispute your parking tickets better than you can (and definitely better than that lawyer cousin who 'knows stuff')."
+      joke: "Our AI is so smart, it'll dispute your parking tickets more effectively than your lawyer cousin who 'knows someone' at city hall."
     },
     {
       phase: "Phase 5",
@@ -85,7 +85,7 @@ const RoadmapItems = () => {
         "White-label licensing platform",
         "Advanced enterprise features"
       ],
-      joke: "By this point, HOUSIE will know your business better than you do (but in a helpful way, not a creepy surveillance way)."
+      joke: "By this point, HOUSIE will predict your business needs better than your mom predicts the weather (and that's saying something)."
     }
   ];
 

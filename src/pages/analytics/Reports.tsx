@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,8 @@ import { useProviderProfile } from '@/hooks/useProviderProfile';
 import { useTaxCompliance } from '@/hooks/useTaxCompliance';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ReportsFilter } from '@/components/analytics/ReportsFilter';
+import { DateRange } from 'react-day-picker';
 
 const Reports = () => {
   const { user, loading: authLoading } = useAuth();
@@ -24,6 +27,8 @@ const Reports = () => {
     isLoading: taxLoading,
     generateTaxDocument 
   } = useTaxCompliance(provider?.id);
+
+  const [filters, setFilters] = useState<{ dateRange?: DateRange; reportType?: string }>({});
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -53,6 +58,11 @@ const Reports = () => {
     return null;
   }
 
+  const handleFilterChange = (newFilters: { dateRange?: DateRange; reportType?: string }) => {
+    setFilters(newFilters);
+    console.log('Applied filters:', newFilters);
+  };
+
   const handleGenerateDocument = (type: 't4a' | 'quarterly_summary' | 'annual_summary') => {
     generateTaxDocument.mutate({ documentType: type });
   };
@@ -79,19 +89,15 @@ const Reports = () => {
                   <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 truncate">Tax Reports & Compliance</h1>
                 </div>
                 <p className="text-sm lg:text-base text-gray-600">Tax compliance dashboard and official documents</p>
+                {filters.dateRange && (
+                  <p className="text-xs lg:text-sm text-gray-500 mt-1">
+                    Filtered: {filters.dateRange.from?.toLocaleDateString()} - {filters.dateRange.to?.toLocaleDateString()}
+                  </p>
+                )}
               </div>
             </div>
             
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex-shrink-0 bg-white/80">
-                <Filter className="h-4 w-4 mr-1 lg:mr-2" />
-                <span className="hidden sm:inline">Filter</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex-shrink-0 bg-white/80">
-                <Calendar className="h-4 w-4 mr-1 lg:mr-2" />
-                <span className="hidden sm:inline">Date Range</span>
-              </Button>
-            </div>
+            <ReportsFilter onFilterChange={handleFilterChange} />
           </div>
         </div>
 

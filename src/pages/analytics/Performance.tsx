@@ -9,6 +9,7 @@ import { PerformanceChart } from '@/components/analytics/PerformanceChart';
 import { BookingChart } from '@/components/analytics/BookingChart';
 import { AnalyticsProvider, useAnalytics } from '@/contexts/AnalyticsContext';
 import { DateRangeButton } from '@/components/analytics/DateRangeButton';
+import { GoalsModal } from '@/components/analytics/GoalsModal';
 
 const PerformanceContent = () => {
   const { filters } = useAnalytics();
@@ -44,10 +45,14 @@ const PerformanceContent = () => {
             <div className="flex gap-2">
               <DateRangeButton />
               <Badge variant="outline" className="bg-white/80">Starter+</Badge>
-              <Button variant="outline" size="sm" className="bg-white/80">
-                <Target className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Set Goals</span>
-              </Button>
+              <GoalsModal
+                trigger={
+                  <Button variant="outline" size="sm" className="bg-white/80">
+                    <Target className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Set Goals</span>
+                  </Button>
+                }
+              />
             </div>
           </div>
         </div>
