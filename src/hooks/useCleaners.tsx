@@ -5,6 +5,7 @@ import { ServiceType } from '@/utils/serviceTypes';
 
 export interface CleanerProfile {
   id: string;
+  user_id?: string; // Add this property to fix the interface
   full_name: string;
   email: string;
   business_name: string | null;

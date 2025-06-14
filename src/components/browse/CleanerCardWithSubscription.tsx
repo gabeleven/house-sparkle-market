@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,25 +8,12 @@ import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
 import { ServiceIcons } from './ServiceIcons';
 import { ServiceType } from '@/utils/serviceTypes';
 import { useNavigate } from 'react-router-dom';
-
-interface CleanerProfile {
-  id: string;
-  user_id?: string;
-  full_name: string;
-  business_name?: string;
-  brief_description?: string;
-  profile_photo_url?: string;
-  service_area_city?: string;
-  years_experience?: number;
-  services?: ServiceType[];
-  average_rating?: number;
-  total_reviews?: number;
-  hourly_rate?: number;
-  distance?: number;
-}
+import { CleanerProfile } from '@/hooks/useCleaners';
+import { SubscriptionTier } from '@/types/subscription';
 
 interface CleanerCardWithSubscriptionProps {
   cleaner: CleanerProfile;
+  userSubscription?: SubscriptionTier; // Add this property
   showSubscriptionBadge?: boolean;
   showServiceIcons?: boolean;
   compact?: boolean;
@@ -35,6 +21,7 @@ interface CleanerCardWithSubscriptionProps {
 
 export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionProps> = ({
   cleaner,
+  userSubscription = 'FREE',
   showSubscriptionBadge = false,
   showServiceIcons = true,
   compact = false

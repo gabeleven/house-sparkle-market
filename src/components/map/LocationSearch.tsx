@@ -101,8 +101,9 @@ export const LocationSearch = ({
 
         if (placeDetails.geometry?.location) {
           const location = placeDetails.geometry.location;
-          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
-          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+          // Fix: Properly handle Google Maps location type
+          const lat = typeof location.lat === 'function' ? location.lat() : location.lat as number;
+          const lng = typeof location.lng === 'function' ? location.lng() : location.lng as number;
           
           onLocationSearch({
             lat: lat,
@@ -149,8 +150,9 @@ export const LocationSearch = ({
 
       if (result.length > 0) {
         const location = result[0].geometry.location;
-        const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
-        const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+        // Fix: Properly handle Google Maps location type
+        const lat = typeof location.lat === 'function' ? location.lat() : location.lat as number;
+        const lng = typeof location.lng === 'function' ? location.lng() : location.lng as number;
         
         onLocationSearch({
           lat: lat,
