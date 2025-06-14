@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DollarSign, MessageCircle, MapPin } from 'lucide-react';
+import { DollarSign, MessageCircle, MapPin, Calendar } from 'lucide-react';
 
 interface ContactSidebarProps {
   profile: {
@@ -21,6 +21,12 @@ export const ContactSidebar: React.FC<ContactSidebarProps> = ({
   displayRate, 
   onMessageProvider 
 }) => {
+  const handleBookNow = () => {
+    // For now, this will redirect to messaging
+    // In the future, this could open a booking modal or redirect to a booking page
+    onMessageProvider();
+  };
+
   return (
     <div className="lg:col-span-1">
       <Card className="sticky top-6">
@@ -39,10 +45,20 @@ export const ContactSidebar: React.FC<ContactSidebarProps> = ({
             <p className="text-sm text-green-600">Custom quotes available</p>
           </div>
 
-          {/* Contact Button */}
+          {/* Contact Buttons */}
           <div className="space-y-3">
             <Button
+              onClick={handleBookNow}
+              size="lg"
+              className="w-full"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Book Now
+            </Button>
+            
+            <Button
               onClick={onMessageProvider}
+              variant="outline"
               size="lg"
               className="w-full"
             >

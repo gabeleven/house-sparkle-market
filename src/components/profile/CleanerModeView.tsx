@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -197,16 +196,16 @@ export const CleanerModeView = () => {
         </CardContent>
       </Card>
 
-      {/* Services Offered Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="w-5 h-5" />
-            Services Offered
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {providerServices.length > 0 ? (
+      {/* Services Offered Card - Only show if there are services */}
+      {providerServices.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="w-5 h-5" />
+              Services Offered
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="flex flex-wrap gap-2 mb-4">
               {providerServices.map((service) => {
                 const categoryName = service.service_category?.name;
@@ -229,15 +228,9 @@ export const CleanerModeView = () => {
                 );
               })}
             </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>No services configured yet</p>
-              <p className="text-sm">Add your cleaning services below to attract customers</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Service Types Selector */}
       {user && (
