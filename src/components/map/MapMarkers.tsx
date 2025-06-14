@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Marker, InfoWindow } from '@react-google-maps/api';
+import { Marker, InfoWindow, Circle } from '@react-google-maps/api';
 import { CleanerPopup } from './CleanerPopup';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { useNavigate } from 'react-router-dom';
@@ -59,21 +59,21 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
       )}
 
       {/* Service radius circle */}
-      {userLocation && window.google && (
-        <div>
-          {new google.maps.Circle({
-            center: {
-              lat: userLocation.latitude,
-              lng: userLocation.longitude
-            },
-            radius: radius * 1000, // Convert km to meters
+      {userLocation && (
+        <Circle
+          center={{
+            lat: userLocation.latitude,
+            lng: userLocation.longitude
+          }}
+          radius={radius * 1000} // Convert km to meters
+          options={{
             fillColor: '#3B82F6',
             fillOpacity: 0.1,
             strokeColor: '#3B82F6',
             strokeOpacity: 0.3,
             strokeWeight: 2
-          })}
-        </div>
+          }}
+        />
       )}
 
       {/* Cleaner markers */}
