@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useProviderProfile } from '@/hooks/useProviderProfile';
 import { ServiceTypesSelector } from '@/components/profile/ServiceTypesSelector';
-import { serviceTypeLabels, serviceTypeIcons } from '@/utils/serviceTypes';
+import { serviceTypeIcons, ServiceType } from '@/utils/serviceTypes';
 import { Briefcase, DollarSign, Clock, Award, Star, MapPin, Settings } from 'lucide-react';
 
 export const CleanerModeView = () => {
@@ -48,6 +48,34 @@ export const CleanerModeView = () => {
   const handleSaveProfile = () => {
     updateProvider.mutate(formData);
     setIsEditing(false);
+  };
+
+  const getServiceIcon = (serviceCategoryName: string) => {
+    if (!serviceCategoryName) return Settings;
+    
+    const serviceNameLower = serviceCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
+    
+    // Map common service category names to our service types
+    const serviceMapping: Record<string, ServiceType> = {
+      'residential_cleaning': 'residential_cleaning',
+      'end_of_lease_cleaning': 'end_of_lease_cleaning',
+      'commercial_cleaning': 'commercial_cleaning',
+      'chalet_airbnb_cleaning': 'chalet_airbnb_cleaning',
+      'window_washing': 'window_washing',
+      'ironing': 'ironing',
+      'light_housekeeping': 'light_housekeeping',
+      'deep_cleaning': 'deep_cleaning',
+      'cleaning': 'residential_cleaning',
+      'house_cleaning': 'residential_cleaning',
+      'office_cleaning': 'commercial_cleaning'
+    };
+
+    const mappedServiceType = serviceMapping[serviceNameLower];
+    if (mappedServiceType && serviceTypeIcons[mappedServiceType]) {
+      return serviceTypeIcons[mappedServiceType];
+    }
+    
+    return Settings;
   };
 
   // Get services from provider data
@@ -209,11 +237,7 @@ export const CleanerModeView = () => {
             <div className="flex flex-wrap gap-2 mb-4">
               {providerServices.map((service) => {
                 const categoryName = service.service_category?.name;
-                // Map service category names to our service type system for icons
-                const serviceTypeKey = categoryName?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-                const IconComponent = serviceTypeKey && serviceTypeIcons[serviceTypeKey as keyof typeof serviceTypeIcons] 
-                  ? serviceTypeIcons[serviceTypeKey as keyof typeof serviceTypeIcons] 
-                  : Settings;
+                const IconComponent = getServiceIcon(categoryName || '');
                 
                 return (
                   <Badge key={service.id} variant="secondary" className="flex items-center gap-1">
