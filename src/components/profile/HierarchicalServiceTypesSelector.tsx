@@ -4,9 +4,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight, AlertCircle } from 'lucide-react';
+import { ChevronDown, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -19,6 +18,13 @@ import {
   serviceTypeIcons
 } from '@/utils/serviceTypes';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 
 interface HierarchicalServiceTypesSelectorProps {
   cleanerId: string;
@@ -31,7 +37,6 @@ export const HierarchicalServiceTypesSelector = ({ cleanerId }: HierarchicalServ
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [providerId, setProviderId] = useState<string | null>(null);
-  const [expandedCategories, setExpandedCategories] = useState<Set<ServiceCategory>>(new Set(['cleaning']));
 
   useEffect(() => {
     if (cleanerId) {
@@ -39,16 +44,6 @@ export const HierarchicalServiceTypesSelector = ({ cleanerId }: HierarchicalServ
       loadSelectedServices();
     }
   }, [cleanerId]);
-
-  const toggleCategory = (category: ServiceCategory) => {
-    const newExpanded = new Set(expandedCategories);
-    if (newExpanded.has(category)) {
-      newExpanded.delete(category);
-    } else {
-      newExpanded.add(category);
-    }
-    setExpandedCategories(newExpanded);
-  };
 
   const verifyProviderProfile = async () => {
     try {
@@ -225,72 +220,64 @@ export const HierarchicalServiceTypesSelector = ({ cleanerId }: HierarchicalServ
         <CardTitle>Services Offered</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {Object.entries(servicesByCategory).map(([category, services]) => {
-            const CategoryIcon = serviceCategoryIcons[category as ServiceCategory];
-            const isExpanded = expandedCategories.has(category as ServiceCategory);
-            const selectedCount = getCategoryServiceCount(category as ServiceCategory);
-            
-            return (
-              <div key={category} className="border rounded-lg">
-                <Collapsible
-                  open={isExpanded}
-                  onOpenChange={() => toggleCategory(category as ServiceCategory)}
-                >
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-between p-4 h-auto hover:bg-muted/50"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <CategoryIcon className="w-5 h-5 text-primary" />
-                        <span className="font-medium text-left">
-                          {serviceCategoryLabels[category as ServiceCategory]}
+        <NavigationMenu className="w-full max-w-none">
+          <NavigationMenuList className="flex-wrap justify-start space-x-2">
+            {Object.entries(servicesByCategory).map(([category, services]) => {
+              const CategoryIcon = serviceCategoryIcons[category as ServiceCategory];
+              const selectedCount = getCategoryServiceCount(category as ServiceCategory);
+              
+              return (
+                <NavigationMenuItem key={category}>
+                  <NavigationMenuTrigger className="h-auto px-4 py-3 bg-background hover:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <div className="flex items-center space-x-2">
+                      <CategoryIcon className="w-4 h-4 text-primary" />
+                      <span className="font-medium">
+                        {serviceCategoryLabels[category as ServiceCategory]}
+                      </span>
+                      {selectedCount > 0 && (
+                        <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full ml-2">
+                          {selectedCount}
                         </span>
-                        {selectedCount > 0 && (
-                          <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                            {selectedCount}
-                          </span>
-                        )}
-                      </div>
-                      {isExpanded ? (
-                        <ChevronDown className="w-4 h-4" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4" />
                       )}
-                    </Button>
-                  </CollapsibleTrigger>
+                      <ChevronDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </NavigationMenuTrigger>
                   
-                  <CollapsibleContent className="px-4 pb-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
+                  <NavigationMenuContent className="min-w-[400px] p-4 bg-background border shadow-lg">
+                    <div className="grid grid-cols-2 gap-4">
                       {services.map((serviceType) => {
                         const ServiceIcon = serviceTypeIcons[serviceType];
+                        const isSelected = selectedServices.includes(serviceType);
+                        
                         return (
-                          <div key={serviceType} className="flex items-center space-x-3">
+                          <div 
+                            key={serviceType} 
+                            className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent/30 transition-colors cursor-pointer"
+                            onClick={() => handleServiceChange(serviceType, !isSelected)}
+                          >
                             <Checkbox
-                              id={serviceType}
-                              checked={selectedServices.includes(serviceType)}
-                              onCheckedChange={(checked) => 
-                                handleServiceChange(serviceType, checked as boolean)
-                              }
+                              id={`${category}-${serviceType}`}
+                              checked={isSelected}
+                              onChange={() => {}} // Handled by parent div click
+                              className="pointer-events-none" // Prevent double handling
                             />
                             <Label 
-                              htmlFor={serviceType} 
-                              className="flex items-center space-x-2 cursor-pointer"
+                              htmlFor={`${category}-${serviceType}`}
+                              className="flex items-center space-x-2 cursor-pointer flex-1 pointer-events-none"
                             >
-                              <ServiceIcon className="w-4 h-4" />
-                              <span>{serviceTypeLabels[serviceType]}</span>
+                              <ServiceIcon className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm">{serviceTypeLabels[serviceType]}</span>
                             </Label>
                           </div>
                         );
                       })}
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-            );
-          })}
-        </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              );
+            })}
+          </NavigationMenuList>
+        </NavigationMenu>
       </CardContent>
     </Card>
   );
