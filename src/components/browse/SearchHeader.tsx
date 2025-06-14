@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, Filter } from 'lucide-react';
 import { LocationSearch } from '@/components/map/LocationSearch';
-import { ServiceFilters } from './ServiceFilters';
+import { HierarchicalServiceFilters } from './HierarchicalServiceFilters';
 import { ServiceType } from '@/utils/serviceTypes';
 import {
   Sheet,
@@ -137,18 +137,18 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="mt-2 sm:mt-0 pop-blue-btn">
               <Filter className="w-4 h-4 mr-2" />
-              Filters {selectedServices.length > 0 && `(${selectedServices.length})`}
+              Service Categories {selectedServices.length > 0 && `(${selectedServices.length})`}
             </Button>
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetTitle>Filter Results</SheetTitle>
+              <SheetTitle>Filter by Service Categories</SheetTitle>
               <SheetDescription>
-                Refine your search to find the perfect service provider across Canada.
+                Choose from organized service categories to find the perfect provider across Canada.
               </SheetDescription>
             </SheetHeader>
             <div className="py-4">
-              <ServiceFilters
+              <HierarchicalServiceFilters
                 selectedServices={selectedServices}
                 onServiceChange={onServiceFiltersChange}
               />
