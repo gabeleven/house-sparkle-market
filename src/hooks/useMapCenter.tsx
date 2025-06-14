@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,18 +6,6 @@ interface MapCenter {
   latitude: number;
   longitude: number;
   zoom: number;
-}
-
-interface CleanerProfile {
-  service_area_city?: string;
-  service_radius_km?: number;
-  latitude?: number;
-  longitude?: number;
-}
-
-interface CustomerProfile {
-  latitude?: number;
-  longitude?: number;
 }
 
 export const useMapCenter = () => {
@@ -155,24 +142,24 @@ export const useMapCenter = () => {
         }
 
         if (profile.user_role === 'cleaner') {
-          // Get cleaner's service area data
-          const { data: cleanerProfile } = await supabase
-            .from('cleaner_profiles')
-            .select('service_area_city, service_radius_km, latitude, longitude')
-            .eq('id', user.id)
+          // Get provider's service area data
+          const { data: providerProfile } = await supabase
+            .from('providers')
+            .select('address, service_radius_km, latitude, longitude')
+            .eq('user_id', user.id)
             .single();
 
-          if (cleanerProfile) {
+          if (providerProfile) {
             let centerLat: number;
             let centerLng: number;
             let zoom: number;
 
-            // Use coordinates if available, otherwise geocode city
-            if (cleanerProfile.latitude && cleanerProfile.longitude) {
-              centerLat = Number(cleanerProfile.latitude);
-              centerLng = Number(cleanerProfile.longitude);
-            } else if (cleanerProfile.service_area_city) {
-              const coords = geocodeCity(cleanerProfile.service_area_city);
+            // Use coordinates if available, otherwise geocode city from address
+            if (providerProfile.latitude && providerProfile.longitude) {
+              centerLat = Number(providerProfile.latitude);
+              centerLng = Number(providerProfile.longitude);
+            } else if (providerProfile.address) {
+              const coords = geocodeCity(providerProfile.address);
               if (coords) {
                 centerLat = coords.lat;
                 centerLng = coords.lng;
@@ -188,7 +175,7 @@ export const useMapCenter = () => {
             }
 
             // Calculate zoom based on service radius
-            const radius = cleanerProfile.service_radius_km || 10;
+            const radius = providerProfile.service_radius_km || 10;
             zoom = calculateZoomFromRadius(radius);
 
             setMapCenter({

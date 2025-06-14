@@ -46,16 +46,16 @@ export const useUserLocation = () => {
           };
         }
       } else if (profile?.user_role === 'cleaner') {
-        const { data: cleanerProfile } = await supabase
-          .from('cleaner_profiles')
+        const { data: providerProfile } = await supabase
+          .from('providers')
           .select('latitude, longitude')
-          .eq('id', user.id)
+          .eq('user_id', user.id)
           .single();
 
-        if (cleanerProfile?.latitude && cleanerProfile?.longitude) {
+        if (providerProfile?.latitude && providerProfile?.longitude) {
           return {
-            latitude: Number(cleanerProfile.latitude),
-            longitude: Number(cleanerProfile.longitude)
+            latitude: Number(providerProfile.latitude),
+            longitude: Number(providerProfile.longitude)
           };
         }
       }
@@ -119,12 +119,12 @@ export const useUserLocation = () => {
           } as any);
       } else if (profile?.user_role === 'cleaner') {
         await supabase
-          .from('cleaner_profiles')
+          .from('providers')
           .update({
             latitude: location.latitude,
             longitude: location.longitude
           })
-          .eq('id', user.id);
+          .eq('user_id', user.id);
       }
 
       console.log('Location saved to profile');

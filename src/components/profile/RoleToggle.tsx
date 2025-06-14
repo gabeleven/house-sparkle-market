@@ -54,26 +54,24 @@ export const RoleToggle = () => {
     }
   };
 
-  const createCleanerProfile = async (userId: string) => {
-    console.log('RoleToggle: Creating cleaner profile for:', userId);
+  const createProviderProfile = async (userId: string) => {
+    console.log('RoleToggle: Creating provider profile for:', userId);
     const { error } = await supabase
-      .from('cleaner_profiles')
+      .from('providers')
       .upsert({
-        id: userId,
+        user_id: userId,
         service_radius_km: 10,
         years_experience: 0,
         hourly_rate: 25.00,
-        before_after_photos: [],
-        service_badges: [],
         is_featured: false,
         is_profile_complete: false
       });
 
     if (error) {
-      console.error('Error creating cleaner profile:', error);
+      console.error('Error creating provider profile:', error);
       throw error;
     }
-    console.log('RoleToggle: Cleaner profile created successfully');
+    console.log('RoleToggle: Provider profile created successfully');
   };
 
   const createCustomerProfile = async (userId: string) => {
@@ -122,7 +120,7 @@ export const RoleToggle = () => {
 
       // Create the appropriate role-specific profile record
       if (newRole === 'cleaner') {
-        await createCleanerProfile(user.id);
+        await createProviderProfile(user.id);
       } else {
         await createCustomerProfile(user.id);
       }
