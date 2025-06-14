@@ -29,6 +29,7 @@ export const UnifiedProfileToggle = ({ onModeChange }: UnifiedProfileToggleProps
     if (!user) return;
 
     try {
+      // Use RLS-compliant query - only authenticated users can see their own profile
       const { data, error } = await supabase
         .from('profiles')
         .select('user_role')
@@ -40,9 +41,21 @@ export const UnifiedProfileToggle = ({ onModeChange }: UnifiedProfileToggleProps
         console.log('UnifiedProfileToggle: Loaded user role:', role);
         setUserRole(role);
         onModeChange(role);
+      } else if (error) {
+        console.error('Error loading user role:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load user role",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error loading user role:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load user role",
+        variant: "destructive"
+      });
     }
   };
 
@@ -88,14 +101,21 @@ export const UnifiedProfileToggle = ({ onModeChange }: UnifiedProfileToggleProps
   };
 
   const handleModeToggle = async () => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to change your profile mode",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setLoading(true);
     const newRole = userRole === 'customer' ? 'cleaner' : 'customer';
     console.log('UnifiedProfileToggle: Switching role from', userRole, 'to', newRole);
 
     try {
-      // Update the user role in profiles table
+      // Update the user role in profiles table - RLS ensures user can only update their own profile
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ user_role: newRole })
@@ -129,6 +149,25 @@ export const UnifiedProfileToggle = ({ onModeChange }: UnifiedProfileToggleProps
       setLoading(false);
     }
   };
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return (
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Star className="w-5 h-5" />
+            Profile Mode
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground text-center">
+            Please log in to manage your profile mode.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mb-6">

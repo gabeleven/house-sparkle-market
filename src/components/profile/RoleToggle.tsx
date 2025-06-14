@@ -25,6 +25,7 @@ export const RoleToggle = () => {
     if (!user) return;
 
     try {
+      // Use RLS-compliant query - only authenticated users can see their own profile
       const { data, error } = await supabase
         .from('profiles')
         .select('user_role')
@@ -35,9 +36,21 @@ export const RoleToggle = () => {
         const role = data.user_role || 'customer';
         console.log('RoleToggle: Loaded user role:', role);
         setUserRole(role);
+      } else if (error) {
+        console.error('Error loading user role:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load user role",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error loading user role:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load user role",
+        variant: "destructive"
+      });
     }
   };
 
@@ -83,14 +96,21 @@ export const RoleToggle = () => {
   };
 
   const handleRoleToggle = async () => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to change your role",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setLoading(true);
     const newRole = userRole === 'customer' ? 'cleaner' : 'customer';
     console.log('RoleToggle: Switching role from', userRole, 'to', newRole);
 
     try {
-      // Update the user role in profiles table
+      // Update the user role in profiles table - RLS ensures user can only update their own profile
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ user_role: newRole })
@@ -128,6 +148,25 @@ export const RoleToggle = () => {
       setLoading(false);
     }
   };
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            Account Type
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Please log in to manage your account type.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

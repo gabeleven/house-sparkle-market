@@ -16,6 +16,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Enhanced auth state cleanup utility
+const cleanupAuthState = () => {
+  console.log('Cleaning up auth state...');
+  
+  // Remove standard auth tokens
+  localStorage.removeItem('supabase.auth.token');
+  
+  // Remove all Supabase auth keys from localStorage
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  
+  // Remove from sessionStorage if in use
+  if (typeof sessionStorage !== 'undefined') {
+    Object.keys(sessionStorage || {}).forEach((key) => {
+      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+        sessionStorage.removeItem(key);
+      }
+    });
+  }
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -82,6 +106,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, userData: any) => {
+    // Clean up any existing auth state before sign up
+    cleanupAuthState();
+    
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -110,6 +137,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
+    // Clean up existing state before sign in
+    cleanupAuthState();
+    
+    // Attempt global sign out to clear any existing sessions
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      // Continue even if this fails
+      console.log('Global sign out failed, continuing with sign in:', err);
+    }
+    
     // Validate session before sign in
     await validateSession();
     
@@ -126,6 +164,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } else {
       console.log('Sign in successful');
+      // Force page reload for clean state
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
     }
 
     return { error };
@@ -133,16 +175,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     console.log('Signing out user...');
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Sign out error:', error);
-      toast({
-        title: "Erreur de déconnexion",
-        description: error.message,
-        variant: "destructive"
-      });
-    } else {
-      console.log('Sign out successful');
+    
+    try {
+      // Clean up auth state first
+      cleanupAuthState();
+      
+      // Attempt global sign out
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      
+      if (error) {
+        console.error('Sign out error:', error);
+        toast({
+          title: "Erreur de déconnexion",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        console.log('Sign out successful');
+      }
+      
+      // Force page reload for clean state
+      window.location.href = '/auth';
+    } catch (error) {
+      console.error('Sign out failed:', error);
+      // Force page reload even if sign out fails
+      window.location.href = '/auth';
     }
   };
 

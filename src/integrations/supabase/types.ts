@@ -1268,6 +1268,10 @@ export type Database = {
           correlation_score: number
         }[]
       }
+      get_user_role: {
+        Args: { user_uuid: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
     }
     Enums: {
       contact_method: "email" | "phone" | "app_messaging"
