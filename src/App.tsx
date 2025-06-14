@@ -13,7 +13,7 @@ import { IntelligentChatbot } from '@/components/support/IntelligentChatbot';
 
 // Pages
 import Index from '@/pages/Index';
-import BrowseCleaners from '@/pages/BrowseCleaners';
+import BrowseServices from '@/pages/BrowseServices';
 import Profile from '@/pages/Profile';
 import PublicProfile from '@/pages/PublicProfile';
 import MyProfile from '@/pages/MyProfile';
@@ -22,6 +22,7 @@ import HowItWorksPage from '@/pages/HowItWorksPage';
 import ServiceProvidersPage from '@/pages/ServiceProvidersPage';
 import Support from '@/pages/Support';
 import AnalyticsDashboard from '@/pages/AnalyticsDashboard';
+import ProviderDashboard from '@/pages/ProviderDashboard';
 import GrowthDashboard from '@/pages/GrowthDashboard';
 import CalendarDashboard from '@/pages/CalendarDashboard';
 import TaxCompliancePage from '@/pages/TaxCompliancePage';
@@ -56,7 +57,10 @@ function App() {
                     <Routes>
                       {/* Public routes - accessible without authentication */}
                       <Route path="/" element={<Index />} />
-                      <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+                      <Route path="/browse-services" element={<BrowseServices />} />
+                      <Route path="/browse-providers" element={<BrowseServices />} />
+                      {/* Legacy route redirect */}
+                      <Route path="/browse-cleaners" element={<BrowseServices />} />
                       <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
                       <Route path="/prestataires" element={<ServiceProvidersPage />} />
                       <Route path="/support" element={<Support />} />
@@ -68,7 +72,12 @@ function App() {
                       <Route path="/profile/:id" element={<Profile />} />
                       <Route path="/my-profile" element={<MyProfile />} />
                       <Route path="/chat" element={<Chat />} />
+                      
+                      {/* Dashboard routing - both routes point to analytics */}
+                      <Route path="/dashboard" element={<AnalyticsDashboard />} />
                       <Route path="/analytics" element={<AnalyticsDashboard />} />
+                      <Route path="/provider-dashboard" element={<ProviderDashboard />} />
+                      
                       <Route path="/analytics/insights" element={<Insights />} />
                       <Route path="/analytics/reports" element={<Reports />} />
                       <Route path="/analytics/intelligence" element={<Intelligence />} />

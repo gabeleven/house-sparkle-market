@@ -59,7 +59,7 @@ const MegaMenu = ({ user, currentTier, signOut, trigger, isOpen, onOpenChange }:
       title: "Analytics & Growth",
       items: [
         {
-          path: '/provider-dashboard',
+          path: '/dashboard',
           title: 'Dashboard',
           description: 'Vue d\'ensemble de votre activité',
           icon: <BarChart3 className="w-5 h-5" />,

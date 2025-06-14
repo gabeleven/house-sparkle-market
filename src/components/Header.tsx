@@ -31,11 +31,12 @@ const Header = () => {
   // Get page title based on current route
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path === '/analytics') return 'Business Analytics';
+    if (path === '/analytics' || path === '/dashboard') return 'Business Analytics';
     if (path === '/analytics/insights') return 'Business Insights';
     if (path === '/analytics/reports') return 'Tax & Reports';
     if (path === '/analytics/intelligence') return 'Market Intelligence';
     if (path === '/analytics/performance') return 'Performance Dashboard';
+    if (path === '/provider-dashboard') return 'Provider Dashboard';
     return null;
   };
 

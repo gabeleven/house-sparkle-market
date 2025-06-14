@@ -38,7 +38,7 @@ const MobileMenu = ({
 
   const essentialMenuItems = [
     { path: '/my-profile', title: 'Profil', icon: <User className="w-4 h-4" /> },
-    { path: '/provider-dashboard', title: 'Dashboard', icon: <BarChart3 className="w-4 h-4" /> },
+    { path: '/dashboard', title: 'Dashboard', icon: <BarChart3 className="w-4 h-4" /> },
     { path: '/bookings', title: 'Réservations', icon: <Calendar className="w-4 h-4" /> },
     { path: '/chat', title: 'Messages', icon: <MessageSquare className="w-4 h-4" /> },
   ];
@@ -139,7 +139,7 @@ const MobileMenu = ({
           <>
             {/* Navigation for non-logged in users */}
             <Link 
-              to="/browse-cleaners" 
+              to="/browse-services" 
               className="text-muted-foreground hover:text-primary transition-colors py-2 px-4 block truncate"
               onClick={handleLinkClick}
             >
