@@ -33,6 +33,10 @@ import GrowthDashboard from './pages/GrowthDashboard';
 import Settings from './pages/Settings';
 import TaxCompliancePage from './pages/TaxCompliancePage';
 import ServiceProvidersPage from './pages/ServiceProvidersPage';
+import Performance from './pages/analytics/Performance';
+import Intelligence from './pages/analytics/Intelligence';
+import Insights from './pages/analytics/Insights';
+import Reports from './pages/analytics/Reports';
 
 function App() {
   const queryClient = new QueryClient();
@@ -69,6 +73,10 @@ function App() {
                           <Route path="/how-it-works" element={<HowItWorksPage />} />
                           <Route path="/messages" element={<ChatPage />} />
                           <Route path="/analytics" element={<AnalyticsDashboard />} />
+                          <Route path="/analytics/performance" element={<Performance />} />
+                          <Route path="/analytics/intelligence" element={<Intelligence />} />
+                          <Route path="/analytics/insights" element={<Insights />} />
+                          <Route path="/analytics/reports" element={<Reports />} />
                           <Route path="/bookings" element={<BookingsPage />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
