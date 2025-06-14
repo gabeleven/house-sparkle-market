@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Clock, DollarSign, MessageCircle, Calendar } from 'lucide-react';
+import { Star, MapPin, Clock, DollarSign, MessageCircle, Calendar, Eye } from 'lucide-react';
 import { CleanerProfile } from '@/hooks/useCleaners';
 import { ServiceIcons } from './ServiceIcons';
 import { hasStarterOrHigher, SubscriptionTier } from '@/types/subscription';
 import { BookingSlideOut } from '@/components/booking/BookingSlideOut';
+import { useNavigate } from 'react-router-dom';
 
 interface CleanerCardWithSubscriptionProps {
   cleaner: CleanerProfile;
@@ -19,10 +20,19 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
   userSubscription = 'FREE'
 }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const navigate = useNavigate();
   const showServiceIcons = hasStarterOrHigher(userSubscription);
 
   const handleBookNow = () => {
     setIsBookingOpen(true);
+  };
+
+  const handleViewProfile = () => {
+    navigate(`/public-profile/${cleaner.id}`);
+  };
+
+  const handleMessage = () => {
+    navigate(`/chat?provider=${cleaner.id}`);
   };
 
   return (
@@ -101,6 +111,15 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
 
             <div className="flex gap-2 pt-2">
               <Button 
+                onClick={handleViewProfile}
+                size="sm" 
+                variant="outline"
+                className="flex-1"
+              >
+                <Eye className="w-4 h-4 mr-1" />
+                View Profile
+              </Button>
+              <Button 
                 onClick={handleBookNow}
                 size="sm" 
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
@@ -108,11 +127,17 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
                 <Calendar className="w-4 h-4 mr-1" />
                 Book now
               </Button>
-              <Button size="sm" variant="outline" className="flex-1">
-                <MessageCircle className="w-4 h-4 mr-1" />
-                Message
-              </Button>
             </div>
+            
+            <Button 
+              onClick={handleMessage}
+              size="sm" 
+              variant="outline" 
+              className="w-full"
+            >
+              <MessageCircle className="w-4 h-4 mr-1" />
+              Message
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -14,92 +14,101 @@ import { ServiceType, serviceTypeIcons, serviceTypeLabels } from '@/utils/servic
 interface PublicProfileData {
   id: string;
   full_name: string;
+  email: string;
   profile_photo_url?: string;
   business_name?: string;
-  brief_description?: string;
-  service_area_city?: string;
+  bio?: string;
+  address?: string;
   service_radius_km?: number;
   years_experience?: number;
   hourly_rate?: number;
   latitude?: number;
   longitude?: number;
-  services?: ServiceType[];
+  average_rating?: number;
+  total_reviews?: number;
+  services?: any[];
   user_role: string;
 }
 
 const PublicProfile = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (userId) {
+    if (id) {
       loadProfile();
     }
-  }, [userId]);
+  }, [id]);
 
   const loadProfile = async () => {
-    if (!userId) return;
+    if (!id) return;
 
     try {
-      console.log('Loading public profile for user ID:', userId);
+      console.log('Loading public profile for user ID:', id);
       
-      // Get basic profile info
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
+      // First try to get the provider profile
+      const { data: providerData, error: providerError } = await supabase
+        .from('providers')
+        .select(`
+          *,
+          profiles!providers_user_id_fkey(
+            full_name,
+            email,
+            user_role
+          ),
+          provider_services(
+            *,
+            service_categories(*)
+          )
+        `)
+        .eq('user_id', id)
         .single();
 
-      if (profileError) {
-        console.error('Profile error:', profileError);
-        throw profileError;
-      }
-
-      let completeProfile: PublicProfileData = {
-        id: profileData.id,
-        full_name: profileData.full_name,
-        profile_photo_url: profileData.profile_photo_url,
-        user_role: profileData.user_role
-      };
-
-      // Get role-specific data if it's a cleaner
-      if (profileData.user_role === 'cleaner') {
-        const { data: cleanerData } = await supabase
-          .from('cleaner_profiles')
+      if (providerData && providerData.profiles) {
+        const profiles = Array.isArray(providerData.profiles) ? providerData.profiles[0] : providerData.profiles;
+        setProfile({
+          id: providerData.user_id,
+          full_name: profiles.full_name,
+          email: profiles.email,
+          profile_photo_url: providerData.profile_photo_url,
+          business_name: providerData.business_name,
+          bio: providerData.bio,
+          address: providerData.address,
+          service_radius_km: providerData.service_radius_km,
+          years_experience: providerData.years_experience,
+          hourly_rate: providerData.hourly_rate,
+          latitude: providerData.latitude,
+          longitude: providerData.longitude,
+          average_rating: providerData.average_rating,
+          total_reviews: providerData.total_reviews,
+          services: providerData.provider_services || [],
+          user_role: profiles.user_role
+        });
+      } else {
+        // Fallback to basic profile if no provider profile exists
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
           .select('*')
-          .eq('id', userId)
+          .eq('id', id)
           .single();
 
-        if (cleanerData) {
-          completeProfile = {
-            ...completeProfile,
-            business_name: cleanerData.business_name,
-            brief_description: cleanerData.brief_description,
-            service_area_city: cleanerData.service_area_city,
-            service_radius_km: cleanerData.service_radius_km,
-            years_experience: cleanerData.years_experience,
-            hourly_rate: cleanerData.hourly_rate,
-            latitude: cleanerData.latitude,
-            longitude: cleanerData.longitude
-          };
-
-          // Get services
-          const { data: servicesData } = await supabase
-            .from('cleaner_service_types')
-            .select('service_type')
-            .eq('cleaner_id', userId);
-
-          if (servicesData) {
-            completeProfile.services = servicesData.map(s => s.service_type as ServiceType);
-          }
+        if (profileError) {
+          console.error('Profile error:', profileError);
+          throw profileError;
         }
-      }
 
-      console.log('Loaded complete profile:', completeProfile);
-      setProfile(completeProfile);
+        setProfile({
+          id: profileData.id,
+          full_name: profileData.full_name,
+          email: profileData.email,
+          profile_photo_url: profileData.profile_photo_url,
+          user_role: profileData.user_role,
+          services: []
+        });
+      }
     } catch (error) {
       console.error('Error loading profile:', error);
       setError('Profile not found');
@@ -109,20 +118,17 @@ const PublicProfile = () => {
   };
 
   const getDisplayRate = () => {
-    // Use actual hourly_rate from database, fallback to default if not set
     if (profile?.hourly_rate && profile.hourly_rate > 0) {
       return profile.hourly_rate;
     }
     
-    // Fallback calculation based on experience
     const baseRate = 25;
     const experienceBonus = (profile?.years_experience || 0) * 2;
     return baseRate + experienceBonus;
   };
 
   const handleMessageProvider = () => {
-    // Navigate to chat page with provider ID
-    navigate(`/chat?provider=${userId}`);
+    navigate(`/chat?provider=${id}`);
   };
 
   if (loading) {
@@ -178,8 +184,12 @@ const PublicProfile = () => {
                     <div className="flex items-center gap-4 mb-4">
                       <div className="flex items-center">
                         <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <span className="text-lg text-gray-700 ml-1 font-medium">4.8</span>
-                        <span className="text-gray-500 ml-1">(24 reviews)</span>
+                        <span className="text-lg text-gray-700 ml-1 font-medium">
+                          {profile.average_rating ? profile.average_rating.toFixed(1) : '4.8'}
+                        </span>
+                        <span className="text-gray-500 ml-1">
+                          ({profile.total_reviews || 0} reviews)
+                        </span>
                       </div>
                       
                       {profile.years_experience && (
@@ -190,17 +200,17 @@ const PublicProfile = () => {
                       )}
                     </div>
 
-                    {profile.service_area_city && (
+                    {profile.address && (
                       <div className="flex items-center text-gray-600 mb-4">
                         <MapPin className="w-5 h-5 mr-2" />
-                        <span>Services {profile.service_area_city}</span>
+                        <span>Services {profile.address}</span>
                         {profile.service_radius_km && (
                           <span className="ml-1">• {profile.service_radius_km}km radius</span>
                         )}
                       </div>
                     )}
 
-                    {profile.user_role === 'cleaner' && (
+                    {profile.hourly_rate && (
                       <div className="flex items-center text-green-600 mb-4">
                         <DollarSign className="w-5 h-5 mr-1" />
                         <span className="font-semibold text-lg">${getDisplayRate()}/hour</span>
@@ -212,10 +222,10 @@ const PublicProfile = () => {
                   </div>
                 </div>
 
-                {profile.brief_description && (
+                {profile.bio && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
-                    <p className="text-gray-700 leading-relaxed">{profile.brief_description}</p>
+                    <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
                   </div>
                 )}
 
@@ -223,20 +233,16 @@ const PublicProfile = () => {
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Services Offered</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {profile.services.map((service, index) => {
-                        const Icon = serviceTypeIcons[service];
-                        return (
-                          <div
-                            key={index}
-                            className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg"
-                          >
-                            <Icon className="w-5 h-5 text-purple-600" />
-                            <span className="text-sm font-medium text-gray-700">
-                              {serviceTypeLabels[service]}
-                            </span>
-                          </div>
-                        );
-                      })}
+                      {profile.services.map((service, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg"
+                        >
+                          <span className="text-sm font-medium text-gray-700">
+                            {service.service_category?.name || 'Service'}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -284,7 +290,7 @@ const PublicProfile = () => {
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
                 
-                {profile.user_role === 'cleaner' && (
+                {profile.hourly_rate && (
                   <div className="mb-4 p-4 bg-green-50 rounded-lg">
                     <div className="flex items-center text-green-700 mb-2">
                       <DollarSign className="w-5 h-5 mr-2" />
@@ -331,7 +337,7 @@ const PublicProfile = () => {
                       <MapPin className="w-8 h-8 mx-auto mb-2" />
                       <p>Interactive map coming soon</p>
                       <p className="text-sm">
-                        Located in {profile.service_area_city}
+                        Located in {profile.address}
                       </p>
                     </div>
                   </div>

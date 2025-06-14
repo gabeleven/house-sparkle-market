@@ -100,10 +100,10 @@ const MyProfile = () => {
         </div>
         
         <div className="space-y-6">
-          {/* Profile Mode Toggle at the top */}
+          {/* Profile Mode Toggle moved to top */}
           <UnifiedProfileToggle onModeChange={handleModeChange} />
           
-          {/* Profile content based on current mode */}
+          {/* Profile content based on current mode - sections are now organized within each mode view */}
           {currentMode === 'customer' ? (
             <CustomerModeView />
           ) : (
