@@ -100,20 +100,18 @@ const Hero = () => {
 
             {/* Right Content - Floating Mascot */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative mascot-container">
-                {/* Floating mascot image - no background containers */}
+              <div className="relative">
+                {/* Pure floating mascot image with no container styling */}
                 <img 
                   src="https://raw.githubusercontent.com/gabeleven/Housie_Media/main/APPLOGOPNG.png"
                   alt="HOUSIE Assistant - Your Canadian tax compliance expert" 
-                  className="w-80 h-80 object-contain cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float mascot-interactive mascot-image"
+                  className="cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float"
                   onClick={handleMascotClick}
                   style={{
-                    margin: 0,
-                    padding: 0,
-                    border: 0,
-                    outline: 'none',
-                    background: 'transparent',
-                    display: 'block',
+                    width: 'auto',
+                    height: 'auto',
+                    maxWidth: '320px',
+                    maxHeight: '320px',
                     filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15))'
                   }}
                 />
