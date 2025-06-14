@@ -5,7 +5,7 @@ import { ServiceType } from '@/utils/serviceTypes';
 
 export interface CleanerProfile {
   id: string;
-  user_id?: string; // Add this property to fix the interface
+  user_id?: string;
   full_name: string;
   email: string;
   business_name: string | null;
@@ -33,7 +33,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
   const { data: cleaners, isLoading, error } = useQuery({
     queryKey: ['cleaners', userLocation, searchTerm, locationFilter],
     queryFn: async () => {
-      console.log('Fetching cleaners with fixed database relationships...');
+      console.log('Fetching service providers with enhanced search...');
       
       // Query providers with proper join to profiles using the new foreign key constraint
       let query = supabase
@@ -50,24 +50,25 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
         `)
         .eq('provider_services.service_categories.name', 'cleaning');
 
-      // Apply search filters
+      // Apply enhanced search filters including addresses
       if (searchTerm) {
-        query = query.or(`business_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`);
+        query = query.or(`business_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%,address.ilike.%${searchTerm}%`);
       }
 
+      // Enhanced location filtering - search in address field for better coverage
       if (locationFilter) {
-        query = query.ilike('address', `%${locationFilter}%`);
+        query = query.or(`address.ilike.%${locationFilter}%,business_name.ilike.%${locationFilter}%`);
       }
 
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching cleaners:', error);
+        console.error('Error fetching service providers:', error);
         throw error;
       }
 
-      console.log('Successfully fetched cleaners with fixed relationships:', data);
-      console.log('Number of cleaners found:', data?.length || 0);
+      console.log('Successfully fetched service providers with enhanced search:', data);
+      console.log('Number of service providers found:', data?.length || 0);
 
       let processedCleaners = (data || [])
         .filter(provider => provider.profiles)
@@ -75,6 +76,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
           const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
           return {
             id: provider.user_id,
+            user_id: provider.user_id,
             email: profile?.email || '',
             full_name: profile?.full_name || '',
             business_name: provider.business_name,
@@ -84,7 +86,7 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter }: UseCle
             longitude: provider.longitude,
             service_radius_km: provider.service_radius_km,
             years_experience: provider.years_experience,
-            service_area_city: provider.address,
+            service_area_city: provider.address, // Use address field for location display
             hourly_rate: provider.hourly_rate,
             average_rating: provider.average_rating,
             total_reviews: provider.total_reviews,

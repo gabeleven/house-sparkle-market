@@ -44,8 +44,8 @@ export const CleanerMapPopup: React.FC<CleanerMapPopupProps> = ({ cleaner, posit
   };
 
   const handleBookNow = () => {
-    // Navigate to booking page or open booking modal
-    window.location.href = `/booking?provider=${cleaner.id}`;
+    // Navigate to bookings page with provider parameter
+    window.location.href = `/bookings?provider=${cleaner.id}`;
   };
 
   return (

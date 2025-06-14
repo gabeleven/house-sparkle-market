@@ -20,8 +20,8 @@ const Hero = () => {
   const handleSearch = () => {
     if (location.trim()) {
       if (user) {
-        // User is already authenticated, go directly to browse cleaners
-        navigate(`/browse-cleaners?location=${encodeURIComponent(location)}`);
+        // User is already authenticated, go directly to browse services
+        navigate(`/browse-services?location=${encodeURIComponent(location)}`);
       } else {
         // User needs to authenticate first
         setShowAuthModal(true);

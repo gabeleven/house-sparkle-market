@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,7 @@ import { SubscriptionTier } from '@/types/subscription';
 
 interface CleanerCardWithSubscriptionProps {
   cleaner: CleanerProfile;
-  userSubscription?: SubscriptionTier; // Add this property
+  userSubscription?: SubscriptionTier;
   showSubscriptionBadge?: boolean;
   showServiceIcons?: boolean;
   compact?: boolean;
@@ -35,9 +36,9 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
   };
 
   const handleBookService = () => {
-    // Navigate to booking page with the provider ID
+    // Navigate to bookings page with the provider ID as parameter
     const providerId = cleaner.user_id || cleaner.id;
-    navigate(`/booking?provider=${providerId}`);
+    navigate(`/bookings?provider=${providerId}`);
   };
 
   const displayName = cleaner.business_name || cleaner.full_name;
