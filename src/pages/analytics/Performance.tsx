@@ -9,43 +9,46 @@ import { BookingChart } from '@/components/analytics/BookingChart';
 
 const Performance = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Link to="/analytics">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <BarChart3 className="w-6 h-6 text-orange-600" />
-                <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Performance Dashboard</h1>
-              </div>
-              <p className="text-muted-foreground">Track your business KPIs and performance metrics</p>
-            </div>
-          </div>
-          
-          <div className="flex gap-2">
-            <Badge variant="outline">Starter+</Badge>
-            <Button variant="outline" size="sm">
-              <Target className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Set Goals</span>
+        {/* Header with styled back button */}
+        <div className="mb-8">
+          <Link to="/analytics">
+            <Button className="mb-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full flex items-center gap-2 shadow-lg">
+              <ArrowLeft className="h-4 w-4" />
+              Retour aux Analytiques
             </Button>
+          </Link>
+          
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-orange-600" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-800">Performance Dashboard</h1>
+              </div>
+              <p className="text-gray-600">Track your business KPIs and performance metrics</p>
+            </div>
+            
+            <div className="flex gap-2">
+              <Badge variant="outline" className="bg-white/80">Starter+</Badge>
+              <Button variant="outline" size="sm" className="bg-white/80">
+                <Target className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Set Goals</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Efficiency</p>
-                  <p className="text-2xl font-bold">92%</p>
+                  <p className="text-sm font-medium text-gray-600">Efficiency</p>
+                  <p className="text-2xl font-bold text-gray-900">92%</p>
                 </div>
                 <Target className="h-8 w-8 text-green-600" />
               </div>
@@ -53,12 +56,12 @@ const Performance = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Response Time</p>
-                  <p className="text-2xl font-bold">12m</p>
+                  <p className="text-sm font-medium text-gray-600">Response Time</p>
+                  <p className="text-2xl font-bold text-gray-900">12m</p>
                 </div>
                 <Clock className="h-8 w-8 text-blue-600" />
               </div>
@@ -66,12 +69,12 @@ const Performance = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Retention</p>
-                  <p className="text-2xl font-bold">87%</p>
+                  <p className="text-sm font-medium text-gray-600">Retention</p>
+                  <p className="text-2xl font-bold text-gray-900">87%</p>
                 </div>
                 <Users className="h-8 w-8 text-purple-600" />
               </div>
@@ -79,12 +82,12 @@ const Performance = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Growth Rate</p>
-                  <p className="text-2xl font-bold">+15%</p>
+                  <p className="text-sm font-medium text-gray-600">Growth Rate</p>
+                  <p className="text-2xl font-bold text-gray-900">+15%</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-orange-600" />
               </div>
@@ -95,7 +98,7 @@ const Performance = () => {
 
         {/* Performance Charts */}
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-blue-600" />
@@ -107,7 +110,7 @@ const Performance = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-green-600" />
@@ -122,7 +125,7 @@ const Performance = () => {
 
         {/* Detailed Metrics */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-yellow-600" />
@@ -151,7 +154,7 @@ const Performance = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="truncate">Booking Metrics</CardTitle>
             </CardHeader>
@@ -177,7 +180,7 @@ const Performance = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="truncate">Efficiency Metrics</CardTitle>
             </CardHeader>

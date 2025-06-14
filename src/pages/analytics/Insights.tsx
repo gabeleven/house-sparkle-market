@@ -37,43 +37,46 @@ const chartConfig = {
 
 const Insights = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Link to="/analytics">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <LineChart className="w-6 h-6 text-blue-600" />
-                <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Business Insights</h1>
-              </div>
-              <p className="text-muted-foreground">Comprehensive analytics and business metrics</p>
-            </div>
-          </div>
-          
-          <div className="flex gap-2">
-            <Badge variant="outline">Pro+</Badge>
-            <Button variant="outline" size="sm">
-              <Calendar className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Date Range</span>
+        {/* Header with styled back button */}
+        <div className="mb-8">
+          <Link to="/analytics">
+            <Button className="mb-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full flex items-center gap-2 shadow-lg">
+              <ArrowLeft className="h-4 w-4" />
+              Retour aux Analytiques
             </Button>
+          </Link>
+          
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <LineChart className="w-6 h-6 text-blue-600" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-800">Business Insights</h1>
+              </div>
+              <p className="text-gray-600">Comprehensive analytics and business metrics</p>
+            </div>
+            
+            <div className="flex gap-2">
+              <Badge variant="outline" className="bg-white/80">Pro+</Badge>
+              <Button variant="outline" size="sm" className="bg-white/80">
+                <Calendar className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Date Range</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Revenue</p>
-                  <p className="text-xl font-bold">$28,750</p>
+                  <p className="text-sm font-medium text-gray-600">Revenue</p>
+                  <p className="text-xl font-bold text-gray-900">$28,750</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-600" />
               </div>
@@ -81,12 +84,12 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Bookings</p>
-                  <p className="text-xl font-bold">127</p>
+                  <p className="text-sm font-medium text-gray-600">Bookings</p>
+                  <p className="text-xl font-bold text-gray-900">127</p>
                 </div>
                 <Calendar className="h-8 w-8 text-blue-600" />
               </div>
@@ -94,12 +97,12 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Avg. Rate</p>
-                  <p className="text-xl font-bold">$35/hr</p>
+                  <p className="text-sm font-medium text-gray-600">Avg. Rate</p>
+                  <p className="text-xl font-bold text-gray-900">$35/hr</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-600" />
               </div>
@@ -107,12 +110,12 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Rating</p>
-                  <p className="text-xl font-bold">4.8</p>
+                  <p className="text-sm font-medium text-gray-600">Rating</p>
+                  <p className="text-xl font-bold text-gray-900">4.8</p>
                 </div>
                 <div className="text-yellow-500">★</div>
               </div>
@@ -124,7 +127,7 @@ const Insights = () => {
         {/* Charts Section */}
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Revenue Trend */}
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <LineChart className="w-5 h-5 text-blue-600" />
@@ -155,7 +158,7 @@ const Insights = () => {
           </Card>
 
           {/* Service Distribution */}
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PieChart className="w-5 h-5 text-green-600" />
@@ -189,7 +192,7 @@ const Insights = () => {
 
         {/* Performance Metrics */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-orange-600" />
@@ -229,7 +232,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="truncate">Customer Satisfaction</CardTitle>
             </CardHeader>
@@ -257,7 +260,7 @@ const Insights = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="truncate">Booking Sources</CardTitle>
             </CardHeader>
