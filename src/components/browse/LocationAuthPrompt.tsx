@@ -39,9 +39,9 @@ export const LocationAuthPrompt: React.FC<LocationAuthPromptProps> = ({
             <MapPin className="w-8 h-8 text-white" />
           </div>
         </div>
-        <CardTitle className="text-2xl">Find Cleaners Near You</CardTitle>
+        <CardTitle className="text-2xl">Find Service Providers Near You</CardTitle>
         <CardDescription className="text-base">
-          Allow location access to see cleaners in your exact area
+          Allow location access to see service providers in your exact area
           {postalCode && ` around ${postalCode}`}
         </CardDescription>
       </CardHeader>
@@ -52,7 +52,7 @@ export const LocationAuthPrompt: React.FC<LocationAuthPromptProps> = ({
             <Target className="w-8 h-8 text-primary mx-auto" />
             <h4 className="font-semibold">Precise Results</h4>
             <p className="text-sm text-muted-foreground">
-              See cleaners within your preferred distance
+              See service providers within your preferred distance
             </p>
           </div>
           <div className="text-center space-y-2">
@@ -101,7 +101,7 @@ export const LocationAuthPrompt: React.FC<LocationAuthPromptProps> = ({
         </div>
 
         <p className="text-xs text-center text-muted-foreground">
-          We use your location only to show nearby cleaners. You can change this anytime in your browser settings.
+          We use your location only to show nearby service providers. You can change this anytime in your browser settings.
         </p>
       </CardContent>
     </Card>

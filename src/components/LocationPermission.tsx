@@ -61,7 +61,7 @@ const LocationPermission = ({ onLocationGranted, onPostalCode, onDismiss }: Loca
             Code postal
           </CardTitle>
           <CardDescription>
-            Entrez votre code postal pour voir les nettoyeurs près de vous
+            Entrez votre code postal pour voir les service providers près de vous
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -100,10 +100,10 @@ const LocationPermission = ({ onLocationGranted, onPostalCode, onDismiss }: Loca
         </Button>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="w-5 h-5" />
-          Trouvez des nettoyeurs près de vous
+          Trouvez des service providers près de vous
         </CardTitle>
         <CardDescription>
-          Autorisez l'accès à votre localisation pour voir les nettoyeurs les plus proches
+          Autorisez l'accès à votre localisation pour voir les service providers les plus proches
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

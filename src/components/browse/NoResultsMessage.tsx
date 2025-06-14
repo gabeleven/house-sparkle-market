@@ -20,7 +20,7 @@ export const NoResultsMessage: React.FC<NoResultsMessageProps> = ({
           <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">No cleaners found</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No service providers found</h3>
           <p className="text-muted-foreground mb-4">
             Try adjusting your search terms or expand your search to other cities in Quebec.
           </p>

@@ -41,9 +41,9 @@ export const AuthInterceptModal: React.FC<AuthInterceptModalProps> = ({
           <span className="text-lg font-semibold">Searching in: {postalCode}</span>
         </div>
         
-        <h3 className="text-xl font-bold">Find Local Cleaners Near You</h3>
+        <h3 className="text-xl font-bold">Find Local Service Providers Near You</h3>
         <p className="text-muted-foreground">
-          To see verified cleaners in your area and book services, you'll need an account
+          To see verified service providers in your area and book services, you'll need an account
         </p>
       </div>
 
@@ -124,14 +124,14 @@ export const AuthInterceptModal: React.FC<AuthInterceptModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {currentView === 'choice' && 'Access Local Cleaners'}
+            {currentView === 'choice' && 'Access Local Service Providers'}
             {currentView === 'login' && 'Sign In'}
             {currentView === 'signup' && 'Create Your Account'}
           </DialogTitle>
           <DialogDescription>
             {currentView === 'choice' && 'Join thousands of Canadians finding trusted home services'}
             {currentView === 'login' && 'Welcome back! Sign in to continue'}
-            {currentView === 'signup' && 'Create your account to find local cleaners'}
+            {currentView === 'signup' && 'Create your account to find local service providers'}
           </DialogDescription>
         </DialogHeader>
 
