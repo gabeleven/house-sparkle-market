@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,8 @@ import { LineChart, BarChart3, PieChart, TrendingUp, ArrowLeft, Calendar, Dollar
 import { Link } from 'react-router-dom';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
+import { AnalyticsProvider, useAnalytics } from '@/contexts/AnalyticsContext';
+import { DateRangeButton } from '@/components/analytics/DateRangeButton';
 
 // Sample data for charts
 const revenueData = [
@@ -35,7 +38,9 @@ const chartConfig = {
   },
 };
 
-const Insights = () => {
+const InsightsContent = () => {
+  const { filters } = useAnalytics();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -57,14 +62,16 @@ const Insights = () => {
                 <h1 className="text-3xl font-bold text-gray-800">Business Insights</h1>
               </div>
               <p className="text-gray-600">Comprehensive analytics and business metrics</p>
+              {filters.dateRange && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Filtered data from {filters.dateRange.from?.toLocaleDateString()} to {filters.dateRange.to?.toLocaleDateString()}
+                </p>
+              )}
             </div>
             
             <div className="flex gap-2">
+              <DateRangeButton />
               <Badge variant="outline" className="bg-white/80 shadow-md">Pro+</Badge>
-              <Button variant="outline" size="sm" className="bg-white/80 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <Calendar className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Date Range</span>
-              </Button>
             </div>
           </div>
         </div>
@@ -284,6 +291,14 @@ const Insights = () => {
         </div>
       </main>
     </div>
+  );
+};
+
+const Insights = () => {
+  return (
+    <AnalyticsProvider>
+      <InsightsContent />
+    </AnalyticsProvider>
   );
 };
 

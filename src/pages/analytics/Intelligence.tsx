@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,9 +7,12 @@ import MarketIntelligenceDashboard from "@/components/analytics/MarketIntelligen
 import { useSubscription } from "@/hooks/useSubscription";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { AnalyticsProvider, useAnalytics } from '@/contexts/AnalyticsContext';
+import { DateRangeButton } from '@/components/analytics/DateRangeButton';
 
-const Intelligence = () => {
+const IntelligenceContent = () => {
   const { canAccessFeature } = useSubscription();
+  const { filters } = useAnalytics();
   const navigate = useNavigate();
 
   // AI-powered insights for Canadian market
@@ -104,12 +108,20 @@ const Intelligence = () => {
                 <div>
                   <h1 className="text-3xl font-bold text-gray-800">Intelligence Marché Canadien</h1>
                   <p className="text-gray-600">Insights IA pour la prise de décision stratégique dans toutes les provinces</p>
+                  {filters.dateRange && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Filtered data from {filters.dateRange.from?.toLocaleDateString()} to {filters.dateRange.to?.toLocaleDateString()}
+                    </p>
+                  )}
                 </div>
               </div>
-              <Badge className="bg-gradient-to-r from-purple-500 to-blue-600 text-white">
-                <Lightbulb className="w-4 h-4 mr-1" />
-                Alimenté par IA
-              </Badge>
+              <div className="flex items-center gap-3">
+                <DateRangeButton />
+                <Badge className="bg-gradient-to-r from-purple-500 to-blue-600 text-white">
+                  <Lightbulb className="w-4 h-4 mr-1" />
+                  Alimenté par IA
+                </Badge>
+              </div>
             </div>
           </div>
 
@@ -201,6 +213,14 @@ const Intelligence = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Intelligence = () => {
+  return (
+    <AnalyticsProvider>
+      <IntelligenceContent />
+    </AnalyticsProvider>
   );
 };
 

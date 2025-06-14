@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,8 +7,12 @@ import { BarChart3, Target, Clock, Users, ArrowLeft, TrendingUp, Star } from 'lu
 import { Link } from 'react-router-dom';
 import { PerformanceChart } from '@/components/analytics/PerformanceChart';
 import { BookingChart } from '@/components/analytics/BookingChart';
+import { AnalyticsProvider, useAnalytics } from '@/contexts/AnalyticsContext';
+import { DateRangeButton } from '@/components/analytics/DateRangeButton';
 
-const Performance = () => {
+const PerformanceContent = () => {
+  const { filters } = useAnalytics();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-orange-200 to-yellow-300">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -29,9 +34,15 @@ const Performance = () => {
                 <h1 className="text-3xl font-bold text-gray-800">Performance Dashboard</h1>
               </div>
               <p className="text-gray-600">Track your business KPIs and performance metrics</p>
+              {filters.dateRange && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Filtered data from {filters.dateRange.from?.toLocaleDateString()} to {filters.dateRange.to?.toLocaleDateString()}
+                </p>
+              )}
             </div>
             
             <div className="flex gap-2">
+              <DateRangeButton />
               <Badge variant="outline" className="bg-white/80">Starter+</Badge>
               <Button variant="outline" size="sm" className="bg-white/80">
                 <Target className="h-4 w-4 mr-2" />
@@ -208,6 +219,14 @@ const Performance = () => {
         </div>
       </main>
     </div>
+  );
+};
+
+const Performance = () => {
+  return (
+    <AnalyticsProvider>
+      <PerformanceContent />
+    </AnalyticsProvider>
   );
 };
 
