@@ -1,26 +1,20 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
-import { ThemeProvider } from '@/components/ui/theme-provider';
+import { ThemeProvider } from 'next-themes';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ChatbotProvider } from '@/contexts/ChatbotContext';
 import { IntensityThemeProvider } from "./contexts/IntensityThemeContext"
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { ServicesPage } from './pages/ServicesPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { HowItWorksPage } from './pages/HowItWorksPage';
-import { SupportPage } from './pages/SupportPage';
-import { CleanersPage } from './pages/CleanersPage';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Index from './pages/Index';
+import Support from './pages/Support';
+import HowItWorksPage from './pages/HowItWorksPage';
 import { ChatPage } from './components/chat/ChatPage';
-import { TaxOverviewPage } from './pages/TaxOverviewPage';
-import { TaxTransactionsPage } from './pages/TaxTransactionsPage';
-import { TaxAnalyticsPage } from './pages/TaxAnalyticsPage';
-import { NotFoundPage } from './pages/NotFoundPage';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import NotFound from './pages/NotFound';
 import { BookingsPage } from './pages/BookingsPage';
 import { TabbedChatbot } from '@/components/support/TabbedChatbot';
 import { FloatingChatButton } from '@/components/support/FloatingChatButton';
@@ -40,20 +34,13 @@ function App() {
                   <Header />
                   <main className="relative z-10">
                     <Routes>
-                      <Route path="/" element={<HomePage />} />
-                      <Route path="/about" element={<AboutPage />} />
-                      <Route path="/contact" element={<ContactPage />} />
-                      <Route path="/services" element={<ServicesPage />} />
-                      <Route path="/profile/:id" element={<ProfilePage />} />
+                      <Route path="/" element={<Index />} />
+                      <Route path="/support" element={<Support />} />
                       <Route path="/how-it-works" element={<HowItWorksPage />} />
-                      <Route path="/support" element={<SupportPage />} />
-                      <Route path="/cleaners" element={<CleanersPage />} />
                       <Route path="/messages" element={<ChatPage />} />
-                      <Route path="/tax-overview" element={<TaxOverviewPage />} />
-                      <Route path="/tax-transactions" element={<TaxTransactionsPage />} />
-                      <Route path="/tax-analytics" element={<TaxAnalyticsPage />} />
+                      <Route path="/analytics" element={<AnalyticsDashboard />} />
                       <Route path="/bookings" element={<BookingsPage />} />
-                      <Route path="*" element={<NotFoundPage />} />
+                      <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
                   <Footer />
