@@ -14,17 +14,22 @@ interface ContactSidebarProps {
   };
   displayRate: number;
   onMessageProvider: () => void;
+  onBookNow?: () => void;
 }
 
 export const ContactSidebar: React.FC<ContactSidebarProps> = ({ 
   profile, 
   displayRate, 
-  onMessageProvider 
+  onMessageProvider,
+  onBookNow 
 }) => {
   const handleBookNow = () => {
-    // For now, this will redirect to messaging
-    // In the future, this could open a booking modal or redirect to a booking page
-    onMessageProvider();
+    if (onBookNow) {
+      onBookNow();
+    } else {
+      // Fallback to messaging if no booking function provided
+      onMessageProvider();
+    }
   };
 
   return (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +8,7 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { ServicesOfferedCard } from '@/components/profile/ServicesOfferedCard';
 import { ReviewsSection } from '@/components/profile/ReviewsSection';
 import { ContactSidebar } from '@/components/profile/ContactSidebar';
+import { BookingSlideOut } from '@/components/booking/BookingSlideOut';
 
 interface PublicProfileData {
   id: string;
@@ -36,6 +36,7 @@ const PublicProfile = () => {
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -146,6 +147,14 @@ const PublicProfile = () => {
     navigate(`/chat?provider=${id}`);
   };
 
+  const handleBookNow = () => {
+    setIsBookingOpen(true);
+  };
+
+  const handleCloseBooking = () => {
+    setIsBookingOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -176,42 +185,59 @@ const PublicProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Profile Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Provider Basic Information */}
-            <Card>
-              <CardContent className="p-8">
-                <ProfileHeader profile={profile} displayRate={getDisplayRate()} />
+    <>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Profile Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Provider Basic Information */}
+              <Card>
+                <CardContent className="p-8">
+                  <ProfileHeader profile={profile} displayRate={getDisplayRate()} />
 
-                {/* Brief Description */}
-                {profile.bio && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
-                    <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  {/* Brief Description */}
+                  {profile.bio && (
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
+                      <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-            {/* Services Offered */}
-            <ServicesOfferedCard services={profile.services || []} />
+              {/* Services Offered */}
+              <ServicesOfferedCard services={profile.services || []} />
 
-            {/* Reviews Section */}
-            <ReviewsSection />
+              {/* Reviews Section */}
+              <ReviewsSection />
+            </div>
+
+            {/* Contact Sidebar */}
+            <ContactSidebar 
+              profile={profile} 
+              displayRate={getDisplayRate()} 
+              onMessageProvider={handleMessageProvider}
+              onBookNow={handleBookNow}
+            />
           </div>
-
-          {/* Contact Sidebar */}
-          <ContactSidebar 
-            profile={profile} 
-            displayRate={getDisplayRate()} 
-            onMessageProvider={handleMessageProvider} 
-          />
         </div>
       </div>
-    </div>
+
+      {/* Booking Modal */}
+      {profile && (
+        <BookingSlideOut
+          isOpen={isBookingOpen}
+          onClose={handleCloseBooking}
+          cleaner={{
+            id: profile.user_id,
+            full_name: profile.full_name,
+            business_name: profile.business_name,
+            profile_photo_url: profile.profile_photo_url
+          }}
+        />
+      )}
+    </>
   );
 };
 
