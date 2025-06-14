@@ -1,111 +1,72 @@
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/sonner';
-import { AuthProvider } from '@/hooks/useAuth';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ChatbotProvider } from '@/contexts/ChatbotContext';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { IntensityThemeProvider } from "./contexts/IntensityThemeContext"
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { HowItWorksPage } from './pages/HowItWorksPage';
+import { SupportPage } from './pages/SupportPage';
+import { CleanersPage } from './pages/CleanersPage';
+import { ChatPage } from './components/chat/ChatPage';
+import { TaxOverviewPage } from './pages/TaxOverviewPage';
+import { TaxTransactionsPage } from './pages/TaxTransactionsPage';
+import { TaxAnalyticsPage } from './pages/TaxAnalyticsPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { BookingsPage } from './pages/BookingsPage';
+import { TabbedChatbot } from '@/components/support/TabbedChatbot';
 import { FloatingChatButton } from '@/components/support/FloatingChatButton';
-import { IntelligentChatbot } from '@/components/support/IntelligentChatbot';
-
-// Pages
-import Index from '@/pages/Index';
-import BrowseServices from '@/pages/BrowseServices';
-import Profile from '@/pages/Profile';
-import PublicProfile from '@/pages/PublicProfile';
-import MyProfile from '@/pages/MyProfile';
-import Chat from '@/pages/Chat';
-import HowItWorksPage from '@/pages/HowItWorksPage';
-import ServiceProvidersPage from '@/pages/ServiceProvidersPage';
-import Support from '@/pages/Support';
-import AnalyticsDashboard from '@/pages/AnalyticsDashboard';
-import ProviderDashboard from '@/pages/ProviderDashboard';
-import GrowthDashboard from '@/pages/GrowthDashboard';
-import CalendarDashboard from '@/pages/CalendarDashboard';
-import TaxCompliancePage from '@/pages/TaxCompliancePage';
-import Settings from '@/pages/Settings';
-import Bookings from '@/pages/Bookings';
-import CleanerReviews from '@/pages/CleanerReviews';
-import Auth from '@/pages/Auth';
-import NotFound from '@/pages/NotFound';
-
-// Analytics Pages
-import Insights from '@/pages/analytics/Insights';
-import Reports from '@/pages/analytics/Reports';
-import Intelligence from '@/pages/analytics/Intelligence';
-import Performance from '@/pages/analytics/Performance';
-
-const queryClient = new QueryClient();
 
 function App() {
+  const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
+      <IntensityThemeProvider>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
           <LanguageProvider>
             <ChatbotProvider>
-              <Router>
-                <div className="min-h-screen text-foreground">
-                  {/* Single Header for entire app */}
+              <Toaster />
+              <BrowserRouter>
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
                   <Header />
-                  
-                  {/* Main content area */}
-                  <main className="flex-1">
+                  <main className="relative z-10">
                     <Routes>
-                      {/* Public routes - accessible without authentication */}
-                      <Route path="/" element={<Index />} />
-                      <Route path="/browse-services" element={<BrowseServices />} />
-                      <Route path="/browse-providers" element={<BrowseServices />} />
-                      {/* Legacy route redirect */}
-                      <Route path="/browse-cleaners" element={<BrowseServices />} />
-                      <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
-                      <Route path="/prestataires" element={<ServiceProvidersPage />} />
-                      <Route path="/support" element={<Support />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/public-profile/:id" element={<PublicProfile />} />
-                      <Route path="/reviews/:cleanerId" element={<CleanerReviews />} />
-                      
-                      {/* Protected routes - require authentication */}
-                      <Route path="/profile/:id" element={<Profile />} />
-                      <Route path="/my-profile" element={<MyProfile />} />
-                      <Route path="/chat" element={<Chat />} />
-                      
-                      {/* Dashboard routing - both routes point to analytics */}
-                      <Route path="/dashboard" element={<AnalyticsDashboard />} />
-                      <Route path="/analytics" element={<AnalyticsDashboard />} />
-                      <Route path="/provider-dashboard" element={<ProviderDashboard />} />
-                      
-                      <Route path="/analytics/insights" element={<Insights />} />
-                      <Route path="/analytics/reports" element={<Reports />} />
-                      <Route path="/analytics/intelligence" element={<Intelligence />} />
-                      <Route path="/analytics/performance" element={<Performance />} />
-                      <Route path="/growth" element={<GrowthDashboard />} />
-                      <Route path="/calendar" element={<CalendarDashboard />} />
-                      <Route path="/tax-compliance" element={<TaxCompliancePage />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/bookings" element={<Bookings />} />
-                      
-                      {/* 404 catch-all */}
-                      <Route path="*" element={<NotFound />} />
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/services" element={<ServicesPage />} />
+                      <Route path="/profile/:id" element={<ProfilePage />} />
+                      <Route path="/how-it-works" element={<HowItWorksPage />} />
+                      <Route path="/support" element={<SupportPage />} />
+                      <Route path="/cleaners" element={<CleanersPage />} />
+                      <Route path="/messages" element={<ChatPage />} />
+                      <Route path="/tax-overview" element={<TaxOverviewPage />} />
+                      <Route path="/tax-transactions" element={<TaxTransactionsPage />} />
+                      <Route path="/tax-analytics" element={<TaxAnalyticsPage />} />
+                      <Route path="/bookings" element={<BookingsPage />} />
+                      <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                   </main>
-                  
-                  {/* Single Footer for entire app */}
                   <Footer />
                   
-                  {/* Global components */}
+                  {/* Floating Chat Components */}
                   <FloatingChatButton />
-                  <IntelligentChatbot />
-                  <Toaster />
+                  <TabbedChatbot />
                 </div>
-              </Router>
+              </BrowserRouter>
             </ChatbotProvider>
           </LanguageProvider>
         </ThemeProvider>
-      </AuthProvider>
+      </IntensityThemeProvider>
     </QueryClientProvider>
   );
 }

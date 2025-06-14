@@ -1,9 +1,7 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, X } from 'lucide-react';
+import { Send, Bot, User } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatbot } from '@/contexts/ChatbotContext';
 
@@ -124,64 +122,38 @@ export const DualModeChatbot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Use try-catch for chatbot context
-  let chatbotContext;
-  try {
-    chatbotContext = useChatbot();
-  } catch (error) {
-    console.error('Chatbot context error:', error);
-    return null;
-  }
-
-  const { isOpen, mode, closeChatbot, navigateToHowItWorks, navigateToSupport, showGoodbyeMessage } = chatbotContext;
+  const { mode, showGoodbyeMessage, navigateToHowItWorks, navigateToSupport } = useChatbot();
 
   const scrollToBottom = () => {
-    try {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    } catch (error) {
-      console.error('Scroll error:', error);
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Initialize messages when mode changes or chatbot opens
+  // Initialize messages when component mounts or mode changes
   useEffect(() => {
-    if (isOpen) {
-      try {
-        if (showGoodbyeMessage) {
-          setMessages([{
-            id: '1',
-            type: 'bot',
-            content: 'Perfect! I\'ve brought you to our support team. They\'ll take great care of you from here. Thanks for using Housie! 😊',
-            timestamp: new Date()
-          }]);
-          // Auto-close after showing goodbye message
-          setTimeout(() => {
-            closeChatbot();
-          }, 3000);
-        } else {
-          const welcomeMsg = getWelcomeMessage(mode);
-          setMessages([{
-            id: '1',
-            type: 'bot',
-            content: welcomeMsg.content,
-            timestamp: new Date(),
-            options: welcomeMsg.options
-          }]);
-        }
-        setError(null);
-      } catch (error) {
-        console.error('Error initializing messages:', error);
-        setError('Chat initialization failed');
-      }
+    if (showGoodbyeMessage) {
+      setMessages([{
+        id: '1',
+        type: 'bot',
+        content: 'Perfect! I\'ve brought you to our support team. They\'ll take great care of you from here. Thanks for using Housie! 😊',
+        timestamp: new Date()
+      }]);
+    } else {
+      const welcomeMsg = getWelcomeMessage(mode);
+      setMessages([{
+        id: '1',
+        type: 'bot',
+        content: welcomeMsg.content,
+        timestamp: new Date(),
+        options: welcomeMsg.options
+      }]);
     }
-  }, [isOpen, mode, showGoodbyeMessage, closeChatbot]);
+  }, [mode, showGoodbyeMessage]);
 
   const simulateTyping = (message: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -211,7 +183,6 @@ export const DualModeChatbot: React.FC = () => {
             }]);
             setTimeout(() => {
               navigateToHowItWorks();
-              closeChatbot();
             }, 2000);
           }, 1000);
           return 'Taking you to our step-by-step guide...';
@@ -274,7 +245,6 @@ Would you like help with any specific part of the booking process?`;
           }]);
           setTimeout(() => {
             navigateToSupport();
-            closeChatbot();
           }, 2000);
         }, 1000);
         return 'Connecting you with our human support team...';
@@ -288,28 +258,30 @@ Would you like help with any specific part of the booking process?`;
   };
 
   const handleSendMessage = async (messageText?: string) => {
-    try {
-      const userMessage = messageText || input.trim();
-      if (!userMessage) return;
+    const userMessage = messageText || input.trim();
+    if (!userMessage) return;
 
-      // Add user message
-      const userMsg: ChatMessage = {
-        id: Date.now().toString(),
-        type: 'user',
-        content: userMessage,
-        timestamp: new Date()
-      };
+    // Add user message
+    const userMsg: ChatMessage = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: userMessage,
+      timestamp: new Date()
+    };
 
-      setMessages(prev => [...prev, userMsg]);
-      setInput('');
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
 
-      // Simulate bot typing
-      await simulateTyping(userMessage);
-
-      // Get bot response
-      const botResponse = getBotResponse(userMessage);
+    // Simulate bot typing
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
       
-      // Add bot response
+      // Simple response logic for the tabbed interface
+      const botResponse = userMessage.toLowerCase().includes('support') 
+        ? 'I\'m connecting you with our support team!'
+        : 'Thanks for your message! How else can I help you?';
+      
       const botMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'bot',
@@ -318,126 +290,84 @@ Would you like help with any specific part of the booking process?`;
       };
 
       setMessages(prev => [...prev, botMsg]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setError('Failed to send message');
-    }
+    }, 1000);
   };
 
   const handleOptionClick = (option: string) => {
     handleSendMessage(option);
   };
 
-  if (!isOpen) return null;
-
-  if (error) {
-    return (
-      <Card className="fixed bottom-4 right-4 w-96 shadow-xl z-50">
-        <CardContent className="p-4">
-          <p className="text-red-600">Chat temporarily unavailable</p>
-          <Button onClick={closeChatbot} size="sm" className="mt-2">
-            Close
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const getModeTitle = () => {
-    switch (mode) {
-      case 'support': return 'Housie Support';
-      case 'how-it-works': return 'How Housie Works';
-      default: return 'Housie Assistant';
-    }
-  };
-
   return (
-    <Card className="fixed bottom-4 right-4 w-96 h-[600px] shadow-xl z-50 flex flex-col">
-      <CardHeader className="pb-3 border-b flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <Bot className="w-4 h-4 text-white" />
+    <div className="flex flex-col h-full">
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <div key={message.id} className="space-y-2">
+              <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
+                    {message.type === 'user' ? <User className="w-3 h-3 text-white" /> : <Bot className="w-3 h-3 text-white" />}
+                  </div>
+                  <div className={`rounded-lg p-3 text-sm ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted'}`}>
+                    <p className="whitespace-pre-line">{message.content}</p>
+                  </div>
+                </div>
+              </div>
+              
+              {message.options && (
+                <div className="flex flex-wrap gap-2 ml-8">
+                  {message.options.map((option, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handleOptionClick(option)}
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
-            <CardTitle className="text-lg">{getModeTitle()}</CardTitle>
-          </div>
-          <Button variant="ghost" size="sm" onClick={closeChatbot}>
-            <X className="w-4 h-4" />
-          </Button>
+          ))}
+          
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-2">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                  <Bot className="w-3 h-3 text-white" />
+                </div>
+                <div className="bg-muted rounded-lg p-3">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
-      </CardHeader>
+      </ScrollArea>
 
-      <CardContent className="flex-1 p-0 flex flex-col min-h-0">
-        <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <div key={message.id} className="space-y-2">
-                <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
-                      {message.type === 'user' ? <User className="w-3 h-3 text-white" /> : <Bot className="w-3 h-3 text-white" />}
-                    </div>
-                    <div className={`rounded-lg p-3 ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted'}`}>
-                      <p className="text-sm whitespace-pre-line">{message.content}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {message.options && (
-                  <div className="flex flex-wrap gap-2 ml-8">
-                    {message.options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs"
-                        onClick={() => handleOptionClick(option)}
-                      >
-                        {option}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="flex items-start space-x-2">
-                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                    <Bot className="w-3 h-3 text-white" />
-                  </div>
-                  <div className="bg-muted rounded-lg p-3">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+      {!showGoodbyeMessage && (
+        <div className="border-t p-4">
+          <div className="flex items-center space-x-2">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              className="flex-1 h-8 text-sm"
+            />
+            <Button size="sm" onClick={() => handleSendMessage()} className="h-8 w-8 p-0">
+              <Send className="w-3 h-3" />
+            </Button>
           </div>
-        </ScrollArea>
-
-        {!showGoodbyeMessage && (
-          <div className="border-t p-4 flex-shrink-0">
-            <div className="flex items-center space-x-2">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-1"
-              />
-              <Button size="sm" onClick={() => handleSendMessage()}>
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+    </div>
   );
 };
