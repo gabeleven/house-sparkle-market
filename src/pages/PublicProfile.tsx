@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
-import { MapPin, Star, DollarSign, Clock, Award } from 'lucide-react';
+import { MapPin, Star, DollarSign, Clock, Award, MessageCircle } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import { ServiceType, serviceTypeIcons, serviceTypeLabels } from '@/utils/serviceTypes';
 
@@ -28,6 +29,7 @@ interface PublicProfileData {
 
 const PublicProfile = () => {
   const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +44,8 @@ const PublicProfile = () => {
     if (!userId) return;
 
     try {
+      console.log('Loading public profile for user ID:', userId);
+      
       // Get basic profile info
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -49,7 +53,10 @@ const PublicProfile = () => {
         .eq('id', userId)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Profile error:', profileError);
+        throw profileError;
+      }
 
       let completeProfile: PublicProfileData = {
         id: profileData.id,
@@ -91,6 +98,7 @@ const PublicProfile = () => {
         }
       }
 
+      console.log('Loaded complete profile:', completeProfile);
       setProfile(completeProfile);
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -110,6 +118,11 @@ const PublicProfile = () => {
     const baseRate = 25;
     const experienceBonus = (profile?.years_experience || 0) * 2;
     return baseRate + experienceBonus;
+  };
+
+  const handleMessageProvider = () => {
+    // Navigate to chat page with provider ID
+    navigate(`/chat?provider=${userId}`);
   };
 
   if (loading) {
@@ -284,13 +297,25 @@ const PublicProfile = () => {
                   </div>
                 )}
 
-                <ContactViaHousieButton 
-                  cleanerId={profile.id}
-                  size="lg"
-                  className="w-full mb-4"
-                />
+                <div className="space-y-3">
+                  <ContactViaHousieButton 
+                    cleanerId={profile.id}
+                    size="lg"
+                    className="w-full"
+                  />
 
-                <div className="text-center text-sm text-gray-500">
+                  <Button
+                    onClick={handleMessageProvider}
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Messages
+                  </Button>
+                </div>
+
+                <div className="text-center text-sm text-gray-500 mt-4">
                   <p>All communications are handled through Housie's secure messaging system</p>
                 </div>
               </CardContent>

@@ -70,6 +70,20 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
     setIsSubmitting(true);
 
     try {
+      console.log('Creating booking with data:', {
+        customer_id: user.id,
+        cleaner_id: cleaner.id,
+        service_type: serviceType,
+        service_date: selectedDate.toISOString().split('T')[0],
+        service_time: selectedTime,
+        estimated_duration: selectedServicePricing?.duration_minutes || 120,
+        estimated_price: selectedServicePricing?.base_price || 0,
+        additional_notes: additionalNotes,
+        customer_address: customerAddress,
+        customer_phone: customerPhone,
+        status: 'pending'
+      });
+
       const { error } = await supabase
         .from('bookings')
         .insert({
@@ -86,7 +100,10 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
           status: 'pending'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Booking creation error:', error);
+        throw error;
+      }
 
       // Send notification email to cleaner
       try {
@@ -109,7 +126,7 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
 
       toast({
         title: "Booking request sent!",
-        description: "The cleaner will receive your booking request and respond soon."
+        description: "The service provider will receive your booking request and respond soon."
       });
 
       onClose();
@@ -132,6 +149,21 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Prevent form submission redirect by handling all form events
+  const handleFormClick = (e: React.MouseEvent) => {
+    // Prevent any potential navigation
+    e.stopPropagation();
+  };
+
+  const handleAddressChange = (value: string) => {
+    setCustomerAddress(value);
+    // Clear any autocomplete that might cause redirects
+    setTimeout(() => {
+      const autocompleteElements = document.querySelectorAll('.pac-container');
+      autocompleteElements.forEach(el => el.remove());
+    }, 100);
   };
 
   return (
@@ -176,8 +208,8 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
         </div>
 
         {/* Form Content */}
-        <div className="p-6 overflow-y-auto h-[calc(100vh-80px)]">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="p-6 overflow-y-auto h-[calc(100vh-80px)]" onClick={handleFormClick}>
+          <form onSubmit={handleSubmit} className="space-y-6" onClick={handleFormClick}>
             
             <ServiceTypeSelector
               value={serviceType}
@@ -194,7 +226,7 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
 
             <CustomerDetailsForm
               customerAddress={customerAddress}
-              onAddressChange={setCustomerAddress}
+              onAddressChange={handleAddressChange}
               customerPhone={customerPhone}
               onPhoneChange={setCustomerPhone}
               additionalNotes={additionalNotes}
@@ -214,7 +246,7 @@ export const BookingSlideOut: React.FC<BookingSlideOutProps> = ({ isOpen, onClos
             <Button 
               type="submit" 
               className="w-full bg-purple-600 hover:bg-purple-700" 
-              disabled={isSubmitting}
+              disabled={isSubmitting || !selectedDate || !selectedTime || !serviceType || !customerAddress || !customerPhone}
             >
               {isSubmitting ? 'Sending request...' : 'Send booking request'}
             </Button>

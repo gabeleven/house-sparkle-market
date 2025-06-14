@@ -76,26 +76,26 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
 
             <div className="flex items-center text-sm text-gray-500">
               <MapPin className="w-4 h-4 mr-1" />
-              <span>{cleaner.service_area_city || 'Ville non spécifiée'}</span>
+              <span>{cleaner.service_area_city || 'Service area not specified'}</span>
             </div>
 
             {cleaner.years_experience !== null && (
               <div className="flex items-center text-sm text-gray-500">
                 <Clock className="w-4 h-4 mr-1" />
-                <span>{cleaner.years_experience} ans d'expérience</span>
+                <span>{cleaner.years_experience} years experience</span>
               </div>
             )}
 
             {cleaner.hourly_rate && (
               <div className="flex items-center text-sm font-medium text-green-600">
                 <DollarSign className="w-4 h-4 mr-1" />
-                <span>{cleaner.hourly_rate}$ / heure</span>
+                <span>${cleaner.hourly_rate} / hour</span>
               </div>
             )}
 
             {cleaner.total_reviews && cleaner.total_reviews > 0 && (
               <div className="flex items-center text-sm text-gray-500">
-                <span>{cleaner.total_reviews} avis</span>
+                <span>{cleaner.total_reviews} reviews</span>
               </div>
             )}
 

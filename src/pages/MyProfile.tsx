@@ -47,6 +47,10 @@ const MyProfile = () => {
     setCurrentMode(mode);
   };
 
+  const handleViewPublicProfile = () => {
+    navigate(`/public-profile/${user.id}`);
+  };
+
   const averageRating = reviews.length > 0 
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
     : 0;
@@ -88,7 +92,7 @@ const MyProfile = () => {
                 </Button>
               </div>
             )}
-            <Button variant="outline" onClick={() => navigate(`/profile/${user.id}`)}>
+            <Button variant="outline" onClick={handleViewPublicProfile}>
               <Eye className="w-4 h-4 mr-2" />
               View Public Profile
             </Button>
@@ -96,8 +100,10 @@ const MyProfile = () => {
         </div>
         
         <div className="space-y-6">
+          {/* Profile Mode Toggle at the top */}
           <UnifiedProfileToggle onModeChange={handleModeChange} />
           
+          {/* Profile content based on current mode */}
           {currentMode === 'customer' ? (
             <CustomerModeView />
           ) : (
