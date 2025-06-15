@@ -21,21 +21,19 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "~": path.resolve(__dirname, "./src"),
     },
   },
   build: {
     rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@radix-ui/react-accordion', '@radix-ui/react-dialog']
-        }
-      }
+      // Remove manual chunks for SSR compatibility
+      output: mode === 'production' ? {
+        manualChunks: undefined
+      } : undefined
     }
   },
-  ssr: {
-    noExternal: ['@radix-ui/react-accordion', '@radix-ui/react-dialog']
+  // Remove SSR externalization that conflicts with vite-plugin-ssr
+  optimizeDeps: {
+    include: ['react', 'react-dom']
   }
 }));

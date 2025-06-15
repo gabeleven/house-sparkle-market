@@ -18,20 +18,29 @@ import { Toaster } from '@/components/ui/toaster';
 export { PageShell };
 
 function PageShell({ children, pageContext }: { children: React.ReactNode; pageContext: any }) {
+  // Create QueryClient with SSR-friendly defaults
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // Disable queries during SSR
-        enabled: typeof window !== 'undefined',
+        staleTime: 60 * 1000,
+        retry: false,
+        refetchOnWindowFocus: false,
       },
     },
   });
+
+  const isClient = typeof window !== 'undefined';
 
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <IntensityThemeProvider>
-          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+          <ThemeProvider 
+            defaultTheme="light" 
+            storageKey="vite-ui-theme"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
             <CustomThemeProvider>
               <LanguageProvider>
                 <AuthProvider>
@@ -45,8 +54,8 @@ function PageShell({ children, pageContext }: { children: React.ReactNode; pageC
                         </main>
                         <Footer />
                         
-                        {/* Floating Chat Components - only render on client */}
-                        {typeof window !== 'undefined' && (
+                        {/* Only render interactive components on client */}
+                        {isClient && (
                           <>
                             <FloatingChatButton />
                             <TabbedChatbot />

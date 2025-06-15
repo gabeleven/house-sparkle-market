@@ -12,11 +12,25 @@ const passToClient = ['pageProps', 'urlPathname'];
 async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
   
-  const pageHtml = ReactDOMServer.renderToString(
-    <PageShell pageContext={pageContext}>
-      <Page {...pageProps} />
-    </PageShell>
-  );
+  let pageHtml = '';
+  
+  try {
+    pageHtml = ReactDOMServer.renderToString(
+      <PageShell pageContext={pageContext}>
+        <Page {...pageProps} />
+      </PageShell>
+    );
+  } catch (error) {
+    console.error('SSR render error:', error);
+    // Fallback to minimal HTML structure
+    pageHtml = `
+      <div class="min-h-screen">
+        <header>HOUSIE - Professional Service Providers</header>
+        <main>Loading...</main>
+        <footer>© 2024 HOUSIE</footer>
+      </div>
+    `;
+  }
 
   const { documentHtml } = pageContext;
   
@@ -26,7 +40,7 @@ async function render(pageContext: PageContextServer) {
       `<div id="root">${pageHtml}</div>`
     ),
     pageContext: {
-      // Pass page context to client
+      // Pass minimal context to client
     }
   };
 }
