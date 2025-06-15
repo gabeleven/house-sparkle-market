@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Brain, BarChart3, FileText, Target, ArrowLeft } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -34,46 +33,42 @@ export const AnalyticsNavigation = () => {
   ];
 
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg">
-      <CardContent className="p-6">
-        {isAnalyticsSubpage && (
-          <div className="mb-4">
-            <Link to="/analytics">
-              <Button 
-                variant="outline" 
-                className="flex items-center gap-2 mb-4"
+    <div className="flex items-center gap-4">
+      {isAnalyticsSubpage && (
+        <Link to="/analytics">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
+        </Link>
+      )}
+      
+      <div className="flex gap-1 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-1 shadow-lg">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = currentPath === item.path;
+          
+          return (
+            <Link key={item.path} to={item.path}>
+              <Button
+                variant={isActive ? "default" : "ghost"}
+                size="sm"
+                className={`flex items-center gap-2 ${
+                  isActive 
+                    ? "bg-primary text-primary-foreground" 
+                    : "hover:bg-gray-100"
+                }`}
               >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Dashboard
+                <Icon className="w-4 h-4" />
+                <span>{item.label}</span>
               </Button>
             </Link>
-          </div>
-        )}
-        
-        <div className="flex gap-2">
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentPath === item.path;
-            
-            return (
-              <Link key={item.path} to={item.path}>
-                <Button
-                  variant={isActive ? "default" : "outline"}
-                  size="sm"
-                  className={`flex items-center gap-2 ${
-                    isActive 
-                      ? "bg-primary text-primary-foreground" 
-                      : "bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </Button>
-              </Link>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
+          );
+        })}
+      </div>
+    </div>
   );
 };

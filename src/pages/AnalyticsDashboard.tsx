@@ -38,14 +38,13 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
 
-        {/* Customizable Widget Grid */}
+        {/* Customizable Widget Grid with Navigation */}
         <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
+            <AnalyticsNavigation />
+          </div>
           <WidgetGrid />
-        </div>
-
-        {/* Analytics Navigation */}
-        <div className="mb-8">
-          <AnalyticsNavigation />
         </div>
 
         {/* Key Metrics */}
