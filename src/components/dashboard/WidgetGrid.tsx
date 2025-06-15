@@ -1,16 +1,21 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Plus, MapPin } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { WidgetConfig, WidgetType } from '@/types/widgets';
 import { WidgetConfigDialog } from './WidgetConfigDialog';
 import { MileageTrackerWidget } from './widgets/MileageTrackerWidget';
 import { ParkyTicketsWidget } from './widgets/ParkyTicketsWidget';
 import { ExpenseCategoriesWidget } from './widgets/ExpenseCategoriesWidget';
 import { TaxComparisonWidget } from './widgets/TaxComparisonWidget';
+import { CitySelector } from './CitySelector';
+import { useCitySelection } from '@/hooks/useCitySelection';
+import { useRealDataSources } from '@/hooks/useRealDataSources';
 
 export const WidgetGrid = () => {
+  const { selectedCity } = useCitySelection();
+  const { businessData } = useRealDataSources(selectedCity);
+  
   const [widgets, setWidgets] = useState<WidgetConfig[]>([
     {
       id: '1',
@@ -53,16 +58,24 @@ export const WidgetGrid = () => {
 
   const renderWidget = (widget: WidgetConfig) => {
     const onConfigure = () => setConfigDialog({ isOpen: true, widget });
+    
+    // Pass city-specific data to widgets
+    const widgetProps = {
+      key: widget.id,
+      onConfigure,
+      selectedCity,
+      businessData
+    };
 
     switch (widget.type) {
       case 'mileage-tracker':
-        return <MileageTrackerWidget key={widget.id} onConfigure={onConfigure} />;
+        return <MileageTrackerWidget {...widgetProps} />;
       case 'parky-tickets':
-        return <ParkyTicketsWidget key={widget.id} onConfigure={onConfigure} />;
+        return <ParkyTicketsWidget {...widgetProps} />;
       case 'expense-categories':
-        return <ExpenseCategoriesWidget key={widget.id} onConfigure={onConfigure} />;
+        return <ExpenseCategoriesWidget {...widgetProps} />;
       case 'tax-comparison':
-        return <TaxComparisonWidget key={widget.id} onConfigure={onConfigure} />;
+        return <TaxComparisonWidget {...widgetProps} />;
       default:
         return null;
     }
@@ -92,17 +105,19 @@ export const WidgetGrid = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Add Widget button */}
+      {/* Header with City Selector and Add Widget button */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
+          {businessData && (
+            <p className="text-sm text-gray-600 mt-1">
+              {businessData.city} • {businessData.providerCount} providers • {businessData.totalBookings} bookings
+            </p>
+          )}
+        </div>
+        
         <div className="flex items-center gap-4">
-          <div className="flex gap-2">
-            <Badge variant="outline" className="bg-white/90 shadow-md backdrop-blur-sm">
-              <MapPin className="w-4 h-4 mr-1" />
-              Montreal, QC
-            </Badge>
-            <Badge variant="secondary" className="bg-white/90 shadow-md backdrop-blur-sm">Live Data</Badge>
-          </div>
+          <CitySelector />
           <Button 
             onClick={() => setConfigDialog({ isOpen: true })}
             className="flex items-center gap-2"

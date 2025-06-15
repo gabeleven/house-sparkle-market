@@ -1,4 +1,7 @@
 
+import { CanadianCity } from '@/hooks/useCitySelection';
+import { CityBusinessData } from '@/hooks/useRealDataSources';
+
 export interface WidgetConfig {
   id: string;
   type: WidgetType;
@@ -27,4 +30,10 @@ export interface ParkyTicketData {
   totalFees: number;
   disputeSuccessRate: number;
   monthlyTrend: { month: string; tickets: number; fees: number }[];
+}
+
+export interface WidgetProps {
+  onConfigure: () => void;
+  selectedCity?: CanadianCity;
+  businessData?: CityBusinessData | null;
 }
