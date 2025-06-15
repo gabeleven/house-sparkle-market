@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -26,11 +27,17 @@ const AnalyticsDashboard = () => {
               <h1 className="text-3xl font-bold text-gray-800">Business Dashboard</h1>
               <p className="text-gray-600">Customizable widgets and comprehensive business insights</p>
             </div>
+          </div>
+        </div>
+
+        {/* Navigation Row - Right Aligned */}
+        <div className="mb-6">
+          <div className="flex justify-end">
             <AnalyticsNavigation />
           </div>
         </div>
 
-        {/* Customizable Widget Grid */}
+        {/* Dashboard Widgets Row */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
