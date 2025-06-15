@@ -17,12 +17,12 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
     queryFn: async () => {
       console.log('Fetching service providers with enhanced search...');
       
-      // Query providers with proper join to profiles using the new foreign key constraint
+      // Query providers with proper join to profiles using inner join
       let query = supabase
         .from('providers')
         .select(`
           *,
-          profiles!providers_user_id_fkey(
+          profiles!inner(
             full_name,
             email
           ),
@@ -46,7 +46,8 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
               updated_at
             )
           )
-        `);
+        `)
+        .eq('profiles.id', 'providers.user_id');
 
       // Apply enhanced search filters including addresses
       if (searchTerm) {
