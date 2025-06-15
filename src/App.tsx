@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -41,7 +42,14 @@ import Insights from './pages/analytics/Insights';
 import Reports from './pages/analytics/Reports';
 
 function App() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // Disable queries during SSR for compatibility
+        enabled: typeof window !== 'undefined',
+      },
+    },
+  });
 
   return (
     <HelmetProvider>
