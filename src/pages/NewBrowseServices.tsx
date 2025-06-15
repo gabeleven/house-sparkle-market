@@ -9,14 +9,18 @@ import { ResultsContent } from '@/components/browse/ResultsContent';
 import { ResultsHeader } from '@/components/browse/ResultsHeader';
 import { LocationAuthPrompt } from '@/components/browse/LocationAuthPrompt';
 import { useSubscription } from '@/hooks/useSubscription';
+import { toast } from 'sonner';
 
-const BrowseServices = () => {
+const NewBrowseServices = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
+  const [radiusKm, setRadiusKm] = useState(25);
+  
   const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
   const { currentTier: userSubscription } = useSubscription();
 
+  // Auto-request location on mount
   useEffect(() => {
     if (!userLocation && !locationLoading) {
       requestUserLocation();
@@ -39,25 +43,23 @@ const BrowseServices = () => {
     userLocation, 
     searchTerm, 
     locationFilter, 
-    serviceFilters 
+    serviceFilters,
+    radiusKm
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading service providers...</p>
-        </div>
-      </div>
-    );
-  }
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (error) {
+      toast.error(`Error loading service providers: ${error.message}`);
+    }
+  }, [error]);
 
-  if (error) {
+  if (isLoading && !providers.length) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-destructive">Error loading service providers: {error.message}</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading service providers across Canada...</p>
         </div>
       </div>
     );
@@ -67,6 +69,13 @@ const BrowseServices = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-4">
+            Find Service Providers Across Canada
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Search for professional service providers in your area using postal codes, cities, or neighborhoods.
+          </p>
+          
           <SearchHeader
             searchTerm={searchTerm}
             locationFilter={locationFilter}
@@ -83,6 +92,27 @@ const BrowseServices = () => {
               selectedServices={serviceFilters}
               onServiceChange={handleServiceFilter}
             />
+            
+            {userLocation && (
+              <div className="mt-6 p-4 bg-card border rounded-lg">
+                <h3 className="font-medium mb-3">Search Radius</h3>
+                <div className="space-y-2">
+                  <input
+                    type="range"
+                    min="5"
+                    max="100"
+                    value={radiusKm}
+                    onChange={(e) => setRadiusKm(Number(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>5 km</span>
+                    <span className="font-medium">{radiusKm} km</span>
+                    <span>100 km</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-3">
@@ -94,18 +124,29 @@ const BrowseServices = () => {
               userLocation={userLocation}
             />
 
-            {!userLocation && (
+            {!userLocation && !locationLoading && (
               <LocationAuthPrompt onRequestLocation={handleRequestLocation} />
             )}
             
-            <ResultsContent
-              cleaners={providers}
-              isLoading={isLoading}
-              error={error}
-              hasLocation={!!userLocation}
-              onRequestLocation={handleRequestLocation}
-              userSubscription={userSubscription}
-            />
+            {error ? (
+              <div className="text-center py-12">
+                <p className="text-destructive mb-2">
+                  Unable to load service providers
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Please try refreshing the page or adjusting your search criteria.
+                </p>
+              </div>
+            ) : (
+              <ResultsContent
+                cleaners={providers}
+                isLoading={isLoading}
+                error={error}
+                hasLocation={!!userLocation}
+                onRequestLocation={handleRequestLocation}
+                userSubscription={userSubscription}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -113,4 +154,4 @@ const BrowseServices = () => {
   );
 };
 
-export default BrowseServices;
+export default NewBrowseServices;

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUserLocation } from '@/hooks/useUserLocation';
-import { useEnhancedProviders } from '@/hooks/useEnhancedProviders';
+import { useUnifiedProviders } from '@/hooks/useUnifiedProviders';
 import { ServiceType } from '@/utils/serviceTypes';
 import { SearchHeader } from '@/components/browse/SearchHeader';
 import { ServiceFilters } from '@/components/browse/ServiceFilters';
@@ -35,7 +35,7 @@ const BrowseCleaners = () => {
     providers, 
     isLoading, 
     error 
-  } = useEnhancedProviders({ 
+  } = useUnifiedProviders({ 
     userLocation, 
     searchTerm, 
     locationFilter, 

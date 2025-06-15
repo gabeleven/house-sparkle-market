@@ -104,7 +104,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   }, [userLocation]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
-    console.log('Google Map loaded successfully with Places API for Canada-wide coverage');
+    console.log('Google Map loaded successfully with fixed provider relationships');
     
     // Verify Places API is available
     if (window.google?.maps?.places) {
