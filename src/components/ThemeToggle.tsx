@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
-import { useTheme } from '../contexts/ThemeContext';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Moon, Sun } from 'lucide-react';
 
 export const ThemeToggle = () => {

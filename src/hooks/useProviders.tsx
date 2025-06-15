@@ -76,7 +76,10 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
             updated_at: provider.updated_at,
             full_name: profile?.full_name || '',
             email: profile?.email || '',
-            services: provider.provider_services || []
+            services: provider.provider_services || [],
+            // Add required CleanerProfile properties with defaults
+            brief_description: provider.bio || '',
+            service_area_city: provider.address?.split(',')[1]?.trim() || 'Unknown'
           };
         });
 

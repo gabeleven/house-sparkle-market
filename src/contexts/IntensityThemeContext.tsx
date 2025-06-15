@@ -1,6 +1,5 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { safeLocalStorage } from '../utils/safeStorage';
 
 type IntensityTheme = 'vibrant' | 'matte';
 
@@ -13,7 +12,8 @@ const IntensityThemeContext = createContext<IntensityThemeContextType | undefine
 
 export const IntensityThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [intensityTheme, setIntensityTheme] = useState<IntensityTheme>(() => {
-    const savedIntensityTheme = safeLocalStorage.getItem('intensityTheme') as IntensityTheme;
+    // Check localStorage for saved intensity theme preference, default to vibrant
+    const savedIntensityTheme = localStorage.getItem('intensityTheme') as IntensityTheme;
     return savedIntensityTheme || 'vibrant';
   });
 
@@ -23,7 +23,7 @@ export const IntensityThemeProvider: React.FC<{ children: React.ReactNode }> = (
     document.documentElement.classList.add(intensityTheme);
     
     // Save to localStorage
-    safeLocalStorage.setItem('intensityTheme', intensityTheme);
+    localStorage.setItem('intensityTheme', intensityTheme);
   }, [intensityTheme]);
 
   const toggleIntensityTheme = () => {

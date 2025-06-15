@@ -1,22 +1,14 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
 
 User-agent: *
 Allow: /
-
-# High priority pages for indexing
-Allow: /browse-services
-Allow: /browse-cleaners
-Allow: /pricing
-Allow: /how-it-works
-Allow: /support
-
-# Authentication pages (crawlable but not indexed)
-Allow: /auth
-
-# Important resources
-Allow: /sitemap.xml
-
-# Sitemap location
-Sitemap: https://housie.ca/sitemap.xml
-
-# Crawl delay for respectful crawling
-Crawl-delay: 1

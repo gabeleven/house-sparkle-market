@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, MessageCircle, Mail, HelpCircle } from 'lucide-react';
-import { EnhancedFAQSection } from '../components/support/EnhancedFAQSection';
-import { ContactForm } from '../components/support/ContactForm';
+import { FAQSection } from '@/components/support/FAQSection';
+import { ContactForm } from '@/components/support/ContactForm';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,11 +14,9 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator
-} from '../components/ui/breadcrumb';
+} from '@/components/ui/breadcrumb';
 
-export { Page };
-
-function Page() {
+const Support = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('faq');
 
@@ -73,7 +71,7 @@ function Page() {
           </TabsList>
 
           <TabsContent value="faq">
-            <EnhancedFAQSection searchQuery={searchQuery} />
+            <FAQSection searchQuery={searchQuery} />
           </TabsContent>
 
           <TabsContent value="contact">
@@ -116,4 +114,6 @@ function Page() {
       </div>
     </div>
   );
-}
+};
+
+export default Support;

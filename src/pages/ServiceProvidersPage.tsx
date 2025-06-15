@@ -1,11 +1,11 @@
 
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import Footer from "../components/Footer";
-import { useLanguage } from "../contexts/LanguageContext";
-import PricingPlansSection from "../components/providers/PricingPlansSection";
-import ProviderBenefitsSection from "../components/providers/ProviderBenefitsSection";
-import TestimonialsSection from "../components/providers/TestimonialsSection";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Footer from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
+import PricingPlansSection from "@/components/providers/PricingPlansSection";
+import ProviderBenefitsSection from "@/components/providers/ProviderBenefitsSection";
+import TestimonialsSection from "@/components/providers/TestimonialsSection";
 
 const ServiceProvidersPage = () => {
   const { t } = useLanguage();

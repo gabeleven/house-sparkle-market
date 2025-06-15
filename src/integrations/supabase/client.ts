@@ -6,47 +6,12 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://hgnehytgabtciltgvmcf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnbmVoeXRnYWJ0Y2lsdGd2bWNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODM3NjYsImV4cCI6MjA2NDY1OTc2Nn0.beiABo6Kr0gBi0I9YDq2nyfnp7O8VoKOGy-AImOqx_o";
 
-// Safe storage adapter for SSR compatibility
-const createSafeStorage = () => {
-  return {
-    getItem: (key: string): string | null => {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        try {
-          return localStorage.getItem(key);
-        } catch (error) {
-          console.warn('localStorage.getItem failed:', error);
-          return null;
-        }
-      }
-      return null;
-    },
-    setItem: (key: string, value: string): void => {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        try {
-          localStorage.setItem(key, value);
-        } catch (error) {
-          console.warn('localStorage.setItem failed:', error);
-        }
-      }
-    },
-    removeItem: (key: string): void => {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        try {
-          localStorage.removeItem(key);
-        } catch (error) {
-          console.warn('localStorage.removeItem failed:', error);
-        }
-      }
-    }
-  };
-};
-
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: createSafeStorage(),
+    storage: localStorage,
     persistSession: true,
     autoRefreshToken: true
   }

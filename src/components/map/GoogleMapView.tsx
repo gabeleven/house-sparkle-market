@@ -4,7 +4,6 @@ import { MapMarkers } from './MapMarkers';
 import { MapControls } from './MapControls';
 import { useMapState } from '@/hooks/useMapState';
 import { useUserLocation } from '@/hooks/useUserLocation';
-import { supabase } from '@/integrations/supabase/client';
 
 const mapContainerStyle = {
   width: '100%',
@@ -61,46 +60,9 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   onError,
   isFullScreen = false
 }) => {
-  const [secureApiKey, setSecureApiKey] = useState<string | null>(null);
-  const [keyLoading, setKeyLoading] = useState(true);
-  const [keyError, setKeyError] = useState<string | null>(null);
-
-  // Securely get API key from edge function
-  useEffect(() => {
-    const getSecureApiKey = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
-          body: { action: 'get_key' }
-        });
-        
-        if (error) {
-          console.error('Failed to get secure API key:', error);
-          setKeyError('Failed to retrieve API key');
-          if (onError) onError();
-          return;
-        }
-        
-        if (data?.apiKey) {
-          setSecureApiKey(data.apiKey);
-        } else {
-          setKeyError('No API key returned');
-          if (onError) onError();
-        }
-      } catch (error) {
-        console.error('Error retrieving secure API key:', error);
-        setKeyError('Network error retrieving API key');
-        if (onError) onError();
-      } finally {
-        setKeyLoading(false);
-      }
-    };
-
-    getSecureApiKey();
-  }, [onError]);
-
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: secureApiKey || '',
+    googleMapsApiKey: 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o',
     libraries: libraries,
     version: '3.55'
   });
@@ -131,14 +93,18 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   // Update map center based on user location
   useEffect(() => {
     if (userLocation) {
+      console.log('Setting map center to user location:', userLocation);
       const newCenter = { lat: userLocation.latitude, lng: userLocation.longitude };
       setFinalCenter(newCenter);
     } else {
+      console.log('Using Canada geographic center as fallback');
       setFinalCenter(CANADA_CENTER);
     }
   }, [userLocation]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
+    console.log('Google Map loaded successfully with Places API for Canada-wide coverage');
+    
     // Verify Places API is available
     if (window.google?.maps?.places) {
       console.log('Places API is available and ready for Canadian locations');
@@ -171,19 +137,8 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     setSelectedCleaner(null);
   }, [setSelectedCleaner]);
 
-  if (keyLoading) {
-    return (
-      <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
-        <div className="text-center p-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
-          <p className="text-gray-600">Securing API connection...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (keyError || loadError || !secureApiKey) {
-    console.error('Google Maps load error:', loadError || keyError);
+  if (loadError) {
+    console.error('Google Maps load error:', loadError);
     if (onError) {
       onError();
     }
@@ -192,10 +147,10 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         <div className="text-center p-4">
           <p className="text-red-600 mb-2">Failed to load Google Maps</p>
           <p className="text-sm text-gray-500 mb-2">
-            {loadError?.message || keyError || 'API key configuration error'}
+            {loadError.message}
           </p>
           <p className="text-xs text-gray-400">
-            Please ensure the Google Maps API key is properly configured.
+            Please ensure the Google Maps API key has Places API (New) enabled for Canadian coverage.
           </p>
         </div>
       </div>

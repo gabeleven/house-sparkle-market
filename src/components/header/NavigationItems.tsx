@@ -18,7 +18,7 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
             Dashboard
           </Link>
         )}
-        {currentPath !== '/browse-services' && (
+        {currentPath !== '/browse-services' && currentPath !== '/browse-providers' && (
           <Link to="/browse-services" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
             Services
           </Link>
@@ -34,7 +34,7 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
 
   return (
     <>
-      {currentPath !== '/browse-services' && (
+      {currentPath !== '/browse-services' && currentPath !== '/browse-providers' && (
         <Link to="/browse-services" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
           Services
         </Link>
@@ -42,6 +42,11 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
       {currentPath !== '/roadmap' && (
         <Link to="/roadmap" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
           Roadmap
+        </Link>
+      )}
+      {currentPath !== '/comment-ca-marche' && (
+        <Link to="/comment-ca-marche" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
+          À Propos
         </Link>
       )}
       {currentPath !== '/support' && (

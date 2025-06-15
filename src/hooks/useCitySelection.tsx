@@ -1,5 +1,5 @@
+
 import { useState, useEffect } from 'react';
-import { safeLocalStorage } from '../utils/safeStorage';
 
 export interface CanadianCity {
   name: string;
@@ -56,7 +56,7 @@ export const CANADIAN_CITIES: CanadianCity[] = [
 
 export const useCitySelection = () => {
   const [selectedCity, setSelectedCity] = useState<CanadianCity>(() => {
-    const saved = safeLocalStorage.getItem('housie-selected-city');
+    const saved = localStorage.getItem('housie-selected-city');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -72,7 +72,7 @@ export const useCitySelection = () => {
 
   const updateSelectedCity = (city: CanadianCity) => {
     setSelectedCity(city);
-    safeLocalStorage.setItem('housie-selected-city', JSON.stringify(city));
+    localStorage.setItem('housie-selected-city', JSON.stringify(city));
   };
 
   const getCitiesByProvince = () => {

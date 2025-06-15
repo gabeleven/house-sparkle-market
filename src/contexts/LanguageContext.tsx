@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { safeLocalStorage } from '../utils/safeStorage';
 
 type Language = 'en' | 'fr';
 
@@ -17,13 +16,13 @@ interface LanguageProviderProps {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = safeLocalStorage.getItem('housie-language');
+    const saved = localStorage.getItem('housie-language');
     return (saved as Language) || 'fr'; // Default to French for Quebec
   });
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    safeLocalStorage.setItem('housie-language', lang);
+    localStorage.setItem('housie-language', lang);
   };
 
   const t = (key: string): string => {
@@ -31,9 +30,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   };
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = language;
-    }
+    document.documentElement.lang = language;
   }, [language]);
 
   return (
