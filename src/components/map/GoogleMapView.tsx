@@ -1,4 +1,3 @@
-
 import React, { useCallback, useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { MapMarkers } from './MapMarkers';
@@ -68,12 +67,6 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 
   // Securely get API key from edge function
   useEffect(() => {
-    // Skip in SSR environment
-    if (typeof window === 'undefined') {
-      setKeyLoading(false);
-      return;
-    }
-
     const getSecureApiKey = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('google-maps-proxy', {

@@ -1,5 +1,4 @@
 
-// Force rebuild for preview sync - 2025-06-15
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
@@ -23,8 +22,7 @@ function App({ children }: AppProps) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // Disable queries during SSR for compatibility
-        enabled: typeof window !== 'undefined',
+        enabled: true,
       },
     },
   });
