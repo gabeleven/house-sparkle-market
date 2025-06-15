@@ -14,35 +14,21 @@ const BrowseServices = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
-  const { userLocation, requestLocation, isLoading: locationLoading } = useUserLocation();
+  const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
   const { currentTier: userSubscription } = useSubscription();
 
   useEffect(() => {
     if (!userLocation && !locationLoading) {
-      requestLocation();
+      requestUserLocation();
     }
-  }, [requestLocation, userLocation, locationLoading]);
-
-  const handleSearchChange = (newSearchTerm: string) => {
-    setSearchTerm(newSearchTerm);
-  };
-
-  const handleLocationChange = (newLocationFilter: string) => {
-    setLocationFilter(newLocationFilter);
-  };
-
-  const handleServiceFilter = (service: ServiceType, checked: boolean) => {
-    setServiceFilters((prevServices) => {
-      if (checked) {
-        return [...prevServices, service];
-      } else {
-        return prevServices.filter((s) => s !== service);
-      }
-    });
-  };
+  }, [requestUserLocation, userLocation, locationLoading]);
 
   const handleRequestLocation = () => {
-    requestLocation();
+    requestUserLocation();
+  };
+
+  const handleServiceFilter = (services: ServiceType[]) => {
+    setServiceFilters(services);
   };
 
   const { 

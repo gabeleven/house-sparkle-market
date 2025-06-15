@@ -3,16 +3,16 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MapPin } from 'lucide-react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderProfile } from '@/types/providers';
 
 interface MapPreviewProps {
-  cleaners: CleanerProfile[];
+  providers: ProviderProfile[];
   onShowMap: () => void;
   userLocation?: { latitude: number; longitude: number } | null;
 }
 
-export const MapPreview = ({ cleaners, onShowMap, userLocation }: MapPreviewProps) => {
-  const cleanersWithLocation = cleaners.filter(c => c.latitude && c.longitude);
+export const MapPreview = ({ providers, onShowMap, userLocation }: MapPreviewProps) => {
+  const providersWithLocation = providers.filter(p => p.latitude && p.longitude);
 
   return (
     <Card className="mb-6">
@@ -25,10 +25,10 @@ export const MapPreview = ({ cleaners, onShowMap, userLocation }: MapPreviewProp
             
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-1">
-                View Cleaners on Google Maps
+                View Service Providers on Google Maps
               </h3>
               <p className="text-sm text-muted-foreground">
-                {cleanersWithLocation.length} cleaner{cleanersWithLocation.length !== 1 ? 's' : ''} available in your area
+                {providersWithLocation.length} service provider{providersWithLocation.length !== 1 ? 's' : ''} available in your area
               </p>
               {userLocation && (
                 <p className="text-xs text-green-600 mt-1">
@@ -41,16 +41,16 @@ export const MapPreview = ({ cleaners, onShowMap, userLocation }: MapPreviewProp
           <Button 
             onClick={onShowMap}
             className="bg-purple-600 hover:bg-purple-700"
-            disabled={cleanersWithLocation.length === 0}
+            disabled={providersWithLocation.length === 0}
           >
             Show Map
           </Button>
         </div>
         
-        {cleanersWithLocation.length === 0 && (
+        {providersWithLocation.length === 0 && (
           <div className="mt-4 p-3 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground">
-              No cleaners with location data found. Try adjusting your search filters.
+              No service providers with location data found. Try adjusting your search filters.
             </p>
           </div>
         )}

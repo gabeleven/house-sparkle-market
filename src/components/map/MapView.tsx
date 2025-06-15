@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderProfile } from '@/types/providers';
 import { Button } from '@/components/ui/button';
 import { X, MapPin, Users } from 'lucide-react';
 import { CleanerMapPopup } from './CleanerMapPopup';
@@ -8,16 +8,16 @@ import { useMapCenter } from '@/hooks/useMapCenter';
 import { Badge } from '@/components/ui/badge';
 
 interface MapViewProps {
-  cleaners: CleanerProfile[];
+  providers: ProviderProfile[];
   userLocation?: { latitude: number; longitude: number } | null;
   radius?: number;
   onClose: () => void;
   isFullScreen?: boolean;
 }
 
-export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullScreen = false }: MapViewProps) => {
+export const MapView = ({ providers, userLocation, radius = 10, onClose, isFullScreen = false }: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<ProviderProfile | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
   const { mapCenter, loading: centerLoading } = useMapCenter();
 
@@ -25,22 +25,22 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
     ? "fixed inset-0 z-50 bg-white"
     : "relative w-full h-96 rounded-lg overflow-hidden border";
 
-  // Filter featured cleaners for highlighting
-  const featuredCleaners = cleaners.filter(cleaner => 
-    cleaner.business_name && cleaner.years_experience && cleaner.years_experience > 2
+  // Filter featured providers for highlighting
+  const featuredProviders = providers.filter(provider => 
+    provider.business_name && provider.years_experience && provider.years_experience > 2
   );
 
-  const regularCleaners = cleaners.filter(cleaner => 
-    !featuredCleaners.includes(cleaner)
+  const regularProviders = providers.filter(provider => 
+    !featuredProviders.includes(provider)
   );
 
-  const handleCleanerClick = (cleaner: CleanerProfile, index: number) => {
-    setSelectedCleaner(cleaner);
+  const handleProviderClick = (provider: ProviderProfile, index: number) => {
+    setSelectedProvider(provider);
     setPopupPosition({ x: 200 + index * 50, y: 150 + index * 30 });
   };
 
   const handleClosePopup = () => {
-    setSelectedCleaner(null);
+    setSelectedProvider(null);
     setPopupPosition(null);
   };
 
@@ -69,13 +69,13 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
               )}
             </div>
             
-            {/* Cleaner markers simulation */}
+            {/* Provider markers simulation */}
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {featuredCleaners.slice(0, 4).map((cleaner, index) => (
+              {featuredProviders.slice(0, 4).map((provider, index) => (
                 <div 
-                  key={cleaner.id}
+                  key={provider.id}
                   className="bg-white p-3 rounded-lg shadow-md border-2 border-yellow-400 cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => handleCleanerClick(cleaner, index)}
+                  onClick={() => handleProviderClick(provider, index)}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
@@ -84,10 +84,10 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
                     </Badge>
                   </div>
                   <p className="text-sm font-medium text-gray-800 truncate">
-                    {cleaner.business_name || cleaner.full_name}
+                    {provider.business_name || provider.full_name}
                   </p>
                   <p className="text-xs text-gray-600">
-                    ${cleaner.hourly_rate || 25}/hr
+                    ${provider.hourly_rate || 25}/hr
                   </p>
                 </div>
               ))}
@@ -98,34 +98,34 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
               <div className="flex items-center justify-center gap-4 text-xs">
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span>Featured ({featuredCleaners.length})</span>
+                  <span>Featured ({featuredProviders.length})</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>Regular ({regularCleaners.length})</span>
+                  <span>Regular ({regularProviders.length})</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Simulated regular cleaner markers */}
-        {regularCleaners.slice(0, 6).map((cleaner, index) => (
+        {/* Simulated regular provider markers */}
+        {regularProviders.slice(0, 6).map((provider, index) => (
           <div
-            key={cleaner.id}
+            key={provider.id}
             className="absolute bg-white p-2 rounded-lg shadow-md border cursor-pointer hover:shadow-lg transition-shadow"
             style={{
               left: `${20 + index * 12}%`,
               top: `${30 + (index % 3) * 20}%`,
               transform: 'translate(-50%, -50%)'
             }}
-            onClick={() => handleCleanerClick(cleaner, index)}
+            onClick={() => handleProviderClick(provider, index)}
           >
             <div className="flex items-center gap-1 mb-1">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
             </div>
             <p className="text-xs font-medium text-gray-800 truncate max-w-20">
-              {cleaner.business_name || cleaner.full_name}
+              {provider.business_name || provider.full_name}
             </p>
           </div>
         ))}
@@ -161,16 +161,16 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
         </div>
       )}
 
-      {/* Cleaner Count */}
+      {/* Provider Count */}
       <div className="absolute bottom-4 right-4 bg-white px-3 py-2 rounded-lg shadow-md">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Users className="w-4 h-4" />
-          <span className="font-medium">{cleaners.length}</span> cleaner{cleaners.length !== 1 ? 's' : ''} shown
+          <span className="font-medium">{providers.length}</span> provider{providers.length !== 1 ? 's' : ''} shown
         </div>
       </div>
 
-      {/* Cleaner Popup */}
-      {selectedCleaner && popupPosition && (
+      {/* Provider Popup */}
+      {selectedProvider && popupPosition && (
         <div 
           className="absolute z-20 bg-white rounded-lg shadow-lg border"
           style={{
@@ -180,7 +180,7 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
           }}
         >
           <CleanerMapPopup
-            cleaner={selectedCleaner}
+            cleaner={selectedProvider}
             position={popupPosition}
             onClose={handleClosePopup}
           />
@@ -188,7 +188,7 @@ export const MapView = ({ cleaners, userLocation, radius = 10, onClose, isFullSc
       )}
 
       {/* Click to close overlay */}
-      {selectedCleaner && (
+      {selectedProvider && (
         <div 
           className="absolute inset-0 z-10" 
           onClick={handleClosePopup}

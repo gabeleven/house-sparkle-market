@@ -1,33 +1,33 @@
 
 import React from 'react';
 import { Marker, InfoWindow, Circle } from '@react-google-maps/api';
-import { CleanerPopup } from './CleanerPopup';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderPopup } from './ProviderPopup';
+import { ProviderProfile } from '@/types/providers';
 import { useNavigate } from 'react-router-dom';
 
 interface MapMarkersProps {
-  cleaners: CleanerProfile[];
+  providers: ProviderProfile[];
   userLocation?: { latitude: number; longitude: number } | null;
   radius?: number;
-  selectedCleaner?: CleanerProfile | null;
-  onMarkerClick: (cleaner: CleanerProfile) => void;
+  selectedProvider?: ProviderProfile | null;
+  onMarkerClick: (provider: ProviderProfile) => void;
   onInfoWindowClose: () => void;
   isGoogleMapsAvailable: () => boolean;
 }
 
 export const MapMarkers: React.FC<MapMarkersProps> = ({
-  cleaners,
+  providers,
   userLocation,
   radius = 25,
-  selectedCleaner,
+  selectedProvider,
   onMarkerClick,
   onInfoWindowClose,
   isGoogleMapsAvailable
 }) => {
   const navigate = useNavigate();
 
-  const handleViewProfile = (cleaner: CleanerProfile) => {
-    navigate(`/public-profile/${cleaner.id}`);
+  const handleViewProfile = (provider: ProviderProfile) => {
+    navigate(`/public-profile/${provider.id}`);
     onInfoWindowClose();
   };
 
@@ -76,16 +76,16 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
         />
       )}
 
-      {/* Cleaner markers */}
-      {cleaners.map((cleaner) => {
-        if (!cleaner.latitude || !cleaner.longitude) return null;
+      {/* Provider markers */}
+      {providers.map((provider) => {
+        if (!provider.latitude || !provider.longitude) return null;
 
         return (
-          <React.Fragment key={cleaner.id}>
+          <React.Fragment key={provider.id}>
             <Marker
               position={{
-                lat: cleaner.latitude,
-                lng: cleaner.longitude
+                lat: provider.latitude,
+                lng: provider.longitude
               }}
               icon={{
                 url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
@@ -97,20 +97,20 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
                 scaledSize: new google.maps.Size(32, 32),
                 anchor: new google.maps.Point(16, 16)
               }}
-              title={cleaner.business_name || cleaner.full_name}
-              onClick={() => onMarkerClick(cleaner)}
+              title={provider.business_name || provider.full_name}
+              onClick={() => onMarkerClick(provider)}
             />
 
-            {selectedCleaner?.id === cleaner.id && (
+            {selectedProvider?.id === provider.id && (
               <InfoWindow
                 position={{
-                  lat: cleaner.latitude,
-                  lng: cleaner.longitude
+                  lat: provider.latitude,
+                  lng: provider.longitude
                 }}
                 onCloseClick={onInfoWindowClose}
               >
-                <CleanerPopup
-                  cleaner={cleaner}
+                <ProviderPopup
+                  provider={provider}
                   onViewProfile={handleViewProfile}
                   onClose={onInfoWindowClose}
                 />

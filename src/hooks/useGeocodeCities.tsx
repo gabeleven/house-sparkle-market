@@ -1,38 +1,38 @@
 
 import { useState, useEffect } from 'react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderProfile } from '@/types/providers';
 
-interface GeocodedCleaner extends CleanerProfile {
+interface GeocodedProvider extends ProviderProfile {
   geocoded_lat?: number;
   geocoded_lng?: number;
 }
 
-export const useGeocodeCities = (cleaners: CleanerProfile[]) => {
-  const [geocodedCleaners, setGeocodedCleaners] = useState<GeocodedCleaner[]>([]);
+export const useGeocodeCities = (providers: ProviderProfile[]) => {
+  const [geocodedProviders, setGeocodedProviders] = useState<GeocodedProvider[]>([]);
   const [isGeocoding, setIsGeocoding] = useState(false);
 
   useEffect(() => {
-    const geocodeCleaners = async () => {
-      if (!cleaners.length || !window.google) return;
+    const geocodeProviders = async () => {
+      if (!providers.length || !window.google) return;
 
       setIsGeocoding(true);
       const geocoder = new google.maps.Geocoder();
-      const results: GeocodedCleaner[] = [];
+      const results: GeocodedProvider[] = [];
 
-      for (const cleaner of cleaners) {
+      for (const provider of providers) {
         // Use existing coordinates if available
-        if (cleaner.latitude && cleaner.longitude) {
-          results.push(cleaner);
+        if (provider.latitude && provider.longitude) {
+          results.push(provider);
           continue;
         }
 
         // Geocode using service area city
-        if (cleaner.service_area_city) {
+        if (provider.service_area_city) {
           try {
             const geocodeResult = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
               geocoder.geocode(
                 {
-                  address: `${cleaner.service_area_city}, Quebec, Canada`,
+                  address: `${provider.service_area_city}, Quebec, Canada`,
                   region: 'CA',
                   componentRestrictions: { country: 'CA', administrativeArea: 'QC' }
                 },
@@ -40,7 +40,7 @@ export const useGeocodeCities = (cleaners: CleanerProfile[]) => {
                   if (status === 'OK' && results) {
                     resolve(results);
                   } else {
-                    console.warn(`Geocoding failed for ${cleaner.service_area_city}: ${status}`);
+                    console.warn(`Geocoding failed for ${provider.service_area_city}: ${status}`);
                     resolve([]);
                   }
                 }
@@ -50,28 +50,28 @@ export const useGeocodeCities = (cleaners: CleanerProfile[]) => {
             if (geocodeResult.length > 0) {
               const location = geocodeResult[0].geometry.location;
               results.push({
-                ...cleaner,
+                ...provider,
                 geocoded_lat: location.lat(),
                 geocoded_lng: location.lng()
               });
             } else {
-              results.push(cleaner);
+              results.push(provider);
             }
           } catch (error) {
-            console.error(`Error geocoding ${cleaner.service_area_city}:`, error);
-            results.push(cleaner);
+            console.error(`Error geocoding ${provider.service_area_city}:`, error);
+            results.push(provider);
           }
         } else {
-          results.push(cleaner);
+          results.push(provider);
         }
       }
 
-      setGeocodedCleaners(results);
+      setGeocodedProviders(results);
       setIsGeocoding(false);
     };
 
-    geocodeCleaners();
-  }, [cleaners]);
+    geocodeProviders();
+  }, [providers]);
 
-  return { geocodedCleaners, isGeocoding };
+  return { geocodedProviders, isGeocoding };
 };

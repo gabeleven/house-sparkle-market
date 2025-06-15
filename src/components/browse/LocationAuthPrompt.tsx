@@ -1,108 +1,43 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Shield, Clock, Target } from 'lucide-react';
-import { useLocation } from '@/hooks/useLocation';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Shield } from 'lucide-react';
 
 interface LocationAuthPromptProps {
-  onLocationGranted: () => void;
-  onLocationDenied: () => void;
-  postalCode?: string;
+  onRequestLocation: () => void;
 }
 
-export const LocationAuthPrompt: React.FC<LocationAuthPromptProps> = ({
-  onLocationGranted,
-  onLocationDenied,
-  postalCode,
-}) => {
-  const [isRequesting, setIsRequesting] = useState(false);
-  const { requestLocation } = useLocation();
-
-  const handleRequestLocation = async () => {
-    setIsRequesting(true);
-    try {
-      await requestLocation();
-      onLocationGranted();
-    } catch (error) {
-      onLocationDenied();
-    } finally {
-      setIsRequesting(false);
-    }
-  };
-
+export const LocationAuthPrompt: React.FC<LocationAuthPromptProps> = ({ onRequestLocation }) => {
   return (
-    <Card className="pop-card bg-card/80 backdrop-blur border-2 border-primary/20 max-w-2xl mx-auto">
-      <CardHeader className="text-center">
-        <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
-            <MapPin className="w-8 h-8 text-white" />
+    <Card className="mb-6 border-blue-200 bg-blue-50">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <MapPin className="w-6 h-6 text-blue-600" />
           </div>
-        </div>
-        <CardTitle className="text-2xl">Find Service Providers Near You</CardTitle>
-        <CardDescription className="text-base">
-          Allow location access to see service providers in your exact area
-          {postalCode && ` around ${postalCode}`}
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center space-y-2">
-            <Target className="w-8 h-8 text-primary mx-auto" />
-            <h4 className="font-semibold">Precise Results</h4>
-            <p className="text-sm text-muted-foreground">
-              See service providers within your preferred distance
-            </p>
-          </div>
-          <div className="text-center space-y-2">
-            <Clock className="w-8 h-8 text-primary mx-auto" />
-            <h4 className="font-semibold">Faster Booking</h4>
-            <p className="text-sm text-muted-foreground">
-              Skip manual address entry for quicker service
-            </p>
-          </div>
-          <div className="text-center space-y-2">
-            <Shield className="w-8 h-8 text-primary mx-auto" />
-            <h4 className="font-semibold">Privacy Protected</h4>
-            <p className="text-sm text-muted-foreground">
-              Your location is only used for search results
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <Button
-            onClick={handleRequestLocation}
-            disabled={isRequesting}
-            className="w-full pop-blue-btn"
-            size="lg"
-          >
-            {isRequesting ? (
-              <>
-                <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
-                Requesting Location...
-              </>
-            ) : (
-              <>
-                <MapPin className="w-4 h-4 mr-2" />
-                Allow Location Access
-              </>
-            )}
-          </Button>
           
-          <Button
-            onClick={onLocationDenied}
-            variant="outline"
-            className="w-full"
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              Get Better Results with Location Access
+            </h3>
+            <p className="text-blue-700 mb-3">
+              Allow location access to see service providers near you and get accurate distance estimates.
+            </p>
+            <div className="flex items-center gap-2 text-sm text-blue-600">
+              <Shield className="w-4 h-4" />
+              <span>Your location is never shared with service providers</span>
+            </div>
+          </div>
+          
+          <Button 
+            onClick={onRequestLocation}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
           >
-            Continue with {postalCode || 'Postal Code'} Search
+            <MapPin className="w-4 h-4 mr-2" />
+            Allow Location Access
           </Button>
         </div>
-
-        <p className="text-xs text-center text-muted-foreground">
-          We use your location only to show nearby service providers. You can change this anytime in your browser settings.
-        </p>
       </CardContent>
     </Card>
   );

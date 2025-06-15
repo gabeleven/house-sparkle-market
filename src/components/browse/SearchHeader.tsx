@@ -17,48 +17,35 @@ import {
 
 interface SearchHeaderProps {
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
   locationFilter: string;
-  setLocationFilter: (value: string) => void;
-  selectedServices: ServiceType[];
-  onServiceFiltersChange: (services: ServiceType[]) => void;
-  onSearch: () => void;
-  location: { latitude: number; longitude: number } | null;
+  onSearchChange: (searchTerm: string) => void;
+  onLocationChange: (locationFilter: string) => void;
+  hasLocation: boolean;
   onRequestLocation: () => void;
-  onShowMap?: () => void;
 }
 
 export const SearchHeader: React.FC<SearchHeaderProps> = ({
   searchTerm,
-  setSearchTerm,
   locationFilter,
-  setLocationFilter,
-  selectedServices,
-  onServiceFiltersChange,
-  onSearch,
-  location,
+  onSearchChange,
+  onLocationChange,
+  hasLocation,
   onRequestLocation,
-  onShowMap,
 }) => {
+  const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
   const [useEnhancedLocationSearch, setUseEnhancedLocationSearch] = useState(true);
 
-  const handleLocationSearchResult = (result: { lat: number; lng: number; address: string }) => {
-    console.log('Enhanced location search result:', result);
-    setLocationFilter(result.address);
-    // Trigger search automatically after location is selected
-    setTimeout(() => {
-      onSearch();
-    }, 100);
+  const handleLocationSelect = (result: { address: string; latitude: number; longitude: number } | null) => {
+    if (result) {
+      console.log('Enhanced location search result:', result);
+      onLocationChange(result.address);
+    } else {
+      onLocationChange('');
+    }
   };
 
   const handleSearch = () => {
-    onSearch();
-    // Show map after search if callback is provided
-    if (onShowMap) {
-      setTimeout(() => {
-        onShowMap();
-      }, 500);
-    }
+    // Search logic handled by parent component
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -80,7 +67,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               type="text"
               placeholder="Search by name, service, or description..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => onSearchChange(e.target.value)}
               onKeyPress={handleKeyPress}
               className="pl-10"
             />
@@ -90,10 +77,11 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
         <div className="md:w-80">
           {useEnhancedLocationSearch ? (
             <EnhancedLocationSearch
-              onLocationSearch={handleLocationSearchResult}
+              onLocationSelect={handleLocationSelect}
+              onSearch={onLocationChange}
               placeholder="Search city, province, postal code, or address..."
               initialValue={locationFilter}
-              onInputChange={setLocationFilter}
+              onInputChange={onLocationChange}
             />
           ) : (
             <div className="relative">
@@ -102,7 +90,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
                 type="text"
                 placeholder="Enter city, postal code, or address..."
                 value={locationFilter}
-                onChange={(e) => setLocationFilter(e.target.value)}
+                onChange={(e) => onLocationChange(e.target.value)}
                 onFocus={() => setUseEnhancedLocationSearch(true)}
                 onKeyPress={handleKeyPress}
                 className="pl-10"
@@ -119,7 +107,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4">
         <div className="flex items-center gap-4">
-          {!location && (
+          {!hasLocation && (
             <Button
               variant="outline"
               size="sm"
@@ -131,7 +119,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             </Button>
           )}
           
-          {location && (
+          {hasLocation && (
             <span className="text-sm text-[hsl(var(--pop-blue))] font-medium">
               ✓ Using your location for better results across Canada
             </span>
@@ -148,9 +136,9 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             </Button>
           )}
 
-          {selectedServices.length > 0 && (
+          {serviceFilters.length > 0 && (
             <span className="text-sm text-primary font-medium">
-              {selectedServices.length} service{selectedServices.length !== 1 ? 's' : ''} selected
+              {serviceFilters.length} service{serviceFilters.length !== 1 ? 's' : ''} selected
             </span>
           )}
         </div>
@@ -159,7 +147,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="mt-2 sm:mt-0 pop-blue-btn">
               <Filter className="w-4 h-4 mr-2" />
-              Service Categories {selectedServices.length > 0 && `(${selectedServices.length})`}
+              Service Categories {serviceFilters.length > 0 && `(${serviceFilters.length})`}
             </Button>
           </SheetTrigger>
           <SheetContent>
@@ -171,8 +159,8 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             </SheetHeader>
             <div className="py-4">
               <HierarchicalServiceFilters
-                selectedServices={selectedServices}
-                onServiceChange={onServiceFiltersChange}
+                selectedServices={serviceFilters}
+                onServiceChange={setServiceFilters}
               />
             </div>
           </SheetContent>

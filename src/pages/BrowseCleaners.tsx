@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { useEnhancedProviders } from '@/hooks/useEnhancedProviders';
@@ -13,8 +14,8 @@ const BrowseCleaners = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
-  const { userLocation, requestLocation, isLoading: locationLoading } = useUserLocation();
-  const { userSubscription } = useSubscription();
+  const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
+  const { currentTier: userSubscription } = useSubscription();
 
   useEffect(() => {
     if (userLocation) {
@@ -23,25 +24,11 @@ const BrowseCleaners = () => {
   }, [userLocation]);
 
   const handleRequestLocation = () => {
-    requestLocation();
+    requestUserLocation();
   };
 
-  const handleSearchChange = (newSearchTerm: string) => {
-    setSearchTerm(newSearchTerm);
-  };
-
-  const handleLocationChange = (newLocationFilter: string) => {
-    setLocationFilter(newLocationFilter);
-  };
-
-  const handleServiceFilter = (service: ServiceType, checked: boolean) => {
-    setServiceFilters((prevServices) => {
-      if (checked) {
-        return [...prevServices, service];
-      } else {
-        return prevServices.filter((s) => s !== service);
-      }
-    });
+  const handleServiceFilter = (services: ServiceType[]) => {
+    setServiceFilters(services);
   };
 
   const { 

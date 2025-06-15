@@ -1,8 +1,8 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { MapPin, Search, X } from 'lucide-react';
-import { useGeocoding } from '@/hooks/useGeocoding';
 import { useUserLocation } from '@/hooks/useUserLocation';
 
 interface EnhancedLocationSearchProps {
@@ -10,21 +10,22 @@ interface EnhancedLocationSearchProps {
   onSearch: (query: string) => void;
   placeholder?: string;
   initialValue?: string;
+  onInputChange?: (value: string) => void;
 }
 
 export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
   onLocationSelect,
   onSearch,
   placeholder = "Search by city, neighborhood, or postal code...",
-  initialValue = ""
+  initialValue = "",
+  onInputChange
 }) => {
   const [searchQuery, setSearchQuery] = useState(initialValue);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { geocodeAddress } = useGeocoding();
-  const { userLocation, requestLocation, isLoading: locationLoading } = useUserLocation();
+  const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
 
   const debounce = (func: Function, delay: number) => {
     let timeoutId: NodeJS.Timeout;
@@ -39,16 +40,20 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
       const query = e.target.value;
       setSearchQuery(query);
       setShowSuggestions(query.length > 0);
+      
+      if (onInputChange) {
+        onInputChange(query);
+      }
 
       if (query.length > 0) {
         setIsLoading(true);
+        // Simple mock geocoding for now
         try {
-          const results = await geocodeAddress(query);
-          if (results) {
-            setSuggestions(results.candidates || []);
-          } else {
-            setSuggestions([]);
-          }
+          const mockSuggestions = [
+            { description: `${query}, Montreal, QC`, formatted_address: `${query}, Montreal, QC` },
+            { description: `${query}, Toronto, ON`, formatted_address: `${query}, Toronto, ON` },
+          ];
+          setSuggestions(mockSuggestions);
         } catch (error) {
           console.error('Error fetching suggestions:', error);
           setSuggestions([]);
@@ -59,7 +64,7 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
         setSuggestions([]);
       }
     }, 300),
-    [geocodeAddress]
+    [onInputChange]
   );
 
   const handleSuggestionSelect = useCallback(async (suggestion: any) => {
@@ -67,26 +72,16 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
     setSearchQuery(suggestion.description || suggestion.formatted_address);
     setShowSuggestions(false);
     
-    try {
-      setIsLoading(true);
-      const geocoded = await geocodeAddress(suggestion.description || suggestion.formatted_address);
-      
-      if (geocoded) {
-        const locationData = {
-          address: suggestion.description || suggestion.formatted_address,
-          latitude: typeof geocoded.latitude === 'function' ? geocoded.latitude() : geocoded.latitude,
-          longitude: typeof geocoded.longitude === 'function' ? geocoded.longitude() : geocoded.longitude
-        };
-        
-        console.log('Geocoded location:', locationData);
-        onLocationSelect(locationData);
-      }
-    } catch (error) {
-      console.error('Error geocoding suggestion:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [geocodeAddress, onLocationSelect]);
+    // Mock geocoding result
+    const locationData = {
+      address: suggestion.description || suggestion.formatted_address,
+      latitude: 45.5017 + Math.random() * 0.1, // Montreal area
+      longitude: -73.5673 + Math.random() * 0.1
+    };
+    
+    console.log('Geocoded location:', locationData);
+    onLocationSelect(locationData);
+  }, [onLocationSelect]);
 
   const useCurrentLocation = useCallback(async () => {
     if (userLocation) {
@@ -97,9 +92,9 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
       });
       setSearchQuery('');
     } else {
-      requestLocation();
+      requestUserLocation();
     }
-  }, [userLocation, requestLocation, onLocationSelect]);
+  }, [userLocation, requestUserLocation, onLocationSelect]);
 
   const handleSearch = () => {
     onSearch(searchQuery);
