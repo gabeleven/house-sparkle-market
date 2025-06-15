@@ -33,8 +33,8 @@ const AnalyticsDashboard = () => {
         {/* Customizable Widget Grid with Navigation */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
             <div className="flex items-center gap-4">
+              <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
               <div className="flex gap-2">
                 <Badge variant="outline" className="bg-white/90 shadow-md backdrop-blur-sm">
                   <MapPin className="w-4 h-4 mr-1" />
@@ -42,8 +42,8 @@ const AnalyticsDashboard = () => {
                 </Badge>
                 <Badge variant="secondary" className="bg-white/90 shadow-md backdrop-blur-sm">Live Data</Badge>
               </div>
-              <AnalyticsNavigation />
             </div>
+            <AnalyticsNavigation />
           </div>
           <WidgetGrid />
         </div>
