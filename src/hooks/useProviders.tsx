@@ -76,16 +76,17 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
             updated_at: provider.updated_at,
             full_name: profile?.full_name || '',
             email: profile?.email || '',
-            services: provider.provider_services || []
+            services: provider.provider_services?.map(service => service.service_category?.name).filter(Boolean) || [],
+            // Add required CleanerProfile properties with defaults
+            brief_description: provider.bio || '',
+            service_area_city: provider.address?.split(',')[1]?.trim() || 'Unknown'
           };
         });
 
       // Filter by service category if specified
       if (serviceCategory) {
         processedProviders = processedProviders.filter(provider => 
-          provider.services?.some(service => 
-            service.service_category?.name === serviceCategory
-          )
+          provider.services?.includes(serviceCategory)
         );
       }
 

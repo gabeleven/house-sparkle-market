@@ -142,9 +142,9 @@ export const EnhancedLocationSearch = ({
 
         if (result.length > 0) {
           const location = result[0].geometry.location;
-          // Proper type handling for Google Maps lat/lng
-          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
-          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+          // Explicit type handling for Google Maps lat/lng
+          const lat: number = typeof location.lat === 'function' ? location.lat() : location.lat;
+          const lng: number = typeof location.lng === 'function' ? location.lng() : location.lng;
           
           onLocationSearch({
             lat,

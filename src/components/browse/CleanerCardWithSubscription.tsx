@@ -119,7 +119,7 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
               )}
 
               <ServiceIcons 
-                services={cleaner.services || null} 
+                services={cleaner.services} 
                 showIcons={showServiceIcons} 
               />
 

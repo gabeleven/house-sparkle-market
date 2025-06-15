@@ -76,6 +76,9 @@ export const useEnhancedProviders = ({
         .filter(provider => provider.profiles)
         .map((provider): ProviderProfile => {
           const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
+          // Extract service names for compatibility with ServiceType[]
+          const serviceNames = provider.provider_services?.map(service => service.service_category?.name).filter(Boolean) || [];
+          
           return {
             id: provider.id,
             user_id: provider.user_id,
@@ -98,7 +101,7 @@ export const useEnhancedProviders = ({
             updated_at: provider.updated_at,
             full_name: profile?.full_name || '',
             email: profile?.email || '',
-            services: provider.provider_services || [],
+            services: serviceNames,
             // Add required CleanerProfile properties with defaults
             brief_description: provider.bio || '',
             service_area_city: provider.address?.split(',')[1]?.trim() || 'Unknown'
@@ -108,10 +111,9 @@ export const useEnhancedProviders = ({
       // Apply service filters if specified
       if (serviceFilters && serviceFilters.length > 0) {
         processedProviders = processedProviders.filter(provider => 
-          provider.services?.some(service => 
-            service.service_category?.name && 
+          provider.services?.some(serviceName => 
             serviceFilters.some(filter => 
-              service.service_category.name.toLowerCase().includes(filter.toLowerCase())
+              serviceName.toLowerCase().includes(filter.toLowerCase())
             )
           )
         );

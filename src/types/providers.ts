@@ -60,4 +60,6 @@ export interface ProviderProfile extends Provider {
   // Required properties for CleanerProfile compatibility
   brief_description: string;
   service_area_city: string;
+  // Make services compatible with ServiceType[] (used by CleanerProfile)
+  services?: string[] | null;
 }
