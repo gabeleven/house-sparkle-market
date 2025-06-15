@@ -12,10 +12,10 @@ import { useNavigate } from 'react-router-dom';
 const CleanerReviews = () => {
   const { cleanerId } = useParams<{ cleanerId: string }>();
   const navigate = useNavigate();
-  const { reviews, isLoading, error } = useReviews({ cleanerId });
+  const { reviews, isLoading, error } = useReviews({ providerId: cleanerId });
 
   if (!cleanerId) {
-    return <div>Cleaner not found</div>;
+    return <div>Provider not found</div>;
   }
 
   const averageRating = reviews.length > 0 
@@ -74,7 +74,7 @@ const CleanerReviews = () => {
             <CardContent className="p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
               <p className="text-muted-foreground">
-                This cleaner hasn't received any reviews yet. Be the first to book and leave a review!
+                This provider hasn't received any reviews yet. Be the first to book and leave a review!
               </p>
             </CardContent>
           </Card>

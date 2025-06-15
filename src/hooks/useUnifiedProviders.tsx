@@ -24,12 +24,12 @@ export const useUnifiedProviders = ({
     queryFn: async () => {
       console.log('Fetching providers with unified search...');
       
-      // Build the base query with proper relationships
+      // Build the base query with proper relationships using provider_id
       let query = supabase
         .from('providers')
         .select(`
           *,
-          profiles!fk_providers_user_id(
+          profiles!providers_user_id_fkey(
             full_name,
             email
           ),
