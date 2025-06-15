@@ -9,12 +9,12 @@ import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
 import { ServiceIcons } from './ServiceIcons';
 import { ServiceType } from '@/utils/serviceTypes';
 import { useNavigate } from 'react-router-dom';
-import { ProviderProfile } from '@/types/providers';
+import { CleanerProfile } from '@/hooks/useCleaners';
 import { SubscriptionTier } from '@/types/subscription';
 import { BookingSlideOut } from '@/components/booking/BookingSlideOut';
 
 interface CleanerCardWithSubscriptionProps {
-  cleaner: ProviderProfile;
+  cleaner: CleanerProfile;
   userSubscription?: SubscriptionTier;
   showSubscriptionBadge?: boolean;
   showServiceIcons?: boolean;
@@ -43,9 +43,6 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
 
   const displayName = cleaner.business_name || cleaner.full_name;
   const displayRate = cleaner.hourly_rate || 25;
-
-  // Convert ProviderService[] to service names for ServiceIcons compatibility
-  const serviceNames = cleaner.services?.map(service => service.service_category?.name).filter(Boolean) || [];
 
   return (
     <>
@@ -122,7 +119,7 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
               )}
 
               <ServiceIcons 
-                services={serviceNames as ServiceType[]} 
+                services={cleaner.services || null} 
                 showIcons={showServiceIcons} 
               />
 

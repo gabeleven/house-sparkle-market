@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ProviderProfile } from '@/types/providers';
+import { CleanerProfile } from '@/hooks/useCleaners';
 import { CleanerCardWithSubscription } from './CleanerCardWithSubscription';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { ErrorMessage } from './ErrorMessage';
@@ -8,7 +8,7 @@ import { NoResultsMessage } from './NoResultsMessage';
 import { SubscriptionTier } from '@/types/subscription';
 
 interface ResultsContentProps {
-  cleaners: ProviderProfile[] | undefined;
+  cleaners: CleanerProfile[] | undefined;
   isLoading: boolean;
   error: Error | null;
   hasLocation: boolean;

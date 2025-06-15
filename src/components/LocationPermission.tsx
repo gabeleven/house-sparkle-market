@@ -58,10 +58,10 @@ const LocationPermission = ({ onLocationGranted, onPostalCode, onDismiss }: Loca
           </Button>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="w-5 h-5" />
-            Postal Code
+            Code postal
           </CardTitle>
           <CardDescription>
-            Enter your postal code to see service providers near you
+            Entrez votre code postal pour voir les service providers près de vous
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,10 +75,10 @@ const LocationPermission = ({ onLocationGranted, onPostalCode, onDismiss }: Loca
             />
             <div className="flex gap-2">
               <Button type="submit" className="flex-1">
-                Confirm
+                Confirmer
               </Button>
               <Button type="button" variant="outline" onClick={onDismiss}>
-                Skip
+                Ignorer
               </Button>
             </div>
           </form>
@@ -100,10 +100,10 @@ const LocationPermission = ({ onLocationGranted, onPostalCode, onDismiss }: Loca
         </Button>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="w-5 h-5" />
-          Find Service Providers Near You
+          Trouvez des service providers près de vous
         </CardTitle>
         <CardDescription>
-          Allow location access to see the closest service providers
+          Autorisez l'accès à votre localisation pour voir les service providers les plus proches
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -112,21 +112,21 @@ const LocationPermission = ({ onLocationGranted, onPostalCode, onDismiss }: Loca
           disabled={loading}
           className="w-full"
         >
-          {loading ? 'Getting Location...' : 'Allow Location Access'}
+          {loading ? 'Localisation en cours...' : 'Autoriser la localisation'}
         </Button>
         <Button 
           variant="outline" 
           onClick={() => setShowPostalForm(true)}
           className="w-full"
         >
-          Use My Postal Code
+          Utiliser mon code postal
         </Button>
         <Button 
           variant="ghost" 
           onClick={onDismiss}
           className="w-full text-sm"
         >
-          Skip for now
+          Ignorer pour le moment
         </Button>
       </CardContent>
     </Card>

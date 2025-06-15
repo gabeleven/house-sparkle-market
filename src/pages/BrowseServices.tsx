@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useEnhancedProviders } from "@/hooks/useEnhancedProviders";
+import { useCleaners } from "@/hooks/useCleaners";
 import { useLocation } from "@/hooks/useLocation";
 import { useAuth } from "@/hooks/useAuth";
 import { MapPreview } from "@/components/map/MapPreview";
@@ -30,7 +31,6 @@ const BrowseServices = () => {
   const [useGoogleMaps, setUseGoogleMaps] = useState(true);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
   const { location, requestLocation } = useLocation();
   const { user } = useAuth();
   
@@ -59,8 +59,7 @@ const BrowseServices = () => {
     address: "Your location"
   } : null;
   
-  // Use the enhanced providers hook instead of useCleaners
-  const { providers, isLoading, error } = useEnhancedProviders({
+  const { cleaners, isLoading, error } = useCleaners({
     userLocation: location,
     searchTerm: searchTerm,
     locationFilter: locationFilter,
@@ -68,8 +67,7 @@ const BrowseServices = () => {
   });
 
   const handleSearch = () => {
-    console.log('Enhanced search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
-    setHasSearched(true);
+    console.log('Search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
   };
 
   const handleServiceFiltersChange = (services: ServiceType[]) => {
@@ -109,11 +107,7 @@ const BrowseServices = () => {
     // Continue with postal code search
   };
 
-  const handleShowMap = () => {
-    setShowMap(true);
-  };
-
-  console.log('BrowseServices rendering - service providers count:', providers?.length || 0);
+  console.log('BrowseServices rendering - service providers count:', cleaners?.length || 0);
 
   // Show location authorization prompt
   if (showLocationPrompt) {
@@ -151,11 +145,10 @@ const BrowseServices = () => {
           onSearch={handleSearch}
           location={location}
           onRequestLocation={requestLocation}
-          onShowMap={handleShowMap}
         />
 
         {/* Integrated Radius Selector */}
-        {!showMap && searchLocation && hasSearched && (
+        {!showMap && searchLocation && (
           <DynamicRadiusSelector 
             currentRadius={searchRadius}
             onRadiusChange={handleRadiusChange}
@@ -164,9 +157,9 @@ const BrowseServices = () => {
         )}
 
         {/* Map Preview */}
-        {!showMap && !isLoading && providers && providers.length > 0 && hasSearched && (
+        {!showMap && !isLoading && cleaners && cleaners.length > 0 && (
           <MapPreview 
-            cleaners={providers}
+            cleaners={cleaners}
             onShowMap={() => setShowMap(true)}
             userLocation={location}
           />
@@ -177,7 +170,7 @@ const BrowseServices = () => {
           <MapErrorBoundary 
             fallback={
               <MapView
-                cleaners={providers || []}
+                cleaners={cleaners || []}
                 userLocation={location}
                 radius={searchRadius}
                 onClose={handleCloseMap}
@@ -187,7 +180,7 @@ const BrowseServices = () => {
           >
             {useGoogleMaps ? (
               <GoogleMapView
-                cleaners={providers || []}
+                cleaners={cleaners || []}
                 onCleanerSelect={handleProviderSelect}
                 selectedCleaner={selectedProvider}
                 radiusKm={searchRadius}
@@ -199,7 +192,7 @@ const BrowseServices = () => {
               />
             ) : (
               <MapView
-                cleaners={providers || []}
+                cleaners={cleaners || []}
                 userLocation={location}
                 radius={searchRadius}
                 onClose={handleCloseMap}
@@ -212,9 +205,9 @@ const BrowseServices = () => {
         {/* Results */}
         {!showMap && (
           <>
-            <ResultsHeader count={providers?.length || 0} />
+            <ResultsHeader count={cleaners?.length || 0} />
             <ResultsContent
-              cleaners={providers}
+              cleaners={cleaners}
               isLoading={isLoading}
               error={error}
               hasLocation={!!location}

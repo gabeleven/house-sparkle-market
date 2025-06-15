@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, Filter } from 'lucide-react';
-import { EnhancedLocationSearch } from './EnhancedLocationSearch';
+import { LocationSearch } from '@/components/map/LocationSearch';
 import { HierarchicalServiceFilters } from './HierarchicalServiceFilters';
 import { ServiceType } from '@/utils/serviceTypes';
 import {
@@ -25,7 +25,6 @@ interface SearchHeaderProps {
   onSearch: () => void;
   location: { latitude: number; longitude: number } | null;
   onRequestLocation: () => void;
-  onShowMap?: () => void;
 }
 
 export const SearchHeader: React.FC<SearchHeaderProps> = ({
@@ -38,34 +37,17 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   onSearch,
   location,
   onRequestLocation,
-  onShowMap,
 }) => {
-  const [useEnhancedLocationSearch, setUseEnhancedLocationSearch] = useState(true);
+  const [useLocationSearch, setUseLocationSearch] = useState(false);
 
   const handleLocationSearchResult = (result: { lat: number; lng: number; address: string }) => {
-    console.log('Enhanced location search result:', result);
+    console.log('Location search result:', result);
     setLocationFilter(result.address);
+    setUseLocationSearch(false);
     // Trigger search automatically after location is selected
     setTimeout(() => {
       onSearch();
     }, 100);
-  };
-
-  const handleSearch = () => {
-    onSearch();
-    // Show map after search if callback is provided
-    if (onShowMap) {
-      setTimeout(() => {
-        onShowMap();
-      }, 500);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSearch();
-    }
   };
 
   return (
@@ -81,37 +63,33 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               placeholder="Search by name, service, or description..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={handleKeyPress}
               className="pl-10"
             />
           </div>
         </div>
         
-        <div className="md:w-80">
-          {useEnhancedLocationSearch ? (
-            <EnhancedLocationSearch
+        <div className="md:w-64">
+          {useLocationSearch ? (
+            <LocationSearch
               onLocationSearch={handleLocationSearchResult}
-              placeholder="Search city, province, postal code, or address..."
-              initialValue={locationFilter}
-              onInputChange={setLocationFilter}
+              placeholder="Search location..."
             />
           ) : (
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Enter city, postal code, or address..."
+                placeholder="City or postal code..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                onFocus={() => setUseEnhancedLocationSearch(true)}
-                onKeyPress={handleKeyPress}
+                onFocus={() => setUseLocationSearch(true)}
                 className="pl-10"
               />
             </div>
           )}
         </div>
 
-        <Button onClick={handleSearch} className="search-btn-pop">
+        <Button onClick={onSearch} className="search-btn-pop">
           <Search className="w-4 h-4 mr-2" />
           Search
         </Button>
@@ -137,14 +115,14 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             </span>
           )}
 
-          {!useEnhancedLocationSearch && (
+          {useLocationSearch && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setUseEnhancedLocationSearch(true)}
+              onClick={() => setUseLocationSearch(false)}
               className="text-sm"
             >
-              Use Enhanced Search
+              Use Simple Search
             </Button>
           )}
 
