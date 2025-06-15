@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Plus, MapPin } from 'lucide-react';
 import { WidgetConfig, WidgetType } from '@/types/widgets';
 import { WidgetConfigDialog } from './WidgetConfigDialog';
 import { MileageTrackerWidget } from './widgets/MileageTrackerWidget';
@@ -94,13 +95,22 @@ export const WidgetGrid = () => {
       {/* Header with Add Widget button */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
-        <Button 
-          onClick={() => setConfigDialog({ isOpen: true })}
-          className="flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Add Widget
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex gap-2">
+            <Badge variant="outline" className="bg-white/90 shadow-md backdrop-blur-sm">
+              <MapPin className="w-4 h-4 mr-1" />
+              Montreal, QC
+            </Badge>
+            <Badge variant="secondary" className="bg-white/90 shadow-md backdrop-blur-sm">Live Data</Badge>
+          </div>
+          <Button 
+            onClick={() => setConfigDialog({ isOpen: true })}
+            className="flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Widget
+          </Button>
+        </div>
       </div>
 
       {/* Widget Grid */}
