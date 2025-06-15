@@ -1,5 +1,5 @@
 
-import HowItWorksPage from "@/pages/HowItWorksPage";
+import HowItWorksPage from "../pages/HowItWorksPage";
 
 export { Page };
 
