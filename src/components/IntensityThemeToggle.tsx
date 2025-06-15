@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { useIntensityTheme } from '@/contexts/IntensityThemeContext';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
+import { useIntensityTheme } from '../contexts/IntensityThemeContext';
 import { Zap, Sparkles } from 'lucide-react';
 
 export const IntensityThemeToggle = () => {

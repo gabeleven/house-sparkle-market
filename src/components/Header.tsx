@@ -1,126 +1,120 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
-import { LanguageToggle } from '@/components/LanguageToggle';
-import HeaderLogo from '@/components/header/HeaderLogo';
-import NavigationItems from '@/components/header/NavigationItems';
-import UserMenu from '@/components/header/UserMenu';
-import MobileMenu from '@/components/header/MobileMenu';
+import { Button } from './ui/button';
+import HeaderLogo from './header/HeaderLogo';
+import NavigationItems from './header/NavigationItems';
+import { ThemeToggle } from './ThemeToggle';
+import { IntensityThemeToggle } from './IntensityThemeToggle';
+import { LanguageToggle } from './LanguageToggle';
+import { useAuth } from '../hooks/useAuth';
 
 const Header = () => {
-  const { user, signOut } = useAuth();
-  const { currentTier } = useSubscription();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-    setIsMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsMobileMenuOpen(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
-
-  const closeMobileMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  // Get page title based on current route
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path === '/analytics' || path === '/dashboard') return 'Business Analytics';
-    if (path === '/analytics/insights') return 'Business Insights';
-    if (path === '/analytics/reports') return 'Tax & Reports';
-    if (path === '/analytics/intelligence') return 'Market Intelligence';
-    if (path === '/analytics/performance') return 'Performance Dashboard';
-    if (path === '/provider-dashboard') return 'Provider Dashboard';
-    return null;
-  };
-
-  const pageTitle = getPageTitle();
 
   return (
-    <header className="bg-black shadow-lg border-b border-gray-800 sticky top-0 z-50">
+    <header className="bg-black text-white relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo with App Icon */}
-          <div className="flex items-center space-x-3 flex-shrink-0 mr-8">
-            {/* App Icon with Shadow */}
-            <div className="w-10 h-10 bg-gradient-to-br from-[#d50067] to-[#0067bd] rounded-lg flex items-center justify-center shadow-lg app-icon-shadow">
-              <span className="text-white font-bold text-lg">H</span>
-            </div>
-            <HeaderLogo />
-          </div>
-
-          {/* Page Title for Analytics Pages */}
-          {pageTitle && (
-            <div className="hidden lg:block">
-              <h1 className="text-lg font-semibold text-white">{pageTitle}</h1>
-            </div>
-          )}
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <HeaderLogo />
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center justify-end flex-1 space-x-1">
-            <nav className="flex items-center space-x-1">
-              <NavigationItems isLoggedIn={!!user} />
-              
-              {/* HOUSIE Pro - Always visible */}
-              <Link to="/pricing" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm whitespace-nowrap">
-                HOUSIE Pro
-              </Link>
-            </nav>
+          <nav className="hidden md:flex items-center space-x-1">
+            <NavigationItems isLoggedIn={!!user} />
+          </nav>
+
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-3">
+            <LanguageToggle />
+            <ThemeToggle />
+            <IntensityThemeToggle />
             
-            {/* Desktop Controls */}
-            <div className="flex items-center space-x-3 ml-6">
-              {/* Language Toggle */}
-              <div className="flex-shrink-0">
-                <LanguageToggle />
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-300">
+                  Bonjour, {user.user_metadata?.full_name || user.email}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-white border-white hover:bg-white hover:text-black"
+                >
+                  Déconnexion
+                </Button>
               </div>
-              
-              {/* User Menu - Desktop only */}
-              <div className="flex-shrink-0">
-                <UserMenu 
-                  user={user} 
-                  currentTier={currentTier} 
-                  signOut={signOut}
-                />
-              </div>
-            </div>
+            ) : null}
           </div>
 
-          {/* Mobile/Tablet Controls */}
-          <div className="flex lg:hidden items-center space-x-2">
-            {/* Language toggle for tablet only */}
-            <div className="hidden md:flex lg:hidden items-center space-x-2">
-              <LanguageToggle />
-            </div>
-            
-            {/* Mobile menu button */}
+          {/* Mobile menu button */}
+          <div className="md:hidden">
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="relative z-50 text-white hover:bg-gray-800"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-white hover:bg-gray-800"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden">
-            <MobileMenu
-              isOpen={isMenuOpen}
-              user={user}
-              currentTier={currentTier}
-              onClose={closeMobileMenu}
-              handleSignOut={handleSignOut}
-            />
+        {isMobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-900 rounded-lg mt-2">
+              <NavigationItems isLoggedIn={!!user} />
+              
+              <div className="pt-4 border-t border-gray-700">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-300">Thème</span>
+                    <ThemeToggle />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-300">Intensité</span>
+                    <IntensityThemeToggle />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-300">Langue</span>
+                    <LanguageToggle />
+                  </div>
+                </div>
+              </div>
+
+              {user && (
+                <div className="pt-4 border-t border-gray-700">
+                  <div className="flex flex-col space-y-2">
+                    <span className="text-sm text-gray-300">
+                      {user.user_metadata?.full_name || user.email}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleLogout}
+                      className="text-white border-white hover:bg-white hover:text-black w-fit"
+                    >
+                      Déconnexion
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

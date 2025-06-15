@@ -1,40 +1,41 @@
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Calculator, TrendingUp, Users, Shield } from "lucide-react";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Shield, Clock, Star, Award } from "lucide-react";
 
 const CleanerBenefits = () => {
   const benefits = [
     {
-      icon: Calculator,
-      title: "Taxes gérées pour vous, automatiquement",
-      description: "Concentrez-vous sur le ménage, pas sur la paperasse. Nous gérons le suivi et les déclarations pour vous maintenir conforme à l'ARC sans stress."
-    },
-    {
-      icon: TrendingUp,
-      title: "Gardez plus de ce que vous gagnez",
-      description: "Nos outils vous aident à suivre les dépenses et maximiser les déductions, remettant plus d'argent dans votre poche."
-    },
-    {
-      icon: Users,
-      title: "Trouvez plus de clients, instantanément",
-      description: "Accédez à un flux constant de clients locaux cherchant des professionnels de services bien notés."
-    },
-    {
       icon: Shield,
-      title: "Travaillez avec confiance et tranquillité d'esprit",
-      description: "Avec les options d'assurance intégrées et des clients vérifiés, vous pouvez vous concentrer sur votre travail en sachant que vous êtes protégé."
+      title: "Assurance complète",
+      description: "Tous nos professionnels sont assurés et vérifiés"
+    },
+    {
+      icon: Clock,
+      title: "Réservation flexible",
+      description: "Planifiez selon votre horaire, même à la dernière minute"
+    },
+    {
+      icon: Star,
+      title: "Qualité garantie",
+      description: "Service de qualité supérieure ou nous revenons gratuitement"
+    },
+    {
+      icon: Award,
+      title: "Professionnels certifiés",
+      description: "Équipe formée aux meilleures pratiques de nettoyage"
     }
   ];
 
   return (
-    <section className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            Pourquoi choisir HOUSIE ?
+    <section className="py-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
+            Pourquoi choisir nos professionnels ?
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Nous sommes plus qu'une plateforme - nous sommes votre partenaire pour faire croître votre entreprise de ménage en toute simplicité.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Des services de qualité supérieure avec la tranquillité d'esprit que vous méritez
           </p>
         </div>
 
@@ -42,13 +43,12 @@ const CleanerBenefits = () => {
           {benefits.map((benefit, index) => {
             const IconComponent = benefit.icon;
             return (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-card">
-                <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Card key={index} className="border-0 shadow-lg bg-card/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <IconComponent className="w-8 h-8 text-primary" />
                   </div>
-                  
-                  <h3 className="text-xl font-bold text-foreground mb-4">
+                  <h3 className="text-xl font-semibold text-foreground mb-3">
                     {benefit.title}
                   </h3>
                   <p className="text-muted-foreground">
@@ -58,6 +58,12 @@ const CleanerBenefits = () => {
               </Card>
             );
           })}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Badge className="bg-primary/10 text-primary px-6 py-2 text-lg">
+            Plus de 1000+ services complétés avec succès
+          </Badge>
         </div>
       </div>
     </section>

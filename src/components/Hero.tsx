@@ -1,158 +1,113 @@
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { MapPin, Search, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useChatbot } from '@/contexts/ChatbotContext';
-import { useAuth } from '@/hooks/useAuth';
-import { AuthInterceptModal } from '@/components/auth/AuthInterceptModal';
+import { Button } from "./ui/button";
+import { ArrowRight, MapPin, Star } from "lucide-react";
+import { Card, CardContent } from "./ui/card";
 
 const Hero = () => {
-  const [location, setLocation] = useState('');
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const navigate = useNavigate();
-  const { t } = useLanguage();
-  const { openChatbot } = useChatbot();
-  const { user } = useAuth();
-
-  const handleSearch = () => {
-    if (location.trim()) {
-      if (user) {
-        // User is already authenticated, go directly to browse services
-        navigate(`/browse-services?location=${encodeURIComponent(location)}`);
-      } else {
-        // User needs to authenticate first
-        setShowAuthModal(true);
-      }
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  const handleMascotClick = () => {
-    openChatbot('support');
-  };
-
   return (
-    <>
-      <section className="relative py-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                  Canada's Trusted Marketplace for{' '}
-                  <span className="bg-gradient-to-r from-[hsl(var(--pop-orange))] via-purple-400 to-[hsl(var(--pop-blue))] bg-clip-text text-transparent">
-                    Home Services
-                  </span>
-                </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  We connect you with verified, CRA-compliant professionals for cleaning, lawn care, and more across all Canadian provinces.
-                </p>
-              </div>
-
-              {/* Search Bar */}
-              <div className="pop-card bg-card/80 backdrop-blur-sm p-2 rounded-full shadow-lg border-2 border-purple-500/40 max-w-md relative">
-                <div className="flex items-center relative z-10">
-                  <div className="flex items-center flex-1 px-4">
-                    <MapPin className="w-5 h-5 text-purple-400 mr-3" />
-                    <Input
-                      type="text"
-                      placeholder="Enter your city or postal code"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      className="border-0 focus:ring-2 focus:ring-purple-400/50 text-base bg-transparent"
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleSearch}
-                    className="search-btn-pop rounded-full h-12 px-6"
-                  >
-                    <Search className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="flex items-center space-x-8 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-[hsl(var(--pop-blue))]"></div>
-                  <span>CRA compliance guaranteed</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[hsl(var(--pop-orange))] to-purple-500"></div>
-                  <span>Verified professionals</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-[hsl(var(--pop-blue))]"></div>
-                  <span>Secure payment</span>
-                </div>
-              </div>
+    <section className="relative py-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Text Content */}
+          <div className="text-left">
+            <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <Star className="w-4 h-4 mr-2" />
+              Services professionnels vérifiés
             </div>
-
-            {/* Right Content - Floating Mascot */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative">
-                {/* Pure floating mascot image with no container styling */}
-                <img 
-                  src="https://raw.githubusercontent.com/gabeleven/Housie_Media/main/APPLOGOPNG.png"
-                  alt="HOUSIE Assistant - Your Canadian tax compliance expert" 
-                  className="cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out animate-gentle-float"
-                  onClick={handleMascotClick}
-                  style={{
-                    width: 'auto',
-                    height: 'auto',
-                    maxWidth: '320px',
-                    maxHeight: '320px',
-                    filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15))'
-                  }}
-                />
-                
-                {/* Welcome message from mascot */}
-                <div className="absolute -top-4 -left-8 chat-pop bg-card/90 backdrop-blur-sm border-2 border-purple-400/30 rounded-lg p-4 shadow-lg max-w-xs cursor-pointer hover:shadow-xl hover:border-purple-400/50 transition-all duration-300" onClick={handleMascotClick}>
-                  <div className="flex items-start space-x-2 relative z-10">
-                    <MessageCircle className="w-5 h-5 text-purple-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm text-foreground font-medium">
-                        Hello! I'm your HOUSIE assistant.
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Ready to help with CRA 2025 compliance across Canada!
-                      </p>
-                    </div>
-                  </div>
+            
+            <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+              Trouvez des{" "}
+              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                professionnels
+              </span>{" "}
+              près de chez vous
+            </h1>
+            
+            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+              Connectez-vous avec des professionnels de confiance pour tous vos besoins de service à domicile. 
+              Réservation simple, qualité garantie.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <Button size="lg" className="text-lg px-8 py-6">
+                Commencer maintenant
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
+                <MapPin className="mr-2 w-5 h-5" />
+                Parcourir les services
+              </Button>
+            </div>
+            
+            <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+              <div className="flex items-center">
+                <div className="flex -space-x-2 mr-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full border-2 border-white"></div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full border-2 border-white"></div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-400 rounded-full border-2 border-white"></div>
                 </div>
-
-                {/* Action button */}
-                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                  <Button 
-                    onClick={handleSearch}
-                    className="pop-orange-btn font-bold px-8 py-3 rounded-full shadow-lg"
-                  >
-                    Get Started
-                  </Button>
-                </div>
+                <span>500+ clients satisfaits</span>
+              </div>
+              <div className="flex items-center">
+                <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                <span>4.9/5 étoiles</span>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Authentication Modal */}
-      <AuthInterceptModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        postalCode={location}
-      />
-    </>
+          {/* Right Column - Feature Cards */}
+          <div className="space-y-6">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">Professionnels vérifiés</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Tous nos prestataires passent par une vérification complète des antécédents
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Star className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">Qualité garantie</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Satisfaction garantie ou nous revenons corriger le problème gratuitement
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">Service local</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Trouvez des professionnels dans votre région pour un service rapide
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
