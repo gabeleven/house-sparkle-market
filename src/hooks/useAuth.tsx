@@ -16,27 +16,34 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced auth state cleanup utility
+// Enhanced auth state cleanup utility with SSR safety
 const cleanupAuthState = () => {
   console.log('Cleaning up auth state...');
   
-  // Remove standard auth tokens
-  localStorage.removeItem('supabase.auth.token');
+  // Only run in browser environment
+  if (typeof window === 'undefined') return;
   
-  // Remove all Supabase auth keys from localStorage
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-      localStorage.removeItem(key);
-    }
-  });
-  
-  // Remove from sessionStorage if in use
-  if (typeof sessionStorage !== 'undefined') {
-    Object.keys(sessionStorage || {}).forEach((key) => {
+  try {
+    // Remove standard auth tokens
+    localStorage.removeItem('supabase.auth.token');
+    
+    // Remove all Supabase auth keys from localStorage
+    Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-        sessionStorage.removeItem(key);
+        localStorage.removeItem(key);
       }
     });
+    
+    // Remove from sessionStorage if in use
+    if (typeof sessionStorage !== 'undefined') {
+      Object.keys(sessionStorage || {}).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+    }
+  } catch (error) {
+    console.warn('Failed to cleanup auth state:', error);
   }
 };
 
@@ -194,12 +201,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log('Sign out successful');
       }
       
-      // Force page reload for clean state
-      window.location.href = '/auth';
+      // Force page reload for clean state - only in browser
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth';
+      }
     } catch (error) {
       console.error('Sign out failed:', error);
-      // Force page reload even if sign out fails
-      window.location.href = '/auth';
+      // Force page reload even if sign out fails - only in browser
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth';
+      }
     }
   };
 
