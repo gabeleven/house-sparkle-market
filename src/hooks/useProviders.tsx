@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceType } from '@/utils/serviceTypes';
@@ -17,12 +16,12 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
     queryFn: async () => {
       console.log('Fetching service providers with enhanced search...');
       
-      // Query providers with proper join to profiles using inner join
+      // Query providers with proper join to profiles using the existing foreign key constraint
       let query = supabase
         .from('providers')
         .select(`
           *,
-          profiles!inner(
+          profiles!fk_providers_user_id(
             full_name,
             email
           ),
@@ -46,8 +45,7 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
               updated_at
             )
           )
-        `)
-        .eq('profiles.id', 'providers.user_id');
+        `);
 
       // Apply enhanced search filters including addresses
       if (searchTerm) {
