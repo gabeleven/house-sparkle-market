@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,19 +38,6 @@ const AnalyticsDashboard = () => {
 
         {/* Dashboard Widgets Row */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
-            <div className="flex items-center gap-4">
-              <div className="flex gap-2">
-                <Badge variant="outline" className="bg-white/90 shadow-md backdrop-blur-sm">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  Montreal, QC
-                </Badge>
-                <Badge variant="secondary" className="bg-white/90 shadow-md backdrop-blur-sm">Live Data</Badge>
-              </div>
-              <span className="text-sm text-gray-600">[+ Add Widget]</span>
-            </div>
-          </div>
           <WidgetGrid />
         </div>
 
