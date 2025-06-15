@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from 'next-themes';
 import { ThemeProvider as CustomThemeProvider } from '@/contexts/ThemeContext';
@@ -43,63 +44,65 @@ function App() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <IntensityThemeProvider>
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <CustomThemeProvider>
-            <LanguageProvider>
-              <AuthProvider>
-                <ChatbotProvider>
-                  <AnalyticsProvider>
-                    <Toaster />
-                    <BrowserRouter>
-                      <div className="min-h-screen">
-                        <Header />
-                        <main className="relative z-10">
-                          <Routes>
-                            <Route path="/" element={<Index />} />
-                            <Route path="/auth" element={<Auth />} />
-                            <Route path="/my-profile" element={<MyProfile />} />
-                            <Route path="/profile" element={<Profile />} />
-                            <Route path="/public-profile/:id" element={<PublicProfile />} />
-                            <Route path="/browse-cleaners" element={<BrowseCleaners />} />
-                            <Route path="/browse-services" element={<BrowseServices />} />
-                            <Route path="/roadmap" element={<Roadmap />} />
-                            <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
-                            <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
-                            <Route path="/calendar" element={<CalendarDashboard />} />
-                            <Route path="/dashboard" element={<ProviderDashboard />} />
-                            <Route path="/growth-dashboard" element={<GrowthDashboard />} />
-                            <Route path="/settings" element={<Settings />} />
-                            <Route path="/tax-compliance" element={<TaxCompliancePage />} />
-                            <Route path="/pricing" element={<ServiceProvidersPage />} />
-                            <Route path="/support" element={<Support />} />
-                            <Route path="/how-it-works" element={<HowItWorksPage />} />
-                            <Route path="/messages" element={<ChatPage />} />
-                            <Route path="/analytics" element={<AnalyticsDashboard />} />
-                            <Route path="/analytics/performance" element={<Performance />} />
-                            <Route path="/analytics/intelligence" element={<Intelligence />} />
-                            <Route path="/analytics/insights" element={<Insights />} />
-                            <Route path="/analytics/reports" element={<Reports />} />
-                            <Route path="/bookings" element={<BookingsPage />} />
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                        </main>
-                        <Footer />
-                        
-                        {/* Floating Chat Components */}
-                        <FloatingChatButton />
-                        <TabbedChatbot />
-                      </div>
-                    </BrowserRouter>
-                  </AnalyticsProvider>
-                </ChatbotProvider>
-              </AuthProvider>
-            </LanguageProvider>
-          </CustomThemeProvider>
-        </ThemeProvider>
-      </IntensityThemeProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <IntensityThemeProvider>
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <CustomThemeProvider>
+              <LanguageProvider>
+                <AuthProvider>
+                  <ChatbotProvider>
+                    <AnalyticsProvider>
+                      <Toaster />
+                      <BrowserRouter>
+                        <div className="min-h-screen">
+                          <Header />
+                          <main className="relative z-10">
+                            <Routes>
+                              <Route path="/" element={<Index />} />
+                              <Route path="/auth" element={<Auth />} />
+                              <Route path="/my-profile" element={<MyProfile />} />
+                              <Route path="/profile" element={<Profile />} />
+                              <Route path="/public-profile/:id" element={<PublicProfile />} />
+                              <Route path="/browse-cleaners" element={<BrowseCleaners />} />
+                              <Route path="/browse-services" element={<BrowseServices />} />
+                              <Route path="/roadmap" element={<Roadmap />} />
+                              <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+                              <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
+                              <Route path="/calendar" element={<CalendarDashboard />} />
+                              <Route path="/dashboard" element={<ProviderDashboard />} />
+                              <Route path="/growth-dashboard" element={<GrowthDashboard />} />
+                              <Route path="/settings" element={<Settings />} />
+                              <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                              <Route path="/pricing" element={<ServiceProvidersPage />} />
+                              <Route path="/support" element={<Support />} />
+                              <Route path="/how-it-works" element={<HowItWorksPage />} />
+                              <Route path="/messages" element={<ChatPage />} />
+                              <Route path="/analytics" element={<AnalyticsDashboard />} />
+                              <Route path="/analytics/performance" element={<Performance />} />
+                              <Route path="/analytics/intelligence" element={<Intelligence />} />
+                              <Route path="/analytics/insights" element={<Insights />} />
+                              <Route path="/analytics/reports" element={<Reports />} />
+                              <Route path="/bookings" element={<BookingsPage />} />
+                              <Route path="*" element={<NotFound />} />
+                            </Routes>
+                          </main>
+                          <Footer />
+                          
+                          {/* Floating Chat Components */}
+                          <FloatingChatButton />
+                          <TabbedChatbot />
+                        </div>
+                      </BrowserRouter>
+                    </AnalyticsProvider>
+                  </ChatbotProvider>
+                </AuthProvider>
+              </LanguageProvider>
+            </CustomThemeProvider>
+          </ThemeProvider>
+        </IntensityThemeProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 
