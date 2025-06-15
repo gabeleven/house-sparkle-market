@@ -1,26 +1,8 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceType } from '@/utils/serviceTypes';
-
-export interface CleanerProfile {
-  id: string;
-  user_id?: string;
-  full_name: string;
-  email: string;
-  business_name: string | null;
-  brief_description: string | null;
-  profile_photo_url: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  service_radius_km: number | null;
-  years_experience: number | null;
-  service_area_city: string | null;
-  services: ServiceType[] | null;
-  hourly_rate: number | null;
-  distance?: number;
-  average_rating: number | null;
-  total_reviews: number | null;
-}
+import { ProviderProfile } from '@/types/providers';
 
 interface UseCleanersProps {
   userLocation?: { latitude: number; longitude: number } | null;
@@ -70,55 +52,68 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter, serviceF
       console.log('Successfully fetched service providers with enhanced search:', data);
       console.log('Number of service providers found:', data?.length || 0);
 
-      let processedCleaners = (data || [])
+      let processedProviders = (data || [])
         .filter(provider => provider.profiles)
-        .map((provider): CleanerProfile => {
+        .map((provider): ProviderProfile => {
           const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
           return {
-            id: provider.user_id,
+            id: provider.id,
             user_id: provider.user_id,
             email: profile?.email || '',
             full_name: profile?.full_name || '',
             business_name: provider.business_name,
-            brief_description: provider.bio,
-            profile_photo_url: provider.profile_photo_url,
+            bio: provider.bio,
+            phone: provider.phone,
+            address: provider.address,
             latitude: provider.latitude,
             longitude: provider.longitude,
             service_radius_km: provider.service_radius_km,
             years_experience: provider.years_experience,
-            service_area_city: provider.address, // Use address field for location display
             hourly_rate: provider.hourly_rate,
             average_rating: provider.average_rating,
             total_reviews: provider.total_reviews,
-            services: []
+            profile_photo_url: provider.profile_photo_url,
+            banner_image_url: provider.banner_image_url,
+            is_featured: provider.is_featured,
+            is_profile_complete: provider.is_profile_complete,
+            created_at: provider.created_at,
+            updated_at: provider.updated_at,
+            services: provider.provider_services || [],
+            // Add required CleanerProfile compatibility properties
+            brief_description: provider.bio || '',
+            service_area_city: provider.address?.split(',')[1]?.trim() || 'Unknown'
           };
         });
 
       // Apply service type filtering if specified
       if (serviceFilters && serviceFilters.length > 0) {
-        // For now, we'll keep all providers since the service filtering
-        // logic would need to be implemented based on the actual service data structure
-        console.log('Service filters applied:', serviceFilters);
-        // TODO: Implement actual service filtering when service data structure is finalized
+        processedProviders = processedProviders.filter(provider => 
+          provider.services?.some(service => 
+            service.service_category?.name && 
+            serviceFilters.some(filter => 
+              service.service_category.name.toLowerCase().includes(filter.toLowerCase())
+            )
+          )
+        );
       }
 
       // Sort by average rating first (highest first), then by address
-      processedCleaners.sort((a, b) => {
+      processedProviders.sort((a, b) => {
         const ratingA = a.average_rating || 0;
         const ratingB = b.average_rating || 0;
         if (ratingB !== ratingA) {
           return ratingB - ratingA;
         }
         
-        if (a.service_area_city && b.service_area_city) {
-          return a.service_area_city.localeCompare(b.service_area_city);
+        if (a.address && b.address) {
+          return a.address.localeCompare(b.address);
         }
-        if (a.service_area_city) return -1;
-        if (b.service_area_city) return 1;
+        if (a.address) return -1;
+        if (b.address) return 1;
         return 0;
       });
 
-      return processedCleaners;
+      return processedProviders;
     }
   });
 
@@ -128,3 +123,6 @@ export const useCleaners = ({ userLocation, searchTerm, locationFilter, serviceF
     error
   };
 };
+
+// Export the same hook with the new name for compatibility
+export const useProviders = useCleaners;

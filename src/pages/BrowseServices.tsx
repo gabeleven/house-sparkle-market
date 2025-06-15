@@ -1,230 +1,128 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useEnhancedProviders } from "@/hooks/useEnhancedProviders";
-import { useLocation } from "@/hooks/useLocation";
-import { useAuth } from "@/hooks/useAuth";
-import { MapPreview } from "@/components/map/MapPreview";
-import { GoogleMapView } from "@/components/map/GoogleMapView";
-import { MapView } from "@/components/map/MapView";
-import { MapErrorBoundary } from "@/components/map/MapErrorBoundary";
-import { DynamicRadiusSelector } from "@/components/map/DynamicRadiusSelector";
-import { SearchHeader } from "@/components/browse/SearchHeader";
-import { ResultsHeader } from "@/components/browse/ResultsHeader";
-import { ResultsContent } from "@/components/browse/ResultsContent";
-import { LocationAuthPrompt } from "@/components/browse/LocationAuthPrompt";
-import { SearchBreadcrumbs } from "@/components/browse/SearchBreadcrumbs";
-import { SubscriptionTier } from "@/types/subscription";
-import { ServiceType } from "@/utils/serviceTypes";
+import React, { useState, useEffect } from 'react';
+import { useUserLocation } from '@/hooks/useUserLocation';
+import { useEnhancedProviders } from '@/hooks/useEnhancedProviders';
+import { ServiceType } from '@/utils/serviceTypes';
+import { SearchHeader } from '@/components/browse/SearchHeader';
+import { ServiceFilters } from '@/components/browse/ServiceFilters';
+import { ResultsContent } from '@/components/browse/ResultsContent';
+import { ResultsHeader } from '@/components/browse/ResultsHeader';
+import { LocationAuthPrompt } from '@/components/browse/LocationAuthPrompt';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const BrowseServices = () => {
-  const [searchParams] = useSearchParams();
-  const initialSearch = searchParams.get('search') || '';
-  const initialLocation = searchParams.get('location') || '';
-  const autoOpenMap = searchParams.get('autoMap') === 'true';
-  
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
-  const [locationFilter, setLocationFilter] = useState(initialLocation);
-  const [selectedServices, setSelectedServices] = useState<ServiceType[]>([]);
-  const [searchRadius, setSearchRadius] = useState(25);
-  const [showMap, setShowMap] = useState(autoOpenMap || false);
-  const [useGoogleMaps, setUseGoogleMaps] = useState(true);
-  const [selectedProvider, setSelectedProvider] = useState(null);
-  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const { location, requestLocation } = useLocation();
-  const { user } = useAuth();
-  
-  // Mock user subscription - in a real app, this would come from user subscription data
-  const userSubscription: SubscriptionTier = 'FREE'; // This would be fetched from user's actual subscription
-  
-  // Auto-open map and request location when user is logged in and autoMap is true
+  const [searchTerm, setSearchTerm] = useState('');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
+  const { userLocation, requestLocation, isLoading: locationLoading } = useUserLocation();
+  const { subscription: userSubscription } = useSubscription();
+
   useEffect(() => {
-    if (user && autoOpenMap && !location) {
+    if (!userLocation && !locationLoading) {
       requestLocation();
-      setShowMap(true);
     }
-  }, [user, autoOpenMap, location, requestLocation]);
-  
-  // Show location prompt when user first arrives with a postal code but no location permission
-  useEffect(() => {
-    if (user && initialLocation && !location && !autoOpenMap) {
-      setShowLocationPrompt(true);
-    }
-  }, [user, initialLocation, location, autoOpenMap]);
-  
-  // Create a search location object for the DynamicRadiusSelector
-  const searchLocation = location ? {
-    lat: location.latitude,
-    lng: location.longitude,
-    address: "Your location"
-  } : null;
-  
-  // Use the enhanced providers hook instead of useCleaners
-  const { providers, isLoading, error } = useEnhancedProviders({
-    userLocation: location,
-    searchTerm: searchTerm,
-    locationFilter: locationFilter,
-    serviceFilters: selectedServices
+  }, [requestLocation, userLocation, locationLoading]);
+
+  const handleSearchChange = (newSearchTerm: string) => {
+    setSearchTerm(newSearchTerm);
+  };
+
+  const handleLocationChange = (newLocationFilter: string) => {
+    setLocationFilter(newLocationFilter);
+  };
+
+  const handleServiceFilter = (service: ServiceType, checked: boolean) => {
+    setServiceFilters((prevServices) => {
+      if (checked) {
+        return [...prevServices, service];
+      } else {
+        return prevServices.filter((s) => s !== service);
+      }
+    });
+  };
+
+  const handleRequestLocation = () => {
+    requestLocation();
+  };
+
+  const { 
+    providers, 
+    isLoading, 
+    error 
+  } = useEnhancedProviders({ 
+    userLocation, 
+    searchTerm, 
+    locationFilter, 
+    serviceFilters 
   });
 
-  const handleSearch = () => {
-    console.log('Enhanced search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
-    setHasSearched(true);
-  };
-
-  const handleServiceFiltersChange = (services: ServiceType[]) => {
-    setSelectedServices(services);
-    // Automatically trigger search when filters change
-    setTimeout(() => {
-      handleSearch();
-    }, 100);
-  };
-
-  const handleRadiusChange = (newRadius: number) => {
-    setSearchRadius(newRadius);
-    console.log('Radius changed to:', newRadius);
-  };
-
-  const handleMapFallback = () => {
-    console.log('Falling back to simple map view');
-    setUseGoogleMaps(false);
-  };
-
-  const handleCloseMap = () => {
-    setShowMap(false);
-    setUseGoogleMaps(true); // Reset to try Google Maps again next time
-  };
-
-  const handleProviderSelect = (provider: any) => {
-    setSelectedProvider(provider);
-  };
-
-  const handleLocationGranted = () => {
-    setShowLocationPrompt(false);
-    // Location will be automatically updated by the useLocation hook
-  };
-
-  const handleLocationDenied = () => {
-    setShowLocationPrompt(false);
-    // Continue with postal code search
-  };
-
-  const handleShowMap = () => {
-    setShowMap(true);
-  };
-
-  console.log('BrowseServices rendering - service providers count:', providers?.length || 0);
-
-  // Show location authorization prompt
-  if (showLocationPrompt) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <SearchBreadcrumbs postalCode={initialLocation} />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <LocationAuthPrompt
-              onLocationGranted={handleLocationGranted}
-              onLocationDenied={handleLocationDenied}
-              postalCode={initialLocation}
-            />
-          </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading service providers...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive">Error loading service providers: {error.message}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SearchBreadcrumbs 
-          postalCode={locationFilter || initialLocation} 
-          hasLocation={!!location}
-        />
-
-        <SearchHeader
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          locationFilter={locationFilter}
-          setLocationFilter={setLocationFilter}
-          selectedServices={selectedServices}
-          onServiceFiltersChange={handleServiceFiltersChange}
-          onSearch={handleSearch}
-          location={location}
-          onRequestLocation={requestLocation}
-          onShowMap={handleShowMap}
-        />
-
-        {/* Integrated Radius Selector */}
-        {!showMap && searchLocation && hasSearched && (
-          <DynamicRadiusSelector 
-            currentRadius={searchRadius}
-            onRadiusChange={handleRadiusChange}
-            searchLocation={searchLocation}
+        <div className="mb-8">
+          <SearchHeader
+            searchTerm={searchTerm}
+            locationFilter={locationFilter}
+            onSearchChange={setSearchTerm}
+            onLocationChange={setLocationFilter}
+            hasLocation={!!userLocation}
+            onRequestLocation={handleRequestLocation}
           />
-        )}
+        </div>
 
-        {/* Map Preview */}
-        {!showMap && !isLoading && providers && providers.length > 0 && hasSearched && (
-          <MapPreview 
-            cleaners={providers}
-            onShowMap={() => setShowMap(true)}
-            userLocation={location}
-          />
-        )}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-1">
+            <ServiceFilters
+              selectedServices={serviceFilters}
+              onServiceChange={handleServiceFilter}
+            />
+          </div>
 
-        {/* Full Screen Map with Error Boundary */}
-        {showMap && (
-          <MapErrorBoundary 
-            fallback={
-              <MapView
-                cleaners={providers || []}
-                userLocation={location}
-                radius={searchRadius}
-                onClose={handleCloseMap}
-                isFullScreen={true}
-              />
-            }
-          >
-            {useGoogleMaps ? (
-              <GoogleMapView
-                cleaners={providers || []}
-                onCleanerSelect={handleProviderSelect}
-                selectedCleaner={selectedProvider}
-                radiusKm={searchRadius}
-                onRadiusChange={handleRadiusChange}
-                onClose={handleCloseMap}
-                onError={handleMapFallback}
-                isFullScreen={true}
-                className="h-[80vh]"
-              />
-            ) : (
-              <MapView
-                cleaners={providers || []}
-                userLocation={location}
-                radius={searchRadius}
-                onClose={handleCloseMap}
-                isFullScreen={true}
-              />
+          <div className="lg:col-span-3">
+            <ResultsHeader
+              totalResults={providers.length}
+              searchTerm={searchTerm}
+              locationFilter={locationFilter}
+              serviceFilters={serviceFilters}
+              userLocation={userLocation}
+            />
+
+            {!userLocation && (
+              <LocationAuthPrompt onRequestLocation={handleRequestLocation} />
             )}
-          </MapErrorBoundary>
-        )}
-
-        {/* Results */}
-        {!showMap && (
-          <>
-            <ResultsHeader count={providers?.length || 0} />
+            
             <ResultsContent
               cleaners={providers}
               isLoading={isLoading}
               error={error}
-              hasLocation={!!location}
-              onRequestLocation={requestLocation}
+              hasLocation={!!userLocation}
+              onRequestLocation={handleRequestLocation}
               userSubscription={userSubscription}
             />
-          </>
-        )}
+          </div>
+        </div>
       </div>
-    </div>
+    );
   );
 };
 

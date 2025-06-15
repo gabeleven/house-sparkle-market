@@ -1,223 +1,171 @@
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { MapPin, Search, Loader2 } from 'lucide-react';
-import { useLocationSearch } from '@/hooks/useLocationSearch';
-
-interface LocationSearchSuggestion {
-  type: 'city' | 'province' | 'postal_code' | 'address';
-  value: string;
-  display: string;
-  province?: string;
-}
+import { MapPin, Search, X } from 'lucide-react';
+import { useGeocoding } from '@/hooks/useGeocoding';
+import { useUserLocation } from '@/hooks/useUserLocation';
 
 interface EnhancedLocationSearchProps {
-  onLocationSearch: (location: { lat: number; lng: number; address: string }) => void;
+  onLocationSelect: (location: { address: string; latitude: number; longitude: number } | null) => void;
+  onSearch: (query: string) => void;
   placeholder?: string;
   initialValue?: string;
-  onInputChange?: (value: string) => void;
 }
 
-export const EnhancedLocationSearch = ({ 
-  onLocationSearch, 
-  placeholder = "Search city, province, postal code, or address...",
-  initialValue = "",
-  onInputChange
-}: EnhancedLocationSearchProps) => {
-  const [searchTerm, setSearchTerm] = useState(initialValue);
-  const [isSearching, setIsSearching] = useState(false);
-  const [suggestions, setSuggestions] = useState<LocationSearchSuggestion[]>([]);
+export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
+  onLocationSelect,
+  onSearch,
+  placeholder = "Search by city, neighborhood, or postal code...",
+  initialValue = ""
+}) => {
+  const [searchQuery, setSearchQuery] = useState(initialValue);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
-  const { parseLocationQuery, MAJOR_CANADIAN_CITIES, CANADIAN_PROVINCES } = useLocationSearch();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const { geocodeAddress } = useGeocoding();
+  const { userLocation, requestLocation, isLoading: locationLoading } = useUserLocation();
 
-  useEffect(() => {
-    setSearchTerm(initialValue);
-  }, [initialValue]);
-
-  useEffect(() => {
-    if (window.google && window.google.maps && window.google.maps.places) {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
-    }
-  }, []);
-
-  const generateLocalSuggestions = (input: string): LocationSearchSuggestion[] => {
-    const suggestions: LocationSearchSuggestion[] = [];
-    const lowerInput = input.toLowerCase();
-
-    // Postal code pattern
-    const postalPattern = /^[a-z]\d[a-z]\s?\d?[a-z]?\d?$/i;
-    if (postalPattern.test(input)) {
-      suggestions.push({
-        type: 'postal_code',
-        value: input.toUpperCase(),
-        display: `Postal Code: ${input.toUpperCase()}`
-      });
-    }
-
-    // Major cities
-    MAJOR_CANADIAN_CITIES
-      .filter(city => city.toLowerCase().includes(lowerInput))
-      .slice(0, 5)
-      .forEach(city => {
-        suggestions.push({
-          type: 'city',
-          value: city,
-          display: city
-        });
-      });
-
-    // Provinces
-    CANADIAN_PROVINCES
-      .filter(province => 
-        province.name.toLowerCase().includes(lowerInput) ||
-        province.abbreviation.toLowerCase().includes(lowerInput) ||
-        province.variations.some(v => v.includes(lowerInput))
-      )
-      .slice(0, 3)
-      .forEach(province => {
-        suggestions.push({
-          type: 'province',
-          value: province.name,
-          display: `${province.name} (${province.abbreviation})`
-        });
-      });
-
-    return suggestions;
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return function (...args: any[]) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
   };
 
-  const handleInputChange = (value: string) => {
-    setSearchTerm(value);
-    onInputChange?.(value);
+  const handleInputChange = useCallback(
+    debounce(async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const query = e.target.value;
+      setSearchQuery(query);
+      setShowSuggestions(query.length > 0);
 
-    if (value.length > 1) {
-      const localSuggestions = generateLocalSuggestions(value);
-      setSuggestions(localSuggestions);
-      setShowSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
-  };
+      if (query.length > 0) {
+        setIsLoading(true);
+        try {
+          const results = await geocodeAddress(query);
+          if (results) {
+            setSuggestions(results.candidates || []);
+          } else {
+            setSuggestions([]);
+          }
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+          setSuggestions([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 300),
+    [geocodeAddress]
+  );
 
-  const handleSuggestionClick = (suggestion: LocationSearchSuggestion) => {
-    setSearchTerm(suggestion.value);
-    onInputChange?.(suggestion.value);
-    setShowSuggestions(false);
-    handleSearch(suggestion.value);
-  };
-
-  const handleSearch = async (searchValue?: string) => {
-    const valueToSearch = searchValue || searchTerm;
-    if (!valueToSearch.trim()) return;
-
-    setIsSearching(true);
+  const handleSuggestionSelect = useCallback(async (suggestion: any) => {
+    console.log('Selected suggestion:', suggestion);
+    setSearchQuery(suggestion.description || suggestion.formatted_address);
     setShowSuggestions(false);
     
     try {
-      // Parse the location to understand what we're searching for
-      const locationComponents = parseLocationQuery(valueToSearch);
+      setIsLoading(true);
+      const geocoded = await geocodeAddress(suggestion.description || suggestion.formatted_address);
       
-      // Try Google Maps Geocoding first
-      if (window.google?.maps?.Geocoder) {
-        const geocoder = new google.maps.Geocoder();
+      if (geocoded) {
+        const locationData = {
+          address: suggestion.description || suggestion.formatted_address,
+          latitude: typeof geocoded.latitude === 'function' ? geocoded.latitude() : geocoded.latitude,
+          longitude: typeof geocoded.longitude === 'function' ? geocoded.longitude() : geocoded.longitude
+        };
         
-        const result = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
-          geocoder.geocode(
-            { 
-              address: valueToSearch,
-              region: 'CA',
-              componentRestrictions: { country: 'CA' }
-            },
-            (results, status) => {
-              if (status === 'OK' && results) {
-                resolve(results);
-              } else {
-                reject(new Error(`Geocoding failed: ${status}`));
-              }
-            }
-          );
-        });
-
-        if (result.length > 0) {
-          const location = result[0].geometry.location;
-          // Proper type handling for Google Maps lat/lng
-          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
-          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
-          
-          onLocationSearch({
-            lat,
-            lng,
-            address: result[0].formatted_address
-          });
-          return;
-        }
+        console.log('Geocoded location:', locationData);
+        onLocationSelect(locationData);
       }
-      
-      // Fallback: Use predefined coordinates for major cities
-      if (locationComponents.city) {
-        // You could extend this with a comprehensive city coordinate mapping
-        console.log('Searching for city:', locationComponents.city);
-      }
-      
     } catch (error) {
-      console.error('Location search error:', error);
+      console.error('Error geocoding suggestion:', error);
     } finally {
-      setIsSearching(false);
+      setIsLoading(false);
     }
+  }, [geocodeAddress, onLocationSelect]);
+
+  const useCurrentLocation = useCallback(async () => {
+    if (userLocation) {
+      onLocationSelect({
+        address: 'Current Location',
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+      });
+      setSearchQuery('');
+    } else {
+      requestLocation();
+    }
+  }, [userLocation, requestLocation, onLocationSelect]);
+
+  const handleSearch = () => {
+    onSearch(searchQuery);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSearch();
-    }
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+    onLocationSelect(null);
   };
+
+  useEffect(() => {
+    if (initialValue) {
+      setSearchQuery(initialValue);
+    }
+  }, [initialValue]);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             type="text"
+            value={searchQuery}
+            onChange={handleInputChange}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             placeholder={placeholder}
-            value={searchTerm}
-            onChange={(e) => handleInputChange(e.target.value)}
-            onKeyPress={handleKeyPress}
-            onFocus={() => searchTerm.length > 1 && setShowSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            className="pl-10"
-            disabled={isSearching}
+            className="pl-10 pr-10"
           />
-        </div>
-        <Button 
-          onClick={() => handleSearch()}
-          disabled={isSearching || !searchTerm.trim()}
-          size="sm"
-        >
-          {isSearching ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Search className="w-4 h-4" />
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
           )}
+        </div>
+        
+        <Button
+          variant="outline"
+          size="default"
+          onClick={useCurrentLocation}
+          disabled={locationLoading}
+          className="flex items-center gap-2 whitespace-nowrap"
+        >
+          <MapPin className="w-4 h-4" />
+          {locationLoading ? 'Locating...' : 'Use Location'}
         </Button>
       </div>
 
-      {/* Suggestions dropdown */}
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-12 z-50 bg-white border border-gray-200 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 mt-1 max-h-60 overflow-y-auto">
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
-              className="w-full px-4 py-2 text-left hover:bg-gray-100 border-b border-gray-100 last:border-b-0 flex items-center gap-2"
-              onClick={() => handleSuggestionClick(suggestion)}
+              onClick={() => handleSuggestionSelect(suggestion)}
+              className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0 transition-colors"
             >
-              <MapPin className="w-4 h-4 text-gray-400" />
-              <div>
-                <div className="font-medium">{suggestion.display}</div>
-                <div className="text-xs text-gray-500 capitalize">{suggestion.type.replace('_', ' ')}</div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-900 dark:text-gray-100">
+                  {suggestion.description || suggestion.formatted_address}
+                </span>
               </div>
             </button>
           ))}
