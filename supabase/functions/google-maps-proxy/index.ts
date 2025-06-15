@@ -13,19 +13,8 @@ serve(async (req) => {
   }
 
   try {
-    const { searchParams } = new URL(req.url);
-    const service = searchParams.get('service');
-    const query = searchParams.get('query');
-    
-    if (!service || !query) {
-      return new Response(
-        JSON.stringify({ error: 'Missing required parameters: service and query' }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
+    const body = await req.json();
+    const { action, service, query } = body;
 
     const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY');
     if (!apiKey) {
@@ -34,6 +23,27 @@ serve(async (req) => {
         JSON.stringify({ error: 'Google Maps API not configured' }),
         { 
           status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Handle API key request
+    if (action === 'get_key') {
+      return new Response(
+        JSON.stringify({ apiKey }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Handle API proxy requests
+    if (!service || !query) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required parameters: service and query' }),
+        { 
+          status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );

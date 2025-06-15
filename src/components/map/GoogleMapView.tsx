@@ -64,9 +64,16 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 }) => {
   const [secureApiKey, setSecureApiKey] = useState<string | null>(null);
   const [keyLoading, setKeyLoading] = useState(true);
+  const [keyError, setKeyError] = useState<string | null>(null);
 
   // Securely get API key from edge function
   useEffect(() => {
+    // Skip in SSR environment
+    if (typeof window === 'undefined') {
+      setKeyLoading(false);
+      return;
+    }
+
     const getSecureApiKey = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
@@ -75,13 +82,20 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         
         if (error) {
           console.error('Failed to get secure API key:', error);
+          setKeyError('Failed to retrieve API key');
           if (onError) onError();
           return;
         }
         
-        setSecureApiKey(data?.apiKey);
+        if (data?.apiKey) {
+          setSecureApiKey(data.apiKey);
+        } else {
+          setKeyError('No API key returned');
+          if (onError) onError();
+        }
       } catch (error) {
         console.error('Error retrieving secure API key:', error);
+        setKeyError('Network error retrieving API key');
         if (onError) onError();
       } finally {
         setKeyLoading(false);
@@ -175,8 +189,8 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     );
   }
 
-  if (loadError || !secureApiKey) {
-    console.error('Google Maps load error:', loadError);
+  if (keyError || loadError || !secureApiKey) {
+    console.error('Google Maps load error:', loadError || keyError);
     if (onError) {
       onError();
     }
@@ -185,7 +199,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         <div className="text-center p-4">
           <p className="text-red-600 mb-2">Failed to load Google Maps</p>
           <p className="text-sm text-gray-500 mb-2">
-            {loadError?.message || 'API key configuration error'}
+            {loadError?.message || keyError || 'API key configuration error'}
           </p>
           <p className="text-xs text-gray-400">
             Please ensure the Google Maps API key is properly configured.

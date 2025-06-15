@@ -65,6 +65,12 @@ export const useGoogleMapsApi = () => {
 
   // Enhanced script loading with secure API key
   const loadGoogleMapsScript = useCallback(async () => {
+    // Skip in SSR environment
+    if (typeof window === 'undefined') {
+      setIsLoading(false);
+      return;
+    }
+
     if (isGoogleMapsAvailable()) {
       console.log('Google Maps with Places API already available');
       setScriptLoaded(true);
@@ -86,7 +92,7 @@ export const useGoogleMapsApi = () => {
         }
       });
       
-      existingScript.addEventListener('error', (error) => {
+      existingScript.addEventListener('error', () => {
         handleLoadError(new Error('Script loading failed'));
       });
       
@@ -95,37 +101,41 @@ export const useGoogleMapsApi = () => {
 
     console.log('Loading Google Maps script with Places API (New)...');
     
-    // Get secure API key
-    const apiKey = await getSecureApiKey();
-    if (!apiKey) {
-      handleLoadError(new Error('Failed to retrieve secure API key'));
-      return;
-    }
-    
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&v=3.55&loading=async`;
-    script.async = true;
-    script.defer = true;
-    
-    script.onload = () => {
-      console.log('Google Maps script loaded, checking Places API availability...');
+    try {
+      // Get secure API key
+      const apiKey = await getSecureApiKey();
+      if (!apiKey) {
+        handleLoadError(new Error('Failed to retrieve secure API key'));
+        return;
+      }
       
-      // Wait a bit for all libraries to initialize
-      setTimeout(() => {
-        if (isGoogleMapsAvailable()) {
-          handleLoadSuccess();
-        } else {
-          handleLoadError(new Error('Places API not available after script load'));
-        }
-      }, 100);
-    };
-    
-    script.onerror = (error) => {
-      console.error('Google Maps script loading failed:', error);
-      handleLoadError(new Error('Script loading failed'), undefined);
-    };
-    
-    document.head.appendChild(script);
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&v=3.55&loading=async`;
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        console.log('Google Maps script loaded, checking Places API availability...');
+        
+        // Wait a bit for all libraries to initialize
+        setTimeout(() => {
+          if (isGoogleMapsAvailable()) {
+            handleLoadSuccess();
+          } else {
+            handleLoadError(new Error('Places API not available after script load'));
+          }
+        }, 100);
+      };
+      
+      script.onerror = () => {
+        console.error('Google Maps script loading failed');
+        handleLoadError(new Error('Script loading failed'));
+      };
+      
+      document.head.appendChild(script);
+    } catch (error) {
+      handleLoadError(new Error(`Script loading setup failed: ${error.message}`));
+    }
   }, [isGoogleMapsAvailable, handleLoadSuccess, handleLoadError, getSecureApiKey]);
 
   // Initialize with secure API key loading
