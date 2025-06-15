@@ -1,5 +1,5 @@
 
-import ServiceProvidersPage from "@/pages/ServiceProvidersPage";
+import ServiceProvidersPage from "../pages/ServiceProvidersPage";
 
 export { Page };
 
