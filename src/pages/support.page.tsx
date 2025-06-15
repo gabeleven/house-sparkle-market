@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Search, MessageCircle, Mail, HelpCircle } from 'lucide-react';
-import { FAQSection } from '@/components/support/FAQSection';
-import { ContactForm } from '@/components/support/ContactForm';
+import { EnhancedFAQSection } from '../components/support/EnhancedFAQSection';
+import { ContactForm } from '../components/support/ContactForm';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
+} from '../components/ui/breadcrumb';
 
 export { Page };
 
@@ -73,7 +73,7 @@ function Page() {
           </TabsList>
 
           <TabsContent value="faq">
-            <FAQSection searchQuery={searchQuery} />
+            <EnhancedFAQSection searchQuery={searchQuery} />
           </TabsContent>
 
           <TabsContent value="contact">

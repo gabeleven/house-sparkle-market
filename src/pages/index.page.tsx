@@ -1,11 +1,11 @@
 
-import Hero from "@/components/Hero";
-import CleanerBenefits from "@/components/CleanerBenefits";
-import TestimonialSection from "@/components/TestimonialSection";
-import TaxComplianceSection from "@/components/TaxComplianceSection";
-import ComingSoonSection from "@/components/ComingSoonSection";
-import ServiceProviderCTA from "@/components/ServiceProviderCTA";
-import { SEO } from "@/components/SEO";
+import Hero from "../components/Hero";
+import CleanerBenefits from "../components/CleanerBenefits";
+import TestimonialSection from "../components/TestimonialSection";
+import TaxComplianceSection from "../components/TaxComplianceSection";
+import ComingSoonSection from "../components/ComingSoonSection";
+import ServiceProviderCTA from "../components/ServiceProviderCTA";
+import { SEO } from "../components/SEO";
 
 export { Page };
 
