@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
+      "@": path.resolve(__dirname, "./src"),
       "~": path.resolve(__dirname, "./src"),
     },
   },
@@ -35,5 +36,9 @@ export default defineConfig(({ mode }) => ({
   // Remove SSR externalization that conflicts with vite-plugin-ssr
   optimizeDeps: {
     include: ['react', 'react-dom']
+  },
+  // Ensure proper resolution for SSR
+  ssr: {
+    noExternal: ['@radix-ui/*']
   }
 }));
