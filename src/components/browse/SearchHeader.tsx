@@ -25,6 +25,7 @@ interface SearchHeaderProps {
   onSearch: () => void;
   location: { latitude: number; longitude: number } | null;
   onRequestLocation: () => void;
+  onShowMap?: () => void;
 }
 
 export const SearchHeader: React.FC<SearchHeaderProps> = ({
@@ -37,6 +38,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   onSearch,
   location,
   onRequestLocation,
+  onShowMap,
 }) => {
   const [useLocationSearch, setUseLocationSearch] = useState(false);
 
@@ -48,6 +50,23 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
     setTimeout(() => {
       onSearch();
     }, 100);
+  };
+
+  const handleSearch = () => {
+    onSearch();
+    // Show map after search if callback is provided
+    if (onShowMap) {
+      setTimeout(() => {
+        onShowMap();
+      }, 500);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch();
+    }
   };
 
   return (
@@ -63,6 +82,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               placeholder="Search by name, service, or description..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="pl-10"
             />
           </div>
@@ -72,24 +92,26 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           {useLocationSearch ? (
             <LocationSearch
               onLocationSearch={handleLocationSearchResult}
-              placeholder="Search location..."
+              placeholder="Search location in Canada..."
+              initialValue={locationFilter}
             />
           ) : (
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 type="text"
-                placeholder="City or postal code..."
+                placeholder="Enter city, postal code, or address..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
                 onFocus={() => setUseLocationSearch(true)}
+                onKeyPress={handleKeyPress}
                 className="pl-10"
               />
             </div>
           )}
         </div>
 
-        <Button onClick={onSearch} className="search-btn-pop">
+        <Button onClick={handleSearch} className="search-btn-pop">
           <Search className="w-4 h-4 mr-2" />
           Search
         </Button>

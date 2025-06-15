@@ -27,7 +27,7 @@ export const useLocation = (): UseLocationReturn => {
     setError(null);
 
     if (!navigator.geolocation) {
-      setError('La géolocalisation n\'est pas supportée par ce navigateur');
+      setError('Geolocation is not supported by this browser');
       setLoading(false);
       return;
     }
@@ -43,18 +43,18 @@ export const useLocation = (): UseLocationReturn => {
         setLoading(false);
         
         toast({
-          title: "Localisation activée",
-          description: "Nous pouvons maintenant vous montrer les nettoyeurs près de vous"
+          title: "Location enabled",
+          description: "We can now show you service providers near you"
         });
       },
       (error) => {
         console.error('Geolocation error:', error);
-        setError('Impossible d\'obtenir votre localisation');
+        setError('Unable to get your location');
         setLoading(false);
         
         toast({
-          title: "Localisation refusée",
-          description: "Vous pouvez entrer votre code postal manuellement",
+          title: "Location denied",
+          description: "You can enter your postal code manually",
           variant: "destructive"
         });
       },

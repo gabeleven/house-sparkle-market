@@ -31,6 +31,7 @@ const BrowseServices = () => {
   const [useGoogleMaps, setUseGoogleMaps] = useState(true);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const { location, requestLocation } = useLocation();
   const { user } = useAuth();
   
@@ -68,6 +69,7 @@ const BrowseServices = () => {
 
   const handleSearch = () => {
     console.log('Search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
+    setHasSearched(true);
   };
 
   const handleServiceFiltersChange = (services: ServiceType[]) => {
@@ -105,6 +107,10 @@ const BrowseServices = () => {
   const handleLocationDenied = () => {
     setShowLocationPrompt(false);
     // Continue with postal code search
+  };
+
+  const handleShowMap = () => {
+    setShowMap(true);
   };
 
   console.log('BrowseServices rendering - service providers count:', cleaners?.length || 0);
@@ -145,10 +151,11 @@ const BrowseServices = () => {
           onSearch={handleSearch}
           location={location}
           onRequestLocation={requestLocation}
+          onShowMap={handleShowMap}
         />
 
         {/* Integrated Radius Selector */}
-        {!showMap && searchLocation && (
+        {!showMap && searchLocation && hasSearched && (
           <DynamicRadiusSelector 
             currentRadius={searchRadius}
             onRadiusChange={handleRadiusChange}
@@ -157,7 +164,7 @@ const BrowseServices = () => {
         )}
 
         {/* Map Preview */}
-        {!showMap && !isLoading && cleaners && cleaners.length > 0 && (
+        {!showMap && !isLoading && cleaners && cleaners.length > 0 && hasSearched && (
           <MapPreview 
             cleaners={cleaners}
             onShowMap={() => setShowMap(true)}
