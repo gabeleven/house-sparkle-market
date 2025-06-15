@@ -29,7 +29,7 @@ export const useUnifiedProviders = ({
         .from('providers')
         .select(`
           *,
-          profiles(
+          profiles!fk_providers_user_id(
             full_name,
             email
           ),
@@ -39,30 +39,28 @@ export const useUnifiedProviders = ({
           )
         `);
 
-      // Apply search filters
-      const searchConditions = [];
-      
-      if (searchTerm) {
-        searchConditions.push(`business_name.ilike.%${searchTerm}%`);
-        searchConditions.push(`bio.ilike.%${searchTerm}%`);
+      // Apply search filters with proper syntax
+      if (searchTerm?.trim()) {
+        const cleanSearchTerm = searchTerm.trim();
+        query = query.or(`business_name.ilike.%${cleanSearchTerm}%,bio.ilike.%${cleanSearchTerm}%`);
       }
       
-      if (locationFilter) {
-        // Enhanced location search - handle postal codes and addresses
+      if (locationFilter?.trim()) {
+        // Clean and handle location filter properly
         const cleanLocation = locationFilter.trim().toLowerCase();
-        searchConditions.push(`address.ilike.%${cleanLocation}%`);
         
-        // Handle postal code formats (A1A 1A1 or A1A1A1)
-        if (/^[a-z]\d[a-z]\s*\d[a-z]\d$/i.test(cleanLocation)) {
-          const postalCode = cleanLocation.replace(/\s/g, '').toUpperCase();
-          const formattedPostal = postalCode.replace(/(.{3})(.{3})/, '$1 $2');
-          searchConditions.push(`address.ilike.%${postalCode}%`);
-          searchConditions.push(`address.ilike.%${formattedPostal}%`);
+        // Skip "current location" searches to avoid query errors
+        if (!cleanLocation.includes('current location')) {
+          // Handle postal code formats (A1A 1A1 or A1A1A1)
+          if (/^[a-z]\d[a-z]\s*\d[a-z]\d$/i.test(cleanLocation)) {
+            const postalCode = cleanLocation.replace(/\s/g, '').toUpperCase();
+            const formattedPostal = postalCode.replace(/(.{3})(.{3})/, '$1 $2');
+            query = query.or(`address.ilike.%${postalCode}%,address.ilike.%${formattedPostal}%`);
+          } else {
+            // Regular address search
+            query = query.ilike('address', `%${cleanLocation}%`);
+          }
         }
-      }
-      
-      if (searchConditions.length > 0) {
-        query = query.or(searchConditions.join(','));
       }
 
       const { data, error } = await query;
@@ -77,7 +75,7 @@ export const useUnifiedProviders = ({
       let processedProviders = (data || [])
         .filter(provider => provider.profiles)
         .map((provider): ProviderProfile => {
-          const profile = provider.profiles;
+          const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
           
           return {
             id: provider.id,

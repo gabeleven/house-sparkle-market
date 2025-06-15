@@ -36,7 +36,7 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
   };
 
   const handleInputChange = useCallback(
-    debounce(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
       const query = e.target.value;
       setSearchQuery(query);
       setShowSuggestions(query.length > 0);
@@ -47,15 +47,34 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
 
       if (query.length > 0) {
         setIsLoading(true);
-        // Simple mock geocoding for now
         try {
-          const mockSuggestions = [
-            { description: `${query}, Montreal, QC`, formatted_address: `${query}, Montreal, QC` },
-            { description: `${query}, Toronto, ON`, formatted_address: `${query}, Toronto, ON` },
-          ];
+          // Generate suggestions based on input
+          const mockSuggestions = [];
+          
+          // Check if it's a postal code pattern
+          if (/^[a-z]\d[a-z]/i.test(query)) {
+            mockSuggestions.push({ 
+              description: `${query.toUpperCase()} - Postal Code Area`, 
+              formatted_address: query.toUpperCase() 
+            });
+          }
+          
+          // Add city suggestions
+          if (query.length >= 2) {
+            const cities = ['Montreal, QC', 'Toronto, ON', 'Vancouver, BC', 'Calgary, AB', 'Ottawa, ON'];
+            cities
+              .filter(city => city.toLowerCase().includes(query.toLowerCase()))
+              .forEach(city => {
+                mockSuggestions.push({ 
+                  description: city, 
+                  formatted_address: city 
+                });
+              });
+          }
+          
           setSuggestions(mockSuggestions);
         } catch (error) {
-          console.error('Error fetching suggestions:', error);
+          console.error('Error generating suggestions:', error);
           setSuggestions([]);
         } finally {
           setIsLoading(false);
@@ -69,19 +88,24 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
 
   const handleSuggestionSelect = useCallback(async (suggestion: any) => {
     console.log('Selected suggestion:', suggestion);
-    setSearchQuery(suggestion.description || suggestion.formatted_address);
+    const selectedText = suggestion.description || suggestion.formatted_address;
+    setSearchQuery(selectedText);
     setShowSuggestions(false);
     
-    // Mock geocoding result
-    const locationData = {
-      address: suggestion.description || suggestion.formatted_address,
-      latitude: 45.5017 + Math.random() * 0.1, // Montreal area
-      longitude: -73.5673 + Math.random() * 0.1
-    };
-    
-    console.log('Geocoded location:', locationData);
-    onLocationSelect(locationData);
-  }, [onLocationSelect]);
+    // For postal codes and specific addresses, try to geocode
+    if (/^[a-z]\d[a-z]/i.test(selectedText)) {
+      // Mock geocoding for postal codes (you'd replace this with real geocoding)
+      const locationData = {
+        address: selectedText,
+        latitude: 45.5017 + Math.random() * 0.1, // Montreal area
+        longitude: -73.5673 + Math.random() * 0.1
+      };
+      onLocationSelect(locationData);
+    } else {
+      // For general searches, just pass the query to the search function
+      onSearch(selectedText);
+    }
+  }, [onLocationSelect, onSearch]);
 
   const useCurrentLocation = useCallback(async () => {
     if (userLocation) {
@@ -90,14 +114,17 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
       });
-      setSearchQuery('');
+      setSearchQuery('Current Location');
     } else {
       requestUserLocation();
     }
   }, [userLocation, requestUserLocation, onLocationSelect]);
 
   const handleSearch = () => {
-    onSearch(searchQuery);
+    if (searchQuery.trim()) {
+      onSearch(searchQuery);
+      setShowSuggestions(false);
+    }
   };
 
   const clearSearch = () => {
@@ -105,6 +132,9 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
     setSuggestions([]);
     setShowSuggestions(false);
     onLocationSelect(null);
+    if (onInputChange) {
+      onInputChange('');
+    }
   };
 
   useEffect(() => {
