@@ -14,7 +14,6 @@ import { AuthProvider } from '@/hooks/useAuth';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Index from './pages/Index';
-import Support from './pages/Support';
 import HowItWorksPage from './pages/HowItWorksPage';
 import { ChatPage } from './components/chat/ChatPage';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
@@ -83,7 +82,6 @@ function App() {
                               <Route path="/settings" element={<Settings />} />
                               <Route path="/tax-compliance" element={<TaxCompliancePage />} />
                               <Route path="/pricing" element={<ServiceProvidersPage />} />
-                              <Route path="/support" element={<Support />} />
                               <Route path="/how-it-works" element={<HowItWorksPage />} />
                               <Route path="/messages" element={<ChatPage />} />
                               <Route path="/analytics" element={<AnalyticsDashboard />} />
