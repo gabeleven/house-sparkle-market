@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -11,11 +10,11 @@ import { useAuth } from '../hooks/useAuth';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signOut();
       setIsMobileMenuOpen(false);
     } catch (error) {
       console.error('Logout error:', error);

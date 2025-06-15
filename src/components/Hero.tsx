@@ -1,6 +1,5 @@
-
 import { Button } from "./ui/button";
-import { ArrowRight, MapPin, Star } from "lucide-react";
+import { ArrowRight, MapPin, Star, Shield } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 
 const Hero = () => {
