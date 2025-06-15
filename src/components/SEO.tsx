@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import pkg from 'react-helmet-async';
+const { Helmet } = pkg;
 
 interface SEOProps {
   title?: string;
