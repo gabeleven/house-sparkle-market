@@ -27,14 +27,6 @@ const AnalyticsDashboard = () => {
               <h1 className="text-3xl font-bold text-gray-800">Business Dashboard</h1>
               <p className="text-gray-600">Customizable widgets and comprehensive business insights</p>
             </div>
-            
-            <div className="flex gap-2">
-              <Badge variant="outline" className="bg-white/90 shadow-md backdrop-blur-sm">
-                <MapPin className="w-4 h-4 mr-1" />
-                Montreal, QC
-              </Badge>
-              <Badge variant="secondary" className="bg-white/90 shadow-md backdrop-blur-sm">Live Data</Badge>
-            </div>
           </div>
         </div>
 
@@ -42,7 +34,16 @@ const AnalyticsDashboard = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-800">Dashboard Widgets</h2>
-            <AnalyticsNavigation />
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
+                <Badge variant="outline" className="bg-white/90 shadow-md backdrop-blur-sm">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  Montreal, QC
+                </Badge>
+                <Badge variant="secondary" className="bg-white/90 shadow-md backdrop-blur-sm">Live Data</Badge>
+              </div>
+              <AnalyticsNavigation />
+            </div>
           </div>
           <WidgetGrid />
         </div>
