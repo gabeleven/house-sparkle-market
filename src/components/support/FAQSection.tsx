@@ -1,9 +1,8 @@
-
 import React, { useState, useMemo } from 'react';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '~/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
+import { Badge } from '~/components/ui/badge';
 import { Search, BookOpen, CreditCard, User, MapPin, Star, MessageCircle, Shield } from 'lucide-react';
 
 interface FAQItem {
