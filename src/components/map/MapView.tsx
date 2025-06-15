@@ -15,9 +15,28 @@ interface MapViewProps {
   isFullScreen?: boolean;
 }
 
+// Transform ProviderProfile to match CleanerMapPopup expected format
+interface CleanerMapProfile {
+  id: string;
+  full_name: string;
+  business_name?: string;
+  brief_description?: string;
+  profile_photo_url?: string;
+  service_area_city?: string;
+  latitude?: number;
+  longitude?: number;
+  service_radius_km?: number;
+  hourly_rate?: number;
+  years_experience?: number;
+  average_rating?: number;
+  total_reviews?: number;
+  distance?: number;
+  services?: string[];
+}
+
 export const MapView = ({ providers, userLocation, radius = 10, onClose, isFullScreen = false }: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const [selectedProvider, setSelectedProvider] = useState<ProviderProfile | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<CleanerMapProfile | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
   const { mapCenter, loading: centerLoading } = useMapCenter();
 
@@ -25,16 +44,35 @@ export const MapView = ({ providers, userLocation, radius = 10, onClose, isFullS
     ? "fixed inset-0 z-50 bg-white"
     : "relative w-full h-96 rounded-lg overflow-hidden border";
 
+  // Transform providers to match expected format
+  const transformedProviders: CleanerMapProfile[] = providers.map(provider => ({
+    id: provider.id,
+    full_name: provider.full_name,
+    business_name: provider.business_name || undefined,
+    brief_description: provider.brief_description,
+    profile_photo_url: provider.profile_photo_url || undefined,
+    service_area_city: provider.service_area_city,
+    latitude: provider.latitude || undefined,
+    longitude: provider.longitude || undefined,
+    service_radius_km: provider.service_radius_km,
+    hourly_rate: provider.hourly_rate || undefined,
+    years_experience: provider.years_experience,
+    average_rating: provider.average_rating,
+    total_reviews: provider.total_reviews,
+    distance: provider.distance,
+    services: provider.services?.map(service => service.service_category?.name || 'Unknown Service').filter(Boolean) || []
+  }));
+
   // Filter featured providers for highlighting
-  const featuredProviders = providers.filter(provider => 
+  const featuredProviders = transformedProviders.filter(provider => 
     provider.business_name && provider.years_experience && provider.years_experience > 2
   );
 
-  const regularProviders = providers.filter(provider => 
+  const regularProviders = transformedProviders.filter(provider => 
     !featuredProviders.includes(provider)
   );
 
-  const handleProviderClick = (provider: ProviderProfile, index: number) => {
+  const handleProviderClick = (provider: CleanerMapProfile, index: number) => {
     setSelectedProvider(provider);
     setPopupPosition({ x: 200 + index * 50, y: 150 + index * 30 });
   };

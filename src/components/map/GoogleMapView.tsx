@@ -1,3 +1,4 @@
+
 import React, { useCallback, useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { MapMarkers } from './MapMarkers';
@@ -38,9 +39,9 @@ const mapOptions = {
 const libraries: ["places", "geometry"] = ["places", "geometry"];
 
 interface GoogleMapViewProps {
-  cleaners: any[];
-  onCleanerSelect?: (cleaner: any) => void;
-  selectedCleaner?: any;
+  providers: any[];
+  onProviderSelect?: (provider: any) => void;
+  selectedProvider?: any;
   radiusKm?: number;
   onRadiusChange?: (radius: number) => void;
   className?: string;
@@ -50,9 +51,9 @@ interface GoogleMapViewProps {
 }
 
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
-  cleaners,
-  onCleanerSelect,
-  selectedCleaner,
+  providers,
+  onProviderSelect,
+  selectedProvider,
   radiusKm = 25,
   onRadiusChange,
   className = "",
@@ -76,7 +77,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   } : null;
 
   const { 
-    selectedCleaner: mapSelectedCleaner,
+    selectedCleaner: mapSelectedProvider,
     setSelectedCleaner,
     mapInstance,
     setMapInstance,
@@ -126,12 +127,12 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     setIsMapReady(false);
   }, [setMapInstance]);
 
-  const handleCleanerSelect = useCallback((cleaner: any) => {
-    setSelectedCleaner(cleaner);
-    if (onCleanerSelect) {
-      onCleanerSelect(cleaner);
+  const handleProviderSelect = useCallback((provider: any) => {
+    setSelectedCleaner(provider);
+    if (onProviderSelect) {
+      onProviderSelect(provider);
     }
-  }, [setSelectedCleaner, onCleanerSelect]);
+  }, [setSelectedCleaner, onProviderSelect]);
 
   const handleInfoWindowClose = useCallback(() => {
     setSelectedCleaner(null);
@@ -182,18 +183,18 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
       >
         {isMapReady && (
           <MapMarkers
-            cleaners={cleaners}
+            providers={providers}
             userLocation={mapUserLocation}
             radius={radiusKm}
-            selectedCleaner={mapSelectedCleaner || selectedCleaner}
-            onMarkerClick={handleCleanerSelect}
+            selectedProvider={mapSelectedProvider || selectedProvider}
+            onMarkerClick={handleProviderSelect}
             onInfoWindowClose={handleInfoWindowClose}
             isGoogleMapsAvailable={() => !!(window.google && window.google.maps && window.google.maps.places)}
           />
         )}
         
         <MapControls
-          cleanerCount={cleaners.length}
+          cleanerCount={providers.length}
           onRecenter={handleRecenter}
           onCenterOnUser={handleCenterOnUser}
           onClose={onClose}

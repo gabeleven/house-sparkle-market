@@ -1,6 +1,6 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderProfile } from '@/types/providers';
 import { useMapCenter } from '@/hooks/useMapCenter';
 
 interface Location {
@@ -13,7 +13,7 @@ interface UseMapStateProps {
 }
 
 export const useMapState = ({ userLocation }: UseMapStateProps) => {
-  const [selectedCleaner, setSelectedCleaner] = useState<CleanerProfile | null>(null);
+  const [selectedCleaner, setSelectedCleaner] = useState<ProviderProfile | null>(null);
   const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
   const { mapCenter, loading: mapCenterLoading } = useMapCenter();
 
@@ -45,7 +45,7 @@ export const useMapState = ({ userLocation }: UseMapStateProps) => {
     return 11;
   }, [mapCenter, mapCenterLoading]);
 
-  const handleMarkerClick = useCallback((cleaner: CleanerProfile) => {
+  const handleMarkerClick = useCallback((cleaner: ProviderProfile) => {
     setSelectedCleaner(cleaner);
   }, []);
 

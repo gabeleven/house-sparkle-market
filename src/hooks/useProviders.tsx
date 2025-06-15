@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceType } from '@/utils/serviceTypes';
-import { ProviderProfile } from '@/types/providers';
+import { ProviderProfile, ProviderService } from '@/types/providers';
 
 interface UseProvidersProps {
   userLocation?: { latitude: number; longitude: number } | null;
@@ -26,11 +26,27 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
             full_name,
             email
           ),
-          provider_services!inner(
-            service_categories!inner(name)
+          provider_services(
+            id,
+            provider_id,
+            service_category_id,
+            description,
+            base_price,
+            price_unit,
+            is_available,
+            created_at,
+            service_categories(
+              id,
+              name,
+              description,
+              icon_name,
+              color_class,
+              is_active,
+              created_at,
+              updated_at
+            )
           )
-        `)
-        .eq('provider_services.service_categories.name', 'cleaning');
+        `);
 
       // Apply enhanced search filters including addresses
       if (searchTerm) {
@@ -56,6 +72,29 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
         .filter(provider => provider.profiles)
         .map((provider): ProviderProfile => {
           const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
+          
+          // Transform provider_services to proper ProviderService format
+          const transformedServices: ProviderService[] = (provider.provider_services || []).map((service: any) => ({
+            id: service.id,
+            provider_id: service.provider_id,
+            service_category_id: service.service_category_id,
+            description: service.description,
+            base_price: service.base_price,
+            price_unit: service.price_unit || 'hour',
+            is_available: service.is_available,
+            created_at: service.created_at,
+            service_category: service.service_categories ? {
+              id: service.service_categories.id,
+              name: service.service_categories.name,
+              description: service.service_categories.description,
+              icon_name: service.service_categories.icon_name,
+              color_class: service.service_categories.color_class,
+              is_active: service.service_categories.is_active,
+              created_at: service.service_categories.created_at,
+              updated_at: service.service_categories.updated_at
+            } : undefined
+          }));
+
           return {
             id: provider.id,
             user_id: provider.user_id,
@@ -78,7 +117,7 @@ export const useProviders = ({ userLocation, searchTerm, locationFilter, service
             is_profile_complete: provider.is_profile_complete,
             created_at: provider.created_at,
             updated_at: provider.updated_at,
-            services: provider.provider_services || [],
+            services: transformedServices,
             // Add required ProviderProfile compatibility properties
             brief_description: provider.bio || '',
             service_area_city: provider.address?.split(',')[1]?.trim() || 'Unknown'

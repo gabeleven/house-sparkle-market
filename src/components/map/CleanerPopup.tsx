@@ -2,11 +2,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Eye } from 'lucide-react';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderProfile } from '@/types/providers';
 
 interface CleanerPopupProps {
-  cleaner: CleanerProfile;
-  onViewProfile: (cleaner: CleanerProfile) => void;
+  cleaner: ProviderProfile;
+  onViewProfile: (cleaner: ProviderProfile) => void;
   onClose: () => void;
 }
 
