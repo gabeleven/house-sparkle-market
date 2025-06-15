@@ -142,9 +142,9 @@ export const EnhancedLocationSearch = ({
 
         if (result.length > 0) {
           const location = result[0].geometry.location;
-          // Fix TypeScript error: properly handle lat/lng which can be functions or values
-          const lat = typeof location.lat === 'function' ? location.lat() : location.lat as number;
-          const lng = typeof location.lng === 'function' ? location.lng() : location.lng as number;
+          // Proper type handling for Google Maps lat/lng
+          const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
+          const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
           
           onLocationSearch({
             lat,

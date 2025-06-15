@@ -57,7 +57,7 @@ export interface ProviderProfile extends Provider {
   full_name: string;
   email: string;
   distance?: number;
-  // Add missing properties to match CleanerProfile
-  brief_description?: string;
-  service_area_city?: string;
+  // Required properties for CleanerProfile compatibility
+  brief_description: string;
+  service_area_city: string;
 }

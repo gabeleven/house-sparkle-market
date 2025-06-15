@@ -9,12 +9,12 @@ import { ContactViaHousieButton } from '@/components/ContactViaHousieButton';
 import { ServiceIcons } from './ServiceIcons';
 import { ServiceType } from '@/utils/serviceTypes';
 import { useNavigate } from 'react-router-dom';
-import { CleanerProfile } from '@/hooks/useCleaners';
+import { ProviderProfile } from '@/types/providers';
 import { SubscriptionTier } from '@/types/subscription';
 import { BookingSlideOut } from '@/components/booking/BookingSlideOut';
 
 interface CleanerCardWithSubscriptionProps {
-  cleaner: CleanerProfile;
+  cleaner: ProviderProfile;
   userSubscription?: SubscriptionTier;
   showSubscriptionBadge?: boolean;
   showServiceIcons?: boolean;
