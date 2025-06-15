@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
     ssr({
-      prerender: true,
+      prerender: false, // Temporarily disabled to fix localStorage SSR issues
       includeAssetsImportedByServer: true
     })
   ].filter(Boolean),
