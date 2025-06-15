@@ -1,4 +1,5 @@
 
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -15,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
     ssr({
-      prerender: true, // Re-enabled after fixing localStorage SSR issues
+      prerender: false, // Temporarily disabled due to React Router SSR compatibility issues
       includeAssetsImportedByServer: true
     })
   ].filter(Boolean),
@@ -42,3 +43,4 @@ export default defineConfig(({ mode }) => ({
     noExternal: ['@radix-ui/*']
   }
 }));
+
