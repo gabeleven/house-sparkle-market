@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from 'next-themes';
 import { ThemeProvider as CustomThemeProvider } from '@/contexts/ThemeContext';
@@ -30,36 +29,34 @@ function App({ children }: AppProps) {
   });
 
   return (
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <IntensityThemeProvider>
-          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-            <CustomThemeProvider>
-              <LanguageProvider>
-                <AuthProvider>
-                  <ChatbotProvider>
-                    <AnalyticsProvider>
-                      <Toaster />
-                      <div className="min-h-screen">
-                        <Header />
-                        <main className="relative z-10">
-                          {children}
-                        </main>
-                        <Footer />
-                        
-                        {/* Floating Chat Components */}
-                        <FloatingChatButton />
-                        <TabbedChatbot />
-                      </div>
-                    </AnalyticsProvider>
-                  </ChatbotProvider>
-                </AuthProvider>
-              </LanguageProvider>
-            </CustomThemeProvider>
-          </ThemeProvider>
-        </IntensityThemeProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <IntensityThemeProvider>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+          <CustomThemeProvider>
+            <LanguageProvider>
+              <AuthProvider>
+                <ChatbotProvider>
+                  <AnalyticsProvider>
+                    <Toaster />
+                    <div className="min-h-screen">
+                      <Header />
+                      <main className="relative z-10">
+                        {children}
+                      </main>
+                      <Footer />
+                      
+                      {/* Floating Chat Components */}
+                      <FloatingChatButton />
+                      <TabbedChatbot />
+                    </div>
+                  </AnalyticsProvider>
+                </ChatbotProvider>
+              </AuthProvider>
+            </LanguageProvider>
+          </CustomThemeProvider>
+        </ThemeProvider>
+      </IntensityThemeProvider>
+    </QueryClientProvider>
   );
 }
 
