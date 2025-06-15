@@ -13,19 +13,14 @@ const NavigationItems = ({ isLoggedIn = false }: NavigationItemsProps) => {
   if (isLoggedIn) {
     return (
       <>
-        {currentPath !== '/analytics' && currentPath !== '/dashboard' && (
-          <Link to="/dashboard" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm font-medium">
+        {currentPath !== '/analytics' && (
+          <Link to="/analytics" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm font-medium">
             Dashboard
           </Link>
         )}
         {currentPath !== '/browse-services' && currentPath !== '/browse-providers' && (
           <Link to="/browse-services" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
             Services
-          </Link>
-        )}
-        {currentPath !== '/analytics' && currentPath !== '/dashboard' && (
-          <Link to="/analytics" className="uber-nav-item text-white hover:text-white hover:bg-gray-800 transition-all duration-200 px-4 py-2 rounded-lg text-sm">
-            Analytics
           </Link>
         )}
         {currentPath !== '/roadmap' && (

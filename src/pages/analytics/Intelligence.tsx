@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,7 +72,7 @@ const IntelligenceContent = () => {
             <Link to="/analytics">
               <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full flex items-center gap-2 shadow-lg">
                 <ArrowLeft className="w-4 h-4" />
-                Retour aux Analytiques
+                Back to Dashboard
               </Button>
             </Link>
           </div>
@@ -101,7 +100,7 @@ const IntelligenceContent = () => {
           <Link to="/analytics">
             <Button className="mb-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full flex items-center gap-2 shadow-lg">
               <ArrowLeft className="w-4 h-4" />
-              Retour aux Analytiques
+              Back to Dashboard
             </Button>
           </Link>
           

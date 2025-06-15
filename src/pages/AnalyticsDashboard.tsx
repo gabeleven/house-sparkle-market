@@ -1,15 +1,14 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BarChart3, TrendingUp, Users, DollarSign, Calendar, MapPin, Target, FileText, Brain, Filter } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrendingUp, Users, DollarSign, Calendar, MapPin } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { RevenueChart } from '@/components/analytics/RevenueChart';
 import { ServiceDistributionChart } from '@/components/analytics/ServiceDistributionChart';
-import { DashboardShortcuts } from '@/components/analytics/DashboardShortcuts';
+import { AnalyticsNavigation } from '@/components/analytics/AnalyticsNavigation';
+import { WidgetGrid } from '@/components/dashboard/WidgetGrid';
 
 const AnalyticsDashboard = () => {
   const { user } = useAuth();
@@ -25,8 +24,8 @@ const AnalyticsDashboard = () => {
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Analytics Dashboard</h1>
-              <p className="text-gray-600">Comprehensive insights for your business</p>
+              <h1 className="text-3xl font-bold text-gray-800">Business Dashboard</h1>
+              <p className="text-gray-600">Customizable widgets and comprehensive business insights</p>
             </div>
             
             <div className="flex gap-2">
@@ -39,8 +38,15 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
 
-        {/* Quick Action Cards */}
-        <DashboardShortcuts />
+        {/* Customizable Widget Grid */}
+        <div className="mb-8">
+          <WidgetGrid />
+        </div>
+
+        {/* Analytics Navigation */}
+        <div className="mb-8">
+          <AnalyticsNavigation />
+        </div>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -90,11 +96,10 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid lg:grid-cols-2 gap-8">
           <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-blue-600" />
                 Monthly Revenue
               </CardTitle>
             </CardHeader>
@@ -106,7 +111,6 @@ const AnalyticsDashboard = () => {
           <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-green-600" />
                 Service Distribution
               </CardTitle>
             </CardHeader>
@@ -114,57 +118,6 @@ const AnalyticsDashboard = () => {
               <ServiceDistributionChart />
             </CardContent>
           </Card>
-        </div>
-
-        {/* Analytics Navigation */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Link to="/analytics/performance">
-            <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-orange-100 rounded-lg">
-                    <BarChart3 className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Performance</h3>
-                    <p className="text-sm text-gray-600">KPIs and metrics</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/analytics/reports">
-            <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <FileText className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Tax Reports</h3>
-                    <p className="text-sm text-gray-600">CRA compliance</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/analytics/insights">
-            <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <Brain className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Market Intelligence</h3>
-                    <p className="text-sm text-gray-600">AI insights</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
         </div>
       </main>
     </div>
