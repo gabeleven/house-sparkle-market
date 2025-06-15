@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useCleaners } from "@/hooks/useCleaners";
+import { useEnhancedProviders } from "@/hooks/useEnhancedProviders";
 import { useLocation } from "@/hooks/useLocation";
 import { useAuth } from "@/hooks/useAuth";
 import { MapPreview } from "@/components/map/MapPreview";
@@ -60,7 +59,8 @@ const BrowseServices = () => {
     address: "Your location"
   } : null;
   
-  const { cleaners, isLoading, error } = useCleaners({
+  // Use the enhanced providers hook instead of useCleaners
+  const { providers, isLoading, error } = useEnhancedProviders({
     userLocation: location,
     searchTerm: searchTerm,
     locationFilter: locationFilter,
@@ -68,7 +68,7 @@ const BrowseServices = () => {
   });
 
   const handleSearch = () => {
-    console.log('Search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
+    console.log('Enhanced search triggered with term:', searchTerm, 'location:', locationFilter, 'services:', selectedServices);
     setHasSearched(true);
   };
 
@@ -113,7 +113,7 @@ const BrowseServices = () => {
     setShowMap(true);
   };
 
-  console.log('BrowseServices rendering - service providers count:', cleaners?.length || 0);
+  console.log('BrowseServices rendering - service providers count:', providers?.length || 0);
 
   // Show location authorization prompt
   if (showLocationPrompt) {
@@ -164,9 +164,9 @@ const BrowseServices = () => {
         )}
 
         {/* Map Preview */}
-        {!showMap && !isLoading && cleaners && cleaners.length > 0 && hasSearched && (
+        {!showMap && !isLoading && providers && providers.length > 0 && hasSearched && (
           <MapPreview 
-            cleaners={cleaners}
+            cleaners={providers}
             onShowMap={() => setShowMap(true)}
             userLocation={location}
           />
@@ -177,7 +177,7 @@ const BrowseServices = () => {
           <MapErrorBoundary 
             fallback={
               <MapView
-                cleaners={cleaners || []}
+                cleaners={providers || []}
                 userLocation={location}
                 radius={searchRadius}
                 onClose={handleCloseMap}
@@ -187,7 +187,7 @@ const BrowseServices = () => {
           >
             {useGoogleMaps ? (
               <GoogleMapView
-                cleaners={cleaners || []}
+                cleaners={providers || []}
                 onCleanerSelect={handleProviderSelect}
                 selectedCleaner={selectedProvider}
                 radiusKm={searchRadius}
@@ -199,7 +199,7 @@ const BrowseServices = () => {
               />
             ) : (
               <MapView
-                cleaners={cleaners || []}
+                cleaners={providers || []}
                 userLocation={location}
                 radius={searchRadius}
                 onClose={handleCloseMap}
@@ -212,9 +212,9 @@ const BrowseServices = () => {
         {/* Results */}
         {!showMap && (
           <>
-            <ResultsHeader count={cleaners?.length || 0} />
+            <ResultsHeader count={providers?.length || 0} />
             <ResultsContent
-              cleaners={cleaners}
+              cleaners={providers}
               isLoading={isLoading}
               error={error}
               hasLocation={!!location}

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, Filter } from 'lucide-react';
-import { LocationSearch } from '@/components/map/LocationSearch';
+import { EnhancedLocationSearch } from './EnhancedLocationSearch';
 import { HierarchicalServiceFilters } from './HierarchicalServiceFilters';
 import { ServiceType } from '@/utils/serviceTypes';
 import {
@@ -40,12 +40,11 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   onRequestLocation,
   onShowMap,
 }) => {
-  const [useLocationSearch, setUseLocationSearch] = useState(false);
+  const [useEnhancedLocationSearch, setUseEnhancedLocationSearch] = useState(true);
 
   const handleLocationSearchResult = (result: { lat: number; lng: number; address: string }) => {
-    console.log('Location search result:', result);
+    console.log('Enhanced location search result:', result);
     setLocationFilter(result.address);
-    setUseLocationSearch(false);
     // Trigger search automatically after location is selected
     setTimeout(() => {
       onSearch();
@@ -88,12 +87,13 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           </div>
         </div>
         
-        <div className="md:w-64">
-          {useLocationSearch ? (
-            <LocationSearch
+        <div className="md:w-80">
+          {useEnhancedLocationSearch ? (
+            <EnhancedLocationSearch
               onLocationSearch={handleLocationSearchResult}
-              placeholder="Search location in Canada..."
+              placeholder="Search city, province, postal code, or address..."
               initialValue={locationFilter}
+              onInputChange={setLocationFilter}
             />
           ) : (
             <div className="relative">
@@ -103,7 +103,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
                 placeholder="Enter city, postal code, or address..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                onFocus={() => setUseLocationSearch(true)}
+                onFocus={() => setUseEnhancedLocationSearch(true)}
                 onKeyPress={handleKeyPress}
                 className="pl-10"
               />
@@ -137,14 +137,14 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             </span>
           )}
 
-          {useLocationSearch && (
+          {!useEnhancedLocationSearch && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setUseLocationSearch(false)}
+              onClick={() => setUseEnhancedLocationSearch(true)}
               className="text-sm"
             >
-              Use Simple Search
+              Use Enhanced Search
             </Button>
           )}
 
