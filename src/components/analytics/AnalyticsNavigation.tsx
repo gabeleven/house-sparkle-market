@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Brain, BarChart3, FileText, Target, ArrowLeft } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,30 @@ import { Button } from '@/components/ui/button';
 export const AnalyticsNavigation = () => {
   const location = useLocation();
   const isAnalyticsSubpage = location.pathname.startsWith('/analytics/');
-  const currentTab = location.pathname.split('/analytics/')[1] || 'dashboard';
+  const currentPath = location.pathname;
+
+  const navigationItems = [
+    {
+      path: '/analytics/intelligence',
+      icon: Brain,
+      label: 'Intelligence'
+    },
+    {
+      path: '/analytics/insights',
+      icon: BarChart3,
+      label: 'Insights'
+    },
+    {
+      path: '/analytics/reports',
+      icon: FileText,
+      label: 'Reports'
+    },
+    {
+      path: '/analytics/performance',
+      icon: Target,
+      label: 'Performance'
+    }
+  ];
 
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg">
@@ -28,37 +50,28 @@ export const AnalyticsNavigation = () => {
           </div>
         )}
         
-        <Tabs value={currentTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-100">
-            <TabsTrigger value="intelligence" asChild>
-              <Link to="/analytics/intelligence" className="flex items-center gap-2 data-[state=active]:bg-white">
-                <Brain className="w-4 h-4 text-purple-600" />
-                <span className="hidden sm:inline">Intelligence</span>
-              </Link>
-            </TabsTrigger>
+        <div className="flex gap-2">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentPath === item.path;
             
-            <TabsTrigger value="insights" asChild>
-              <Link to="/analytics/insights" className="flex items-center gap-2 data-[state=active]:bg-white">
-                <BarChart3 className="w-4 h-4 text-blue-600" />
-                <span className="hidden sm:inline">Insights</span>
-              </Link>
-            </TabsTrigger>
-            
-            <TabsTrigger value="reports" asChild>
-              <Link to="/analytics/reports" className="flex items-center gap-2 data-[state=active]:bg-white">
-                <FileText className="w-4 h-4 text-green-600" />
-                <span className="hidden sm:inline">Reports</span>
-              </Link>
-            </TabsTrigger>
-            
-            <TabsTrigger value="performance" asChild>
-              <Link to="/analytics/performance" className="flex items-center gap-2 data-[state=active]:bg-white">
-                <Target className="w-4 h-4 text-orange-600" />
-                <span className="hidden sm:inline">Performance</span>
-              </Link>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+            return (
+              <Link key={item.path} to={item.path}>
+                <Button
+                  variant={isActive ? "default" : "outline"}
+                  size="sm"
+                  className={`flex items-center gap-2 ${
+                    isActive 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Button>
+              );
+            })}
+        </div>
       </CardContent>
     </Card>
   );
