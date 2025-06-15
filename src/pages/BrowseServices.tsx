@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { useEnhancedProviders } from '@/hooks/useEnhancedProviders';
@@ -14,7 +15,7 @@ const BrowseServices = () => {
   const [locationFilter, setLocationFilter] = useState('');
   const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
   const { userLocation, requestLocation, isLoading: locationLoading } = useUserLocation();
-  const { subscription: userSubscription } = useSubscription();
+  const { currentTier: userSubscription } = useSubscription();
 
   useEffect(() => {
     if (!userLocation && !locationLoading) {
@@ -122,7 +123,7 @@ const BrowseServices = () => {
           </div>
         </div>
       </div>
-    );
+    </div>
   );
 };
 
