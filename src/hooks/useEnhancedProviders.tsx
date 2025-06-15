@@ -106,9 +106,9 @@ export const useEnhancedProviders = ({
       if (serviceFilters && serviceFilters.length > 0) {
         processedProviders = processedProviders.filter(provider => 
           provider.services?.some(service => 
-            service.service_categories?.name && 
+            service.service_category?.name && 
             serviceFilters.some(filter => 
-              service.service_categories.name.toLowerCase().includes(filter.toLowerCase())
+              service.service_category.name.toLowerCase().includes(filter.toLowerCase())
             )
           )
         );
