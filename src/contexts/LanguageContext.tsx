@@ -1,5 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { safeLocalStorage } from '../utils/safeStorage';
 
 type Language = 'en' | 'fr';
 
@@ -17,20 +17,13 @@ interface LanguageProviderProps {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    // Check if we're in the browser before accessing localStorage
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const saved = localStorage.getItem('housie-language');
-      return (saved as Language) || 'fr'; // Default to French for Quebec
-    }
-    return 'fr';
+    const saved = safeLocalStorage.getItem('housie-language');
+    return (saved as Language) || 'fr'; // Default to French for Quebec
   });
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    // Save to localStorage only in browser
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('housie-language', lang);
-    }
+    safeLocalStorage.setItem('housie-language', lang);
   };
 
   const t = (key: string): string => {
@@ -38,7 +31,9 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   };
 
   useEffect(() => {
-    document.documentElement.lang = language;
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
   }, [language]);
 
   return (

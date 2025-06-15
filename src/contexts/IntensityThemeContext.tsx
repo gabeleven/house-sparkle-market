@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { safeLocalStorage } from '../utils/safeStorage';
 
 type IntensityTheme = 'vibrant' | 'matte';
 
@@ -12,12 +13,8 @@ const IntensityThemeContext = createContext<IntensityThemeContextType | undefine
 
 export const IntensityThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [intensityTheme, setIntensityTheme] = useState<IntensityTheme>(() => {
-    // Check if we're in the browser before accessing localStorage
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const savedIntensityTheme = localStorage.getItem('intensityTheme') as IntensityTheme;
-      return savedIntensityTheme || 'vibrant';
-    }
-    return 'vibrant';
+    const savedIntensityTheme = safeLocalStorage.getItem('intensityTheme') as IntensityTheme;
+    return savedIntensityTheme || 'vibrant';
   });
 
   useEffect(() => {
@@ -25,10 +22,8 @@ export const IntensityThemeProvider: React.FC<{ children: React.ReactNode }> = (
     document.documentElement.classList.remove('vibrant', 'matte');
     document.documentElement.classList.add(intensityTheme);
     
-    // Save to localStorage only in browser
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('intensityTheme', intensityTheme);
-    }
+    // Save to localStorage
+    safeLocalStorage.setItem('intensityTheme', intensityTheme);
   }, [intensityTheme]);
 
   const toggleIntensityTheme = () => {
