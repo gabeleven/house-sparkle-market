@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ProviderProfile } from '@/types/providers';
-import { CleanerCardWithSubscription } from './CleanerCardWithSubscription';
+import { ProviderCardWithSubscription } from './CleanerCardWithSubscription';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { ErrorMessage } from './ErrorMessage';
 import { NoResultsMessage } from './NoResultsMessage';
@@ -43,10 +43,10 @@ export const ResultsContent: React.FC<ResultsContentProps> = ({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {cleaners.map((cleaner) => (
-        <CleanerCardWithSubscription 
-          key={cleaner.id} 
-          cleaner={cleaner} 
+      {cleaners.map((provider) => (
+        <ProviderCardWithSubscription 
+          key={provider.id} 
+          provider={provider} 
           userSubscription={userSubscription}
         />
       ))}

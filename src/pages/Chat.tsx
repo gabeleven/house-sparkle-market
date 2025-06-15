@@ -37,7 +37,12 @@ const Chat = () => {
 
         if (data && !error) {
           const isCustomer = data.customer_id === user.id;
-          const otherUser = isCustomer ? data.provider : data.customer;
+          
+          // Handle both single object and array cases for customer/provider data
+          const customer = Array.isArray(data.customer) ? data.customer[0] : data.customer;
+          const provider = Array.isArray(data.provider) ? data.provider[0] : data.provider;
+          
+          const otherUser = isCustomer ? provider : customer;
           
           setConversationData({
             id: data.id,

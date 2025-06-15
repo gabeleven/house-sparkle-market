@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { isValidMessageData, isValidConversationData } from '@/utils/typeGuards';
 
 export interface ChatMessage {
   id: string;
@@ -77,18 +76,22 @@ export const useChat = () => {
     const processedConversations: Conversation[] = await Promise.all(
       (data || []).map(async (conv: any) => {
         const isCustomer = conv.customer_id === user.id;
-        const otherUser = isCustomer ? conv.provider : conv.customer;
+        
+        // Handle both single object and array cases
+        const customer = Array.isArray(conv.customer) ? conv.customer[0] : conv.customer;
+        const provider = Array.isArray(conv.provider) ? conv.provider[0] : conv.provider;
+        const otherUser = isCustomer ? provider : customer;
 
         // Get unread count
         const { count } = await supabase
           .from('chat_messages')
           .select('*', { count: 'exact', head: true })
           .eq('conversation_id', conv.id)
-          .eq('is_read', false as any)
-          .neq('sender_id', user.id as any);
+          .eq('is_read', false)
+          .neq('sender_id', user.id);
 
         // Get last message
-        const { data: lastMsg, error: lastMsgError } = await supabase
+        const { data: lastMsg } = await supabase
           .from('chat_messages')
           .select('message_content, message_type')
           .eq('conversation_id', conv.id)
@@ -97,8 +100,8 @@ export const useChat = () => {
           .maybeSingle();
 
         let lastMessageText = '';
-        if (!lastMsgError && lastMsg && isValidMessageData(lastMsg)) {
-          lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content;
+        if (lastMsg) {
+          lastMessageText = lastMsg.message_type === 'image' ? '📷 Image' : lastMsg.message_content || '';
         }
 
         return {
@@ -132,7 +135,7 @@ export const useChat = () => {
         *,
         sender:profiles!chat_messages_sender_id_fkey(full_name, profile_photo_url)
       `)
-      .eq('conversation_id', conversationId as any)
+      .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -168,18 +171,14 @@ export const useChat = () => {
     if (!validSession) throw new Error('No valid session');
 
     // Try to find existing conversation
-    const { data: existing, error: existingError } = await supabase
+    const { data: existing } = await supabase
       .from('conversations')
       .select('*')
-      .eq('customer_id', customerId as any)
-      .eq('provider_id', providerId as any)
+      .eq('customer_id', customerId)
+      .eq('provider_id', providerId)
       .maybeSingle();
 
-    if (existingError) {
-      console.error('Error checking existing conversation:', existingError);
-    }
-
-    if (existing && isValidConversationData(existing)) {
+    if (existing) {
       return existing.id;
     }
 
@@ -189,7 +188,7 @@ export const useChat = () => {
       .insert({
         customer_id: customerId,
         provider_id: providerId
-      } as any)
+      })
       .select()
       .single();
 
@@ -198,11 +197,7 @@ export const useChat = () => {
       throw error;
     }
 
-    if (newConv && isValidConversationData(newConv)) {
-      return newConv.id;
-    }
-
-    throw new Error('Failed to create conversation');
+    return newConv.id;
   };
 
   // Send a message
@@ -219,7 +214,7 @@ export const useChat = () => {
 
     const { data, error } = await supabase
       .from('chat_messages')
-      .insert(messageData as any)
+      .insert(messageData)
       .select()
       .single();
 
@@ -243,9 +238,9 @@ export const useChat = () => {
 
     await supabase
       .from('chat_messages')
-      .update({ is_read: true } as any)
-      .eq('conversation_id', conversationId as any)
-      .neq('sender_id', user.id as any);
+      .update({ is_read: true })
+      .eq('conversation_id', conversationId)
+      .neq('sender_id', user.id);
   };
 
   // Request notification permission
