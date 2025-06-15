@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-
-const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o";
+import { supabase } from '@/integrations/supabase/client';
 
 export const useGoogleMapsApi = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,19 +21,8 @@ export const useGoogleMapsApi = () => {
     );
   }, []);
 
-  // Check if API key is configured properly
-  const isApiKeyValid = useCallback(() => {
-    return GOOGLE_MAPS_API_KEY && 
-           GOOGLE_MAPS_API_KEY.length > 10 && 
-           !GOOGLE_MAPS_API_KEY.includes('YOUR_API_KEY') &&
-           !GOOGLE_MAPS_API_KEY.includes('placeholder');
-  }, []);
-
   const handleLoadSuccess = useCallback(() => {
     console.log('Google Maps API with Places API loaded successfully');
-    console.log('Google Maps version:', window.google?.maps?.version);
-    console.log('Places API available:', !!(window.google?.maps?.places));
-    console.log('Browser:', navigator.userAgent);
     setScriptLoaded(true);
     setIsLoading(false);
     setHasError(false);
@@ -42,13 +30,6 @@ export const useGoogleMapsApi = () => {
 
   const handleLoadError = useCallback((error: Error, onError?: () => void) => {
     console.error('Google Maps API failed to load:', error);
-    console.error('Browser:', navigator.userAgent);
-    console.error('API Key used:', GOOGLE_MAPS_API_KEY);
-    console.error('Error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
     
     setIsLoading(false);
     setHasError(true);
@@ -63,8 +44,27 @@ export const useGoogleMapsApi = () => {
     }
   }, []);
 
-  // Enhanced script loading with new Places API
-  const loadGoogleMapsScript = useCallback(() => {
+  // Secure API key retrieval through edge function
+  const getSecureApiKey = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
+        body: { action: 'get_key' }
+      });
+      
+      if (error) {
+        console.error('Failed to get secure API key:', error);
+        return null;
+      }
+      
+      return data?.apiKey;
+    } catch (error) {
+      console.error('Error retrieving secure API key:', error);
+      return null;
+    }
+  }, []);
+
+  // Enhanced script loading with secure API key
+  const loadGoogleMapsScript = useCallback(async () => {
     if (isGoogleMapsAvailable()) {
       console.log('Google Maps with Places API already available');
       setScriptLoaded(true);
@@ -95,9 +95,15 @@ export const useGoogleMapsApi = () => {
 
     console.log('Loading Google Maps script with Places API (New)...');
     
+    // Get secure API key
+    const apiKey = await getSecureApiKey();
+    if (!apiKey) {
+      handleLoadError(new Error('Failed to retrieve secure API key'));
+      return;
+    }
+    
     const script = document.createElement('script');
-    // Updated to include the new Places API and required libraries
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,geometry&v=3.55&loading=async`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&v=3.55&loading=async`;
     script.async = true;
     script.defer = true;
     
@@ -120,24 +126,13 @@ export const useGoogleMapsApi = () => {
     };
     
     document.head.appendChild(script);
-  }, [isGoogleMapsAvailable, handleLoadSuccess, handleLoadError]);
+  }, [isGoogleMapsAvailable, handleLoadSuccess, handleLoadError, getSecureApiKey]);
 
-  // Check API key and load script
+  // Initialize with secure API key loading
   useEffect(() => {
-    console.log('Initializing Google Maps API with Places API (New)...');
-    console.log('Browser:', navigator.userAgent);
-    console.log('API key validity:', isApiKeyValid());
-    
-    if (!isApiKeyValid()) {
-      setHasError(true);
-      setIsLoading(false);
-      setErrorMessage('Google Maps API key is not properly configured. Please ensure Places API (New) is enabled.');
-      return;
-    }
-
-    // Load the script with Places API
+    console.log('Initializing Google Maps API with secure key retrieval...');
     loadGoogleMapsScript();
-  }, [isApiKeyValid, loadGoogleMapsScript]);
+  }, [loadGoogleMapsScript]);
 
   return {
     isLoading,
@@ -146,7 +141,6 @@ export const useGoogleMapsApi = () => {
     scriptLoaded,
     isGoogleMapsAvailable,
     handleLoadSuccess,
-    handleLoadError,
-    apiKey: GOOGLE_MAPS_API_KEY
+    handleLoadError
   };
 };

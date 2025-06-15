@@ -18,8 +18,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Enhanced auth state cleanup utility with SSR safety
 const cleanupAuthState = () => {
-  console.log('Cleaning up auth state...');
-  
   // Only run in browser environment
   if (typeof window === 'undefined') return;
   
@@ -59,7 +57,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const validateSession = async () => {
     try {
       const { data: { session: currentSession } } = await supabase.auth.getSession();
-      console.log('Session validation result:', currentSession?.user?.id || 'no session');
       return currentSession;
     } catch (error) {
       console.error('Session validation failed:', error);
@@ -72,32 +69,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (isInitializedRef.current) return;
     isInitializedRef.current = true;
 
-    console.log('Initializing auth provider...');
-
     // Set up auth state listener with proper cleanup
     authSubscriptionRef.current = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id || 'no user');
-        
         // Only update state for actual auth events
         if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
-          
-          // Log current auth state for debugging
-          if (session?.user) {
-            console.log('User authenticated:', session.user.email, 'ID:', session.user.id);
-          } else {
-            console.log('User signed out or no session');
-          }
         }
       }
     );
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.id || 'no session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -152,7 +137,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await supabase.auth.signOut({ scope: 'global' });
     } catch (err) {
       // Continue even if this fails
-      console.log('Global sign out failed, continuing with sign in:', err);
     }
     
     // Validate session before sign in
@@ -170,7 +154,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
     } else {
-      console.log('Sign in successful');
       // Force page reload for clean state
       setTimeout(() => {
         window.location.href = '/';
@@ -181,8 +164,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
-    console.log('Signing out user...');
-    
     try {
       // Clean up auth state first
       cleanupAuthState();
@@ -197,8 +178,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           description: error.message,
           variant: "destructive"
         });
-      } else {
-        console.log('Sign out successful');
       }
       
       // Force page reload for clean state - only in browser
