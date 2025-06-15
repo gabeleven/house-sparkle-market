@@ -29,7 +29,6 @@ import CleanerReviews from './pages/CleanerReviews';
 import CalendarDashboard from './pages/CalendarDashboard';
 import Settings from './pages/Settings';
 import ServiceProvidersPage from './pages/ServiceProvidersPage';
-import ProviderDashboard from './pages/ProviderDashboard';
 import Performance from './pages/analytics/Performance';
 import Intelligence from './pages/analytics/Intelligence';
 import Insights from './pages/analytics/Insights';
@@ -70,7 +69,6 @@ function App() {
                               <Route path="/roadmap" element={<Roadmap />} />
                               <Route path="/cleaner/:cleanerId/reviews" element={<CleanerReviews />} />
                               <Route path="/calendar" element={<CalendarDashboard />} />
-                              <Route path="/dashboard" element={<ProviderDashboard />} />
                               <Route path="/settings" element={<Settings />} />
                               <Route path="/pricing" element={<ServiceProvidersPage />} />
                               <Route path="/analytics" element={<AnalyticsDashboard />} />
