@@ -56,15 +56,18 @@ export const CANADIAN_CITIES: CanadianCity[] = [
 
 export const useCitySelection = () => {
   const [selectedCity, setSelectedCity] = useState<CanadianCity>(() => {
-    const saved = localStorage.getItem('housie-selected-city');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return CANADIAN_CITIES.find(city => 
-          city.name === parsed.name && city.province === parsed.province
-        ) || CANADIAN_CITIES[0]; // Default to Montreal
-      } catch {
-        return CANADIAN_CITIES[0];
+    // Check if we're in the browser before accessing localStorage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const saved = localStorage.getItem('housie-selected-city');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return CANADIAN_CITIES.find(city => 
+            city.name === parsed.name && city.province === parsed.province
+          ) || CANADIAN_CITIES[0]; // Default to Montreal
+        } catch {
+          return CANADIAN_CITIES[0];
+        }
       }
     }
     return CANADIAN_CITIES[0]; // Default to Montreal
@@ -72,7 +75,10 @@ export const useCitySelection = () => {
 
   const updateSelectedCity = (city: CanadianCity) => {
     setSelectedCity(city);
-    localStorage.setItem('housie-selected-city', JSON.stringify(city));
+    // Save to localStorage only in browser
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('housie-selected-city', JSON.stringify(city));
+    }
   };
 
   const getCitiesByProvince = () => {
