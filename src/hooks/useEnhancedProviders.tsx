@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ProviderProfile } from '@/types/providers';
@@ -76,8 +75,6 @@ export const useEnhancedProviders = ({
         .filter(provider => provider.profiles)
         .map((provider): ProviderProfile => {
           const profile = Array.isArray(provider.profiles) ? provider.profiles[0] : provider.profiles;
-          // Extract service names for compatibility with ServiceType[]
-          const serviceNames = provider.provider_services?.map(service => service.service_category?.name).filter(Boolean) || [];
           
           return {
             id: provider.id,
@@ -101,7 +98,7 @@ export const useEnhancedProviders = ({
             updated_at: provider.updated_at,
             full_name: profile?.full_name || '',
             email: profile?.email || '',
-            services: serviceNames,
+            services: provider.provider_services || [],
             // Add required CleanerProfile properties with defaults
             brief_description: provider.bio || '',
             service_area_city: provider.address?.split(',')[1]?.trim() || 'Unknown'
@@ -111,9 +108,10 @@ export const useEnhancedProviders = ({
       // Apply service filters if specified
       if (serviceFilters && serviceFilters.length > 0) {
         processedProviders = processedProviders.filter(provider => 
-          provider.services?.some(serviceName => 
+          provider.services?.some(service => 
+            service.service_category?.name && 
             serviceFilters.some(filter => 
-              serviceName.toLowerCase().includes(filter.toLowerCase())
+              service.service_category.name.toLowerCase().includes(filter.toLowerCase())
             )
           )
         );

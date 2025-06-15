@@ -1,4 +1,3 @@
-
 export interface ServiceCategory {
   id: string;
   name: string;
@@ -60,6 +59,6 @@ export interface ProviderProfile extends Provider {
   // Required properties for CleanerProfile compatibility
   brief_description: string;
   service_area_city: string;
-  // Make services compatible with ServiceType[] (used by CleanerProfile)
-  services?: string[] | null;
+  // Keep services as ProviderService[] to maintain type system integrity
+  services?: ProviderService[];
 }

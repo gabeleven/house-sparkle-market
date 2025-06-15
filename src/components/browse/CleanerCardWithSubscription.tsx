@@ -44,6 +44,9 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
   const displayName = cleaner.business_name || cleaner.full_name;
   const displayRate = cleaner.hourly_rate || 25;
 
+  // Convert ProviderService[] to service names for ServiceIcons compatibility
+  const serviceNames = cleaner.services?.map(service => service.service_category?.name).filter(Boolean) || [];
+
   return (
     <>
       <Card className="hover:shadow-lg transition-shadow duration-200">
@@ -119,7 +122,7 @@ export const CleanerCardWithSubscription: React.FC<CleanerCardWithSubscriptionPr
               )}
 
               <ServiceIcons 
-                services={cleaner.services} 
+                services={serviceNames as ServiceType[]} 
                 showIcons={showServiceIcons} 
               />
 
