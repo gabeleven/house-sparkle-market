@@ -1,4 +1,5 @@
 
+// Force rebuild for preview sync - 2025-06-15
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
