@@ -94,7 +94,7 @@ const Bookings = () => {
             Duration: {booking.estimated_duration} mins • Price: ${booking.estimated_price}
           </div>
           
-          {booking.status === 'pending' && booking.cleaner_id === user?.id && (
+          {booking.status === 'pending' && booking.provider_id === user?.id && (
             <div className="flex space-x-2">
               <Button 
                 size="sm" 

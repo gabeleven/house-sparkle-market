@@ -5,21 +5,21 @@ import { useToast } from '@/hooks/use-toast';
 import { ServiceType } from '@/utils/serviceTypes';
 import { useAuth } from '@/hooks/useAuth';
 
-export const useServiceSelection = (cleanerId: string) => {
+export const useServiceSelection = (providerId: string) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedServices, setSelectedServices] = useState<ServiceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [providerId, setProviderId] = useState<string | null>(null);
+  const [providerRecordId, setProviderRecordId] = useState<string | null>(null);
 
   const verifyProviderProfile = async () => {
     try {
-      console.log('useServiceSelection: Verifying provider profile exists for:', cleanerId);
+      console.log('useServiceSelection: Verifying provider profile exists for:', providerId);
       const { data: provider, error } = await supabase
         .from('providers')
         .select('id')
-        .eq('user_id', cleanerId)
+        .eq('user_id', providerId)
         .maybeSingle();
 
       if (error) {
@@ -29,13 +29,13 @@ export const useServiceSelection = (cleanerId: string) => {
       }
 
       if (!provider) {
-        console.error('Provider profile not found for:', cleanerId);
+        console.error('Provider profile not found for:', providerId);
         setError('Provider profile not found. Please complete your profile setup first.');
         return null;
       }
 
       console.log('useServiceSelection: Provider profile verified, ID:', provider.id);
-      setProviderId(provider.id);
+      setProviderRecordId(provider.id);
       return provider.id;
     } catch (error) {
       console.error('Error verifying provider profile:', error);
@@ -80,7 +80,7 @@ export const useServiceSelection = (cleanerId: string) => {
   };
 
   const handleServiceChange = async (serviceType: ServiceType, checked: boolean) => {
-    if (!user || !providerId) {
+    if (!user || !providerRecordId) {
       console.error('useServiceSelection: No user or provider ID found');
       return;
     }
@@ -103,7 +103,7 @@ export const useServiceSelection = (cleanerId: string) => {
         const { error } = await supabase
           .from('provider_services')
           .insert({
-            provider_id: providerId,
+            provider_id: providerRecordId,
             service_category_id: category.id,
             is_available: true
           });
@@ -126,7 +126,7 @@ export const useServiceSelection = (cleanerId: string) => {
         const { error } = await supabase
           .from('provider_services')
           .delete()
-          .eq('provider_id', providerId)
+          .eq('provider_id', providerRecordId)
           .eq('service_category_id', category.id);
 
         if (error) throw error;
@@ -149,11 +149,11 @@ export const useServiceSelection = (cleanerId: string) => {
   };
 
   useEffect(() => {
-    if (cleanerId) {
-      console.log('useServiceSelection: Loading services for user:', cleanerId);
+    if (providerId) {
+      console.log('useServiceSelection: Loading services for user:', providerId);
       loadSelectedServices();
     }
-  }, [cleanerId]);
+  }, [providerId]);
 
   return {
     selectedServices,

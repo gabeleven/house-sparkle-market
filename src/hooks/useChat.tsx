@@ -21,7 +21,7 @@ export interface ChatMessage {
 export interface Conversation {
   id: string;
   customer_id: string;
-  cleaner_id: string;
+  provider_id: string;
   created_at: string;
   last_message_at: string;
   other_user_id: string;
@@ -64,9 +64,9 @@ export const useChat = () => {
       .select(`
         *,
         customer:profiles!conversations_customer_id_fkey(id, full_name, profile_photo_url),
-        cleaner:profiles!conversations_cleaner_id_fkey(id, full_name, profile_photo_url)
+        provider:profiles!conversations_provider_id_fkey(id, full_name, profile_photo_url)
       `)
-      .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
+      .or(`customer_id.eq.${user.id},provider_id.eq.${user.id}`)
       .order('last_message_at', { ascending: false });
 
     if (error) {
@@ -77,7 +77,7 @@ export const useChat = () => {
     const processedConversations: Conversation[] = await Promise.all(
       (data || []).map(async (conv: any) => {
         const isCustomer = conv.customer_id === user.id;
-        const otherUser = isCustomer ? conv.cleaner : conv.customer;
+        const otherUser = isCustomer ? conv.provider : conv.customer;
 
         // Get unread count
         const { count } = await supabase
@@ -104,7 +104,7 @@ export const useChat = () => {
         return {
           id: conv.id,
           customer_id: conv.customer_id,
-          cleaner_id: conv.cleaner_id,
+          provider_id: conv.provider_id,
           created_at: conv.created_at,
           last_message_at: conv.last_message_at,
           other_user_id: otherUser?.id || '',
@@ -163,7 +163,7 @@ export const useChat = () => {
   }, [validateSession]);
 
   // Create or get conversation
-  const getOrCreateConversation = async (cleanerId: string, customerId: string) => {
+  const getOrCreateConversation = async (providerId: string, customerId: string) => {
     const validSession = await validateSession();
     if (!validSession) throw new Error('No valid session');
 
@@ -172,7 +172,7 @@ export const useChat = () => {
       .from('conversations')
       .select('*')
       .eq('customer_id', customerId as any)
-      .eq('cleaner_id', cleanerId as any)
+      .eq('provider_id', providerId as any)
       .maybeSingle();
 
     if (existingError) {
@@ -188,7 +188,7 @@ export const useChat = () => {
       .from('conversations')
       .insert({
         customer_id: customerId,
-        cleaner_id: cleanerId
+        provider_id: providerId
       } as any)
       .select()
       .single();

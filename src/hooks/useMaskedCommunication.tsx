@@ -7,7 +7,7 @@ export const useMaskedCommunication = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const initiateContact = async (cleanerId: string) => {
+  const initiateContact = async (providerId: string) => {
     setLoading(true);
 
     try {
@@ -15,7 +15,7 @@ export const useMaskedCommunication = () => {
       if (!user) {
         toast({
           title: "Connexion requise",
-          description: "Vous devez être connecté pour contacter un nettoyeur",
+          description: "Vous devez être connecté pour contacter un prestataire",
           variant: "destructive"
         });
         return;
@@ -26,7 +26,7 @@ export const useMaskedCommunication = () => {
         .from('masked_communications')
         .select('*')
         .eq('customer_id', user.id as any)
-        .eq('cleaner_id', cleanerId as any)
+        .eq('provider_id', providerId as any)
         .eq('is_active', true as any)
         .gt('expires_at', new Date().toISOString())
         .maybeSingle();
@@ -50,8 +50,7 @@ export const useMaskedCommunication = () => {
         .from('masked_communications')
         .insert({
           customer_id: user.id,
-          cleaner_id: cleanerId,
-          proxy_phone_number: proxyNumber
+          provider_id: providerId
         } as any)
         .select()
         .single();

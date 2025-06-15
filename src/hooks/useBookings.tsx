@@ -6,8 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 export interface Booking {
   id: string;
   customer_id: string;
-  cleaner_id: string; // Keeping for backward compatibility
-  provider_id?: string;
+  provider_id: string;
   service_category_id?: string;
   service_type?: string;
   service_date: string;
@@ -48,7 +47,7 @@ export const useBookings = () => {
             name
           )
         `)
-        .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
+        .or(`customer_id.eq.${user.id},provider_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -57,7 +56,6 @@ export const useBookings = () => {
       const transformedBookings: Booking[] = (data || []).map((booking: any) => ({
         id: booking.id,
         customer_id: booking.customer_id,
-        cleaner_id: booking.cleaner_id || booking.providers?.user_id,
         provider_id: booking.provider_id,
         service_category_id: booking.service_category_id,
         service_type: booking.service_categories?.name || 'cleaning',

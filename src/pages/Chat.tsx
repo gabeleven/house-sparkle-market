@@ -30,14 +30,14 @@ const Chat = () => {
           .select(`
             *,
             customer:profiles!conversations_customer_id_fkey(id, full_name, profile_photo_url),
-            cleaner:profiles!conversations_cleaner_id_fkey(id, full_name, profile_photo_url)
+            provider:profiles!conversations_provider_id_fkey(id, full_name, profile_photo_url)
           `)
           .eq('id', conversationId)
           .single();
 
         if (data && !error) {
           const isCustomer = data.customer_id === user.id;
-          const otherUser = isCustomer ? data.cleaner : data.customer;
+          const otherUser = isCustomer ? data.provider : data.customer;
           
           setConversationData({
             id: data.id,

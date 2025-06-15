@@ -34,7 +34,7 @@ export const useUnreadCounts = (): UnreadCounts => {
       const { data: conversationsData, error: conversationsError } = await supabase
         .from('conversations')
         .select('id')
-        .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`);
+        .or(`customer_id.eq.${user.id},provider_id.eq.${user.id}`);
 
       if (conversationsError) {
         console.error('Error fetching conversations:', conversationsError);
