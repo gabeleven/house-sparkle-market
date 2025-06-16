@@ -2,24 +2,18 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin, Filter } from 'lucide-react';
+import { Search, MapPin } from 'lucide-react';
 import { EnhancedLocationSearch } from './EnhancedLocationSearch';
 import { HierarchicalServiceFilters } from './HierarchicalServiceFilters';
 import { ServiceType } from '@/utils/serviceTypes';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 
 interface SearchHeaderProps {
   searchTerm: string;
   locationFilter: string;
+  serviceFilters: ServiceType[];
   onSearchChange: (searchTerm: string) => void;
   onLocationChange: (locationFilter: string) => void;
+  onServiceFiltersChange: (services: ServiceType[]) => void;
   hasLocation: boolean;
   onRequestLocation: () => void;
 }
@@ -27,12 +21,13 @@ interface SearchHeaderProps {
 export const SearchHeader: React.FC<SearchHeaderProps> = ({
   searchTerm,
   locationFilter,
+  serviceFilters,
   onSearchChange,
   onLocationChange,
+  onServiceFiltersChange,
   hasLocation,
   onRequestLocation,
 }) => {
-  const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
   const [useEnhancedLocationSearch, setUseEnhancedLocationSearch] = useState(true);
 
   const handleLocationSelect = (result: { address: string; latitude: number; longitude: number } | null) => {
@@ -58,6 +53,15 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   return (
     <div className="pop-card bg-card rounded-lg shadow-sm p-6 mb-8 border border-border ben-day-dots">
       <h1 className="text-3xl font-bold text-foreground mb-6">Find Professional Service Providers Across Canada</h1>
+      
+      {/* Service Categories Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-foreground mb-4">Service Categories</h2>
+        <HierarchicalServiceFilters
+          selectedServices={serviceFilters}
+          onServiceChange={onServiceFiltersChange}
+        />
+      </div>
       
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
@@ -142,29 +146,6 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             </span>
           )}
         </div>
-
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-2 sm:mt-0 pop-blue-btn">
-              <Filter className="w-4 h-4 mr-2" />
-              Service Categories {serviceFilters.length > 0 && `(${serviceFilters.length})`}
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Filter by Service Categories</SheetTitle>
-              <SheetDescription>
-                Choose from organized service categories to find the perfect provider across Canada.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="py-4">
-              <HierarchicalServiceFilters
-                selectedServices={serviceFilters}
-                onServiceChange={setServiceFilters}
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
       </div>
     </div>
   );

@@ -4,7 +4,6 @@ import { useUserLocation } from '@/hooks/useUserLocation';
 import { useUnifiedProviders } from '@/hooks/useUnifiedProviders';
 import { ServiceType } from '@/utils/serviceTypes';
 import { SearchHeader } from '@/components/browse/SearchHeader';
-import { ServiceFilters } from '@/components/browse/ServiceFilters';
 import { ResultsContent } from '@/components/browse/ResultsContent';
 import { ResultsHeader } from '@/components/browse/ResultsHeader';
 import { LocationAuthPrompt } from '@/components/browse/LocationAuthPrompt';
@@ -70,43 +69,36 @@ const BrowseServices = () => {
           <SearchHeader
             searchTerm={searchTerm}
             locationFilter={locationFilter}
+            serviceFilters={serviceFilters}
             onSearchChange={setSearchTerm}
             onLocationChange={setLocationFilter}
+            onServiceFiltersChange={handleServiceFilter}
             hasLocation={!!userLocation}
             onRequestLocation={handleRequestLocation}
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <ServiceFilters
-              selectedServices={serviceFilters}
-              onServiceChange={handleServiceFilter}
-            />
-          </div>
+        <div className="space-y-8">
+          <ResultsHeader
+            totalResults={providers.length}
+            searchTerm={searchTerm}
+            locationFilter={locationFilter}
+            serviceFilters={serviceFilters}
+            userLocation={userLocation}
+          />
 
-          <div className="lg:col-span-3">
-            <ResultsHeader
-              totalResults={providers.length}
-              searchTerm={searchTerm}
-              locationFilter={locationFilter}
-              serviceFilters={serviceFilters}
-              userLocation={userLocation}
-            />
-
-            {!userLocation && (
-              <LocationAuthPrompt onRequestLocation={handleRequestLocation} />
-            )}
-            
-            <ResultsContent
-              cleaners={providers}
-              isLoading={isLoading}
-              error={error}
-              hasLocation={!!userLocation}
-              onRequestLocation={handleRequestLocation}
-              userSubscription={userSubscription}
-            />
-          </div>
+          {!userLocation && (
+            <LocationAuthPrompt onRequestLocation={handleRequestLocation} />
+          )}
+          
+          <ResultsContent
+            cleaners={providers}
+            isLoading={isLoading}
+            error={error}
+            hasLocation={!!userLocation}
+            onRequestLocation={handleRequestLocation}
+            userSubscription={userSubscription}
+          />
         </div>
       </div>
     </div>

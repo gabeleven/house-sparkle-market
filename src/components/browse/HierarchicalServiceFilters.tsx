@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { 
   ServiceType, 
   ServiceCategory,
@@ -24,23 +23,13 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
   selectedServices,
   onServiceChange,
 }) => {
-  const [localSelectedServices, setLocalSelectedServices] = useState<ServiceType[]>(selectedServices);
   const [expandedCategories, setExpandedCategories] = useState<Set<ServiceCategory>>(new Set());
 
   const handleServiceToggle = (serviceType: ServiceType) => {
-    const updated = localSelectedServices.includes(serviceType)
-      ? localSelectedServices.filter(s => s !== serviceType)
-      : [...localSelectedServices, serviceType];
-    setLocalSelectedServices(updated);
-  };
-
-  const handleApplyFilters = () => {
-    onServiceChange(localSelectedServices);
-  };
-
-  const handleClearFilters = () => {
-    setLocalSelectedServices([]);
-    onServiceChange([]);
+    const updated = selectedServices.includes(serviceType)
+      ? selectedServices.filter(s => s !== serviceType)
+      : [...selectedServices, serviceType];
+    onServiceChange(updated);
   };
 
   const toggleCategory = (category: ServiceCategory) => {
@@ -55,94 +44,99 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
 
   const getCategoryServiceCount = (category: ServiceCategory) => {
     const categoryServices = servicesByCategory[category];
-    return categoryServices.filter(service => localSelectedServices.includes(service)).length;
+    return categoryServices.filter(service => selectedServices.includes(service)).length;
+  };
+
+  const handleClearAll = () => {
+    onServiceChange([]);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Service Categories</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleClearFilters}
-          disabled={localSelectedServices.length === 0}
-        >
-          Clear All
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Select service categories to filter providers</span>
+          {selectedServices.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearAll}
+              className="text-xs h-6 px-2"
+            >
+              Clear All ({selectedServices.length})
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="space-y-2">
+      {/* App Icon Style Categories */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {Object.entries(servicesByCategory).map(([category, services]) => {
           const CategoryIcon = serviceCategoryIcons[category as ServiceCategory];
           const isExpanded = expandedCategories.has(category as ServiceCategory);
           const selectedCount = getCategoryServiceCount(category as ServiceCategory);
           
           return (
-            <div key={category} className="border rounded-lg">
-              <Collapsible
-                open={isExpanded}
-                onOpenChange={() => toggleCategory(category as ServiceCategory)}
+            <div key={category} className="relative">
+              {/* App Icon Category Button */}
+              <Button
+                variant="outline"
+                onClick={() => toggleCategory(category as ServiceCategory)}
+                className={`w-full h-20 flex flex-col items-center justify-center space-y-2 relative border-2 transition-all duration-200 ${
+                  selectedCount > 0 
+                    ? 'border-primary bg-primary/5 text-primary shadow-md' 
+                    : 'border-border hover:border-primary/50 hover:bg-accent/50'
+                }`}
               >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-between p-4 h-auto hover:bg-muted/50"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <CategoryIcon className="w-5 h-5 text-primary" />
-                      <span className="font-medium text-left">
-                        {serviceCategoryLabels[category as ServiceCategory]}
-                      </span>
-                      {selectedCount > 0 && (
-                        <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                          {selectedCount}
-                        </span>
-                      )}
+                <CategoryIcon className={`w-6 h-6 ${selectedCount > 0 ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className="text-xs font-medium text-center leading-tight">
+                  {serviceCategoryLabels[category as ServiceCategory]}
+                </span>
+                {selectedCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full min-w-[20px] h-5 flex items-center justify-center">
+                    {selectedCount}
+                  </span>
+                )}
+                <ChevronDown className={`w-3 h-3 absolute bottom-1 right-1 transition-transform duration-200 ${
+                  isExpanded ? 'rotate-180' : ''
+                }`} />
+              </Button>
+              
+              {/* Dropdown Service Types */}
+              {isExpanded && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg z-50 p-3 min-w-[200px]">
+                  <div className="space-y-2">
+                    <div className="text-xs font-medium text-muted-foreground border-b pb-1 mb-2">
+                      {serviceCategoryLabels[category as ServiceCategory]} Services
                     </div>
-                    {isExpanded ? (
-                      <ChevronDown className="w-4 h-4" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4" />
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-                
-                <CollapsibleContent className="px-4 pb-4">
-                  <div className="grid grid-cols-1 gap-3 pt-2 border-t">
                     {services.map((serviceType) => {
                       const ServiceIcon = serviceTypeIcons[serviceType];
-                      const isChecked = localSelectedServices.includes(serviceType);
+                      const isChecked = selectedServices.includes(serviceType);
                       
                       return (
-                        <div key={serviceType} className="flex items-center space-x-3">
+                        <div key={serviceType} className="flex items-center space-x-2">
                           <Checkbox
                             id={serviceType}
                             checked={isChecked}
                             onCheckedChange={() => handleServiceToggle(serviceType)}
+                            className="h-4 w-4"
                           />
                           <Label
                             htmlFor={serviceType}
-                            className="flex items-center space-x-2 cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="flex items-center space-x-2 cursor-pointer text-xs font-medium leading-none flex-1"
                           >
-                            <ServiceIcon className="w-4 h-4 text-muted-foreground" />
+                            <ServiceIcon className="w-3 h-3 text-muted-foreground" />
                             <span>{serviceTypeLabels[serviceType]}</span>
                           </Label>
                         </div>
                       );
                     })}
                   </div>
-                </CollapsibleContent>
-              </Collapsible>
+                </div>
+              )}
             </div>
           );
         })}
-      </div>
-
-      <div className="pt-4 border-t">
-        <Button onClick={handleApplyFilters} className="w-full">
-          Apply Filters ({localSelectedServices.length})
-        </Button>
       </div>
     </div>
   );
