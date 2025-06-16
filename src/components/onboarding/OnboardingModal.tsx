@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ServiceSelectionStep } from './steps/ServiceSelectionStep';
@@ -14,7 +13,7 @@ import { ServiceLocationStep } from './steps/ServiceLocationStep';
 import { ProPreviewStep } from './steps/ProPreviewStep';
 
 export const OnboardingModal: React.FC = () => {
-  const { isOnboardingOpen, currentStep, completeOnboarding } = useOnboarding();
+  const { isOnboardingOpen, currentStep } = useOnboarding();
 
   console.log('OnboardingModal render:', { isOnboardingOpen, currentStep });
 
@@ -50,19 +49,14 @@ export const OnboardingModal: React.FC = () => {
   }
 
   return (
-    <Dialog open={isOnboardingOpen} onOpenChange={(open) => {
-      console.log('Dialog open change:', open);
-      if (!open) {
-        completeOnboarding();
-      }
-    }}>
-      <DialogContent 
-        className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-0"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/80" />
+      
+      {/* Modal Content */}
+      <div className="relative bg-background border shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto rounded-lg">
         {renderStep()}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
