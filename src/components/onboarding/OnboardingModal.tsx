@@ -45,16 +45,22 @@ export const OnboardingModal: React.FC = () => {
     }
   };
 
-  const handleOpenChange = (open: boolean) => {
-    console.log('Dialog open change:', open);
-    if (!open) {
-      completeOnboarding();
-    }
-  };
+  if (!isOnboardingOpen) {
+    return null;
+  }
 
   return (
-    <Dialog open={isOnboardingOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-0">
+    <Dialog open={isOnboardingOpen} onOpenChange={(open) => {
+      console.log('Dialog open change:', open);
+      if (!open) {
+        completeOnboarding();
+      }
+    }}>
+      <DialogContent 
+        className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-0"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         {renderStep()}
       </DialogContent>
     </Dialog>

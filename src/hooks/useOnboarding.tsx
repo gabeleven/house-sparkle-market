@@ -26,8 +26,7 @@ export const useOnboarding = () => {
     console.log('Onboarding check:', { hasSeenOnboarding });
     
     if (!hasSeenOnboarding) {
-      // Show immediately for better testing experience
-      console.log('Opening onboarding modal immediately');
+      console.log('Opening onboarding modal for new user');
       setIsOnboardingOpen(true);
     } else {
       console.log('User has already completed onboarding');
@@ -41,6 +40,13 @@ export const useOnboarding = () => {
       setCurrentStep('welcome');
       setUserIntent(null);
       setOnboardingData({});
+    };
+
+    // Also add to window for easy access
+    (window as any).showOnboarding = () => {
+      console.log('Showing onboarding via global function');
+      setIsOnboardingOpen(true);
+      setCurrentStep('welcome');
     };
   }, []);
 
@@ -68,7 +74,6 @@ export const useOnboarding = () => {
     completeOnboarding();
   };
 
-  // Debug function to reset onboarding (for testing)
   const resetOnboarding = () => {
     console.log('Resetting onboarding for testing');
     localStorage.removeItem('housie_onboarding_completed');
