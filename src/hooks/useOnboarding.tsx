@@ -1,9 +1,18 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 
 export type UserIntent = 'find_help' | 'offer_services' | null;
-export type OnboardingStep = 'welcome' | 'service_selection' | 'account_creation';
+export type OnboardingStep = 
+  | 'welcome' 
+  | 'service_selection' 
+  | 'account_creation'
+  | 'location_input'
+  | 'timing_input'
+  | 'search_results'
+  | 'service_offerings'
+  | 'pricing_input'
+  | 'service_location'
+  | 'pro_preview';
 
 export const useOnboarding = () => {
   const { user } = useAuth();
