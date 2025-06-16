@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { User, Eye } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Star, MapPin, Clock, DollarSign } from 'lucide-react';
 import { ProviderProfile } from '@/types/providers';
 
 interface ProviderPopupProps {
@@ -16,30 +17,39 @@ export const ProviderPopup: React.FC<ProviderPopupProps> = ({
   onClose
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 min-w-[280px] max-w-[320px]">
+    <div className="bg-white rounded-lg shadow-lg p-4 min-w-80 max-w-sm">
       <div className="flex items-start gap-3 mb-3">
-        <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-          {provider.profile_photo_url ? (
-            <img 
-              src={provider.profile_photo_url} 
-              alt={provider.full_name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-          ) : (
-            <User className="w-6 h-6 text-white" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">
+        {provider.profile_photo_url ? (
+          <img
+            src={provider.profile_photo_url}
+            alt={provider.business_name || provider.full_name}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+            <span className="text-purple-600 font-medium text-sm">
+              {(provider.business_name || provider.full_name).charAt(0)}
+            </span>
+          </div>
+        )}
+        
+        <div className="flex-1">
+          <h3 className="font-semibold text-gray-900 text-sm">
             {provider.business_name || provider.full_name}
           </h3>
-          {provider.business_name && (
-            <p className="text-sm text-gray-600 truncate">{provider.full_name}</p>
-          )}
           {provider.service_area_city && (
-            <p className="text-sm text-gray-500">{provider.service_area_city}</p>
+            <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
+              <MapPin className="w-3 h-3" />
+              <span>{provider.service_area_city}</span>
+            </div>
           )}
         </div>
+
+        {provider.is_featured && (
+          <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800">
+            Featured
+          </Badge>
+        )}
       </div>
 
       {provider.brief_description && (
@@ -48,23 +58,61 @@ export const ProviderPopup: React.FC<ProviderPopupProps> = ({
         </p>
       )}
 
-      <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-        {provider.years_experience !== null && (
-          <span>{provider.years_experience} years exp.</span>
+      <div className="flex items-center gap-4 mb-3 text-xs text-gray-600">
+        {provider.average_rating && (
+          <div className="flex items-center gap-1">
+            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+            <span>{provider.average_rating.toFixed(1)}</span>
+            <span>({provider.total_reviews || 0})</span>
+          </div>
         )}
+        
+        {provider.years_experience && (
+          <div className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>{provider.years_experience} years</span>
+          </div>
+        )}
+        
         {provider.hourly_rate && (
-          <span className="font-medium text-green-600">${provider.hourly_rate}/hr</span>
+          <div className="flex items-center gap-1">
+            <DollarSign className="w-3 h-3" />
+            <span>${provider.hourly_rate}/hr</span>
+          </div>
         )}
       </div>
 
+      {provider.services && provider.services.length > 0 && (
+        <div className="mb-3">
+          <div className="flex flex-wrap gap-1">
+            {provider.services.slice(0, 3).map((service, index) => (
+              <Badge key={index} variant="outline" className="text-xs">
+                {service.service_category?.name || 'Service'}
+              </Badge>
+            ))}
+            {provider.services.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{provider.services.length - 3} more
+              </Badge>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="flex gap-2">
-        <Button 
+        <Button
           onClick={() => onViewProfile(provider)}
-          size="sm" 
+          size="sm"
           className="flex-1"
         >
-          <Eye className="w-4 h-4 mr-1" />
           View Profile
+        </Button>
+        <Button
+          onClick={onClose}
+          variant="outline"
+          size="sm"
+        >
+          Close
         </Button>
       </div>
     </div>

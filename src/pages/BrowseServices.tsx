@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { useUnifiedProviders } from '@/hooks/useUnifiedProviders';
@@ -8,7 +7,7 @@ import { ServiceFilters } from '@/components/browse/ServiceFilters';
 import { ResultsContent } from '@/components/browse/ResultsContent';
 import { ResultsHeader } from '@/components/browse/ResultsHeader';
 import { LocationAuthPrompt } from '@/components/browse/LocationAuthPrompt';
-import { GoogleMapView } from '@/components/map/GoogleMapView';
+import { UnifiedGoogleMap } from '@/components/map/UnifiedGoogleMap';
 import { Button } from '@/components/ui/button';
 import { Map, List, X } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -67,9 +66,16 @@ const BrowseServices = () => {
     setSelectedProvider(provider);
   };
 
-  const handleMapError = () => {
-    toast.error('Map failed to load. Showing list view instead.');
-    setShowMap(false);
+  const handleLocationSelect = (location: { address: string; latitude: number; longitude: number } | null) => {
+    if (location) {
+      setLocationFilter(location.address);
+      // Center map on new location if in map view
+      if (showMap) {
+        // The map will automatically recenter based on the location filter
+      }
+    } else {
+      setLocationFilter('');
+    }
   };
 
   if (isLoading && !providers.length) {
@@ -98,12 +104,14 @@ const BrowseServices = () => {
             Close Map
           </Button>
         </div>
-        <GoogleMapView
+        <UnifiedGoogleMap
           providers={providers}
+          userLocation={userLocation}
           radiusKm={radiusKm}
           onProviderSelect={handleProviderSelect}
           selectedProvider={selectedProvider}
-          onError={handleMapError}
+          onClose={() => setShowMap(false)}
+          className="h-full w-full"
           isFullScreen={true}
         />
       </div>
@@ -194,12 +202,12 @@ const BrowseServices = () => {
                   </Button>
                 </div>
                 <div className="h-48 rounded-lg overflow-hidden border bg-gray-50">
-                  <GoogleMapView
-                    providers={providers.slice(0, 10)} // Limit for performance
+                  <UnifiedGoogleMap
+                    providers={providers.slice(0, 10)}
+                    userLocation={userLocation}
                     radiusKm={radiusKm}
                     onProviderSelect={handleProviderSelect}
                     selectedProvider={selectedProvider}
-                    onError={handleMapError}
                     className="h-full w-full"
                   />
                 </div>
