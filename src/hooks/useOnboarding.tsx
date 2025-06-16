@@ -26,17 +26,22 @@ export const useOnboarding = () => {
     console.log('Onboarding check:', { hasSeenOnboarding });
     
     if (!hasSeenOnboarding) {
-      // Show immediately for testing, or delay for production
-      const delay = window.location.hostname === 'localhost' ? 500 : 1000;
-      console.log('Setting onboarding to show in', delay, 'ms');
-      
-      setTimeout(() => {
-        console.log('Opening onboarding modal');
-        setIsOnboardingOpen(true);
-      }, delay);
+      // Show immediately for better testing experience
+      console.log('Opening onboarding modal immediately');
+      setIsOnboardingOpen(true);
     } else {
       console.log('User has already completed onboarding');
     }
+
+    // Add global reset function for testing
+    (window as any).resetOnboarding = () => {
+      console.log('Resetting onboarding via global function');
+      localStorage.removeItem('housie_onboarding_completed');
+      setIsOnboardingOpen(true);
+      setCurrentStep('welcome');
+      setUserIntent(null);
+      setOnboardingData({});
+    };
   }, []);
 
   const updateOnboardingData = (key: string, value: any) => {
@@ -83,6 +88,6 @@ export const useOnboarding = () => {
     nextStep,
     completeOnboarding,
     skipOnboarding,
-    resetOnboarding, // Added for testing
+    resetOnboarding,
   };
 };

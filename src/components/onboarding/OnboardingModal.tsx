@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ServiceSelectionStep } from './steps/ServiceSelectionStep';
@@ -54,8 +54,7 @@ export const OnboardingModal: React.FC = () => {
 
   return (
     <Dialog open={isOnboardingOpen} onOpenChange={handleOpenChange}>
-      <DialogOverlay className="bg-black/50" />
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-0">
         {renderStep()}
       </DialogContent>
     </Dialog>
