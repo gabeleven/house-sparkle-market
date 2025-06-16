@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,36 +14,25 @@ interface ChatMessage {
   options?: string[];
 }
 
-const getWelcomeMessage = (mode: 'support' | 'homepage' | 'how-it-works') => {
+const getWelcomeMessage = (mode: 'support' | 'homepage') => {
   switch (mode) {
     case 'support':
       return {
         content: 'Hello! I\'m here to help you with any questions about Housie. What can I assist you with today?',
         options: [
-          'How do I book a cleaner?',
+          'How do I book a provider?',
           'I can\'t find my booking confirmation',
           'How do I change my subscription?',
-          'What if I\'m not satisfied with the cleaning?',
+          'What if I\'m not satisfied with the service?',
           'Talk to support'
-        ]
-      };
-    case 'how-it-works':
-      return {
-        content: 'I can explain each step in detail! Which one interests you most?',
-        options: [
-          'Step 1: Finding cleaners in your area',
-          'Step 2: Comparing profiles and reviews', 
-          'Step 3: Booking and scheduling',
-          'Step 4: Rating your experience',
-          'How do pricing and payments work?'
         ]
       };
     default:
       return {
-        content: 'Welcome to Housie! 👋 I\'m your personal assistant. How can I help you get started with finding the perfect cleaner?',
+        content: 'Welcome to Housie! 👋 I\'m your personal assistant. How can I help you get started with finding the perfect service provider?',
         options: [
           'How does Housie work?',
-          'Find cleaners near me',
+          'Find providers near me',
           'What services are available?',
           'How much does it cost?',
           'Is my area covered?',
@@ -52,79 +42,13 @@ const getWelcomeMessage = (mode: 'support' | 'homepage' | 'how-it-works') => {
   }
 };
 
-const getStepDetails = (step: string) => {
-  switch (step) {
-    case 'Step 1: Finding cleaners in your area':
-      return `**Finding cleaners is super easy!** 🔍
-
-• **Location-based search**: We automatically detect your location or you can enter your postal code
-• **Verified professionals**: All cleaners are background-checked and verified
-• **Real-time availability**: See who's available when you need them
-• **Distance radius**: Adjust how far you want to search (5km to 50km)
-• **Service filters**: Filter by specific services like deep cleaning, regular maintenance, or specialized tasks
-
-Pro tip: Our map view shows cleaner locations and lets you see their service areas visually!`;
-
-    case 'Step 2: Comparing profiles and reviews':
-      return `**Make informed decisions with detailed profiles!** ⭐
-
-• **Real customer reviews**: Read authentic feedback from previous clients
-• **Photo galleries**: See before/after photos of their work
-• **Service specialties**: Each cleaner lists their expertise (apartments, houses, offices, etc.)
-• **Pricing transparency**: Clear hourly rates with no hidden fees
-• **Response times**: See how quickly they typically respond to messages
-• **Verification badges**: Insurance, background checks, and ID verification status
-
-The star rating system helps you quickly identify top-performing cleaners in your area!`;
-
-    case 'Step 3: Booking and scheduling':
-      return `**Seamless booking in just a few clicks!** 📅
-
-• **Real-time calendar**: See actual availability, no back-and-forth
-• **Instant confirmation**: Most bookings are confirmed within minutes
-• **Flexible scheduling**: One-time, weekly, bi-weekly, or monthly services
-• **Custom instructions**: Add specific requests or access instructions
-• **Secure payments**: Pay safely through the platform
-• **Automatic reminders**: Get notifications before your appointment
-
-You can also message your cleaner directly to discuss any special requirements!`;
-
-    case 'Step 4: Rating your experience':
-      return `**Help build our community of excellence!** 🌟
-
-• **Easy rating system**: Rate your experience with just a few taps
-• **Photo reviews**: Upload before/after photos to help other customers
-• **Detailed feedback**: Share what went well and areas for improvement
-• **Tip your cleaner**: Add a tip directly through the app if you're happy
-• **Rebook easily**: One-click rebooking with cleaners you love
-• **Support guarantee**: If something's not right, our team will help resolve it
-
-Your reviews help other customers find great cleaners and help cleaners improve their services!`;
-
-    case 'How do pricing and payments work?':
-      return `**Transparent and fair pricing!** 💰
-
-• **Clear hourly rates**: No hidden fees or surprise charges
-• **Secure payments**: All transactions processed safely through Stripe
-• **Flexible options**: Pay per session or set up recurring payments
-• **Cancellation policy**: Free cancellation up to 24 hours before
-• **Tip included**: Option to add gratuity for exceptional service
-• **Business receipts**: Get proper invoices for tax purposes
-
-Most cleaners charge between $25-$45/hour depending on services and location.`;
-
-    default:
-      return 'I\'d be happy to help with more details! What specific aspect would you like to know more about?';
-  }
-};
-
 export const DualModeChatbot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { mode, showGoodbyeMessage, navigateToHowItWorks, navigateToSupport } = useChatbot();
+  const { mode, showGoodbyeMessage, navigateToSupport } = useChatbot();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -155,17 +79,6 @@ export const DualModeChatbot: React.FC = () => {
     }
   }, [mode, showGoodbyeMessage]);
 
-  const simulateTyping = (message: string): Promise<void> => {
-    return new Promise((resolve) => {
-      setIsTyping(true);
-      const typingTime = Math.min(message.length * 30, 2000);
-      setTimeout(() => {
-        setIsTyping(false);
-        resolve();
-      }, typingTime);
-    });
-  };
-
   const getBotResponse = (userMessage: string): string => {
     try {
       const lower = userMessage.toLowerCase();
@@ -173,61 +86,30 @@ export const DualModeChatbot: React.FC = () => {
       // Homepage mode responses
       if (mode === 'homepage') {
         if (lower.includes('how does housie work') || lower === 'How does Housie work?') {
-          // Show goodbye message and navigate
-          setTimeout(() => {
-            setMessages(prev => [...prev, {
-              id: Date.now().toString(),
-              type: 'bot',
-              content: 'Let me show you how Housie works! Let me know if you need further assistance or guidance.',
-              timestamp: new Date()
-            }]);
-            setTimeout(() => {
-              navigateToHowItWorks();
-            }, 2000);
-          }, 1000);
-          return 'Taking you to our step-by-step guide...';
+          return 'Housie connects you with verified service providers in your area. You can browse profiles, read reviews, compare prices, and book services directly through our platform. It\'s simple, secure, and convenient!';
         }
-        if (lower.includes('find cleaners') || lower.includes('near me')) {
-          return 'Great! You can find cleaners by clicking "Trouver des ménagers près de moi" on the homepage, or I can guide you through what to expect when searching for cleaners in your area.';
+        if (lower.includes('find providers') || lower.includes('near me')) {
+          return 'Great! You can find providers by clicking "Browse Services" on the homepage, or I can guide you through what to expect when searching for providers in your area.';
         }
         if (lower.includes('services')) {
-          return 'We offer a wide range of cleaning services! Our cleaners provide regular house cleaning, deep cleaning, apartment cleaning, office cleaning, move-in/move-out cleaning, and specialized services. Each cleaner lists their specific expertise on their profile.';
+          return 'We offer a wide range of services! Our providers offer cleaning, maintenance, repairs, and specialized services. Each provider lists their specific expertise on their profile.';
         }
         if (lower.includes('cost') || lower.includes('price')) {
-          return 'Pricing is transparent and varies by cleaner and service type. Most charge between $25-45/hour. You can see exact rates on each cleaner\'s profile before booking. No hidden fees!';
+          return 'Pricing is transparent and varies by provider and service type. Most charge between $25-45/hour. You can see exact rates on each provider\'s profile before booking. No hidden fees!';
         }
         if (lower.includes('area') || lower.includes('covered')) {
           return 'We cover most major Canadian cities! You can check availability in your area by entering your postal code on the homepage. If we don\'t serve your area yet, you can join our waitlist.';
         }
       }
 
-      // How-it-works mode responses
-      if (mode === 'how-it-works') {
-        if (lower.includes('step 1') || lower.includes('finding cleaners')) {
-          return getStepDetails('Step 1: Finding cleaners in your area');
-        }
-        if (lower.includes('step 2') || lower.includes('comparing')) {
-          return getStepDetails('Step 2: Comparing profiles and reviews');
-        }
-        if (lower.includes('step 3') || lower.includes('booking')) {
-          return getStepDetails('Step 3: Booking and scheduling');
-        }
-        if (lower.includes('step 4') || lower.includes('rating')) {
-          return getStepDetails('Step 4: Rating your experience');
-        }
-        if (lower.includes('pricing') || lower.includes('payments')) {
-          return getStepDetails('How do pricing and payments work?');
-        }
-      }
-
       // Support mode responses
       if (lower.includes('book') || lower.includes('réserver')) {
-        return `**Here's how to book a cleaner on Housie:**
+        return `**Here's how to book a provider on Housie:**
 
-1. **Browse Cleaners**: Click "Find Cleaners Near Me" on the homepage
-2. **Choose Your Cleaner**: Look at profiles, ratings, and reviews  
-3. **Select Services**: Choose what type of cleaning you need
-4. **Pick Your Date**: Select when you'd like the cleaning
+1. **Browse Providers**: Click "Find Providers Near Me" on the homepage
+2. **Choose Your Provider**: Look at profiles, ratings, and reviews  
+3. **Select Services**: Choose what type of service you need
+4. **Pick Your Date**: Select when you'd like the service
 5. **Confirm & Pay**: Review details and complete payment
 
 Would you like help with any specific part of the booking process?`;
@@ -277,10 +159,7 @@ Would you like help with any specific part of the booking process?`;
     setTimeout(() => {
       setIsTyping(false);
       
-      // Simple response logic for the tabbed interface
-      const botResponse = userMessage.toLowerCase().includes('support') 
-        ? 'I\'m connecting you with our support team!'
-        : 'Thanks for your message! How else can I help you?';
+      const botResponse = getBotResponse(userMessage);
       
       const botMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),

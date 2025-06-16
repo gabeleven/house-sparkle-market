@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const CleanerReviews = () => {
-  const { cleanerId } = useParams<{ cleanerId: string }>();
+const ProviderReviews = () => {
+  const { providerId } = useParams<{ providerId: string }>();
   const navigate = useNavigate();
-  const { reviews, isLoading, error } = useReviews({ providerId: cleanerId });
+  const { reviews, isLoading, error } = useReviews({ providerId });
 
-  if (!cleanerId) {
+  if (!providerId) {
     return <div>Provider not found</div>;
   }
 
@@ -94,4 +94,4 @@ const CleanerReviews = () => {
   );
 };
 
-export default CleanerReviews;
+export default ProviderReviews;

@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type ChatMode = 'homepage' | 'support' | 'how-it-works';
+type ChatMode = 'homepage' | 'support';
 
 interface ChatbotContextType {
   isOpen: boolean;
@@ -11,7 +11,6 @@ interface ChatbotContextType {
   toggleChatbot: () => void;
   setShowGoodbyeMessage: (show: boolean) => void;
   showGoodbyeMessage: boolean;
-  navigateToHowItWorks: () => void;
   navigateToSupport: () => void;
 }
 
@@ -44,13 +43,6 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
     setIsOpen(!isOpen);
   };
 
-  const navigateToHowItWorks = () => {
-    console.log('Navigating to how it works');
-    // In a real app, this would navigate to the how-it-works page
-    // For now, we'll just show a goodbye message
-    setShowGoodbyeMessage(true);
-  };
-
   const navigateToSupport = () => {
     console.log('Navigating to support');
     // In a real app, this would navigate to the support page
@@ -66,7 +58,6 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
     toggleChatbot,
     setShowGoodbyeMessage,
     showGoodbyeMessage,
-    navigateToHowItWorks,
     navigateToSupport,
   };
 
