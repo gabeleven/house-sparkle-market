@@ -7,20 +7,32 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, DollarSign } from 'lucide-react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
-const pricingOptions = [
-  { id: 'hourly', label: 'Hourly Rate', placeholder: 'e.g., $35' },
-  { id: 'fixed', label: 'Fixed Price per Service', placeholder: 'e.g., $150' },
-  { id: 'custom', label: 'Custom Pricing', placeholder: 'Varies by project' }
+const pricingTypes = [
+  { id: 'hourly', label: 'Hourly Rate', description: 'Charge by the hour' },
+  { id: 'fixed', label: 'Fixed Price', description: 'Set price per job' },
+  { id: 'both', label: 'Both', description: 'Flexible pricing options' }
 ];
 
 export const PricingInputStep: React.FC = () => {
   const { updateOnboardingData, nextStep } = useOnboarding();
   const [pricingType, setPricingType] = useState('hourly');
-  const [priceValue, setPriceValue] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
+  const [fixedPrice, setFixedPrice] = useState('');
 
   const handleNext = () => {
-    updateOnboardingData('pricing', { type: pricingType, value: priceValue });
+    updateOnboardingData('pricing', {
+      type: pricingType,
+      hourlyRate: hourlyRate,
+      fixedPrice: fixedPrice
+    });
     nextStep('service_location');
+  };
+
+  const isFormValid = () => {
+    if (pricingType === 'hourly') return hourlyRate.trim() !== '';
+    if (pricingType === 'fixed') return fixedPrice.trim() !== '';
+    if (pricingType === 'both') return hourlyRate.trim() !== '' && fixedPrice.trim() !== '';
+    return false;
   };
 
   return (
@@ -31,61 +43,86 @@ export const PricingInputStep: React.FC = () => {
         </Button>
         <div>
           <h2 className="text-2xl font-bold text-foreground">
-            What's your pricing?
+            What are your rates?
           </h2>
-          <p className="text-muted-foreground">Help customers understand your rates</p>
+          <p className="text-muted-foreground">Help customers understand your pricing</p>
         </div>
       </div>
 
-      <div className="max-w-md mx-auto space-y-4">
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex items-center gap-2 mb-6">
+          <DollarSign className="w-5 h-5 text-primary" />
+          <span className="text-lg font-medium">Pricing Structure</span>
+        </div>
+
         <div className="space-y-3">
-          {pricingOptions.map((option) => (
+          {pricingTypes.map((type) => (
             <Card 
-              key={option.id}
+              key={type.id}
               className={`cursor-pointer transition-all ${
-                pricingType === option.id 
+                pricingType === type.id 
                   ? 'border-primary bg-primary/5' 
-                  : 'hover:border-primary/50'
+                  : 'hover:shadow-md hover:border-primary/50'
               }`}
-              onClick={() => setPricingType(option.id)}
+              onClick={() => setPricingType(type.id)}
             >
-              <CardContent className="flex items-center gap-3 p-4">
-                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
-                  pricingType === option.id 
-                    ? 'border-primary bg-primary' 
-                    : 'border-muted-foreground'
-                }`}>
-                  {pricingType === option.id && (
-                    <div className="w-3 h-3 bg-white rounded-full" />
-                  )}
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-4 h-4 rounded-full border-2 ${
+                    pricingType === type.id 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground'
+                  }`} />
+                  <div>
+                    <h3 className="font-medium">{type.label}</h3>
+                    <p className="text-sm text-muted-foreground">{type.description}</p>
+                  </div>
                 </div>
-                <span className="font-medium">{option.label}</span>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="pt-4">
-          <Label htmlFor="price" className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4" />
-            {pricingOptions.find(opt => opt.id === pricingType)?.label}
-          </Label>
-          <Input
-            id="price"
-            placeholder={pricingOptions.find(opt => opt.id === pricingType)?.placeholder}
-            value={priceValue}
-            onChange={(e) => setPriceValue(e.target.value)}
-            className="mt-1"
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            You can always adjust this later in your profile
-          </p>
+        <div className="space-y-4">
+          {(pricingType === 'hourly' || pricingType === 'both') && (
+            <div>
+              <Label htmlFor="hourlyRate">Hourly Rate (CAD)</Label>
+              <Input
+                id="hourlyRate"
+                type="number"
+                placeholder="25"
+                value={hourlyRate}
+                onChange={(e) => setHourlyRate(e.target.value)}
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Average rate in your area: $20-35/hour
+              </p>
+            </div>
+          )}
+
+          {(pricingType === 'fixed' || pricingType === 'both') && (
+            <div>
+              <Label htmlFor="fixedPrice">Starting Price (CAD)</Label>
+              <Input
+                id="fixedPrice"
+                type="number"
+                placeholder="80"
+                value={fixedPrice}
+                onChange={(e) => setFixedPrice(e.target.value)}
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Base price for your most common service
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center pt-6">
           <Button 
             onClick={handleNext} 
-            disabled={!priceValue.trim()}
+            disabled={!isFormValid()}
             className="min-w-32"
           >
             Next

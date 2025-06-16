@@ -1,96 +1,133 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Star, TrendingUp, Shield, Crown, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Crown, TrendingUp, Shield, Star, CheckCircle } from 'lucide-react';
 import { useOnboarding } from '@/hooks/useOnboarding';
-import { useNavigate } from 'react-router-dom';
 
 const proFeatures = [
-  { icon: Crown, title: 'Priority Ranking', description: 'Appear at the top of search results' },
-  { icon: Star, title: 'Premium Badge', description: 'Stand out with a verified professional badge' },
-  { icon: BarChart3, title: 'Advanced Analytics', description: 'Track views, bookings, and revenue insights' },
-  { icon: TrendingUp, title: 'Marketing Tools', description: 'Promote your services with featured listings' },
-  { icon: Shield, title: 'Trust & Safety', description: 'Enhanced verification and customer protection' }
+  { icon: Crown, title: 'Pro Badge', description: 'Stand out with a verified Pro badge' },
+  { icon: TrendingUp, title: 'Higher Ranking', description: 'Appear first in search results' },
+  { icon: Shield, title: 'Priority Support', description: '24/7 dedicated customer support' },
+  { icon: Star, title: 'Analytics Dashboard', description: 'Track your performance and earnings' }
 ];
 
 export const ProPreviewStep: React.FC = () => {
-  const { completeOnboarding, onboardingData } = useOnboarding();
-  const navigate = useNavigate();
+  const { completeOnboarding, onboardingData, nextStep } = useOnboarding();
 
-  const handleSubscribeToPro = () => {
+  const handleSubscribe = () => {
+    // Here you would typically handle the subscription process
     completeOnboarding();
-    navigate('/pricing');
   };
 
   const handleFinishLater = () => {
     completeOnboarding();
-    navigate('/my-profile');
   };
 
   return (
     <div className="p-6">
-      <div className="text-center mb-6">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <CheckCircle className="w-8 h-8 text-green-500" />
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" onClick={() => nextStep('service_location')}>
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+        <div>
           <h2 className="text-2xl font-bold text-foreground">
-            Great! Your profile is nearly ready
+            You're almost ready! 🎉
           </h2>
+          <p className="text-muted-foreground">Upgrade to Housie Pro for maximum visibility</p>
         </div>
-        <p className="text-muted-foreground">
-          Welcome to Housie, {onboardingData.accountData?.name}!
+      </div>
+
+      <div className="max-w-2xl mx-auto">
+        {/* Profile Preview */}
+        <Card className="mb-6 border-2 border-primary/20">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
+                {onboardingData.accountData?.name?.charAt(0) || 'U'}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-semibold">
+                    {onboardingData.accountData?.name || 'Your Name'}
+                  </h3>
+                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                    <Crown className="w-3 h-3 mr-1" />
+                    PRO
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="font-medium">5.0</span>
+                  <span className="text-muted-foreground">(New Provider)</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {onboardingData.serviceLocation?.area || 'Your Service Area'}
+                </p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-green-600 font-medium">Verified Pro Provider</span>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {onboardingData.offeredServices?.slice(0, 3).map((service: string, index: number) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {service.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </Badge>
+              ))}
+              {(onboardingData.offeredServices?.length || 0) > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{(onboardingData.offeredServices?.length || 0) - 3} more
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pro Features */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {proFeatures.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <Card key={index} className="text-center">
+                <CardContent className="p-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h4 className="font-medium mb-1">{feature.title}</h4>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Pricing */}
+        <Card className="mb-6 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+          <CardContent className="p-6 text-center">
+            <h3 className="text-2xl font-bold mb-2">Start with Housie Pro</h3>
+            <div className="text-3xl font-bold text-primary mb-2">
+              $29<span className="text-lg text-muted-foreground">/month</span>
+            </div>
+            <p className="text-muted-foreground mb-4">Cancel anytime • 30-day money-back guarantee</p>
+            <div className="flex justify-center gap-4">
+              <Button size="lg" onClick={handleSubscribe}>
+                Start Pro Trial
+              </Button>
+              <Button variant="outline" size="lg" onClick={handleFinishLater}>
+                Finish Profile Later
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-sm text-muted-foreground">
+          You can always upgrade to Pro later from your dashboard
         </p>
       </div>
-
-      <Card className="mb-6 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-        <CardHeader className="text-center pb-4">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Crown className="w-6 h-6 text-primary" />
-            <CardTitle className="text-2xl">Housie Pro</CardTitle>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">Recommended</Badge>
-          </div>
-          <p className="text-muted-foreground">
-            Get 3x more bookings with premium features
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {proFeatures.map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <div key={feature.title} className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-sm">{feature.title}</h4>
-                    <p className="text-xs text-muted-foreground">{feature.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="text-center p-4 bg-white/50 rounded-lg">
-            <div className="text-2xl font-bold text-primary mb-1">$29/month</div>
-            <p className="text-sm text-muted-foreground">7-day free trial</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex flex-col gap-3">
-        <Button onClick={handleSubscribeToPro} className="w-full">
-          Start Free Trial - Subscribe to Pro
-        </Button>
-        <Button variant="outline" onClick={handleFinishLater} className="w-full">
-          Continue with Basic (Free)
-        </Button>
-      </div>
-
-      <p className="text-xs text-center text-muted-foreground mt-4">
-        You can always upgrade later. No commitment required.
-      </p>
     </div>
   );
 };

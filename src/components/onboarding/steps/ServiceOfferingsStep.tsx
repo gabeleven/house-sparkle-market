@@ -2,17 +2,18 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Home, Building, Droplets, TreePine, Hammer, Heart, Users } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, Home, Building, Hammer, TreePine, Car, Wrench } from 'lucide-react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
-const serviceCategories = [
-  { id: 'cleaning', label: 'Cleaning Services', icon: Home, services: ['House Cleaning', 'Deep Cleaning', 'Move-in/out Cleaning'] },
-  { id: 'commercial', label: 'Commercial Cleaning', icon: Building, services: ['Office Cleaning', 'Commercial Spaces', 'Post-construction'] },
-  { id: 'maintenance', label: 'Home Maintenance', icon: Hammer, services: ['Handyman Services', 'Home Repairs', 'Renovations'] },
-  { id: 'landscaping', label: 'Landscaping', icon: TreePine, services: ['Lawn Care', 'Garden Maintenance', 'Snow Removal'] },
-  { id: 'windows', label: 'Window Cleaning', icon: Droplets, services: ['Residential Windows', 'Commercial Windows'] },
-  { id: 'wellness', label: 'Wellness Services', icon: Heart, services: ['Massage Therapy', 'Personal Training', 'Physiotherapy'] },
-  { id: 'care', label: 'Care Services', icon: Users, services: ['Pet Sitting', 'Elder Care', 'Child Care'] }
+const serviceOptions = [
+  { id: 'residential_cleaning', label: 'Residential Cleaning', icon: Home, description: 'House cleaning, apartment cleaning' },
+  { id: 'commercial_cleaning', label: 'Commercial Cleaning', icon: Building, description: 'Office cleaning, retail spaces' },
+  { id: 'deep_cleaning', label: 'Deep Cleaning', icon: Home, description: 'Move-in/out, post-construction' },
+  { id: 'maintenance', label: 'Home Maintenance', icon: Hammer, description: 'Repairs, handyman services' },
+  { id: 'landscaping', label: 'Landscaping', icon: TreePine, description: 'Lawn care, garden maintenance' },
+  { id: 'automotive', label: 'Automotive Services', icon: Car, description: 'Car detailing, maintenance' },
+  { id: 'appliance', label: 'Appliance Repair', icon: Wrench, description: 'Washer, dryer, dishwasher repair' }
 ];
 
 export const ServiceOfferingsStep: React.FC = () => {
@@ -28,7 +29,7 @@ export const ServiceOfferingsStep: React.FC = () => {
   };
 
   const handleNext = () => {
-    updateOnboardingData('serviceOfferings', selectedServices);
+    updateOnboardingData('offeredServices', selectedServices);
     nextStep('pricing_input');
   };
 
@@ -47,37 +48,38 @@ export const ServiceOfferingsStep: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {serviceCategories.map((category) => {
-          const Icon = category.icon;
-          const isSelected = selectedServices.includes(category.id);
+        {serviceOptions.map((service) => {
+          const Icon = service.icon;
+          const isSelected = selectedServices.includes(service.id);
           
           return (
             <Card 
-              key={category.id}
+              key={service.id}
               className={`cursor-pointer transition-all ${
                 isSelected 
                   ? 'border-primary bg-primary/5' 
                   : 'hover:shadow-md hover:border-primary/50'
               }`}
-              onClick={() => toggleService(category.id)}
+              onClick={() => toggleService(service.id)}
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    isSelected ? 'bg-primary text-white' : 'bg-muted'
-                  }`}>
-                    <Icon className="w-5 h-5" />
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Checkbox 
+                    checked={isSelected}
+                    onChange={() => toggleService(service.id)}
+                    className="mt-1"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        isSelected ? 'bg-primary text-white' : 'bg-muted'
+                      }`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-medium">{service.label}</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{service.description}</p>
                   </div>
-                  <CardTitle className="text-lg">{category.label}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  {category.services.map((service, index) => (
-                    <p key={index} className="text-xs text-muted-foreground">
-                      • {service}
-                    </p>
-                  ))}
                 </div>
               </CardContent>
             </Card>
