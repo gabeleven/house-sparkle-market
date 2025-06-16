@@ -21,6 +21,12 @@ interface ProfileHeaderProps {
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, displayRate }) => {
+  console.log('ProfileHeader: Rendering with profile data:', {
+    service_radius_km: profile.service_radius_km,
+    address: profile.address,
+    hourly_rate: profile.hourly_rate
+  });
+
   return (
     <div className="flex items-start gap-6 mb-6">
       <Avatar className="w-24 h-24">
@@ -61,13 +67,20 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, displayRa
         </div>
 
         {/* Service Area Information */}
-        {profile.address && (
+        {(profile.address || profile.service_radius_km) && (
           <div className="flex items-center text-gray-600 mb-4">
             <MapPin className="w-5 h-5 mr-2" />
-            <span>Services {profile.address}</span>
-            {profile.service_radius_km && (
-              <span className="ml-1">• {profile.service_radius_km}km radius</span>
-            )}
+            <span>
+              {profile.address ? `Services ${profile.address}` : 'Service area'}
+              {profile.service_radius_km && (
+                <span className="ml-1 font-medium text-primary">
+                  • {profile.service_radius_km}km radius
+                </span>
+              )}
+              {!profile.service_radius_km && !profile.address && (
+                <span className="text-gray-400">Service area not specified</span>
+              )}
+            </span>
           </div>
         )}
 

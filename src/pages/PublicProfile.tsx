@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -50,10 +51,17 @@ const PublicProfile = () => {
     try {
       console.log('PublicProfile: Loading profile for user ID:', id);
       
-      // First, get the provider data
+      // First, get the provider data with full details
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select('*')
+        .select(`
+          *,
+          profiles!providers_user_id_fkey(
+            full_name,
+            email,
+            user_role
+          )
+        `)
         .eq('user_id', id)
         .single();
 
@@ -62,16 +70,27 @@ const PublicProfile = () => {
         throw providerError;
       }
 
-      // Get the profile data separately
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', id)
-        .single();
+      console.log('PublicProfile: Provider data loaded:', {
+        hasProvider: !!providerData,
+        service_radius_km: providerData?.service_radius_km,
+        address: providerData?.address,
+        hourly_rate: providerData?.hourly_rate
+      });
 
-      if (profileError) {
-        console.error('PublicProfile: Profile error:', profileError);
-        throw profileError;
+      // Get the profile data separately if provider query failed
+      let profileData = null;
+      if (!providerData) {
+        const { data: profileDataResult, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (profileError) {
+          console.error('PublicProfile: Profile error:', profileError);
+          throw profileError;
+        }
+        profileData = profileDataResult;
       }
 
       let services = [];
@@ -96,11 +115,13 @@ const PublicProfile = () => {
 
       // Combine the data
       if (providerData) {
+        const profileInfo = Array.isArray(providerData.profiles) ? providerData.profiles[0] : providerData.profiles;
+        
         setProfile({
           id: providerData.id,
           user_id: providerData.user_id,
-          full_name: profileData.full_name,
-          email: profileData.email,
+          full_name: profileInfo?.full_name || '',
+          email: profileInfo?.email || '',
           profile_photo_url: providerData.profile_photo_url,
           business_name: providerData.business_name,
           bio: providerData.bio,
@@ -113,14 +134,17 @@ const PublicProfile = () => {
           average_rating: providerData.average_rating,
           total_reviews: providerData.total_reviews,
           services: services,
-          user_role: profileData.user_role
+          user_role: profileInfo?.user_role || 'cleaner'
         });
+        
         console.log('PublicProfile: Final profile data set:', {
           user_id: providerData.user_id,
+          service_radius_km: providerData.service_radius_km,
+          address: providerData.address,
           servicesCount: services.length,
           services: services.map(s => s.service_categories?.name || s.service_category?.name)
         });
-      } else {
+      } else if (profileData) {
         // Fallback to basic profile if no provider profile exists
         setProfile({
           id: profileData.id,
@@ -180,7 +204,7 @@ const PublicProfile = () => {
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h1>
             <p className="text-gray-600">The profile you're looking for doesn't exist or isn't available.</p>
             <Button 
-              onClick={() => navigate('/browse-services')} 
+              onClick={() => navigate('/browse-providers')} 
               className="mt-4"
             >
               Browse Service Providers
