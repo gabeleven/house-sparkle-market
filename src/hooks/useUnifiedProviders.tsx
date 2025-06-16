@@ -1,8 +1,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { ServiceType } from '@/utils/serviceTypes';
 import { ProviderProfile } from '@/types/providers';
+import { ServiceType } from '@/utils/serviceTypes';
 
 interface UseUnifiedProvidersProps {
   userLocation?: { latitude: number; longitude: number } | null;
@@ -24,12 +24,12 @@ export const useUnifiedProviders = ({
     queryFn: async () => {
       console.log('Fetching providers with unified search...');
       
-      // Build the base query with proper relationships using provider_id
+      // Build the base query with proper join syntax
       let query = supabase
         .from('providers')
         .select(`
           *,
-          profiles!providers_user_id_fkey(
+          profiles(
             full_name,
             email
           ),
@@ -39,28 +39,14 @@ export const useUnifiedProviders = ({
           )
         `);
 
-      // Apply search filters with proper syntax
-      if (searchTerm?.trim()) {
-        const cleanSearchTerm = searchTerm.trim();
-        query = query.or(`business_name.ilike.%${cleanSearchTerm}%,bio.ilike.%${cleanSearchTerm}%`);
+      // Apply business name/bio search if searchTerm is provided
+      if (searchTerm) {
+        query = query.or(`business_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`);
       }
-      
-      if (locationFilter?.trim()) {
-        // Clean and handle location filter properly
-        const cleanLocation = locationFilter.trim().toLowerCase();
-        
-        // Skip "current location" searches to avoid query errors
-        if (!cleanLocation.includes('current location')) {
-          // Handle postal code formats (A1A 1A1 or A1A1A1)
-          if (/^[a-z]\d[a-z]\s*\d[a-z]\d$/i.test(cleanLocation)) {
-            const postalCode = cleanLocation.replace(/\s/g, '').toUpperCase();
-            const formattedPostal = postalCode.replace(/(.{3})(.{3})/, '$1 $2');
-            query = query.or(`address.ilike.%${postalCode}%,address.ilike.%${formattedPostal}%`);
-          } else {
-            // Regular address search
-            query = query.ilike('address', `%${cleanLocation}%`);
-          }
-        }
+
+      // Apply location filter if provided
+      if (locationFilter) {
+        query = query.ilike('address', `%${locationFilter}%`);
       }
 
       const { data, error } = await query;
@@ -70,7 +56,7 @@ export const useUnifiedProviders = ({
         throw error;
       }
 
-      console.log('Unified providers found:', data?.length || 0);
+      console.log('Providers found:', data?.length || 0);
 
       let processedProviders = (data || [])
         .filter(provider => provider.profiles)
@@ -105,7 +91,7 @@ export const useUnifiedProviders = ({
           };
         });
 
-      // Apply service filters
+      // Apply service filters if specified
       if (serviceFilters && serviceFilters.length > 0) {
         processedProviders = processedProviders.filter(provider => 
           provider.services?.some(service => 
@@ -117,22 +103,27 @@ export const useUnifiedProviders = ({
         );
       }
 
-      // Calculate distance and apply radius filter if user location is available
+      // Calculate distance if user location is available
       if (userLocation) {
-        processedProviders = processedProviders
-          .map(provider => {
-            if (provider.latitude && provider.longitude) {
-              const distance = calculateDistance(
-                userLocation.latitude,
-                userLocation.longitude,
-                Number(provider.latitude),
-                Number(provider.longitude)
-              );
-              return { ...provider, distance };
-            }
-            return provider;
-          })
-          .filter(provider => !provider.distance || provider.distance <= radiusKm);
+        processedProviders = processedProviders.map(provider => {
+          if (provider.latitude && provider.longitude) {
+            const distance = calculateDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              Number(provider.latitude),
+              Number(provider.longitude)
+            );
+            return { ...provider, distance };
+          }
+          return provider;
+        });
+        
+        // Filter by radius if specified
+        if (radiusKm) {
+          processedProviders = processedProviders.filter(provider => 
+            !provider.distance || provider.distance <= radiusKm
+          );
+        }
         
         // Sort by distance first, then by rating
         processedProviders.sort((a, b) => {
@@ -147,12 +138,8 @@ export const useUnifiedProviders = ({
           return ratingB - ratingA;
         });
       } else {
-        // Sort by rating and featured status
+        // Sort by rating if no location
         processedProviders.sort((a, b) => {
-          if (a.is_featured !== b.is_featured) {
-            return b.is_featured ? 1 : -1;
-          }
-          
           const ratingA = a.average_rating || 0;
           const ratingB = b.average_rating || 0;
           if (ratingB !== ratingA) {
@@ -162,6 +149,8 @@ export const useUnifiedProviders = ({
           if (a.address && b.address) {
             return a.address.localeCompare(b.address);
           }
+          if (a.address) return -1;
+          if (b.address) return 1;
           return 0;
         });
       }
