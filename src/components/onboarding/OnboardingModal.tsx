@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { WelcomeStep } from './steps/WelcomeStep';
@@ -44,7 +45,7 @@ export const OnboardingModal: React.FC = () => {
     }
   };
 
-  // Prevent scroll when modal is open but KEEP pointer events
+  // Prevent scroll when modal is open
   React.useEffect(() => {
     if (isOnboardingOpen) {
       document.body.style.overflow = 'hidden';
@@ -62,18 +63,8 @@ export const OnboardingModal: React.FC = () => {
   console.log('OnboardingModal: rendering modal');
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[9999]"
-      onClick={(e) => {
-        // Only prevent closing if clicking directly on backdrop
-        if (e.target === e.currentTarget) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Backdrop click blocked');
-        }
-      }}
-    >
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl z-[10000]">
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[9999]">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl z-[10000] pointer-events-auto">
         {renderStep()}
       </div>
     </div>
