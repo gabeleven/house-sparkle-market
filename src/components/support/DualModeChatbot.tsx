@@ -46,14 +46,16 @@ export const DualModeChatbot: React.FC = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const { mode, showGoodbyeMessage, navigateToSupport } = useChatbot();
 
   const scrollToBottom = () => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end'
+      });
+    }, 100);
   };
 
   useEffect(() => {
@@ -179,24 +181,18 @@ Would you like help with any specific part of the booking process?`;
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div 
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0"
-        style={{ 
-          overscrollBehavior: 'none',
-          WebkitOverflowScrolling: 'touch'
-        }}
-      >
-        <div className="space-y-4">
+    <div className="flex flex-col h-full max-h-full">
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pt-4 pb-2">
+        <div className="space-y-4 pb-4">
           {messages.map((message) => (
             <div key={message.id} className="space-y-2">
               <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`flex items-start space-x-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
                     {message.type === 'user' ? <User className="w-3 h-3 text-white" /> : <Bot className="w-3 h-3 text-white" />}
                   </div>
-                  <div className={`rounded-lg p-3 text-sm ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted'}`}>
+                  <div className={`rounded-lg p-3 text-sm break-words ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted'}`}>
                     <p className="whitespace-pre-line">{message.content}</p>
                   </div>
                 </div>
@@ -236,12 +232,15 @@ Would you like help with any specific part of the booking process?`;
               </div>
             </div>
           )}
+          
+          {/* Scroll anchor */}
+          <div ref={messagesEndRef} className="h-1" />
         </div>
-        <div ref={messagesEndRef} />
       </div>
 
+      {/* Input Container */}
       {!showGoodbyeMessage && (
-        <div className="border-t p-4 bg-card">
+        <div className="border-t bg-card p-4 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <Input
               value={input}
