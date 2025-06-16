@@ -32,7 +32,7 @@ export const useOnboarding = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const forceOnboarding = urlParams.get('forceOnboarding');
     
-    // Determine if onboarding should be shown
+    // Show onboarding for new visitors or when forced
     const shouldShowOnboarding = forceOnboarding === 'true' || (!user && !hasCompletedOnboarding);
     
     console.log('Onboarding decision:', {
@@ -44,8 +44,11 @@ export const useOnboarding = () => {
     
     if (shouldShowOnboarding) {
       console.log('Opening onboarding modal');
-      setIsOnboardingOpen(true);
-      setCurrentStep('welcome');
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        setIsOnboardingOpen(true);
+        setCurrentStep('welcome');
+      }, 100);
     }
 
     // Global testing functions

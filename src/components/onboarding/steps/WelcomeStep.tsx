@@ -6,31 +6,25 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 export const WelcomeStep: React.FC = () => {
   const { setUserIntent, nextStep, skipOnboarding } = useOnboarding();
 
-  const handleFindHelp = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleFindHelp = () => {
     console.log('Find help clicked - setting user intent and moving to next step');
     setUserIntent('find_help');
     nextStep('service_selection');
   };
 
-  const handleOfferServices = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleOfferServices = () => {
     console.log('Offer services clicked - setting user intent and moving to next step');
     setUserIntent('offer_services');
     nextStep('account_creation');
   };
 
-  const handleSkip = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSkip = () => {
     console.log('Skip clicked - closing onboarding');
     skipOnboarding();
   };
 
   return (
-    <div className="p-6 pointer-events-auto">
+    <div className="p-6" style={{ pointerEvents: 'auto' }}>
       {/* Header with close button */}
       <div className="flex justify-between items-start mb-6">
         <div>
@@ -39,7 +33,8 @@ export const WelcomeStep: React.FC = () => {
         </div>
         <button
           onClick={handleSkip}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors pointer-events-auto"
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+          style={{ pointerEvents: 'auto' }}
           type="button"
         >
           <X className="w-5 h-5 text-gray-500" />
@@ -54,7 +49,7 @@ export const WelcomeStep: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Find Help Card */}
-          <div className="border-2 border-gray-200 rounded-lg p-6 hover:border-blue-500 hover:shadow-lg transition-all">
+          <div className="border-2 border-gray-200 rounded-lg p-6 hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -66,7 +61,8 @@ export const WelcomeStep: React.FC = () => {
             </p>
             <button
               onClick={handleFindHelp}
-              className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors pointer-events-auto"
+              className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+              style={{ pointerEvents: 'auto' }}
               type="button"
             >
               Find Services
@@ -74,7 +70,7 @@ export const WelcomeStep: React.FC = () => {
           </div>
 
           {/* Offer Services Card */}
-          <div className="border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 hover:shadow-lg transition-all">
+          <div className="border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -86,7 +82,8 @@ export const WelcomeStep: React.FC = () => {
             </p>
             <button
               onClick={handleOfferServices}
-              className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors pointer-events-auto"
+              className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+              style={{ pointerEvents: 'auto' }}
               type="button"
             >
               Start Offering
@@ -99,7 +96,8 @@ export const WelcomeStep: React.FC = () => {
       <div className="text-center">
         <button
           onClick={handleSkip}
-          className="text-gray-500 hover:text-gray-700 px-4 py-2 rounded transition-colors pointer-events-auto"
+          className="text-gray-500 hover:text-gray-700 px-4 py-2 rounded transition-colors cursor-pointer"
+          style={{ pointerEvents: 'auto' }}
           type="button"
         >
           Skip for now

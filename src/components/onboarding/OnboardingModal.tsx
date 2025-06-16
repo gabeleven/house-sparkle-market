@@ -62,9 +62,23 @@ export const OnboardingModal: React.FC = () => {
 
   console.log('OnboardingModal: rendering modal');
 
+  // Fixed modal with proper z-index and pointer events
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[9999]">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl z-[10000] pointer-events-auto">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      style={{ 
+        background: 'rgba(0, 0, 0, 0.8)',
+        pointerEvents: 'auto'
+      }}
+    >
+      <div 
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl"
+        style={{ 
+          pointerEvents: 'auto',
+          zIndex: 10000
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {renderStep()}
       </div>
     </div>
