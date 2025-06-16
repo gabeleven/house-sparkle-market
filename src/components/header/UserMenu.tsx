@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -174,8 +175,12 @@ const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-80 bg-card border border-border shadow-xl z-50"
+        className="w-80 bg-card border border-border shadow-xl z-50 animate-none data-[state=open]:animate-none data-[state=closed]:animate-none data-[side=bottom]:animate-none data-[side=left]:animate-none data-[side=right]:animate-none data-[side=top]:animate-none"
         sideOffset={8}
+        style={{
+          animationDuration: '0s',
+          animationDelay: '0s'
+        }}
       >
         {/* User Info Header */}
         <div className="p-4 border-b border-border">
