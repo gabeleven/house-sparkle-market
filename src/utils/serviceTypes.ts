@@ -123,7 +123,7 @@ export const serviceTypeIcons: Record<ServiceType, React.ComponentType<any>> = {
 };
 
 export const servicesByCategory: Record<ServiceCategory, ServiceType[]> = {
-  cleaning: ['residential_cleaning', 'commercial_cleaning', 'window_washing', 'light_housekeeping'],
+  cleaning: ['residential_cleaning', 'commercial_cleaning', 'window_washing', 'light_housekeeping', 'ironing', 'deep_cleaning', 'end_of_lease_cleaning', 'chalet_airbnb_cleaning'],
   lawn_snow: ['lawn_mowing', 'snow_removal', 'landscaping', 'yard_cleanup'],
   construction: ['handyman_services', 'home_repairs', 'renovations', 'electrical_work'],
   wellness: ['massage_therapy', 'personal_training', 'physiotherapy', 'chiropractic'],
