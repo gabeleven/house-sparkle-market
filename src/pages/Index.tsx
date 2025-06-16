@@ -5,6 +5,7 @@ import TestimonialSection from "@/components/TestimonialSection";
 import TaxComplianceSection from "@/components/TaxComplianceSection";
 import ComingSoonSection from "@/components/ComingSoonSection";
 import ServiceProviderCTA from "@/components/ServiceProviderCTA";
+import { OnboardingModal } from "@/components/onboarding/OnboardingModal";
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
       <TaxComplianceSection />
       <ComingSoonSection />
       <ServiceProviderCTA />
+      <OnboardingModal />
     </div>
   );
 };
