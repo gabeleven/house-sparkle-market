@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin } from 'lucide-react';
-import { EnhancedLocationSearch } from './EnhancedLocationSearch';
 import { HierarchicalServiceFilters } from './HierarchicalServiceFilters';
 import { ServiceType } from '@/utils/serviceTypes';
 
@@ -28,15 +27,6 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   hasLocation,
   onRequestLocation,
 }) => {
-  const handleLocationSelect = (result: { address: string; latitude: number; longitude: number } | null) => {
-    if (result) {
-      console.log('Enhanced location search result:', result);
-      onLocationChange(result.address);
-    } else {
-      onLocationChange('');
-    }
-  };
-
   const handleSearch = () => {
     console.log('Search triggered with:', {
       searchTerm,

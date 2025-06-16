@@ -30,6 +30,8 @@ const CANADA_CENTER = {
 };
 
 const BrowseProviders = () => {
+  console.log('BrowseProviders component rendering');
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
@@ -42,6 +44,7 @@ const BrowseProviders = () => {
 
   // Auto-request location on mount
   useEffect(() => {
+    console.log('BrowseProviders: Auto-requesting location');
     if (!userLocation && !locationLoading) {
       requestUserLocation();
     }
@@ -59,30 +62,38 @@ const BrowseProviders = () => {
     radiusKm
   });
 
+  console.log('BrowseProviders: providers count:', providers?.length || 0);
+
   // Show error toast if there's an error
   useEffect(() => {
     if (error) {
+      console.error('BrowseProviders error:', error);
       toast.error(`Error loading service providers: ${error.message}`);
     }
   }, [error]);
 
   const handleRequestLocation = () => {
+    console.log('BrowseProviders: Requesting location');
     requestUserLocation();
   };
 
   const handleServiceFilter = (services: ServiceType[]) => {
+    console.log('BrowseProviders: Service filter changed:', services);
     setServiceFilters(services);
   };
 
   const handleToggleMap = () => {
+    console.log('BrowseProviders: Toggling map view');
     setShowMap(!showMap);
   };
 
   const handleProviderSelect = (provider: ProviderProfile) => {
+    console.log('BrowseProviders: Provider selected:', provider);
     setSelectedProvider(provider);
   };
 
   const handleCloseInfoWindow = () => {
+    console.log('BrowseProviders: Closing info window');
     setSelectedProvider(null);
   };
 
@@ -93,6 +104,14 @@ const BrowseProviders = () => {
   } : CANADA_CENTER;
 
   const mapZoom = userLocation ? 11 : 4;
+
+  console.log('BrowseProviders: Rendering with state:', {
+    isLoading,
+    providersCount: providers?.length || 0,
+    showMap,
+    userLocation: !!userLocation,
+    error: !!error
+  });
 
   if (isLoading && !providers.length) {
     return (
@@ -262,75 +281,6 @@ const BrowseProviders = () => {
                     <span className="font-medium">{radiusKm} km</span>
                     <span>100 km</span>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* Compact Map Preview */}
-            {providers.length > 0 && userLocation && (
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-medium">Service Area</h3>
-                  <Button
-                    onClick={handleToggleMap}
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    <Map className="w-3 h-3 mr-1" />
-                    Full Map
-                  </Button>
-                </div>
-                <div className="h-48 rounded-lg overflow-hidden border bg-gray-50">
-                  <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
-                    <GoogleMap
-                      mapContainerStyle={{ width: '100%', height: '100%' }}
-                      center={mapCenter}
-                      zoom={mapZoom}
-                      options={{
-                        disableDefaultUI: true,
-                        zoomControl: false,
-                        mapTypeControl: false,
-                        scaleControl: false,
-                        streetViewControl: false,
-                        rotateControl: false,
-                        fullscreenControl: false
-                      }}
-                    >
-                      {userLocation && (
-                        <Marker
-                          position={{ lat: userLocation.latitude, lng: userLocation.longitude }}
-                          icon={{
-                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="8" cy="8" r="6" fill="#3B82F6" stroke="#FFFFFF" stroke-width="2"/>
-                                <circle cx="8" cy="8" r="2" fill="#FFFFFF"/>
-                              </svg>
-                            `),
-                            scaledSize: new window.google.maps.Size(16, 16)
-                          }}
-                        />
-                      )}
-                      {providers.slice(0, 10).map((provider) => {
-                        if (!provider.latitude || !provider.longitude) return null;
-                        return (
-                          <Marker
-                            key={provider.id}
-                            position={{ lat: Number(provider.latitude), lng: Number(provider.longitude) }}
-                            icon={{
-                              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M10 1C6.7 1 4 3.7 4 7C4 11 10 19 10 19C10 19 16 11 16 7C16 3.7 13.3 1 10 1Z" fill="#7C3AED" stroke="#FFFFFF" stroke-width="1"/>
-                                  <circle cx="10" cy="7" r="2" fill="#FFFFFF"/>
-                                </svg>
-                              `),
-                              scaledSize: new window.google.maps.Size(20, 20)
-                            }}
-                          />
-                        );
-                      })}
-                    </GoogleMap>
-                  </LoadScript>
                 </div>
               </div>
             )}
