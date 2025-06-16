@@ -50,6 +50,7 @@ const BrowseProviders = () => {
     }
   }, [requestUserLocation, userLocation, locationLoading]);
 
+  // When serviceFilters is empty, show all providers (don't filter by service)
   const { 
     providers, 
     isLoading, 
@@ -58,11 +59,12 @@ const BrowseProviders = () => {
     userLocation, 
     searchTerm, 
     locationFilter, 
-    serviceFilters,
+    serviceFilters: serviceFilters.length === 0 ? [] : serviceFilters, // Empty array means show all
     radiusKm
   });
 
   console.log('BrowseProviders: providers count:', providers?.length || 0);
+  console.log('BrowseProviders: serviceFilters:', serviceFilters);
 
   // Show error toast if there's an error
   useEffect(() => {
@@ -110,7 +112,8 @@ const BrowseProviders = () => {
     providersCount: providers?.length || 0,
     showMap,
     userLocation: !!userLocation,
-    error: !!error
+    error: !!error,
+    serviceFiltersCount: serviceFilters.length
   });
 
   if (isLoading && !providers.length) {
@@ -227,7 +230,10 @@ const BrowseProviders = () => {
                 Find Service Providers Across Canada
               </h1>
               <p className="text-muted-foreground">
-                Search for professional service providers in your area using postal codes, cities, or neighborhoods.
+                {serviceFilters.length === 0 
+                  ? "Showing all service providers. Select categories above to filter."
+                  : `Filtered by ${serviceFilters.length} service category${serviceFilters.length !== 1 ? 'ies' : 'y'}.`
+                }
               </p>
             </div>
             

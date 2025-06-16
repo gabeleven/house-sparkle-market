@@ -32,6 +32,10 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
     onServiceChange(updated);
   };
 
+  const handleSelectAll = () => {
+    onServiceChange([]);
+  };
+
   const toggleCategory = (category: ServiceCategory) => {
     const newExpanded = new Set(expandedCategories);
     if (newExpanded.has(category)) {
@@ -51,6 +55,8 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
     onServiceChange([]);
   };
 
+  const isAllSelected = selectedServices.length === 0;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -66,6 +72,24 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
               Clear All ({selectedServices.length})
             </Button>
           )}
+        </div>
+      </div>
+
+      {/* Add "All Services" option */}
+      <div className="mb-4">
+        <div className="flex items-center space-x-3">
+          <Checkbox
+            id="all-services"
+            checked={isAllSelected}
+            onCheckedChange={handleSelectAll}
+            className="h-4 w-4"
+          />
+          <Label
+            htmlFor="all-services"
+            className="text-sm font-medium cursor-pointer"
+          >
+            All Services (Show all providers)
+          </Label>
         </div>
       </div>
 

@@ -126,23 +126,24 @@ export const ProviderCardWithSubscription: React.FC<ProviderCardWithSubscription
                 showIcons={showServiceIcons} 
               />
 
+              {/* Compact buttons that fit better */}
               <div className="flex gap-2 mt-4">
                 <Button
                   variant="outline"
-                  size={compact ? "sm" : "default"}
+                  size="sm"
                   onClick={handleViewProfile}
-                  className="flex-1"
+                  className="text-xs px-3 py-1.5 h-7"
                 >
-                  <Eye className="w-4 h-4 mr-2" />
-                  View Profile
+                  <Eye className="w-3 h-3 mr-1" />
+                  View
                 </Button>
                 <Button
-                  size={compact ? "sm" : "default"}
+                  size="sm"
                   onClick={handleBookService}
-                  className="flex-1"
+                  className="text-xs px-3 py-1.5 h-7"
                 >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Book Now
+                  <Calendar className="w-3 h-3 mr-1" />
+                  Book
                 </Button>
               </div>
             </div>
