@@ -46,12 +46,8 @@ const Header = () => {
     <header className="bg-black shadow-lg border-b border-gray-800 sticky top-0 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo with App Icon */}
-          <div className="flex items-center space-x-3 flex-shrink-0 mr-8">
-            {/* App Icon with Shadow */}
-            <div className="w-10 h-10 bg-gradient-to-br from-[#d50067] to-[#0067bd] rounded-lg flex items-center justify-center shadow-lg app-icon-shadow">
-              <span className="text-white font-bold text-lg">H</span>
-            </div>
+          {/* Logo */}
+          <div className="flex items-center flex-shrink-0 mr-8">
             <HeaderLogo />
           </div>
 
