@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Clean up any existing auth state before sign up
     cleanupAuthState();
     
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/my-profile`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       toast({
         title: "Inscription réussie !",
-        description: "Veuillez vérifier votre email pour activer votre compte."
+        description: "Votre compte a été créé avec succès."
       });
     }
 
@@ -164,10 +164,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } else {
       console.log('Sign in successful');
-      // Force page reload for clean state
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 100);
     }
 
     return { error };
@@ -195,11 +191,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       // Force page reload for clean state
-      window.location.href = '/auth';
+      window.location.href = '/';
     } catch (error) {
       console.error('Sign out failed:', error);
       // Force page reload even if sign out fails
-      window.location.href = '/auth';
+      window.location.href = '/';
     }
   };
 

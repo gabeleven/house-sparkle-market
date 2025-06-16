@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -30,9 +29,6 @@ const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
       <div className="flex items-center space-x-4">
         <Link to="/auth">
           <Button variant="ghost" className="text-sm">Connexion</Button>
-        </Link>
-        <Link to="/auth?tab=signup">
-          <Button className="pop-orange-btn text-sm">S'inscrire</Button>
         </Link>
       </div>
     );

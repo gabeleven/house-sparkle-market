@@ -3,16 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
-import SignupForm from '@/components/auth/SignupForm';
 
 const Auth = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState('login');
-  const [currentView, setCurrentView] = useState('login');
   const userType = searchParams.get('type') || 'customer';
 
   useEffect(() => {
@@ -21,15 +17,6 @@ const Auth = () => {
       navigate('/');
     }
   }, [user, loading, navigate]);
-
-  useEffect(() => {
-    // Check URL params for tab switching
-    const tab = searchParams.get('tab');
-    if (tab === 'signup') {
-      setActiveTab('signup');
-      setCurrentView('signup');
-    }
-  }, [searchParams]);
 
   if (loading) {
     return (
@@ -43,18 +30,9 @@ const Auth = () => {
     return null; // Will redirect via useEffect
   }
 
-  const handleSwitchToSignup = () => {
-    setCurrentView('signup');
-    setActiveTab('signup');
-  };
-
-  const handleSwitchToLogin = () => {
-    setCurrentView('login');
-    setActiveTab('login');
-  };
-
   const handleSwitchToForgot = () => {
-    setCurrentView('forgot');
+    // Add forgot password logic here if needed
+    console.log('Forgot password clicked');
   };
 
   return (
@@ -65,39 +43,29 @@ const Auth = () => {
             Bienvenue sur HOUSIE
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Connectez-vous ou créez un compte pour commencer
+            Connectez-vous à votre compte existant
+          </p>
+          <p className="mt-4 text-sm text-primary">
+            Nouveau sur HOUSIE ? <a href="/" className="underline hover:text-primary/80">Visitez notre page d'accueil</a> pour commencer.
           </p>
         </div>
 
         <Card className="pop-card bg-card/80 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-center">Authentification</CardTitle>
+            <CardTitle className="text-center">Connexion</CardTitle>
             <CardDescription className="text-center">
-              Accédez à votre compte ou inscrivez-vous
+              Accédez à votre compte HOUSIE
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="signup">S'inscrire</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login" className="mt-6">
-                <LoginForm 
-                  userType={userType}
-                  onSwitchToSignup={handleSwitchToSignup}
-                  onSwitchToForgot={handleSwitchToForgot}
-                />
-              </TabsContent>
-              
-              <TabsContent value="signup" className="mt-6">
-                <SignupForm 
-                  userType={userType}
-                  onSwitchToLogin={handleSwitchToLogin}
-                />
-              </TabsContent>
-            </Tabs>
+            <LoginForm 
+              userType={userType}
+              onSwitchToSignup={() => {
+                // Redirect to homepage instead of signup
+                navigate('/');
+              }}
+              onSwitchToForgot={handleSwitchToForgot}
+            />
           </CardContent>
         </Card>
       </div>

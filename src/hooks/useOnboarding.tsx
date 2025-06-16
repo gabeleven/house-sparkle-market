@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 export type UserIntent = 'find_help' | 'offer_services' | null;
 export type OnboardingStep = 
@@ -15,28 +16,35 @@ export type OnboardingStep =
   | 'pro_preview';
 
 export const useOnboarding = () => {
+  const { user } = useAuth();
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [userIntent, setUserIntent] = useState<UserIntent>(null);
   const [onboardingData, setOnboardingData] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    console.log('useOnboarding: initializing');
+    console.log('useOnboarding: initializing', { user });
     
     // Check if user has seen onboarding before
     const hasSeenOnboarding = localStorage.getItem('housie_onboarding_completed');
-    console.log('Onboarding check:', { hasSeenOnboarding });
     
     // Check for force parameter
     const urlParams = new URLSearchParams(window.location.search);
     const forceOnboarding = urlParams.get('forceOnboarding');
     
-    if (forceOnboarding === 'true' || !hasSeenOnboarding) {
-      console.log('Opening onboarding modal');
+    // Show onboarding for new visitors (no user AND no completed onboarding)
+    // OR if force parameter is set
+    if (forceOnboarding === 'true' || (!user && !hasSeenOnboarding)) {
+      console.log('Opening onboarding modal for new visitor');
+      setIsOnboardingOpen(true);
+      setCurrentStep('welcome');
+    } else if (user && !hasSeenOnboarding) {
+      // If user just signed up but hasn't completed onboarding, show it
+      console.log('User exists but onboarding not completed, showing onboarding');
       setIsOnboardingOpen(true);
       setCurrentStep('welcome');
     } else {
-      console.log('User has already completed onboarding');
+      console.log('User has already completed onboarding or is existing user');
     }
 
     // Add global functions for testing
@@ -54,7 +62,7 @@ export const useOnboarding = () => {
       setIsOnboardingOpen(true);
       setCurrentStep('welcome');
     };
-  }, []);
+  }, [user]);
 
   const updateOnboardingData = (key: string, value: any) => {
     console.log('Updating onboarding data:', key, value);
@@ -73,11 +81,18 @@ export const useOnboarding = () => {
     setCurrentStep('welcome');
     setUserIntent(null);
     setOnboardingData({});
+    
+    // Redirect to profile page after completion
+    window.location.href = '/my-profile';
   };
 
   const skipOnboarding = () => {
     console.log('Skipping onboarding');
-    completeOnboarding();
+    localStorage.setItem('housie_onboarding_completed', 'true');
+    setIsOnboardingOpen(false);
+    setCurrentStep('welcome');
+    setUserIntent(null);
+    setOnboardingData({});
   };
 
   const resetOnboarding = () => {

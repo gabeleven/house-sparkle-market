@@ -32,13 +32,8 @@ const LoginForm = ({ userType, onSwitchToSignup, onSwitchToForgot, onSuccess }: 
       if (onSuccess) {
         onSuccess();
       } else {
-        // Default redirect behavior with auto-map for customers
-        if (userType === 'cleaner') {
-          navigate('/cleaner/onboarding');
-        } else {
-          // Redirect customers to browse-cleaners with auto-map enabled
-          navigate('/browse-cleaners?autoMap=true');
-        }
+        // Default redirect behavior
+        navigate('/my-profile');
       }
     }
 
@@ -102,7 +97,7 @@ const LoginForm = ({ userType, onSwitchToSignup, onSwitchToForgot, onSuccess }: 
           className="p-0"
           onClick={onSwitchToSignup}
         >
-          S'inscrire
+          Commencer avec HOUSIE
         </Button>
       </div>
     </form>
