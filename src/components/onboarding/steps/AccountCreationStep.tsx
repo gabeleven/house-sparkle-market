@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const AccountCreationStep: React.FC = () => {
-  const { updateOnboardingData, completeOnboarding, userIntent, onboardingData } = useOnboarding();
+  const { completeOnboarding, userIntent, onboardingData } = useOnboarding();
   const { signUp } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -24,13 +24,73 @@ export const AccountCreationStep: React.FC = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const createUserProfiles = async (userId: string) => {
+    console.log('Creating user profiles for:', userId, 'intent:', userIntent);
+    
+    try {
+      // Create base profile first
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          email: formData.email,
+          full_name: formData.name,
+          user_role: userIntent === 'find_help' ? 'customer' : 'cleaner'
+        });
+
+      if (profileError) {
+        console.error('Error creating base profile:', profileError);
+        throw profileError;
+      }
+
+      // Create role-specific profile
+      if (userIntent === 'find_help') {
+        // Create customer profile
+        const { error: customerError } = await supabase
+          .from('customer_profiles')
+          .insert({
+            id: userId,
+            service_location_address: onboardingData.location || '',
+            preferred_contact_method: 'email',
+            looking_for_cleaning: true
+          });
+          
+        if (customerError) {
+          console.error('Error creating customer profile:', customerError);
+          throw customerError;
+        }
+      } else {
+        // Create provider profile
+        const { error: providerError } = await supabase
+          .from('providers')
+          .insert({
+            user_id: userId,
+            business_name: formData.name,
+            bio: onboardingData.description || '',
+            service_radius_km: 25,
+            is_profile_complete: false
+          });
+          
+        if (providerError) {
+          console.error('Error creating provider profile:', providerError);
+          throw providerError;
+        }
+      }
+      
+      console.log('All profiles created successfully');
+    } catch (error) {
+      console.error('Profile creation failed:', error);
+      throw error;
+    }
+  };
+
   const handleNext = async () => {
     if (!isFormValid) return;
     
     setIsLoading(true);
     
     try {
-      console.log('Starting account creation process', { userIntent, onboardingData });
+      console.log('Starting account creation process');
       
       // Create account with Supabase
       const userData = {
@@ -42,68 +102,44 @@ export const AccountCreationStep: React.FC = () => {
       const { error: signUpError } = await signUp(formData.email, formData.password, userData);
       
       if (signUpError) {
-        toast({
-          title: "Erreur lors de la création du compte",
-          description: signUpError.message,
-          variant: "destructive"
+        throw signUpError;
+      }
+      
+      // Wait for auth state to update
+      let attempts = 0;
+      const maxAttempts = 10;
+      
+      const waitForUser = async (): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const checkUser = async () => {
+            attempts++;
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+              resolve(user.id);
+            } else if (attempts < maxAttempts) {
+              setTimeout(checkUser, 500);
+            } else {
+              reject(new Error('Timeout waiting for user creation'));
+            }
+          };
+          checkUser();
         });
-        setIsLoading(false);
-        return;
-      }
+      };
       
-      // Get the newly created user
-      const { data: { user } } = await supabase.auth.getUser();
+      const userId = await waitForUser();
+      console.log('User created with ID:', userId);
       
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Impossible de récupérer les informations utilisateur",
-          variant: "destructive"
-        });
-        setIsLoading(false);
-        return;
-      }
-      
-      console.log('User created successfully:', user.id);
-      
-      // Create profile based on user intent
-      if (userIntent === 'find_help') {
-        // Create customer profile
-        const { error: customerError } = await supabase
-          .from('customer_profiles')
-          .insert({
-            id: user.id,
-            service_location_address: onboardingData.location || '',
-            preferred_contact_method: 'email',
-            looking_for_cleaning: true
-          });
-          
-        if (customerError) {
-          console.error('Error creating customer profile:', customerError);
-        }
-      } else {
-        // Create provider profile
-        const { error: providerError } = await supabase
-          .from('providers')
-          .insert({
-            user_id: user.id,
-            business_name: formData.name,
-            bio: onboardingData.description || '',
-            service_radius_km: 25,
-            is_profile_complete: false
-          });
-          
-        if (providerError) {
-          console.error('Error creating provider profile:', providerError);
-        }
-      }
+      // Create profiles
+      await createUserProfiles(userId);
       
       toast({
         title: "Compte créé avec succès !",
-        description: "Votre profil a été configuré. Redirection vers votre profil..."
+        description: "Redirection vers votre profil...",
+        duration: 3000
       });
       
-      // Complete onboarding and redirect
+      // Complete onboarding
       setTimeout(() => {
         completeOnboarding();
       }, 2000);

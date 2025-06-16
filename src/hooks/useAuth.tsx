@@ -16,28 +16,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced auth state cleanup utility
+// Simplified auth state cleanup utility
 const cleanupAuthState = () => {
   console.log('Cleaning up auth state...');
   
-  // Remove standard auth tokens
-  localStorage.removeItem('supabase.auth.token');
-  
-  // Remove all Supabase auth keys from localStorage
+  // Only remove specific auth tokens, not all storage
   Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+    if (key.startsWith('supabase.auth.') && key.includes('token')) {
       localStorage.removeItem(key);
     }
   });
-  
-  // Remove from sessionStorage if in use
-  if (typeof sessionStorage !== 'undefined') {
-    Object.keys(sessionStorage || {}).forEach((key) => {
-      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-        sessionStorage.removeItem(key);
-      }
-    });
-  }
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -48,18 +36,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const authSubscriptionRef = useRef<any>(null);
   const isInitializedRef = useRef(false);
 
-  // Validate session before operations
-  const validateSession = async () => {
-    try {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      console.log('Session validation result:', currentSession?.user?.id || 'no session');
-      return currentSession;
-    } catch (error) {
-      console.error('Session validation failed:', error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     // Prevent duplicate initialization
     if (isInitializedRef.current) return;
@@ -67,23 +43,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     console.log('Initializing auth provider...');
 
-    // Set up auth state listener with proper cleanup
+    // Set up auth state listener
     authSubscriptionRef.current = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id || 'no user');
         
-        // Only update state for actual auth events
-        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-          setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
-          
-          // Log current auth state for debugging
-          if (session?.user) {
-            console.log('User authenticated:', session.user.email, 'ID:', session.user.id);
-          } else {
-            console.log('User signed out or no session');
-          }
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+        
+        // Handle successful signup
+        if (event === 'SIGNED_IN' && session?.user) {
+          console.log('User signed in successfully:', session.user.email);
         }
       }
     );
@@ -106,10 +77,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, userData: any) => {
-    // Clean up any existing auth state before sign up
-    cleanupAuthState();
-    
     const redirectUrl = `${window.location.origin}/my-profile`;
+    
+    console.log('Starting signup process with userData:', userData);
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -121,12 +91,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (error) {
+      console.error('Signup error:', error);
       toast({
         title: "Erreur d'inscription",
         description: error.message,
         variant: "destructive"
       });
     } else {
+      console.log('Signup successful, user will be created');
       toast({
         title: "Inscription réussie !",
         description: "Votre compte a été créé avec succès."
@@ -137,26 +109,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
-    // Clean up existing state before sign in
-    cleanupAuthState();
-    
-    // Attempt global sign out to clear any existing sessions
-    try {
-      await supabase.auth.signOut({ scope: 'global' });
-    } catch (err) {
-      // Continue even if this fails
-      console.log('Global sign out failed, continuing with sign in:', err);
-    }
-    
-    // Validate session before sign in
-    await validateSession();
-    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
     if (error) {
+      console.error('Sign in error:', error);
       toast({
         title: "Erreur de connexion",
         description: error.message,
@@ -173,11 +132,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log('Signing out user...');
     
     try {
-      // Clean up auth state first
-      cleanupAuthState();
-      
-      // Attempt global sign out
-      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error('Sign out error:', error);
@@ -188,13 +143,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } else {
         console.log('Sign out successful');
+        // Clean up after successful signout
+        cleanupAuthState();
       }
       
-      // Force page reload for clean state
+      // Always redirect to home after signout attempt
       window.location.href = '/';
     } catch (error) {
       console.error('Sign out failed:', error);
-      // Force page reload even if sign out fails
+      // Force cleanup and redirect even if signout fails
+      cleanupAuthState();
       window.location.href = '/';
     }
   };

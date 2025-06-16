@@ -25,29 +25,30 @@ export const useOnboarding = () => {
   useEffect(() => {
     console.log('useOnboarding: initializing', { user });
     
-    // Check if user has seen onboarding before
-    const hasSeenOnboarding = localStorage.getItem('housie_onboarding_completed');
+    // Check if user has completed onboarding
+    const hasCompletedOnboarding = localStorage.getItem('housie_onboarding_completed');
     
     // Check for force parameter
     const urlParams = new URLSearchParams(window.location.search);
     const forceOnboarding = urlParams.get('forceOnboarding');
     
-    // Show onboarding for new visitors (no user AND no completed onboarding)
-    // OR if force parameter is set
-    if (forceOnboarding === 'true' || (!user && !hasSeenOnboarding)) {
-      console.log('Opening onboarding modal for new visitor');
+    // Determine if onboarding should be shown
+    const shouldShowOnboarding = forceOnboarding === 'true' || (!user && !hasCompletedOnboarding);
+    
+    console.log('Onboarding decision:', {
+      forceOnboarding,
+      hasUser: !!user,
+      hasCompletedOnboarding: !!hasCompletedOnboarding,
+      shouldShowOnboarding
+    });
+    
+    if (shouldShowOnboarding) {
+      console.log('Opening onboarding modal');
       setIsOnboardingOpen(true);
       setCurrentStep('welcome');
-    } else if (user && !hasSeenOnboarding) {
-      // If user just signed up but hasn't completed onboarding, show it
-      console.log('User exists but onboarding not completed, showing onboarding');
-      setIsOnboardingOpen(true);
-      setCurrentStep('welcome');
-    } else {
-      console.log('User has already completed onboarding or is existing user');
     }
 
-    // Add global functions for testing
+    // Global testing functions
     (window as any).resetOnboarding = () => {
       console.log('Resetting onboarding via global function');
       localStorage.removeItem('housie_onboarding_completed');
@@ -83,7 +84,9 @@ export const useOnboarding = () => {
     setOnboardingData({});
     
     // Redirect to profile page after completion
-    window.location.href = '/my-profile';
+    setTimeout(() => {
+      window.location.href = '/my-profile';
+    }, 1000);
   };
 
   const skipOnboarding = () => {

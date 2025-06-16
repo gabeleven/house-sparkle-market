@@ -26,27 +26,38 @@ const MyProfile = () => {
   const [switcherLoading, setSwitcherLoading] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [profileComplete, setProfileComplete] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
   const { reviews } = useReviews({ cleanerId: user?.id });
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/auth');
+      console.log('No user found, redirecting to home');
+      navigate('/');
     }
   }, [user, loading, navigate]);
 
   useEffect(() => {
     const checkUserProfile = async () => {
       if (!user) return;
+      
+      setProfileLoading(true);
+      console.log('Checking user profile for:', user.id);
 
       try {
         // Get user role from profiles table
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('user_role')
+          .select('user_role, full_name, email')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          return;
+        }
 
         if (profile) {
+          console.log('Profile found:', profile);
           setUserRole(profile.user_role);
           setCurrentMode(profile.user_role === 'cleaner' ? 'cleaner' : 'customer');
           
@@ -56,7 +67,7 @@ const MyProfile = () => {
               .from('providers')
               .select('is_profile_complete')
               .eq('user_id', user.id)
-              .single();
+              .maybeSingle();
               
             setProfileComplete(providerProfile?.is_profile_complete || false);
           } else {
@@ -65,22 +76,30 @@ const MyProfile = () => {
               .from('customer_profiles')
               .select('*')
               .eq('id', user.id)
-              .single();
+              .maybeSingle();
               
             setProfileComplete(!!customerProfile);
           }
+        } else {
+          console.log('No profile found for user');
+          // If no profile exists, this might be a newly created user
+          // The profile should have been created during onboarding
+          setUserRole('customer'); // Default fallback
+          setProfileComplete(false);
         }
       } catch (error) {
         console.error('Error checking user profile:', error);
+      } finally {
+        setProfileLoading(false);
       }
     };
 
-    if (user) {
+    if (user && !loading) {
       checkUserProfile();
     }
-  }, [user]);
+  }, [user, loading]);
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div>Loading...</div>
