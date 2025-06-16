@@ -20,7 +20,7 @@ export interface ChatMessage {
 export interface Conversation {
   id: string;
   customer_id: string;
-  provider_id: string;
+  cleaner_id: string; // Using actual database column name
   created_at: string;
   last_message_at: string;
   other_user_id: string;
@@ -63,9 +63,9 @@ export const useChat = () => {
       .select(`
         *,
         customer:profiles!conversations_customer_id_fkey(id, full_name, profile_photo_url),
-        provider:profiles!conversations_provider_id_fkey(id, full_name, profile_photo_url)
+        cleaner:profiles!conversations_cleaner_id_fkey(id, full_name, profile_photo_url)
       `)
-      .or(`customer_id.eq.${user.id},provider_id.eq.${user.id}`)
+      .or(`customer_id.eq.${user.id},cleaner_id.eq.${user.id}`)
       .order('last_message_at', { ascending: false });
 
     if (error) {
@@ -79,8 +79,8 @@ export const useChat = () => {
         
         // Handle both single object and array cases
         const customer = Array.isArray(conv.customer) ? conv.customer[0] : conv.customer;
-        const provider = Array.isArray(conv.provider) ? conv.provider[0] : conv.provider;
-        const otherUser = isCustomer ? provider : customer;
+        const cleaner = Array.isArray(conv.cleaner) ? conv.cleaner[0] : conv.cleaner;
+        const otherUser = isCustomer ? cleaner : customer;
 
         // Get unread count
         const { count } = await supabase
@@ -107,7 +107,7 @@ export const useChat = () => {
         return {
           id: conv.id,
           customer_id: conv.customer_id,
-          provider_id: conv.provider_id,
+          cleaner_id: conv.cleaner_id,
           created_at: conv.created_at,
           last_message_at: conv.last_message_at,
           other_user_id: otherUser?.id || '',
@@ -165,29 +165,29 @@ export const useChat = () => {
     await markMessagesAsRead(conversationId);
   }, [validateSession]);
 
-  // Create or get conversation
+  // Create or get conversation - using actual database column names
   const getOrCreateConversation = async (providerId: string, customerId: string) => {
     const validSession = await validateSession();
     if (!validSession) throw new Error('No valid session');
 
-    // Try to find existing conversation
+    // Try to find existing conversation using cleaner_id (actual database column)
     const { data: existing } = await supabase
       .from('conversations')
       .select('*')
       .eq('customer_id', customerId)
-      .eq('provider_id', providerId)
+      .eq('cleaner_id', providerId)
       .maybeSingle();
 
     if (existing) {
       return existing.id;
     }
 
-    // Create new conversation - use the column names that match the current schema
+    // Create new conversation using cleaner_id (actual database column)
     const { data: newConv, error } = await supabase
       .from('conversations')
       .insert({
         customer_id: customerId,
-        provider_id: providerId
+        cleaner_id: providerId
       })
       .select()
       .single();
