@@ -40,7 +40,12 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   };
 
   const handleSearch = () => {
-    // Search logic handled by parent component
+    console.log('Search triggered with:', {
+      searchTerm,
+      locationFilter,
+      serviceFilters
+    });
+    // The search is automatically triggered through the hooks when state changes
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -50,13 +55,29 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
     }
   };
 
+  const handleClearAll = () => {
+    onSearchChange('');
+    onLocationChange('');
+    onServiceFiltersChange([]);
+  };
+
   return (
     <div className="pop-card bg-card rounded-lg shadow-sm p-6 mb-8 border border-border ben-day-dots">
-      <h1 className="text-3xl font-bold text-foreground mb-6">Find Professional Service Providers Across Canada</h1>
-      
       {/* Service Categories Section */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-foreground mb-4">Service Categories</h2>
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-foreground">Service Categories</h2>
+          {(searchTerm || locationFilter || serviceFilters.length > 0) && (
+            <Button
+              onClick={handleClearAll}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Clear All
+            </Button>
+          )}
+        </div>
         <HierarchicalServiceFilters
           selectedServices={serviceFilters}
           onServiceChange={onServiceFiltersChange}
@@ -69,7 +90,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input
               type="text"
-              placeholder="Search by name, service, or description..."
+              placeholder="Search by business name, service type, or description..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               onKeyPress={handleKeyPress}
@@ -83,7 +104,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
             <EnhancedLocationSearch
               onLocationSelect={handleLocationSelect}
               onSearch={onLocationChange}
-              placeholder="Search city, province, postal code, or address..."
+              placeholder="Enter postal code, city, or address..."
               initialValue={locationFilter}
               onInputChange={onLocationChange}
             />
@@ -116,7 +137,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
               variant="outline"
               size="sm"
               onClick={onRequestLocation}
-              className="text-[hsl(var(--pop-blue))] border-[hsl(var(--pop-blue))] hover:bg-[hsl(var(--pop-blue)/0.1)]"
+              className="text-primary border-primary hover:bg-primary/10"
             >
               <MapPin className="w-4 h-4 mr-2" />
               Use My Location
@@ -124,25 +145,27 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
           )}
           
           {hasLocation && (
-            <span className="text-sm text-[hsl(var(--pop-blue))] font-medium">
+            <span className="text-sm text-primary font-medium">
               ✓ Using your location for better results across Canada
             </span>
-          )}
-
-          {!useEnhancedLocationSearch && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setUseEnhancedLocationSearch(true)}
-              className="text-sm"
-            >
-              Use Enhanced Search
-            </Button>
           )}
 
           {serviceFilters.length > 0 && (
             <span className="text-sm text-primary font-medium">
               {serviceFilters.length} service{serviceFilters.length !== 1 ? 's' : ''} selected
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+          {searchTerm && (
+            <span className="text-xs text-muted-foreground">
+              Searching: "{searchTerm}"
+            </span>
+          )}
+          {locationFilter && (
+            <span className="text-xs text-muted-foreground">
+              Near: {locationFilter}
             </span>
           )}
         </div>

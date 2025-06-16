@@ -2,8 +2,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { MapPin, Search, X } from 'lucide-react';
+import { MapPin, Search, X, Loader2 } from 'lucide-react';
 import { useUserLocation } from '@/hooks/useUserLocation';
+import { useCanadianGeocoding } from '@/hooks/useCanadianGeocoding';
 
 interface EnhancedLocationSearchProps {
   onLocationSelect: (location: { address: string; latitude: number; longitude: number } | null) => void;
@@ -23,9 +24,9 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
   const [searchQuery, setSearchQuery] = useState(initialValue);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   
   const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
+  const { geocodeAddress, isGeocoding, isGoogleMapsReady } = useCanadianGeocoding();
 
   const debounce = (func: Function, delay: number) => {
     let timeoutId: NodeJS.Timeout;
@@ -36,7 +37,7 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
   };
 
   const handleInputChange = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+    debounce(async (e: React.ChangeEvent<HTMLInputElement>) => {
       const query = e.target.value;
       setSearchQuery(query);
       setShowSuggestions(query.length > 0);
@@ -45,45 +46,67 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
         onInputChange(query);
       }
 
-      if (query.length > 0) {
-        setIsLoading(true);
+      if (query.length > 2) {
         try {
-          // Generate suggestions based on input
-          const mockSuggestions = [];
+          // Generate Canadian location suggestions
+          const canadianSuggestions = [];
           
-          // Check if it's a postal code pattern
-          if (/^[a-z]\d[a-z]/i.test(query)) {
-            mockSuggestions.push({ 
+          // Check if it's a postal code pattern (Canadian: A1A 1A1)
+          const postalCodePattern = /^[a-z]\d[a-z]/i;
+          if (postalCodePattern.test(query)) {
+            canadianSuggestions.push({ 
               description: `${query.toUpperCase()} - Postal Code Area`, 
-              formatted_address: query.toUpperCase() 
+              formatted_address: query.toUpperCase(),
+              type: 'postal_code'
             });
           }
           
-          // Add city suggestions
-          if (query.length >= 2) {
-            const cities = ['Montreal, QC', 'Toronto, ON', 'Vancouver, BC', 'Calgary, AB', 'Ottawa, ON'];
-            cities
-              .filter(city => city.toLowerCase().includes(query.toLowerCase()))
-              .forEach(city => {
-                mockSuggestions.push({ 
-                  description: city, 
-                  formatted_address: city 
-                });
-              });
-          }
+          // Add major Canadian cities that match
+          const majorCities = [
+            'Toronto, ON', 'Montreal, QC', 'Vancouver, BC', 'Calgary, AB', 
+            'Edmonton, AB', 'Ottawa, ON', 'Winnipeg, MB', 'Quebec City, QC',
+            'Hamilton, ON', 'Kitchener, ON', 'London, ON', 'Halifax, NS',
+            'Victoria, BC', 'Windsor, ON', 'Oshawa, ON', 'Saskatoon, SK',
+            'Regina, SK', 'St. John\'s, NL', 'Barrie, ON', 'Kelowna, BC'
+          ];
           
-          setSuggestions(mockSuggestions);
+          majorCities
+            .filter(city => city.toLowerCase().includes(query.toLowerCase()))
+            .forEach(city => {
+              canadianSuggestions.push({ 
+                description: city, 
+                formatted_address: city,
+                type: 'city'
+              });
+            });
+
+          // Add province suggestions
+          const provinces = [
+            'Ontario', 'Quebec', 'British Columbia', 'Alberta', 'Manitoba',
+            'Saskatchewan', 'Nova Scotia', 'New Brunswick', 'Newfoundland and Labrador',
+            'Prince Edward Island', 'Northwest Territories', 'Yukon', 'Nunavut'
+          ];
+          
+          provinces
+            .filter(province => province.toLowerCase().includes(query.toLowerCase()))
+            .forEach(province => {
+              canadianSuggestions.push({ 
+                description: province, 
+                formatted_address: province,
+                type: 'province'
+              });
+            });
+          
+          setSuggestions(canadianSuggestions.slice(0, 8)); // Limit to 8 suggestions
         } catch (error) {
           console.error('Error generating suggestions:', error);
           setSuggestions([]);
-        } finally {
-          setIsLoading(false);
         }
       } else {
         setSuggestions([]);
       }
     }, 300),
-    [onInputChange]
+    [onInputChange, isGoogleMapsReady]
   );
 
   const handleSuggestionSelect = useCallback(async (suggestion: any) => {
@@ -92,20 +115,22 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
     setSearchQuery(selectedText);
     setShowSuggestions(false);
     
-    // For postal codes and specific addresses, try to geocode
-    if (/^[a-z]\d[a-z]/i.test(selectedText)) {
-      // Mock geocoding for postal codes (you'd replace this with real geocoding)
-      const locationData = {
-        address: selectedText,
-        latitude: 45.5017 + Math.random() * 0.1, // Montreal area
-        longitude: -73.5673 + Math.random() * 0.1
-      };
-      onLocationSelect(locationData);
-    } else {
-      // For general searches, just pass the query to the search function
-      onSearch(selectedText);
+    // Try to geocode the selection if Google Maps is ready
+    if (isGoogleMapsReady) {
+      const geocodeResult = await geocodeAddress(selectedText);
+      if (geocodeResult) {
+        onLocationSelect({
+          address: geocodeResult.address,
+          latitude: geocodeResult.latitude,
+          longitude: geocodeResult.longitude
+        });
+        return;
+      }
     }
-  }, [onLocationSelect, onSearch]);
+    
+    // Fallback to just passing the search query
+    onSearch(selectedText);
+  }, [geocodeAddress, isGoogleMapsReady, onLocationSelect, onSearch]);
 
   const useCurrentLocation = useCallback(async () => {
     if (userLocation) {
@@ -120,10 +145,25 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
     }
   }, [userLocation, requestUserLocation, onLocationSelect]);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchQuery.trim()) {
-      onSearch(searchQuery);
       setShowSuggestions(false);
+      
+      // Try geocoding first if Google Maps is ready
+      if (isGoogleMapsReady && searchQuery !== 'Current Location') {
+        const geocodeResult = await geocodeAddress(searchQuery);
+        if (geocodeResult) {
+          onLocationSelect({
+            address: geocodeResult.address,
+            latitude: geocodeResult.latitude,
+            longitude: geocodeResult.longitude
+          });
+          return;
+        }
+      }
+      
+      // Fallback to text search
+      onSearch(searchQuery);
     }
   };
 
@@ -153,16 +193,23 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             placeholder={placeholder}
             className="pl-10 pr-10"
+            disabled={isGeocoding}
           />
-          {searchQuery && (
+          {searchQuery && !isGeocoding && (
             <button
               onClick={clearSearch}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <X className="w-4 h-4" />
             </button>
+          )}
+          {isGeocoding && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+            </div>
           )}
         </div>
         
@@ -188,12 +235,27 @@ export const EnhancedLocationSearch: React.FC<EnhancedLocationSearchProps> = ({
             >
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span className="text-sm text-gray-900 dark:text-gray-100">
-                  {suggestion.description || suggestion.formatted_address}
-                </span>
+                <div className="flex-1">
+                  <span className="text-sm text-gray-900 dark:text-gray-100">
+                    {suggestion.description || suggestion.formatted_address}
+                  </span>
+                  {suggestion.type && (
+                    <span className="text-xs text-gray-500 ml-2 capitalize">
+                      {suggestion.type.replace('_', ' ')}
+                    </span>
+                  )}
+                </div>
               </div>
             </button>
           ))}
+        </div>
+      )}
+
+      {!isGoogleMapsReady && (
+        <div className="absolute top-full left-0 right-0 mt-1">
+          <div className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+            Enhanced location features loading...
+          </div>
         </div>
       )}
     </div>
