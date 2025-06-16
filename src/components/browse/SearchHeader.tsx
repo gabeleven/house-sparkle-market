@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -27,8 +28,6 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
   hasLocation,
   onRequestLocation,
 }) => {
-  const [useEnhancedLocationSearch, setUseEnhancedLocationSearch] = useState(true);
-
   const handleLocationSelect = (result: { address: string; latitude: number; longitude: number } | null) => {
     if (result) {
       console.log('Enhanced location search result:', result);
@@ -99,13 +98,17 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
         </div>
         
         <div className="md:w-80">
-          <EnhancedLocationSearch
-            onLocationSelect={handleLocationSelect}
-            onSearch={onLocationChange}
-            placeholder="Enter postal code, city, or address..."
-            initialValue={locationFilter}
-            onInputChange={onLocationChange}
-          />
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Input
+              type="text"
+              placeholder="Enter postal code, city, or address..."
+              value={locationFilter}
+              onChange={(e) => onLocationChange(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         <Button onClick={handleSearch} className="search-btn-pop">

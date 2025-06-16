@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
+import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { useUnifiedProviders } from '@/hooks/useUnifiedProviders';
 import { ServiceType } from '@/utils/serviceTypes';
@@ -7,19 +9,33 @@ import { ServiceFilters } from '@/components/browse/ServiceFilters';
 import { ResultsContent } from '@/components/browse/ResultsContent';
 import { ResultsHeader } from '@/components/browse/ResultsHeader';
 import { LocationAuthPrompt } from '@/components/browse/LocationAuthPrompt';
-import { UnifiedGoogleMap } from '@/components/map/UnifiedGoogleMap';
+import { ProviderPopup } from '@/components/map/ProviderPopup';
 import { Button } from '@/components/ui/button';
 import { Map, List, X } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
+import { ProviderProfile } from '@/types/providers';
 
-const BrowseServices = () => {
+const GOOGLE_MAPS_API_KEY = "AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o";
+const LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
+
+const mapContainerStyle = {
+  width: '100%',
+  height: '100%'
+};
+
+const CANADA_CENTER = {
+  lat: 56.1304,
+  lng: -106.3468
+};
+
+const BrowseProviders = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [serviceFilters, setServiceFilters] = useState<ServiceType[]>([]);
   const [radiusKm, setRadiusKm] = useState(25);
   const [showMap, setShowMap] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState(null);
+  const [selectedProvider, setSelectedProvider] = useState<ProviderProfile | null>(null);
   
   const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
   const { currentTier: userSubscription } = useSubscription();
@@ -30,14 +46,6 @@ const BrowseServices = () => {
       requestUserLocation();
     }
   }, [requestUserLocation, userLocation, locationLoading]);
-
-  const handleRequestLocation = () => {
-    requestUserLocation();
-  };
-
-  const handleServiceFilter = (services: ServiceType[]) => {
-    setServiceFilters(services);
-  };
 
   const { 
     providers, 
@@ -58,25 +66,33 @@ const BrowseServices = () => {
     }
   }, [error]);
 
+  const handleRequestLocation = () => {
+    requestUserLocation();
+  };
+
+  const handleServiceFilter = (services: ServiceType[]) => {
+    setServiceFilters(services);
+  };
+
   const handleToggleMap = () => {
     setShowMap(!showMap);
   };
 
-  const handleProviderSelect = (provider: any) => {
+  const handleProviderSelect = (provider: ProviderProfile) => {
     setSelectedProvider(provider);
   };
 
-  const handleLocationSelect = (location: { address: string; latitude: number; longitude: number } | null) => {
-    if (location) {
-      setLocationFilter(location.address);
-      // Center map on new location if in map view
-      if (showMap) {
-        // The map will automatically recenter based on the location filter
-      }
-    } else {
-      setLocationFilter('');
-    }
+  const handleCloseInfoWindow = () => {
+    setSelectedProvider(null);
   };
+
+  // Calculate map center and zoom
+  const mapCenter = userLocation ? {
+    lat: userLocation.latitude,
+    lng: userLocation.longitude
+  } : CANADA_CENTER;
+
+  const mapZoom = userLocation ? 11 : 4;
 
   if (isLoading && !providers.length) {
     return (
@@ -104,16 +120,80 @@ const BrowseServices = () => {
             Close Map
           </Button>
         </div>
-        <UnifiedGoogleMap
-          providers={providers}
-          userLocation={userLocation}
-          radiusKm={radiusKm}
-          onProviderSelect={handleProviderSelect}
-          selectedProvider={selectedProvider}
-          onClose={() => setShowMap(false)}
-          className="h-full w-full"
-          isFullScreen={true}
-        />
+        <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={mapCenter}
+            zoom={mapZoom}
+            options={{
+              disableDefaultUI: false,
+              zoomControl: true,
+              mapTypeControl: false,
+              scaleControl: true,
+              streetViewControl: false,
+              rotateControl: false,
+              fullscreenControl: true
+            }}
+          >
+            {/* User location marker */}
+            {userLocation && (
+              <Marker
+                position={{ lat: userLocation.latitude, lng: userLocation.longitude }}
+                icon={{
+                  url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="8" fill="#3B82F6" stroke="#FFFFFF" stroke-width="2"/>
+                      <circle cx="12" cy="12" r="3" fill="#FFFFFF"/>
+                    </svg>
+                  `),
+                  scaledSize: new window.google.maps.Size(24, 24)
+                }}
+                title="Your Location"
+              />
+            )}
+
+            {/* Provider markers */}
+            {providers.map((provider) => {
+              if (!provider.latitude || !provider.longitude) return null;
+              
+              return (
+                <Marker
+                  key={provider.id}
+                  position={{ lat: Number(provider.latitude), lng: Number(provider.longitude) }}
+                  onClick={() => handleProviderSelect(provider)}
+                  icon={{
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2C11.6 2 8 5.6 8 10C8 16 16 30 16 30C16 30 24 16 24 10C24 5.6 20.4 2 16 2Z" fill="#7C3AED" stroke="#FFFFFF" stroke-width="2"/>
+                        <circle cx="16" cy="10" r="4" fill="#FFFFFF"/>
+                      </svg>
+                    `),
+                    scaledSize: new window.google.maps.Size(32, 32)
+                  }}
+                />
+              );
+            })}
+
+            {/* Info window for selected provider */}
+            {selectedProvider && selectedProvider.latitude && selectedProvider.longitude && (
+              <InfoWindow
+                position={{ lat: Number(selectedProvider.latitude), lng: Number(selectedProvider.longitude) }}
+                onCloseClick={handleCloseInfoWindow}
+              >
+                <div>
+                  <ProviderPopup
+                    provider={selectedProvider}
+                    onViewProfile={(provider) => {
+                      console.log('View profile:', provider);
+                      // You can add navigation logic here
+                    }}
+                    onClose={handleCloseInfoWindow}
+                  />
+                </div>
+              </InfoWindow>
+            )}
+          </GoogleMap>
+        </LoadScript>
       </div>
     );
   }
@@ -202,14 +282,55 @@ const BrowseServices = () => {
                   </Button>
                 </div>
                 <div className="h-48 rounded-lg overflow-hidden border bg-gray-50">
-                  <UnifiedGoogleMap
-                    providers={providers.slice(0, 10)}
-                    userLocation={userLocation}
-                    radiusKm={radiusKm}
-                    onProviderSelect={handleProviderSelect}
-                    selectedProvider={selectedProvider}
-                    className="h-full w-full"
-                  />
+                  <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
+                    <GoogleMap
+                      mapContainerStyle={{ width: '100%', height: '100%' }}
+                      center={mapCenter}
+                      zoom={mapZoom}
+                      options={{
+                        disableDefaultUI: true,
+                        zoomControl: false,
+                        mapTypeControl: false,
+                        scaleControl: false,
+                        streetViewControl: false,
+                        rotateControl: false,
+                        fullscreenControl: false
+                      }}
+                    >
+                      {userLocation && (
+                        <Marker
+                          position={{ lat: userLocation.latitude, lng: userLocation.longitude }}
+                          icon={{
+                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8" cy="8" r="6" fill="#3B82F6" stroke="#FFFFFF" stroke-width="2"/>
+                                <circle cx="8" cy="8" r="2" fill="#FFFFFF"/>
+                              </svg>
+                            `),
+                            scaledSize: new window.google.maps.Size(16, 16)
+                          }}
+                        />
+                      )}
+                      {providers.slice(0, 10).map((provider) => {
+                        if (!provider.latitude || !provider.longitude) return null;
+                        return (
+                          <Marker
+                            key={provider.id}
+                            position={{ lat: Number(provider.latitude), lng: Number(provider.longitude) }}
+                            icon={{
+                              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M10 1C6.7 1 4 3.7 4 7C4 11 10 19 10 19C10 19 16 11 16 7C16 3.7 13.3 1 10 1Z" fill="#7C3AED" stroke="#FFFFFF" stroke-width="1"/>
+                                  <circle cx="10" cy="7" r="2" fill="#FFFFFF"/>
+                                </svg>
+                              `),
+                              scaledSize: new window.google.maps.Size(20, 20)
+                            }}
+                          />
+                        );
+                      })}
+                    </GoogleMap>
+                  </LoadScript>
                 </div>
               </div>
             )}
@@ -275,4 +396,4 @@ const BrowseServices = () => {
   );
 };
 
-export default BrowseServices;
+export default BrowseProviders;

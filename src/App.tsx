@@ -24,7 +24,7 @@ import Auth from './pages/Auth';
 import MyProfile from './pages/MyProfile';
 import Profile from './pages/Profile';
 import PublicProfile from './pages/PublicProfile';
-import BrowseServices from './pages/NewBrowseServices';
+import BrowseProviders from './pages/BrowseProviders';
 import Roadmap from './pages/Roadmap';
 import CalendarDashboard from './pages/CalendarDashboard';
 import GrowthDashboard from './pages/GrowthDashboard';
@@ -61,8 +61,8 @@ function App() {
                             <Route path="/my-profile" element={<MyProfile />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/public-profile/:id" element={<PublicProfile />} />
-                            <Route path="/browse-services" element={<BrowseServices />} />
-                            <Route path="/browse-providers" element={<BrowseServices />} />
+                            <Route path="/browse-providers" element={<BrowseProviders />} />
+                            <Route path="/browse-services" element={<Navigate to="/browse-providers" replace />} />
                             <Route path="/roadmap" element={<Roadmap />} />
                             <Route path="/provider/:providerId/reviews" element={<ProviderReviews />} />
                             <Route path="/calendar" element={<CalendarDashboard />} />
@@ -80,8 +80,8 @@ function App() {
                             <Route path="/analytics/reports" element={<Reports />} />
                             <Route path="/bookings" element={<BookingsPage />} />
                             
-                            {/* Redirect old routes to unified browse services */}
-                            <Route path="/browse-cleaners" element={<Navigate to="/browse-services" replace />} />
+                            {/* Redirect old routes to unified browse providers */}
+                            <Route path="/browse-cleaners" element={<Navigate to="/browse-providers" replace />} />
                             <Route path="/cleaner/:cleanerId/reviews" element={<Navigate to="/provider/:cleanerId/reviews" replace />} />
                             
                             <Route path="*" element={<NotFound />} />
