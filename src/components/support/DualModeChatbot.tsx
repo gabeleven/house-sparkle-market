@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Bot, User } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatbot } from '@/contexts/ChatbotContext';
 
 interface ChatMessage {
@@ -47,16 +46,19 @@ export const DualModeChatbot: React.FC = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const { mode, showGoodbyeMessage, navigateToSupport } = useChatbot();
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
   // Initialize messages when component mounts or mode changes
   useEffect(() => {
@@ -178,13 +180,20 @@ Would you like help with any specific part of the booking process?`;
 
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="flex-1 p-4">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0"
+        style={{ 
+          overscrollBehavior: 'none',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         <div className="space-y-4">
           {messages.map((message) => (
             <div key={message.id} className="space-y-2">
               <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
                     {message.type === 'user' ? <User className="w-3 h-3 text-white" /> : <Bot className="w-3 h-3 text-white" />}
                   </div>
                   <div className={`rounded-lg p-3 text-sm ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted'}`}>
@@ -214,7 +223,7 @@ Would you like help with any specific part of the booking process?`;
           {isTyping && (
             <div className="flex justify-start">
               <div className="flex items-start space-x-2">
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                   <Bot className="w-3 h-3 text-white" />
                 </div>
                 <div className="bg-muted rounded-lg p-3">
@@ -227,12 +236,12 @@ Would you like help with any specific part of the booking process?`;
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
         </div>
-      </ScrollArea>
+        <div ref={messagesEndRef} />
+      </div>
 
       {!showGoodbyeMessage && (
-        <div className="border-t p-4">
+        <div className="border-t p-4 bg-card">
           <div className="flex items-center space-x-2">
             <Input
               value={input}
