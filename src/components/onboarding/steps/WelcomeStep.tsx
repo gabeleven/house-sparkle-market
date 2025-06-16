@@ -8,31 +8,25 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 export const WelcomeStep: React.FC = () => {
   const { setUserIntent, nextStep, skipOnboarding } = useOnboarding();
 
-  const handleFindHelp = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleFindHelp = () => {
     console.log('Find help clicked');
     setUserIntent('find_help');
     nextStep('service_selection');
   };
 
-  const handleOfferServices = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleOfferServices = () => {
     console.log('Offer services clicked');
     setUserIntent('offer_services');
     nextStep('account_creation');
   };
 
-  const handleSkip = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSkip = () => {
     console.log('Skip clicked');
     skipOnboarding();
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6" style={{ pointerEvents: 'auto' }}>
       <div className="flex justify-between items-start mb-6">
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-2">
@@ -47,6 +41,7 @@ export const WelcomeStep: React.FC = () => {
           size="icon"
           onClick={handleSkip}
           className="text-muted-foreground hover:text-foreground"
+          style={{ pointerEvents: 'auto', zIndex: 10002 }}
         >
           <X className="w-4 h-4" />
         </Button>
@@ -69,7 +64,11 @@ export const WelcomeStep: React.FC = () => {
               <p className="text-muted-foreground">
                 Find trusted service providers in your area for cleaning, repairs, and more
               </p>
-              <Button className="w-full mt-4" onClick={handleFindHelp}>
+              <Button 
+                className="w-full mt-4" 
+                onClick={handleFindHelp}
+                style={{ pointerEvents: 'auto', zIndex: 10002 }}
+              >
                 Find Services
               </Button>
             </CardContent>
@@ -86,7 +85,11 @@ export const WelcomeStep: React.FC = () => {
               <p className="text-muted-foreground">
                 Join our network of service providers and grow your business
               </p>
-              <Button className="w-full mt-4" onClick={handleOfferServices}>
+              <Button 
+                className="w-full mt-4" 
+                onClick={handleOfferServices}
+                style={{ pointerEvents: 'auto', zIndex: 10002 }}
+              >
                 Start Offering
               </Button>
             </CardContent>
@@ -94,7 +97,11 @@ export const WelcomeStep: React.FC = () => {
         </div>
 
         <div className="text-center mt-6">
-          <Button variant="ghost" onClick={handleSkip}>
+          <Button 
+            variant="ghost" 
+            onClick={handleSkip}
+            style={{ pointerEvents: 'auto', zIndex: 10002 }}
+          >
             Skip for now
           </Button>
         </div>
