@@ -48,7 +48,7 @@ const PublicProfile = () => {
     if (!id) return;
 
     try {
-      console.log('Loading public profile for user ID:', id);
+      console.log('PublicProfile: Loading profile for user ID:', id);
       
       // First, get the provider data
       const { data: providerData, error: providerError } = await supabase
@@ -58,7 +58,7 @@ const PublicProfile = () => {
         .single();
 
       if (providerError && providerError.code !== 'PGRST116') {
-        console.error('Provider error:', providerError);
+        console.error('PublicProfile: Provider error:', providerError);
         throw providerError;
       }
 
@@ -70,7 +70,7 @@ const PublicProfile = () => {
         .single();
 
       if (profileError) {
-        console.error('Profile error:', profileError);
+        console.error('PublicProfile: Profile error:', profileError);
         throw profileError;
       }
 
@@ -83,12 +83,14 @@ const PublicProfile = () => {
             *,
             service_categories(*)
           `)
-          .eq('provider_id', providerData.id);
+          .eq('provider_id', providerData.id)
+          .eq('is_available', true);
 
         if (servicesError) {
-          console.error('Services error:', servicesError);
+          console.error('PublicProfile: Services error:', servicesError);
         } else {
           services = servicesData || [];
+          console.log('PublicProfile: Loaded services data:', services);
         }
       }
 
@@ -113,6 +115,11 @@ const PublicProfile = () => {
           services: services,
           user_role: profileData.user_role
         });
+        console.log('PublicProfile: Final profile data set:', {
+          user_id: providerData.user_id,
+          servicesCount: services.length,
+          services: services.map(s => s.service_categories?.name || s.service_category?.name)
+        });
       } else {
         // Fallback to basic profile if no provider profile exists
         setProfile({
@@ -126,7 +133,7 @@ const PublicProfile = () => {
         });
       }
     } catch (error) {
-      console.error('Error loading profile:', error);
+      console.error('PublicProfile: Error loading profile:', error);
       setError('Profile not found');
     } finally {
       setLoading(false);
