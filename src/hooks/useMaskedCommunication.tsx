@@ -21,7 +21,7 @@ export const useMaskedCommunication = () => {
         return;
       }
 
-      // Check if communication already exists
+      // Check if communication already exists - using provider_id but querying with column that exists
       const { data: existing, error: existingError } = await supabase
         .from('masked_communications')
         .select('*')
@@ -46,11 +46,13 @@ export const useMaskedCommunication = () => {
       // Generate a proxy phone number (in real implementation, this would be from Twilio)
       const proxyNumber = `+1-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`;
 
+      // Create new communication - use the column names that match current schema
       const { data: communication, error } = await supabase
         .from('masked_communications')
         .insert({
           customer_id: user.id,
-          provider_id: providerId
+          provider_id: providerId,
+          proxy_phone_number: proxyNumber
         })
         .select()
         .single();

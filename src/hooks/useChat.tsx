@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -182,7 +182,7 @@ export const useChat = () => {
       return existing.id;
     }
 
-    // Create new conversation
+    // Create new conversation - use the column names that match the current schema
     const { data: newConv, error } = await supabase
       .from('conversations')
       .insert({
