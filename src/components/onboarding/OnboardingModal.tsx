@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { WelcomeStep } from './steps/WelcomeStep';
@@ -45,14 +44,12 @@ export const OnboardingModal: React.FC = () => {
     }
   };
 
-  // Prevent scroll when modal is open
+  // Prevent scroll when modal is open but KEEP pointer events
   React.useEffect(() => {
     if (isOnboardingOpen) {
       document.body.style.overflow = 'hidden';
-      document.body.style.pointerEvents = 'none';
       return () => {
         document.body.style.overflow = 'unset';
-        document.body.style.pointerEvents = 'auto';
       };
     }
   }, [isOnboardingOpen]);
@@ -64,58 +61,19 @@ export const OnboardingModal: React.FC = () => {
 
   console.log('OnboardingModal: rendering modal');
 
-  // Handle backdrop mouse events
-  const handleBackdropMouseEvent = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('Backdrop mouse event blocked');
-  };
-
-  // Handle backdrop touch events  
-  const handleBackdropTouchEvent = (e: React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('Backdrop touch event blocked');
-  };
-
-  // Handle modal content mouse events
-  const handleModalContentMouseEvent = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log('Modal content mouse event');
-  };
-
-  // Handle modal content touch events
-  const handleModalContentTouchEvent = (e: React.TouchEvent) => {
-    e.stopPropagation();
-    console.log('Modal content touch event');
-  };
-
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4"
-      style={{
-        zIndex: 999999,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        pointerEvents: 'auto'
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[9999]"
+      onClick={(e) => {
+        // Only prevent closing if clicking directly on backdrop
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Backdrop click blocked');
+        }
       }}
-      onClick={handleBackdropMouseEvent}
-      onMouseDown={handleBackdropMouseEvent}
-      onTouchStart={handleBackdropTouchEvent}
     >
-      <div
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl"
-        style={{
-          zIndex: 1000000,
-          pointerEvents: 'auto'
-        }}
-        onClick={handleModalContentMouseEvent}
-        onMouseDown={handleModalContentMouseEvent}
-        onTouchStart={handleModalContentTouchEvent}
-      >
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl z-[10000]">
         {renderStep()}
       </div>
     </div>
