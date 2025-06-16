@@ -49,8 +49,10 @@ export const OnboardingModal: React.FC = () => {
   React.useEffect(() => {
     if (isOnboardingOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.style.pointerEvents = 'none';
       return () => {
         document.body.style.overflow = 'unset';
+        document.body.style.pointerEvents = 'auto';
       };
     }
   }, [isOnboardingOpen]);
@@ -62,16 +64,30 @@ export const OnboardingModal: React.FC = () => {
 
   console.log('OnboardingModal: rendering modal');
 
-  // Handle backdrop click to prevent any interaction with background
-  const handleBackdropClick = (e: React.MouseEvent) => {
+  // Handle backdrop mouse events
+  const handleBackdropMouseEvent = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Don't close modal on backdrop click - force user to complete or skip
+    console.log('Backdrop mouse event blocked');
   };
 
-  // Handle modal content click to prevent event bubbling
-  const handleModalContentClick = (e: React.MouseEvent) => {
+  // Handle backdrop touch events  
+  const handleBackdropTouchEvent = (e: React.TouchEvent) => {
+    e.preventDefault();
     e.stopPropagation();
+    console.log('Backdrop touch event blocked');
+  };
+
+  // Handle modal content mouse events
+  const handleModalContentMouseEvent = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Modal content mouse event');
+  };
+
+  // Handle modal content touch events
+  const handleModalContentTouchEvent = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    console.log('Modal content touch event');
   };
 
   return (
@@ -86,9 +102,9 @@ export const OnboardingModal: React.FC = () => {
         bottom: 0,
         pointerEvents: 'auto'
       }}
-      onClick={handleBackdropClick}
-      onMouseDown={handleBackdropClick}
-      onTouchStart={handleBackdropClick}
+      onClick={handleBackdropMouseEvent}
+      onMouseDown={handleBackdropMouseEvent}
+      onTouchStart={handleBackdropTouchEvent}
     >
       <div
         className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl"
@@ -96,9 +112,9 @@ export const OnboardingModal: React.FC = () => {
           zIndex: 1000000,
           pointerEvents: 'auto'
         }}
-        onClick={handleModalContentClick}
-        onMouseDown={handleModalContentClick}
-        onTouchStart={handleModalContentClick}
+        onClick={handleModalContentMouseEvent}
+        onMouseDown={handleModalContentMouseEvent}
+        onTouchStart={handleModalContentTouchEvent}
       >
         {renderStep()}
       </div>
