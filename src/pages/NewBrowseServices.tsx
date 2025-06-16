@@ -79,8 +79,10 @@ const NewBrowseServices = () => {
           <SearchHeader
             searchTerm={searchTerm}
             locationFilter={locationFilter}
+            serviceFilters={serviceFilters}
             onSearchChange={setSearchTerm}
             onLocationChange={setLocationFilter}
+            onServiceFiltersChange={handleServiceFilter}
             hasLocation={!!userLocation}
             onRequestLocation={handleRequestLocation}
           />
