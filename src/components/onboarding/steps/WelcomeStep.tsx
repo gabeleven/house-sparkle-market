@@ -9,13 +9,20 @@ export const WelcomeStep: React.FC = () => {
   const { setUserIntent, nextStep, skipOnboarding } = useOnboarding();
 
   const handleFindHelp = () => {
+    console.log('Find help clicked');
     setUserIntent('find_help');
     nextStep('service_selection');
   };
 
   const handleOfferServices = () => {
+    console.log('Offer services clicked');
     setUserIntent('offer_services');
     nextStep('account_creation');
+  };
+
+  const handleSkip = () => {
+    console.log('Skip clicked');
+    skipOnboarding();
   };
 
   return (
@@ -32,7 +39,7 @@ export const WelcomeStep: React.FC = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={skipOnboarding}
+          onClick={handleSkip}
           className="text-muted-foreground hover:text-foreground"
         >
           <X className="w-4 h-4" />
@@ -87,7 +94,7 @@ export const WelcomeStep: React.FC = () => {
         </div>
 
         <div className="text-center mt-6">
-          <Button variant="ghost" onClick={skipOnboarding}>
+          <Button variant="ghost" onClick={handleSkip}>
             Skip for now
           </Button>
         </div>

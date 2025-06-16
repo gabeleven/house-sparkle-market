@@ -21,6 +21,17 @@ export const useOnboarding = () => {
   const [onboardingData, setOnboardingData] = useState<Record<string, any>>({});
 
   useEffect(() => {
+    console.log('useOnboarding: initializing');
+    
+    // For testing purposes, always show onboarding for now
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceOnboarding = urlParams.get('forceOnboarding');
+    
+    if (forceOnboarding === 'true') {
+      console.log('Force onboarding from URL parameter');
+      localStorage.removeItem('housie_onboarding_completed');
+    }
+    
     // Check if user has seen onboarding before
     const hasSeenOnboarding = localStorage.getItem('housie_onboarding_completed');
     console.log('Onboarding check:', { hasSeenOnboarding });
@@ -30,6 +41,8 @@ export const useOnboarding = () => {
       setIsOnboardingOpen(true);
     } else {
       console.log('User has already completed onboarding');
+      // For debugging, add a way to easily reset
+      console.log('To reset onboarding, run: localStorage.removeItem("housie_onboarding_completed"); window.location.reload();');
     }
 
     // Add global reset function for testing
