@@ -3,10 +3,17 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Settings, BarChart3, MessageSquare, Calendar, Shield, Target, Brain, User, TrendingUp, Bell, FileText, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SubscriptionTier } from '@/types/subscription';
-import MegaMenu from './MegaMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 
 interface UserMenuProps {
   user: any;
@@ -16,11 +23,6 @@ interface UserMenuProps {
 
 const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  const truncateText = (text: string, maxLength: number = 15) => {
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-  };
 
   // Defensive check to prevent rendering if no user
   if (!user) {
@@ -38,44 +40,203 @@ const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
 
   const userDisplayName = user.email?.split('@')[0] || 'User';
 
-  const handleMenuToggle = (open: boolean) => {
-    setIsOpen(open);
+  const handleSignOutClick = async () => {
+    await signOut();
+    setIsOpen(false);
   };
 
+  const handleLinkClick = () => {
+    setIsOpen(false);
+  };
+
+  function getTierSpecificDesc(tier: SubscriptionTier, feature: string): string {
+    const descriptions = {
+      calendar: {
+        'FREE': 'Calendrier de base',
+        'STARTER': 'Calendrier synchronisé',
+        'PRO': 'Calendrier professionnel',
+        'PREMIUM': 'Calendrier IA'
+      },
+      bookings: {
+        'FREE': 'Max 10 réservations/mois',
+        'STARTER': 'Réservations illimitées',
+        'PRO': 'Gestion avancée',
+        'PREMIUM': 'Gestion intelligente'
+      },
+      chat: {
+        'STARTER': 'Communications client',
+        'PRO': 'Communications pro',
+        'PREMIUM': 'Communications IA'
+      },
+      tax: {
+        'FREE': 'Statut de base',
+        'STARTER': 'Conformité avancée',
+        'PRO': 'Suite fiscale complète',
+        'PREMIUM': 'Optimisation fiscale IA'
+      }
+    };
+    return descriptions[feature]?.[tier] || '';
+  }
+
+  const menuItems = [
+    {
+      section: "Gestion",
+      items: [
+        {
+          path: '/my-profile',
+          title: 'Mon Profil',
+          icon: <User className="w-4 h-4" />,
+        },
+        {
+          path: '/calendar',
+          title: 'Calendrier',
+          icon: <Calendar className="w-4 h-4" />,
+        },
+        {
+          path: '/bookings',
+          title: 'Réservations',
+          icon: <Calendar className="w-4 h-4" />,
+        }
+      ]
+    },
+    {
+      section: "Analytics & Growth",
+      items: [
+        {
+          path: '/dashboard',
+          title: 'Dashboard',
+          icon: <BarChart3 className="w-4 h-4" />,
+        },
+        ...(currentTier === 'PRO' || currentTier === 'PREMIUM' ? [
+          {
+            path: '/analytics/insights',
+            title: 'Insights Avancées',
+            icon: <TrendingUp className="w-4 h-4" />,
+          },
+          {
+            path: '/analytics/reports',
+            title: 'Rapports Professionnels',
+            icon: <FileText className="w-4 h-4" />,
+          }
+        ] : []),
+        ...(currentTier === 'PREMIUM' ? [
+          {
+            path: '/analytics/intelligence',
+            title: 'Business Intelligence',
+            icon: <Brain className="w-4 h-4" />,
+            showNotification: true
+          },
+          {
+            path: '/analytics/performance',
+            title: 'Performance Optimization',
+            icon: <Target className="w-4 h-4" />,
+          }
+        ] : [])
+      ]
+    },
+    {
+      section: "Communication & Support",
+      items: [
+        ...(currentTier !== 'FREE' ? [{
+          path: '/chat',
+          title: 'Messages',
+          icon: <MessageSquare className="w-4 h-4" />,
+        }] : []),
+        {
+          path: '/tax-compliance',
+          title: 'Statut de Conformité',
+          icon: <Shield className="w-4 h-4" />,
+        },
+        {
+          path: '/settings',
+          title: 'Paramètres',
+          icon: <Settings className="w-4 h-4" />,
+        }
+      ]
+    }
+  ];
+
   return (
-    <div ref={menuRef} className="relative">
-      <MegaMenu
-        user={user}
-        currentTier={currentTier}
-        signOut={signOut}
-        isOpen={isOpen}
-        onOpenChange={handleMenuToggle}
-        trigger={
-          <Button 
-            variant="ghost" 
-            className="flex items-center space-x-2 hover:bg-accent/50"
-            aria-expanded={isOpen}
-            aria-haspopup="true"
-          >
-            <Avatar className="w-8 h-8">
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="ghost" 
+          className="flex items-center space-x-2 hover:bg-accent/50 p-2"
+          aria-expanded={isOpen}
+          aria-haspopup="true"
+        >
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={user.avatar_url} />
+            <AvatarFallback className="bg-[hsl(var(--pop-blue))] text-white text-sm">
+              {userDisplayName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent 
+        align="end" 
+        className="w-80 bg-card border border-border shadow-xl z-50 animate-in slide-in-from-top-2 duration-200"
+        sideOffset={8}
+      >
+        {/* User Info Header */}
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center space-x-3">
+            <Avatar className="w-10 h-10">
               <AvatarImage src={user.avatar_url} />
-              <AvatarFallback className="bg-[hsl(var(--pop-blue))] text-white text-sm">
+              <AvatarFallback className="bg-[hsl(var(--pop-blue))] text-white">
                 {userDisplayName.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium truncate max-w-[100px]">
-                {truncateText(userDisplayName)}
-              </span>
-              <Badge variant="outline" className="text-xs px-2 py-0.5 flex-shrink-0">
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-foreground truncate">{userDisplayName}</p>
+              <Badge variant="outline" className="text-xs mt-1">
                 {currentTier}
               </Badge>
             </div>
-            <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-          </Button>
-        }
-      />
-    </div>
+          </div>
+        </div>
+
+        {/* Menu Items */}
+        <div className="max-h-96 overflow-y-auto">
+          {menuItems.map((section, sectionIndex) => (
+            <div key={section.section}>
+              <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground px-4 py-2">
+                {section.section}
+              </DropdownMenuLabel>
+              {section.items.map((item) => (
+                <DropdownMenuItem key={item.path} asChild className="px-4 py-2 cursor-pointer">
+                  <Link
+                    to={item.path}
+                    onClick={handleLinkClick}
+                    className="flex items-center space-x-3 w-full"
+                  >
+                    <div className="text-muted-foreground">
+                      {item.icon}
+                    </div>
+                    <span className="flex-1 text-sm">{item.title}</span>
+                    {item.showNotification && (
+                      <Bell className="w-3 h-3 text-[hsl(var(--pop-orange))]" />
+                    )}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+              {sectionIndex < menuItems.length - 1 && <DropdownMenuSeparator />}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem 
+          onClick={handleSignOutClick}
+          className="px-4 py-3 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
+        >
+          <LogOut className="w-4 h-4 mr-3" />
+          <span className="text-sm">Déconnexion</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
