@@ -16,7 +16,7 @@ const HeaderLogo = () => {
     <Link to="/" className="flex items-center">
       <div className="h-8 w-auto overflow-hidden relative">
         <img 
-          src="/lovable-uploads/48c1d041-a50c-4283-803e-21a051da3ac1.png" 
+          src="/lovable-uploads/7367af12-b329-4f27-8e85-408ec72b67d7.png" 
           alt="HOUSIE" 
           className="h-full w-auto object-contain"
         />
