@@ -49,14 +49,30 @@ export const OnboardingModal: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto">
-      {/* Backdrop - clicking it should not close modal */}
-      <div 
-        className="absolute inset-0 bg-black/80 pointer-events-none" 
-      />
-      
-      {/* Modal Content */}
-      <div className="relative bg-background border shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto rounded-lg z-10 pointer-events-auto">
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 9999,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        maxWidth: '640px',
+        width: '100%',
+        margin: '16px',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        position: 'relative',
+        zIndex: 10000
+      }}>
         {renderStep()}
       </div>
     </div>
