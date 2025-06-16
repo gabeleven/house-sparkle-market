@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,16 +45,15 @@ export const DualModeChatbot: React.FC = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const { mode, showGoodbyeMessage, navigateToSupport } = useChatbot();
 
   const scrollToBottom = () => {
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'end'
-      });
-    }, 100);
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -181,75 +179,79 @@ Would you like help with any specific part of the booking process?`;
   };
 
   return (
-    <div className="flex flex-col h-full max-h-full">
+    <div className="flex flex-col h-full w-full">
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pt-4 pb-2">
-        <div className="space-y-4 pb-4">
-          {messages.map((message) => (
-            <div key={message.id} className="space-y-2">
-              <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex items-start space-x-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
-                    {message.type === 'user' ? <User className="w-3 h-3 text-white" /> : <Bot className="w-3 h-3 text-white" />}
-                  </div>
-                  <div className={`rounded-lg p-3 text-sm break-words ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted'}`}>
-                    <p className="whitespace-pre-line">{message.content}</p>
-                  </div>
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3 min-h-0"
+        style={{ 
+          scrollBehavior: 'smooth'
+        }}
+      >
+        {messages.map((message) => (
+          <div key={message.id} className="w-full">
+            <div className={`flex w-full ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`flex items-start space-x-2 max-w-[75%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${message.type === 'user' ? 'bg-blue-500' : 'bg-primary'}`}>
+                  {message.type === 'user' ? <User className="w-3 h-3 text-white" /> : <Bot className="w-3 h-3 text-white" />}
                 </div>
-              </div>
-              
-              {message.options && (
-                <div className="flex flex-wrap gap-2 ml-8">
-                  {message.options.map((option, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => handleOptionClick(option)}
-                    >
-                      {option}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-          
-          {isTyping && (
-            <div className="flex justify-start">
-              <div className="flex items-start space-x-2">
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-3 h-3 text-white" />
-                </div>
-                <div className="bg-muted rounded-lg p-3">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
+                <div className={`rounded-lg p-2 text-xs leading-relaxed break-words overflow-wrap-anywhere ${message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-muted text-muted-foreground'}`}>
+                  <p className="whitespace-pre-line">{message.content}</p>
                 </div>
               </div>
             </div>
-          )}
-          
-          {/* Scroll anchor */}
-          <div ref={messagesEndRef} className="h-1" />
-        </div>
+            
+            {message.options && (
+              <div className="flex flex-wrap gap-1 mt-2 ml-8">
+                {message.options.map((option, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-6 px-2"
+                    onClick={() => handleOptionClick(option)}
+                  >
+                    {option}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="flex items-start space-x-2 max-w-[75%]">
+              <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                <Bot className="w-3 h-3 text-white" />
+              </div>
+              <div className="bg-muted rounded-lg p-2">
+                <div className="flex space-x-1">
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Scroll anchor */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Container */}
       {!showGoodbyeMessage && (
-        <div className="border-t bg-card p-4 flex-shrink-0">
+        <div className="border-t bg-card p-3 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="flex-1 h-8 text-sm"
+              className="flex-1 h-7 text-xs"
             />
-            <Button size="sm" onClick={() => handleSendMessage()} className="h-8 w-8 p-0">
+            <Button size="sm" onClick={() => handleSendMessage()} className="h-7 w-7 p-0">
               <Send className="w-3 h-3" />
             </Button>
           </div>
