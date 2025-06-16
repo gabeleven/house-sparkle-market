@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DollarSign, MessageCircle, MapPin, Calendar } from 'lucide-react';
+import { ServiceAreaMap } from '@/components/map/ServiceAreaMap';
 
 interface ContactSidebarProps {
   profile: {
@@ -78,24 +79,27 @@ export const ContactSidebar: React.FC<ContactSidebarProps> = ({
         </CardContent>
       </Card>
 
-      {/* Service Area Map Placeholder */}
+      {/* Service Area Map */}
       {profile.latitude && profile.longitude && (
         <Card className="mt-6">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Service Area</h3>
-            <div className="bg-gray-100 h-48 rounded-lg flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <MapPin className="w-8 h-8 mx-auto mb-2" />
-                <p>Interactive map coming soon</p>
-                <p className="text-sm">
-                  Located in {profile.address}
-                </p>
-                {profile.service_radius_km && (
-                  <p className="text-sm">
-                    Service radius: {profile.service_radius_km}km
-                  </p>
-                )}
+            <div className="h-64 rounded-lg overflow-hidden border bg-gray-50">
+              <ServiceAreaMap
+                centerLat={profile.latitude}
+                centerLng={profile.longitude}
+                radiusKm={profile.service_radius_km || 25}
+                className="h-full w-full"
+              />
+            </div>
+            <div className="mt-3 text-sm text-gray-600 text-center">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className="w-4 h-4" />
+                <span>Service radius: {profile.service_radius_km || 25}km</span>
               </div>
+              {profile.address && (
+                <p className="mt-1">Covers area around {profile.address}</p>
+              )}
             </div>
           </CardContent>
         </Card>
