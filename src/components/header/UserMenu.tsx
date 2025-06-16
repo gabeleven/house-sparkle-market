@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -177,7 +176,6 @@ const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
         align="end" 
         className="w-80 bg-card border border-border shadow-xl z-50"
         sideOffset={8}
-        forceMount={false}
       >
         {/* User Info Header */}
         <div className="p-4 border-b border-border">
