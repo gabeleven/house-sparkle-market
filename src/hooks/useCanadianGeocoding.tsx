@@ -45,12 +45,13 @@ export const useCanadianGeocoding = () => {
 
       if (result.length > 0) {
         const location = result[0];
+        // Handle both function and direct property access for lat/lng
         const lat = typeof location.geometry.location.lat === 'function' 
           ? location.geometry.location.lat() 
-          : location.geometry.location.lat;
+          : location.geometry.location.lat as number;
         const lng = typeof location.geometry.location.lng === 'function' 
           ? location.geometry.location.lng() 
-          : location.geometry.location.lng;
+          : location.geometry.location.lng as number;
 
         // Extract components
         let city = '';

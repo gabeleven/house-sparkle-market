@@ -100,7 +100,6 @@ const BrowseServices = () => {
         </div>
         <GoogleMapView
           providers={providers}
-          userLocation={userLocation}
           radiusKm={radiusKm}
           onProviderSelect={handleProviderSelect}
           selectedProvider={selectedProvider}
@@ -197,7 +196,6 @@ const BrowseServices = () => {
                 <div className="h-48 rounded-lg overflow-hidden border bg-gray-50">
                   <GoogleMapView
                     providers={providers.slice(0, 10)} // Limit for performance
-                    userLocation={userLocation}
                     radiusKm={radiusKm}
                     onProviderSelect={handleProviderSelect}
                     selectedProvider={selectedProvider}
