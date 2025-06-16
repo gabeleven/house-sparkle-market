@@ -8,19 +8,25 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 export const WelcomeStep: React.FC = () => {
   const { setUserIntent, nextStep, skipOnboarding } = useOnboarding();
 
-  const handleFindHelp = () => {
+  const handleFindHelp = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Find help clicked');
     setUserIntent('find_help');
     nextStep('service_selection');
   };
 
-  const handleOfferServices = () => {
+  const handleOfferServices = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Offer services clicked');
     setUserIntent('offer_services');
     nextStep('account_creation');
   };
 
-  const handleSkip = () => {
+  const handleSkip = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Skip clicked');
     skipOnboarding();
   };
@@ -52,10 +58,7 @@ export const WelcomeStep: React.FC = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card 
-            className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-            onClick={handleFindHelp}
-          >
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary">
             <CardHeader className="text-center pb-4">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-blue-600" />
@@ -72,10 +75,7 @@ export const WelcomeStep: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card 
-            className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-            onClick={handleOfferServices}
-          >
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary">
             <CardHeader className="text-center pb-4">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-green-600" />

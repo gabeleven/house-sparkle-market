@@ -23,29 +23,23 @@ export const useOnboarding = () => {
   useEffect(() => {
     console.log('useOnboarding: initializing');
     
-    // For testing purposes, always show onboarding for now
-    const urlParams = new URLSearchParams(window.location.search);
-    const forceOnboarding = urlParams.get('forceOnboarding');
-    
-    if (forceOnboarding === 'true') {
-      console.log('Force onboarding from URL parameter');
-      localStorage.removeItem('housie_onboarding_completed');
-    }
-    
     // Check if user has seen onboarding before
     const hasSeenOnboarding = localStorage.getItem('housie_onboarding_completed');
     console.log('Onboarding check:', { hasSeenOnboarding });
     
-    if (!hasSeenOnboarding) {
-      console.log('Opening onboarding modal for new user');
+    // Check for force parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceOnboarding = urlParams.get('forceOnboarding');
+    
+    if (forceOnboarding === 'true' || !hasSeenOnboarding) {
+      console.log('Opening onboarding modal');
       setIsOnboardingOpen(true);
+      setCurrentStep('welcome');
     } else {
       console.log('User has already completed onboarding');
-      // For debugging, add a way to easily reset
-      console.log('To reset onboarding, run: localStorage.removeItem("housie_onboarding_completed"); window.location.reload();');
     }
 
-    // Add global reset function for testing
+    // Add global functions for testing
     (window as any).resetOnboarding = () => {
       console.log('Resetting onboarding via global function');
       localStorage.removeItem('housie_onboarding_completed');
@@ -55,7 +49,6 @@ export const useOnboarding = () => {
       setOnboardingData({});
     };
 
-    // Also add to window for easy access
     (window as any).showOnboarding = () => {
       console.log('Showing onboarding via global function');
       setIsOnboardingOpen(true);
