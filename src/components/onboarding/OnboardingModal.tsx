@@ -45,6 +45,16 @@ export const OnboardingModal: React.FC = () => {
     }
   };
 
+  // Prevent scroll when modal is open
+  React.useEffect(() => {
+    if (isOnboardingOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [isOnboardingOpen]);
+
   if (!isOnboardingOpen) {
     console.log('OnboardingModal: not showing because isOnboardingOpen is false');
     return null;
@@ -52,36 +62,43 @@ export const OnboardingModal: React.FC = () => {
 
   console.log('OnboardingModal: rendering modal');
 
+  // Handle backdrop click to prevent any interaction with background
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Don't close modal on backdrop click - force user to complete or skip
+  };
+
+  // Handle modal content click to prevent event bubbling
+  const handleModalContentClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div 
+    <div
+      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4"
       style={{
+        zIndex: 999999,
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px',
-        zIndex: 999999,
         pointerEvents: 'auto'
       }}
+      onClick={handleBackdropClick}
+      onMouseDown={handleBackdropClick}
+      onTouchStart={handleBackdropClick}
     >
-      <div 
+      <div
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl"
         style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: '672px',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          zIndex: 999999,
+          zIndex: 1000000,
           pointerEvents: 'auto'
         }}
+        onClick={handleModalContentClick}
+        onMouseDown={handleModalContentClick}
+        onTouchStart={handleModalContentClick}
       >
         {renderStep()}
       </div>

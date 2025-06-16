@@ -1,175 +1,109 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, Users, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
 export const WelcomeStep: React.FC = () => {
   const { setUserIntent, nextStep, skipOnboarding } = useOnboarding();
 
-  const handleFindHelp = () => {
+  const handleFindHelp = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Find help clicked');
     setUserIntent('find_help');
     nextStep('service_selection');
   };
 
-  const handleOfferServices = () => {
+  const handleOfferServices = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Offer services clicked');
     setUserIntent('offer_services');
     nextStep('account_creation');
   };
 
-  const handleSkip = () => {
+  const handleSkip = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log('Skip clicked');
     skipOnboarding();
   };
 
   return (
-    <div style={{ padding: '24px', pointerEvents: 'auto', position: 'relative', zIndex: 999999 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+    <div className="p-6">
+      {/* Header with close button */}
+      <div className="flex justify-between items-start mb-6">
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
-            Welcome to Housie! 👋
-          </h2>
-          <p style={{ color: '#6b7280' }}>
-            Let's get you started with the perfect experience
-          </p>
+          <h2 className="text-2xl font-bold mb-2">Welcome to Housie! 👋</h2>
+          <p className="text-gray-600">Let's get you started with the perfect experience</p>
         </div>
         <button
           onClick={handleSkip}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px',
-            borderRadius: '4px',
-            color: '#6b7280',
-            pointerEvents: 'auto',
-            zIndex: 999999
-          }}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          style={{ pointerEvents: 'auto', zIndex: 1000001 }}
         >
-          <X style={{ width: '16px', height: '16px' }} />
+          <X className="w-5 h-5 text-gray-500" />
         </button>
       </div>
 
-      <div style={{ marginBottom: '24px' }}>
-        <p style={{ textAlign: 'center', fontSize: '18px', fontWeight: '500', marginBottom: '24px' }}>
+      {/* Main content */}
+      <div className="text-center mb-8">
+        <p className="text-lg font-medium mb-6">
           Are you here to find help or offer your services?
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
-          <div style={{ 
-            border: '2px solid #e5e7eb', 
-            borderRadius: '8px', 
-            backgroundColor: 'white',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{ padding: '24px', textAlign: 'center' }}>
-              <div style={{ 
-                width: '64px', 
-                height: '64px', 
-                backgroundColor: '#dbeafe', 
-                borderRadius: '50%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                margin: '0 auto 16px auto' 
-              }}>
-                <Search style={{ width: '32px', height: '32px', color: '#2563eb' }} />
-              </div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>I'm looking for help</h3>
-              <p style={{ color: '#6b7280', marginBottom: '16px' }}>
-                Find trusted service providers in your area for cleaning, repairs, and more
-              </p>
-              <button
-                onClick={handleFindHelp}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  backgroundColor: '#000',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  pointerEvents: 'auto',
-                  zIndex: 999999
-                }}
-              >
-                Find Services
-              </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Find Help Card */}
+          <div className="border-2 border-gray-200 rounded-lg p-6 hover:border-blue-500 hover:shadow-lg transition-all">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
+            <h3 className="text-xl font-semibold mb-3">I'm looking for help</h3>
+            <p className="text-gray-600 mb-6">
+              Find trusted service providers in your area for cleaning, repairs, and more
+            </p>
+            <button
+              onClick={handleFindHelp}
+              className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              style={{ pointerEvents: 'auto', zIndex: 1000001 }}
+            >
+              Find Services
+            </button>
           </div>
 
-          <div style={{ 
-            border: '2px solid #e5e7eb', 
-            borderRadius: '8px', 
-            backgroundColor: 'white',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{ padding: '24px', textAlign: 'center' }}>
-              <div style={{ 
-                width: '64px', 
-                height: '64px', 
-                backgroundColor: '#dcfce7', 
-                borderRadius: '50%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                margin: '0 auto 16px auto' 
-              }}>
-                <Users style={{ width: '32px', height: '32px', color: '#16a34a' }} />
-              </div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>I offer services</h3>
-              <p style={{ color: '#6b7280', marginBottom: '16px' }}>
-                Join our network of service providers and grow your business
-              </p>
-              <button
-                onClick={handleOfferServices}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  backgroundColor: '#000',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  pointerEvents: 'auto',
-                  zIndex: 999999
-                }}
-              >
-                Start Offering
-              </button>
+          {/* Offer Services Card */}
+          <div className="border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 hover:shadow-lg transition-all">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
             </div>
+            <h3 className="text-xl font-semibold mb-3">I offer services</h3>
+            <p className="text-gray-600 mb-6">
+              Join our network of service providers and grow your business
+            </p>
+            <button
+              onClick={handleOfferServices}
+              className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              style={{ pointerEvents: 'auto', zIndex: 1000001 }}
+            >
+              Start Offering
+            </button>
           </div>
         </div>
+      </div>
 
-        <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <button
-            onClick={handleSkip}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#6b7280',
-              cursor: 'pointer',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              fontSize: '14px',
-              pointerEvents: 'auto',
-              zIndex: 999999
-            }}
-          >
-            Skip for now
-          </button>
-        </div>
+      {/* Skip button */}
+      <div className="text-center">
+        <button
+          onClick={handleSkip}
+          className="text-gray-500 hover:text-gray-700 px-4 py-2 rounded transition-colors"
+          style={{ pointerEvents: 'auto', zIndex: 1000001 }}
+        >
+          Skip for now
+        </button>
       </div>
     </div>
   );
