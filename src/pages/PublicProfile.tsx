@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -49,9 +48,9 @@ const PublicProfile = () => {
     if (!id) return;
 
     try {
-      console.log('PublicProfile: Loading profile for user ID:', id);
+      console.log('PublicProfile: Loading profile for ID:', id);
       
-      // First, get the provider data with full details
+      // First try to get provider data using user_id
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
         .select(`
@@ -63,98 +62,115 @@ const PublicProfile = () => {
           )
         `)
         .eq('user_id', id)
-        .single();
+        .maybeSingle();
 
-      if (providerError && providerError.code !== 'PGRST116') {
-        console.error('PublicProfile: Provider error:', providerError);
-        throw providerError;
+      console.log('PublicProfile: Provider query result:', { providerData, providerError });
+
+      // If no provider found by user_id, try by provider id
+      let finalProviderData = providerData;
+      if (!providerData && !providerError) {
+        const { data: providerByIdData, error: providerByIdError } = await supabase
+          .from('providers')
+          .select(`
+            *,
+            profiles!providers_user_id_fkey(
+              full_name,
+              email,
+              user_role
+            )
+          `)
+          .eq('id', id)
+          .maybeSingle();
+
+        console.log('PublicProfile: Provider by ID query result:', { providerByIdData, providerByIdError });
+        finalProviderData = providerByIdData;
       }
 
-      console.log('PublicProfile: Provider data loaded:', {
-        hasProvider: !!providerData,
-        service_radius_km: providerData?.service_radius_km,
-        address: providerData?.address,
-        hourly_rate: providerData?.hourly_rate
-      });
-
-      // Get the profile data separately if provider query failed
+      // Get the profile data separately if needed
       let profileData = null;
-      if (!providerData) {
-        const { data: profileDataResult, error: profileError } = await supabase
+      if (!finalProviderData) {
+        const { data: directProfileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', id)
-          .single();
+          .maybeSingle();
+
+        console.log('PublicProfile: Direct profile query result:', { directProfileData, profileError });
 
         if (profileError) {
           console.error('PublicProfile: Profile error:', profileError);
           throw profileError;
         }
-        profileData = profileDataResult;
+        profileData = directProfileData;
       }
 
+      // Load services if we have provider data
       let services = [];
-      if (providerData) {
-        // Get provider services with categories
+      if (finalProviderData) {
         const { data: servicesData, error: servicesError } = await supabase
           .from('provider_services')
           .select(`
             *,
             service_categories(*)
           `)
-          .eq('provider_id', providerData.id)
+          .eq('provider_id', finalProviderData.id)
           .eq('is_available', true);
 
         if (servicesError) {
           console.error('PublicProfile: Services error:', servicesError);
         } else {
           services = servicesData || [];
-          console.log('PublicProfile: Loaded services data:', services);
+          console.log('PublicProfile: Loaded services:', services);
         }
       }
 
       // Combine the data
-      if (providerData) {
-        const profileInfo = Array.isArray(providerData.profiles) ? providerData.profiles[0] : providerData.profiles;
+      if (finalProviderData) {
+        const profileInfo = Array.isArray(finalProviderData.profiles) ? finalProviderData.profiles[0] : finalProviderData.profiles;
         
-        setProfile({
-          id: providerData.id,
-          user_id: providerData.user_id,
+        const profileResult = {
+          id: finalProviderData.id,
+          user_id: finalProviderData.user_id,
           full_name: profileInfo?.full_name || '',
           email: profileInfo?.email || '',
-          profile_photo_url: providerData.profile_photo_url,
-          business_name: providerData.business_name,
-          bio: providerData.bio,
-          address: providerData.address,
-          service_radius_km: providerData.service_radius_km,
-          years_experience: providerData.years_experience,
-          hourly_rate: providerData.hourly_rate,
-          latitude: providerData.latitude,
-          longitude: providerData.longitude,
-          average_rating: providerData.average_rating,
-          total_reviews: providerData.total_reviews,
+          profile_photo_url: finalProviderData.profile_photo_url,
+          business_name: finalProviderData.business_name,
+          bio: finalProviderData.bio,
+          address: finalProviderData.address,
+          service_radius_km: finalProviderData.service_radius_km,
+          years_experience: finalProviderData.years_experience,
+          hourly_rate: finalProviderData.hourly_rate,
+          latitude: finalProviderData.latitude,
+          longitude: finalProviderData.longitude,
+          average_rating: finalProviderData.average_rating,
+          total_reviews: finalProviderData.total_reviews,
           services: services,
           user_role: profileInfo?.user_role || 'cleaner'
-        });
-        
-        console.log('PublicProfile: Final profile data set:', {
-          user_id: providerData.user_id,
-          service_radius_km: providerData.service_radius_km,
-          address: providerData.address,
-          servicesCount: services.length,
-          services: services.map(s => s.service_categories?.name || s.service_category?.name)
-        });
+        };
+
+        console.log('PublicProfile: Setting final profile data:', profileResult);
+        setProfile(profileResult);
       } else if (profileData) {
         // Fallback to basic profile if no provider profile exists
-        setProfile({
+        const basicProfile = {
           id: profileData.id,
           user_id: profileData.id,
           full_name: profileData.full_name,
           email: profileData.email,
           profile_photo_url: profileData.profile_photo_url,
           user_role: profileData.user_role,
-          services: []
-        });
+          services: [],
+          service_radius_km: profileData.service_radius_km,
+          business_name: profileData.business_name,
+          bio: profileData.brief_description,
+          address: profileData.service_area_city,
+          years_experience: profileData.years_experience
+        };
+
+        console.log('PublicProfile: Setting basic profile data:', basicProfile);
+        setProfile(basicProfile);
+      } else {
+        throw new Error('No profile found');
       }
     } catch (error) {
       console.error('PublicProfile: Error loading profile:', error);

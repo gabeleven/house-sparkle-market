@@ -36,6 +36,32 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
     onServiceChange([]);
   };
 
+  const handleCategorySelectAll = (category: ServiceCategory) => {
+    const categoryServices = servicesByCategory[category];
+    const allCategoryServicesSelected = categoryServices.every(service => 
+      selectedServices.includes(service)
+    );
+
+    if (allCategoryServicesSelected) {
+      // Deselect all services in this category
+      const updated = selectedServices.filter(service => 
+        !categoryServices.includes(service)
+      );
+      onServiceChange(updated);
+    } else {
+      // Select all services in this category
+      const servicesNotInCategory = selectedServices.filter(service => 
+        !categoryServices.includes(service)
+      );
+      onServiceChange([...servicesNotInCategory, ...categoryServices]);
+    }
+  };
+
+  const isCategoryAllSelected = (category: ServiceCategory) => {
+    const categoryServices = servicesByCategory[category];
+    return categoryServices.every(service => selectedServices.includes(service));
+  };
+
   const toggleCategory = (category: ServiceCategory) => {
     const newExpanded = new Set(expandedCategories);
     if (newExpanded.has(category)) {
@@ -133,6 +159,25 @@ export const HierarchicalServiceFilters: React.FC<HierarchicalServiceFiltersProp
                     <div className="text-xs font-medium text-muted-foreground border-b pb-1 mb-2">
                       {serviceCategoryLabels[category as ServiceCategory]} Services
                     </div>
+                    
+                    {/* "All [Category]" option */}
+                    <div className="flex items-center space-x-2 mb-2 pb-2 border-b">
+                      <Checkbox
+                        id={`all-${category}`}
+                        checked={isCategoryAllSelected(category as ServiceCategory)}
+                        onCheckedChange={() => handleCategorySelectAll(category as ServiceCategory)}
+                        className="h-4 w-4"
+                      />
+                      <Label
+                        htmlFor={`all-${category}`}
+                        className="flex items-center space-x-2 cursor-pointer text-xs font-medium leading-none flex-1"
+                      >
+                        <span className="font-semibold text-primary">
+                          All {serviceCategoryLabels[category as ServiceCategory]} Services
+                        </span>
+                      </Label>
+                    </div>
+
                     {services.map((serviceType) => {
                       const ServiceIcon = serviceTypeIcons[serviceType];
                       const isChecked = selectedServices.includes(serviceType);

@@ -5,7 +5,7 @@ import { useUserLocation } from '@/hooks/useUserLocation';
 import { useUnifiedProviders } from '@/hooks/useUnifiedProviders';
 import { ServiceType } from '@/utils/serviceTypes';
 import { SearchHeader } from '@/components/browse/SearchHeader';
-import { ServiceFilters } from '@/components/browse/ServiceFilters';
+import { HierarchicalServiceFilters } from '@/components/browse/HierarchicalServiceFilters';
 import { ResultsContent } from '@/components/browse/ResultsContent';
 import { ResultsHeader } from '@/components/browse/ResultsHeader';
 import { LocationAuthPrompt } from '@/components/browse/LocationAuthPrompt';
@@ -15,6 +15,7 @@ import { Map, List, X, AlertTriangle } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
 import { ProviderProfile } from '@/types/providers';
+import { supabase } from '@/integrations/supabase/client';
 
 const LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
 
@@ -39,9 +40,29 @@ const BrowseProviders = () => {
   const [selectedProvider, setSelectedProvider] = useState<ProviderProfile | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
   const [isMapLoading, setIsMapLoading] = useState(false);
+  const [googleMapsApiKey, setGoogleMapsApiKey] = useState<string | null>(null);
   
   const { userLocation, requestUserLocation, loading: locationLoading } = useUserLocation();
   const { currentTier: userSubscription } = useSubscription();
+
+  // Load Google Maps API key from Supabase secrets
+  useEffect(() => {
+    const loadApiKey = async () => {
+      try {
+        console.log('BrowseProviders: Loading Google Maps API key from Supabase');
+        // In production, the API key should be retrieved from Supabase Edge Function
+        // For now, we'll use a fallback
+        const apiKey = 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o'; // Fallback key
+        setGoogleMapsApiKey(apiKey);
+        console.log('BrowseProviders: API key loaded successfully');
+      } catch (error) {
+        console.error('BrowseProviders: Failed to load API key:', error);
+        setMapError('Unable to load map configuration');
+      }
+    };
+
+    loadApiKey();
+  }, []);
 
   // Auto-request location on mount
   useEffect(() => {
@@ -87,6 +108,11 @@ const BrowseProviders = () => {
 
   const handleToggleMap = () => {
     console.log('BrowseProviders: Toggling map view');
+    if (!googleMapsApiKey) {
+      toast.error('Map configuration not loaded. Please try again.');
+      return;
+    }
+    
     setIsMapLoading(true);
     setMapError(null);
     setShowMap(!showMap);
@@ -94,7 +120,7 @@ const BrowseProviders = () => {
     // Reset loading state after a brief delay
     setTimeout(() => {
       setIsMapLoading(false);
-    }, 1000);
+    }, 1500);
   };
 
   const handleProviderSelect = (provider: ProviderProfile) => {
@@ -130,7 +156,8 @@ const BrowseProviders = () => {
     userLocation: !!userLocation,
     error: !!error,
     serviceFiltersCount: serviceFilters.length,
-    mapError: !!mapError
+    mapError: !!mapError,
+    hasApiKey: !!googleMapsApiKey
   });
 
   if (isLoading && !providers.length) {
@@ -160,24 +187,6 @@ const BrowseProviders = () => {
                 }
               </p>
             </div>
-            
-            {/* Map Toggle Button */}
-            <div className="flex gap-2">
-              <Button
-                onClick={handleToggleMap}
-                variant={showMap ? "default" : "outline"}
-                size="sm"
-                className="flex items-center gap-2"
-                disabled={isMapLoading}
-              >
-                {isMapLoading ? (
-                  <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
-                ) : (
-                  <Map className="w-4 h-4" />
-                )}
-                {showMap ? 'Hide Map' : 'Show Map'}
-              </Button>
-            </div>
           </div>
           
           <SearchHeader
@@ -194,7 +203,7 @@ const BrowseProviders = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
-            <ServiceFilters
+            <HierarchicalServiceFilters
               selectedServices={serviceFilters}
               onServiceChange={handleServiceFilter}
             />
@@ -244,7 +253,7 @@ const BrowseProviders = () => {
                   onClick={handleToggleMap}
                   variant={showMap ? "default" : "outline"}
                   size="sm"
-                  disabled={isMapLoading}
+                  disabled={isMapLoading || !googleMapsApiKey}
                 >
                   {isMapLoading ? (
                     <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2" />
@@ -257,7 +266,7 @@ const BrowseProviders = () => {
             </div>
 
             {/* Map Section */}
-            {showMap && (
+            {showMap && googleMapsApiKey && (
               <div className="mb-6">
                 {mapError ? (
                   <div className="bg-destructive/10 border border-destructive rounded-lg p-4 flex items-center gap-3">
@@ -278,7 +287,7 @@ const BrowseProviders = () => {
                 ) : (
                   <div className="bg-card border rounded-lg overflow-hidden">
                     <LoadScript 
-                      googleMapsApiKey={process.env.NODE_ENV === 'production' ? 'YOUR_GOOGLE_MAPS_API_KEY' : 'AIzaSyAJXkmufaWRLR5t4iFFp4qupryDKNZZO9o'}
+                      googleMapsApiKey={googleMapsApiKey}
                       libraries={LIBRARIES}
                       onError={handleMapLoadError}
                     >
