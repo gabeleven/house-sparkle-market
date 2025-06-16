@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -161,7 +160,7 @@ const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="flex items-center space-x-2 hover:bg-accent/50 p-2"
+          className="flex items-center p-1 hover:bg-accent/50 rounded-full"
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
@@ -171,13 +170,17 @@ const UserMenu = ({ user, currentTier, signOut }: UserMenuProps) => {
               {userDisplayName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-80 bg-card border border-border shadow-xl z-50 animate-in slide-in-from-top-2 duration-200"
+        className="w-80 bg-card border border-border shadow-xl z-50"
         sideOffset={8}
+        style={{
+          animationDuration: '200ms',
+          animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          transformOrigin: 'top right'
+        }}
       >
         {/* User Info Header */}
         <div className="p-4 border-b border-border">
