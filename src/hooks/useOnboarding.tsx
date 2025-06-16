@@ -23,23 +23,34 @@ export const useOnboarding = () => {
   useEffect(() => {
     // Check if user has seen onboarding before
     const hasSeenOnboarding = localStorage.getItem('housie_onboarding_completed');
+    console.log('Onboarding check:', { hasSeenOnboarding });
+    
     if (!hasSeenOnboarding) {
-      // Delay to let the page load
+      // Show immediately for testing, or delay for production
+      const delay = window.location.hostname === 'localhost' ? 500 : 1000;
+      console.log('Setting onboarding to show in', delay, 'ms');
+      
       setTimeout(() => {
+        console.log('Opening onboarding modal');
         setIsOnboardingOpen(true);
-      }, 1000);
+      }, delay);
+    } else {
+      console.log('User has already completed onboarding');
     }
   }, []);
 
   const updateOnboardingData = (key: string, value: any) => {
+    console.log('Updating onboarding data:', key, value);
     setOnboardingData(prev => ({ ...prev, [key]: value }));
   };
 
   const nextStep = (step: OnboardingStep) => {
+    console.log('Moving to next step:', step);
     setCurrentStep(step);
   };
 
   const completeOnboarding = () => {
+    console.log('Completing onboarding');
     localStorage.setItem('housie_onboarding_completed', 'true');
     setIsOnboardingOpen(false);
     setCurrentStep('welcome');
@@ -48,7 +59,18 @@ export const useOnboarding = () => {
   };
 
   const skipOnboarding = () => {
+    console.log('Skipping onboarding');
     completeOnboarding();
+  };
+
+  // Debug function to reset onboarding (for testing)
+  const resetOnboarding = () => {
+    console.log('Resetting onboarding for testing');
+    localStorage.removeItem('housie_onboarding_completed');
+    setIsOnboardingOpen(true);
+    setCurrentStep('welcome');
+    setUserIntent(null);
+    setOnboardingData({});
   };
 
   return {
@@ -61,5 +83,6 @@ export const useOnboarding = () => {
     nextStep,
     completeOnboarding,
     skipOnboarding,
+    resetOnboarding, // Added for testing
   };
 };

@@ -14,7 +14,9 @@ import { ServiceLocationStep } from './steps/ServiceLocationStep';
 import { ProPreviewStep } from './steps/ProPreviewStep';
 
 export const OnboardingModal: React.FC = () => {
-  const { isOnboardingOpen, currentStep } = useOnboarding();
+  const { isOnboardingOpen, currentStep, completeOnboarding } = useOnboarding();
+
+  console.log('OnboardingModal render:', { isOnboardingOpen, currentStep });
 
   const renderStep = () => {
     switch (currentStep) {
@@ -43,8 +45,15 @@ export const OnboardingModal: React.FC = () => {
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    console.log('Dialog open change:', open);
+    if (!open) {
+      completeOnboarding();
+    }
+  };
+
   return (
-    <Dialog open={isOnboardingOpen} onOpenChange={() => {}}>
+    <Dialog open={isOnboardingOpen} onOpenChange={handleOpenChange}>
       <DialogOverlay className="bg-black/50" />
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
         {renderStep()}
